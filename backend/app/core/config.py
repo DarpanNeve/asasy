@@ -1,0 +1,96 @@
+from pydantic_settings import BaseSettings
+from typing import List, Optional
+import os
+
+class Settings(BaseSettings):
+    # App settings
+    APP_NAME: str = "Asasy"
+    ENVIRONMENT: str = "development"
+    DEBUG: bool = True
+    
+    # Security
+    SECRET_KEY: str
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+    
+    # Database
+    MONGODB_URL: str
+    DATABASE_NAME: str = "asasy"
+    
+    # Redis
+    REDIS_URL: str = "redis://localhost:6379"
+    
+    # OAuth
+    GOOGLE_CLIENT_ID: str
+    GOOGLE_CLIENT_SECRET: str
+    
+    # msg91
+    MSG91_API_KEY: str
+    MSG91_TEMPLATE_ID: str
+    MSG91_SENDER_ID: str = "ASASY"
+    
+    # Razorpay
+    RAZORPAY_KEY_ID: str
+    RAZORPAY_KEY_SECRET: str
+    RAZORPAY_WEBHOOK_SECRET: str
+    
+    # OpenAI
+    OPENAI_API_KEY: str
+    
+    # AWS S3
+    AWS_ACCESS_KEY_ID: Optional[str] = None
+    AWS_SECRET_ACCESS_KEY: Optional[str] = None
+    AWS_BUCKET_NAME: Optional[str] = None
+    AWS_REGION: str = "us-east-1"
+    
+    # Email settings
+    SMTP_HOST: Optional[str] = None
+    SMTP_PORT: int = 587
+    SMTP_USER: Optional[str] = None
+    SMTP_PASSWORD: Optional[str] = None
+    
+    # CORS
+    ALLOWED_ORIGINS: List[str] = [
+        "http://localhost:3000",
+        "http://localhost:3001", 
+        "https://localhost:3000",
+        "https://localhost:3001"
+    ]
+    ALLOWED_HOSTS: List[str] = ["localhost", "127.0.0.1"]
+    
+    # Rate limiting
+    RATE_LIMIT_REQUESTS: int = 100
+    RATE_LIMIT_PERIOD: int = 60  # seconds
+    
+    # File upload
+    MAX_FILE_SIZE: int = 10 * 1024 * 1024  # 10MB
+    ALLOWED_FILE_TYPES: List[str] = ["pdf", "docx", "txt"]
+    
+    # Report generation
+    REPORTS_STORAGE_PATH: str = "reports"
+    MAX_REPORTS_FREE_USERS: int = 1
+    
+    class Config:
+        env_file = ".env"
+        case_sensitive = True
+
+settings = Settings()
+
+# Validate required settings
+required_settings = [
+    "SECRET_KEY",
+    "MONGODB_URL", 
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET",
+    "MSG91_API_KEY",
+    "MSG91_TEMPLATE_ID",
+    "RAZORPAY_KEY_ID",
+    "RAZORPAY_KEY_SECRET",
+    "RAZORPAY_WEBHOOK_SECRET",
+    "OPENAI_API_KEY"
+]
+
+for setting in required_settings:
+    if not getattr(settings, setting, None):
+        raise ValueError(f"Required setting {setting} is not set")
