@@ -17,6 +17,8 @@ class ReportResponse(BaseModel):
     created_at: datetime
     idea: Optional[str] = None
     pdf_url: Optional[str] = None
+    plan_name: Optional[str] = None
+    plan_type: Optional[str] = None
     message: Optional[str] = None
 
 

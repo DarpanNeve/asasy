@@ -27,7 +27,7 @@ async def seed_plans():
     for plan_data in DEFAULT_PLANS:
         plan = Plan(**plan_data)
         await plan.insert()
-        logger.info(f"Created plan: {plan.name}")
+        logger.info(f"Created plan: {plan.name} - {plan.report_type}")
     
     logger.info("Plans seeded successfully!")
 

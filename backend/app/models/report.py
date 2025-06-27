@@ -24,6 +24,11 @@ class ReportLog(Document):
     title: str = Field(..., description="Report title")
     idea: str = Field(..., description="Original idea/input for the report")
     
+    # Plan information
+    plan_id: str = Field(..., description="Plan used for this report")
+    plan_name: str = Field(..., description="Plan name for display")
+    plan_type: Optional[str] = Field(None, description="Type of analysis performed")
+    
     # Generation status
     status: ReportStatus = ReportStatus.PENDING
     error_message: Optional[str] = None
@@ -60,6 +65,7 @@ class ReportLog(Document):
             "user_id",
             "status",
             "report_type",
+            "plan_id",
             "created_at",
             [("user_id", 1), ("created_at", -1)],
             [("user_id", 1), ("status", 1)],

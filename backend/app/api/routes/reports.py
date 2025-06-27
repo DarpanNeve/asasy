@@ -7,6 +7,7 @@ import asyncio
 
 from app.core.security import get_current_user
 from app.models.user import User
+from app.models.plan import Plan
 from app.models.report import ReportLog, ReportStatus, ReportType
 from app.services.report_generator import generate_technology_report
 from app.core.config import settings
@@ -15,11 +16,12 @@ from app.schemas.report import ReportCreate, ReportResponse, ReportListResponse
 router = APIRouter()
 
 
-async def generate_report_background(report_id: str, idea: str):
+async def generate_report_background(report_id: str, idea: str, plan_id: str):
     """Background task to generate report"""
     try:
         report = await ReportLog.get(report_id)
-        if not report:
+        plan = await Plan.get(plan_id)
+        if not report or not plan:
             return
 
         # Update status to processing
@@ -30,7 +32,7 @@ async def generate_report_background(report_id: str, idea: str):
         output_path = f"{settings.REPORTS_STORAGE_PATH}/{report_id}.pdf"
         os.makedirs(settings.REPORTS_STORAGE_PATH, exist_ok=True)
 
-        report_data = await generate_technology_report(idea, output_path)
+        report_data = await generate_technology_report(idea, output_path, plan)
 
         # Update report with completion details
         file_size = os.path.getsize(output_path) if os.path.exists(output_path) else 0
@@ -60,6 +62,22 @@ async def generate_report(
 ):
     """Generate a new technology assessment report"""
 
+    # Get user's current plan
+    user_plan = None
+    if current_user.current_subscription_id:
+        subscription = await current_user.get_current_subscription()
+        if subscription:
+            user_plan = await Plan.get(subscription.plan_id)
+    
+    # If no subscription, use Basic (free) plan
+    if not user_plan:
+        user_plan = await Plan.find_one({"name": "Basic", "is_active": True})
+        if not user_plan:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Basic plan not found. Please contact support."
+            )
+
     # Check if user can generate reports
     if not await current_user.can_generate_report():
         raise HTTPException(
@@ -74,6 +92,8 @@ async def generate_report(
         idea=report_data.idea,
         report_type=ReportType.TECHNOLOGY_ASSESSMENT,
         status=ReportStatus.PENDING,
+        plan_id=str(user_plan.id),
+        plan_name=user_plan.name,
     )
 
     await report.insert()
@@ -84,7 +104,7 @@ async def generate_report(
 
     # Start background generation
     background_tasks.add_task(
-        generate_report_background, str(report.id), report_data.idea
+        generate_report_background, str(report.id), report_data.idea, str(user_plan.id)
     )
 
     return ReportResponse(
@@ -92,7 +112,9 @@ async def generate_report(
         title=report.title,
         status=report.status,
         created_at=report.created_at,
-        message="Report generation started. You will be notified when complete.",
+        plan_name=user_plan.name,
+        plan_type=user_plan.report_type,
+        message=f"Report generation started using {user_plan.name} plan. You will be notified when complete.",
     )
 
 
@@ -135,6 +157,8 @@ async def get_reports(
                 created_at=report.created_at,
                 idea=report.idea,
                 pdf_url=report.pdf_url,
+                plan_name=getattr(report, 'plan_name', 'Unknown'),
+                plan_type=getattr(report, 'plan_type', 'Unknown'),
             )
             for report in reports
         ],

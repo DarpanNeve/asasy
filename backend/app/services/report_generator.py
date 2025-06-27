@@ -4,57 +4,25 @@ import openai
 from fpdf import FPDF
 from fpdf.enums import XPos, YPos
 from app.core.config import settings
+from app.models.plan import Plan
 
 # Configure OpenAI
 openai.api_key = settings.OPENAI_API_KEY
 
-def generate_report_json(idea: str) -> dict:
-    """Generate report content using OpenAI API"""
-    system_prompt = """
-You are a world-class business & technology research analyst. When given a single "idea" for a patent-grade system, you must OUTPUT STRICTLY ONE JSON DOCUMENT (no extra text) with these exact keys:
-
-1. patent_info: {title, application_no, grant_no, filing_date, jurisdiction, assignee, status}  
-2. executive_summary: string  
-3. technology_overview: string  
-4. development_plan: string  
-5. market_assessment: string  
-6. commercialization_strategies: string  
-7. financial_viability: string  
-8. final_thoughts: string
-9. market_data_table: [{"metric": "string", "value": "string", "growth_rate": "string", "source": "string"}]
-10. competitor_analysis_table: [{"company": "string", "market_share": "string", "revenue": "string", "key_features": "string", "rating": "string"}]
-11. development_timeline_table: [{"phase": "string", "duration": "string", "cost": "string", "milestones": "string", "risk_level": "string"}]
-12. financial_projections_table: [{"year": "string", "revenue": "string", "costs": "string", "profit": "string", "roi": "string"}]
-13. technology_comparison_table: [{"feature": "string", "current_solution": "string", "proposed_solution": "string", "improvement": "string", "priority": "string"}]
-
-**Requirements for ALL textual fields**  
-• **Length**: Minimum **300** words per section.  
-• **Data density**: Embed at least **5** distinct quantitative metrics or statistics in each section (e.g., market size in USD, CAGR percentages, user-adoption rates, cost breakdowns, projected ROI timelines, comparative benchmarks).  
-• **Formatting**: Keep prose in **concise paragraphs**—avoid bullet lists or tables.  
-• **Date style**: Use "DD Month YYYY" for all dates.  
-• **Character set**: Only ASCII characters—no special quotes, en-dashes, or non-ASCII.  
-• **Sophistication**: Write with authoritative, analytical tone, citing hypothetical data points ("According to Gartner, global market will grow by 12.5% CAGR…").  
-
-**Requirements for TABLE fields**
-• Each table should have 5-8 realistic entries
-• Use specific, realistic data points and figures
-• Ensure all values are strings for JSON compatibility
-• Make data relevant to the technology idea provided
-
-Aim to make every section as comprehensive and statistically rigorous as possible.
-"""
+async def generate_report_json(idea: str, plan: Plan) -> dict:
+    """Generate report content using OpenAI API with plan-specific prompt"""
     
     user_prompt = f"""
 Idea: ```{idea}```
 
-Generate the report JSON as specified above. Ensure every section is richly detailed, with at least five numerical data points per section and a minimum of 300 words each. Include realistic tabular data for all 5 table sections.
+Generate the report JSON as specified above. Ensure every section follows the requirements for {plan.report_type} ({plan.report_pages}).
 """
     
     try:
         resp = openai.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": system_prompt},
+                {"role": "system", "content": plan.prompt_template},
                 {"role": "user", "content": user_prompt},
             ],
             response_format={"type": "json_object"},
@@ -66,36 +34,62 @@ Generate the report JSON as specified above. Ensure every section is richly deta
 
     except Exception as e:
         print(f"Error generating report: {e}")
-        # Return a default structure in case of API issues
-        return {
-            "patent_info": {
-                "title": "Technology Assessment Report",
-                "application_no": "N/A",
-                "grant_no": "N/A",
-                "filing_date": "N/A",
-                "jurisdiction": "N/A",
-                "assignee": "N/A",
-                "status": "N/A",
-            },
-            "executive_summary": "Report generation failed.",
-            "technology_overview": "N/A",
-            "development_plan": "N/A",
-            "market_assessment": "N/A",
-            "commercialization_strategies": "N/A",
-            "financial_viability": "N/A",
-            "final_thoughts": "N/A",
-            "market_data_table": [],
-            "competitor_analysis_table": [],
-            "development_timeline_table": [],
-            "financial_projections_table": [],
-            "technology_comparison_table": [],
-        }
+        # Return a default structure based on plan type
+        if plan.name == "Basic":
+            return {
+                "executive_summary": "Report generation failed.",
+                "problem_opportunity": "N/A",
+                "technology_overview": "N/A",
+                "key_benefits": "N/A",
+                "applications": "N/A",
+                "ip_snapshot": "N/A",
+                "next_steps": "N/A",
+            }
+        elif plan.name == "Intermediate":
+            return {
+                "executive_summary": "Report generation failed.",
+                "problem_solution": "N/A",
+                "technical_feasibility": "N/A",
+                "ip_summary": "N/A",
+                "market_signals": "N/A",
+                "early_competitors": "N/A",
+                "regulatory_compliance": "N/A",
+                "summary_recommendation": "N/A",
+            }
+        elif plan.name == "Advanced":
+            return {
+                "executive_summary": "Report generation failed.",
+                "technology_description": "N/A",
+                "market_competition": "N/A",
+                "trl_feasibility": "N/A",
+                "ip_legal_status": "N/A",
+                "regulatory_path": "N/A",
+                "commercialization_options": "N/A",
+                "preliminary_financials": "N/A",
+                "conclusion_recommendations": "N/A",
+            }
+        else:  # Comprehensive
+            return {
+                "executive_summary": "Report generation failed.",
+                "invention_claims": "N/A",
+                "global_fto": "N/A",
+                "market_analysis": "N/A",
+                "business_models": "N/A",
+                "roi_financial_projections": "N/A",
+                "funding_strategy": "N/A",
+                "licensing_plan": "N/A",
+                "team_partnerships": "N/A",
+                "implementation_roadmap": "N/A",
+                "risk_analysis": "N/A",
+                "appendices_data": "N/A",
+            }
 
 class ReportPDF(FPDF):
-    def __init__(self):
+    def __init__(self, plan_name: str):
         super().__init__(format="A4")
         self.set_auto_page_break(auto=True, margin=20)
         self.set_margins(20, 20, 20)
+        self.plan_name = plan_name
 
     def header(self):
         self.set_font("Helvetica", "B", 10)
@@ -103,7 +97,7 @@ class ReportPDF(FPDF):
         self.cell(
             0,
             10,
-            "Technology Assessment Report",
+            f"Technology Assessment Report - {self.plan_name} Plan",
             new_x=XPos.LMARGIN,
             new_y=YPos.NEXT,
             align="C",
@@ -117,7 +111,7 @@ class ReportPDF(FPDF):
         self.cell(
             0,
             10,
-            f"Page {self.page_no()}",
+            f"Page {self.page_no()} - Generated by Asasy",
             new_x=XPos.LMARGIN,
             new_y=YPos.TOP,
             align="C",
@@ -183,34 +177,72 @@ class ReportPDF(FPDF):
         text = "".join(char if ord(char) < 128 else "?" for char in text)
         return text
 
-def create_pdf(report: dict, output_path: str):
-    """Create PDF from report data"""
+def create_pdf(report: dict, output_path: str, plan: Plan):
+    """Create PDF from report data based on plan type"""
     try:
-        pdf = ReportPDF()
+        pdf = ReportPDF(plan.name)
         pdf.add_page()
 
         # Title
-        pdf.add_title("TECHNOLOGY ASSESSMENT REPORT")
+        pdf.add_title(f"TECHNOLOGY ASSESSMENT REPORT")
+        
+        # Subtitle with plan info
+        pdf.set_font("Helvetica", "B", 12)
+        pdf.set_text_color(0, 0, 0)
+        subtitle = f"{plan.report_type} ({plan.report_pages})"
+        subtitle = pdf.clean_text(subtitle)
+        pdf.multi_cell(0, 8, subtitle, align="C")
+        pdf.ln(10)
 
-        # Subtitle with patent title
-        if report.get("patent_info", {}).get("title"):
-            pdf.set_font("Helvetica", "B", 14)
-            pdf.set_text_color(0, 0, 0)
-            title_text = report["patent_info"]["title"]
-            title_text = pdf.clean_text(title_text)
-            pdf.multi_cell(0, 8, title_text, align="C")
-            pdf.ln(10)
-
-        # Sections
-        sections = [
-            ("Executive Summary", report.get("executive_summary", "")),
-            ("Technology Overview", report.get("technology_overview", "")),
-            ("Development Plan", report.get("development_plan", "")),
-            ("Market Assessment", report.get("market_assessment", "")),
-            ("Commercialization Strategies", report.get("commercialization_strategies", "")),
-            ("Financial Viability", report.get("financial_viability", "")),
-            ("Final Thoughts", report.get("final_thoughts", "")),
-        ]
+        # Sections based on plan type
+        if plan.name == "Basic":
+            sections = [
+                ("Executive Summary", report.get("executive_summary", "")),
+                ("Problem & Opportunity", report.get("problem_opportunity", "")),
+                ("Technology Overview", report.get("technology_overview", "")),
+                ("Key Benefits", report.get("key_benefits", "")),
+                ("Applications", report.get("applications", "")),
+                ("IP Snapshot", report.get("ip_snapshot", "")),
+                ("Next Steps", report.get("next_steps", "")),
+            ]
+        elif plan.name == "Intermediate":
+            sections = [
+                ("Executive Summary", report.get("executive_summary", "")),
+                ("Problem & Solution", report.get("problem_solution", "")),
+                ("Technical Feasibility", report.get("technical_feasibility", "")),
+                ("IP Summary", report.get("ip_summary", "")),
+                ("Market Signals", report.get("market_signals", "")),
+                ("Early Competitors", report.get("early_competitors", "")),
+                ("Regulatory & Compliance", report.get("regulatory_compliance", "")),
+                ("Summary & Recommendation", report.get("summary_recommendation", "")),
+            ]
+        elif plan.name == "Advanced":
+            sections = [
+                ("Executive Summary", report.get("executive_summary", "")),
+                ("Technology Description", report.get("technology_description", "")),
+                ("Market & Competition", report.get("market_competition", "")),
+                ("TRL & Feasibility", report.get("trl_feasibility", "")),
+                ("IP & Legal Status", report.get("ip_legal_status", "")),
+                ("Regulatory Path", report.get("regulatory_path", "")),
+                ("Commercialization Options", report.get("commercialization_options", "")),
+                ("Preliminary Financials", report.get("preliminary_financials", "")),
+                ("Conclusion & Recommendations", report.get("conclusion_recommendations", "")),
+            ]
+        else:  # Comprehensive
+            sections = [
+                ("Executive Summary", report.get("executive_summary", "")),
+                ("Invention & Claims", report.get("invention_claims", "")),
+                ("Global FTO Analysis", report.get("global_fto", "")),
+                ("Market Analysis", report.get("market_analysis", "")),
+                ("Business Models", report.get("business_models", "")),
+                ("ROI & Financial Projections", report.get("roi_financial_projections", "")),
+                ("Funding Strategy", report.get("funding_strategy", "")),
+                ("Licensing Plan", report.get("licensing_plan", "")),
+                ("Team & Partnerships", report.get("team_partnerships", "")),
+                ("Implementation Roadmap", report.get("implementation_roadmap", "")),
+                ("Risk Analysis", report.get("risk_analysis", "")),
+                ("Appendices & Data", report.get("appendices_data", "")),
+            ]
 
         for i, (title, content) in enumerate(sections, 1):
             pdf.add_section_header(i, title)
@@ -224,14 +256,14 @@ def create_pdf(report: dict, output_path: str):
         print(f"❌ Error creating PDF: {e}")
         raise
 
-async def generate_technology_report(idea: str, output_path: str) -> dict:
+async def generate_technology_report(idea: str, output_path: str, plan: Plan) -> dict:
     """Main function to generate a complete technology assessment report"""
     try:
-        print("🔄 Generating report content...")
-        report_json = generate_report_json(idea)
+        print(f"🔄 Generating {plan.name} report content...")
+        report_json = await generate_report_json(idea, plan)
 
         print("🔄 Creating PDF...")
-        create_pdf(report_json, output_path)
+        create_pdf(report_json, output_path, plan)
 
         print("✅ Process completed successfully!")
         return report_json

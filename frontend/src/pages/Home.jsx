@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import {
   BarChart3,
   FileText,
@@ -8,9 +10,25 @@ import {
   ArrowRight,
   CheckCircle,
   Star,
+  Send,
+  Sparkles,
 } from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
+import { api } from "../services/api";
+import toast from "react-hot-toast";
 
 export default function Home() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
+
   const features = [
     {
       icon: Zap,
@@ -38,73 +56,88 @@ export default function Home() {
     },
   ];
 
-  const testimonials = [
-    {
-      name: "Sarah Chen",
-      role: "CTO, TechStart Inc.",
-      content:
-        "Asasy has revolutionized how we evaluate new technologies. The AI-generated reports are incredibly detailed and save us weeks of research.",
-      rating: 5,
-    },
-    {
-      name: "Michael Rodriguez",
-      role: "Innovation Director, Global Corp",
-      content:
-        "The quality of analysis is outstanding. We use Asasy for all our technology assessment needs.",
-      rating: 5,
-    },
-    {
-      name: "Emily Johnson",
-      role: "Product Manager, StartupXYZ",
-      content:
-        "Simple to use, powerful results. Asasy helps us make informed technology decisions quickly.",
-      rating: 5,
-    },
-  ];
-
   const pricingPlans = [
     {
-      name: "Starter",
-      price: "₹999",
-      period: "/month",
-      description: "Perfect for individuals and small teams",
+      name: "Basic",
+      price: "Free",
+      period: "",
+      description: "Perfect for getting started",
       features: [
-        "10 AI-powered reports",
-        "Professional PDF exports",
+        "1 free AI-powered report",
+        "Basic PDF export",
         "Email support",
-        "Basic analytics dashboard",
+        "Rapid snapshot analysis",
       ],
       popular: false,
     },
     {
-      name: "Professional",
-      price: "₹2,999",
+      name: "Intermediate",
+      price: "₹999",
       period: "/month",
-      description: "Ideal for growing businesses",
+      description: "In-depth feasibility analysis",
       features: [
-        "50 AI-powered reports",
-        "Advanced PDF customization",
+        "10 AI-powered reports",
+        "In-depth feasibility analysis",
+        "Technical readiness assessment",
         "Priority support",
-        "Team collaboration",
-        "API access",
       ],
       popular: true,
     },
     {
-      name: "Enterprise",
+      name: "Advanced",
+      price: "₹2,999",
+      period: "/month",
+      description: "Comprehensive due-diligence",
+      features: [
+        "25 AI-powered reports",
+        "Comprehensive due-diligence",
+        "TRL assessment",
+        "Commercialization options",
+      ],
+      popular: false,
+    },
+    {
+      name: "Comprehensive",
       price: "₹9,999",
       period: "/month",
-      description: "For large organizations",
+      description: "Full commercialization blueprint",
       features: [
         "Unlimited reports",
-        "Custom branding",
-        "24/7 phone support",
-        "Dedicated account manager",
-        "Custom integrations",
+        "Full commercialization blueprint",
+        "Global FTO analysis",
+        "24/7 dedicated support",
       ],
       popular: false,
     },
   ];
+
+  const handleGenerateReport = async (data) => {
+    if (!user) {
+      toast.error("Please sign in to generate reports");
+      navigate("/login");
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      const response = await api.post("/reports/generate", {
+        idea: data.idea,
+      });
+
+      toast.success("Report generation started! Redirecting to dashboard...");
+      reset();
+      navigate("/dashboard");
+    } catch (error) {
+      if (error.response?.status === 403) {
+        toast.error("You've used your free report. Please upgrade to continue.");
+        navigate("/subscription");
+      } else {
+        toast.error(error.response?.data?.detail || "Failed to generate report");
+      }
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -112,14 +145,12 @@ export default function Home() {
       <nav className="bg-white shadow-sm border-b border-neutral-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <a href="#">
-              <div className="flex items-center">
-                <BarChart3 className="h-8 w-8 text-primary-600" />
-                <span className="ml-2 text-xl font-bold text-gradient">
-                  Asasy
-                </span>
-              </div>
-            </a>
+            <div className="flex items-center">
+              <BarChart3 className="h-8 w-8 text-primary-600" />
+              <span className="ml-2 text-xl font-bold text-gradient">
+                Asasy
+              </span>
+            </div>
             <div className="hidden md:flex items-center space-x-8">
               <a
                 href="#features"
@@ -133,51 +164,118 @@ export default function Home() {
               >
                 Pricing
               </a>
-              {/* <a
-                href="#testimonials"
-                className="text-neutral-600 hover:text-neutral-900 transition-colors"
-              >
-                Testimonials
-              </a> */}
-              <Link
-                to="/login"
-                className="text-neutral-600 hover:text-neutral-900 transition-colors"
-              >
-                Sign In
-              </Link>
-              <Link to="/signup" className="btn-primary">
-                Get Started
-              </Link>
+              {user ? (
+                <Link
+                  to="/dashboard"
+                  className="btn-primary"
+                >
+                  Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    className="text-neutral-600 hover:text-neutral-900 transition-colors"
+                  >
+                    Sign In
+                  </Link>
+                  <Link to="/signup" className="btn-primary">
+                    Get Started
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* Hero Section with ChatGPT-style Interface */}
       <section className="relative bg-gradient-to-br from-primary-50 to-secondary-50 py-20 lg:py-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
             <h1 className="text-4xl md:text-6xl font-bold text-neutral-900 mb-6">
               AI-Powered Technology
               <span className="text-gradient block">Assessment Reports</span>
             </h1>
             <p className="text-xl text-neutral-600 mb-8 max-w-3xl mx-auto">
-              Generate comprehensive technology assessment reports in minutes.
-              Make informed decisions with AI-powered analysis and professional
-              documentation.
+              Describe your technology idea and get a comprehensive assessment report in minutes.
+              Start with a free report - no credit card required.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/signup" className="btn-primary text-lg px-8 py-3">
-                Start Free Trial
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-              <Link to="/login" className="btn-outline text-lg px-8 py-3">
-                Sign In
-              </Link>
+          </div>
+
+          {/* ChatGPT-style Input Interface */}
+          <div className="max-w-3xl mx-auto">
+            <form onSubmit={handleSubmit(handleGenerateReport)} className="space-y-4">
+              <div className="relative">
+                <textarea
+                  {...register("idea", {
+                    required: "Please describe your technology idea",
+                    minLength: {
+                      value: 50,
+                      message: "Please provide at least 50 characters",
+                    },
+                  })}
+                  rows={6}
+                  className="w-full p-6 pr-16 border-2 border-neutral-200 rounded-2xl shadow-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none resize-none text-lg"
+                  placeholder="Describe your technology idea, innovation, or concept here... For example: 'AI-powered smart home automation system with voice control and predictive analytics for energy optimization...'"
+                  disabled={isGenerating}
+                />
+                <button
+                  type="submit"
+                  disabled={isGenerating}
+                  className="absolute bottom-4 right-4 p-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                >
+                  {isGenerating ? (
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                  ) : (
+                    <Send className="h-6 w-6" />
+                  )}
+                </button>
+              </div>
+              {errors.idea && (
+                <p className="text-error-600 text-sm ml-2">{errors.idea.message}</p>
+              )}
+            </form>
+
+            {/* Quick Examples */}
+            <div className="mt-8 text-center">
+              <p className="text-sm text-neutral-500 mb-4">Try these examples:</p>
+              <div className="flex flex-wrap justify-center gap-2">
+                {[
+                  "AI-powered medical diagnosis system",
+                  "Blockchain-based supply chain tracking",
+                  "IoT smart agriculture monitoring",
+                  "Renewable energy storage solution"
+                ].map((example, index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      const textarea = document.querySelector('textarea');
+                      if (textarea) textarea.value = example;
+                    }}
+                    className="px-4 py-2 text-sm bg-white border border-neutral-200 rounded-lg hover:border-primary-300 hover:bg-primary-50 transition-colors"
+                  >
+                    {example}
+                  </button>
+                ))}
+              </div>
             </div>
-            <p className="text-sm text-neutral-500 mt-4">
-              Get your first report absolutely free • No credit card required
-            </p>
+
+            {/* Status indicators */}
+            <div className="mt-8 flex items-center justify-center space-x-6 text-sm text-neutral-600">
+              <div className="flex items-center">
+                <Sparkles className="h-4 w-4 text-primary-500 mr-2" />
+                <span>AI-Powered Analysis</span>
+              </div>
+              <div className="flex items-center">
+                <Shield className="h-4 w-4 text-success-500 mr-2" />
+                <span>Secure & Private</span>
+              </div>
+              <div className="flex items-center">
+                <Zap className="h-4 w-4 text-warning-500 mr-2" />
+                <span>Results in Minutes</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -218,14 +316,13 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
-              Simple, Transparent Pricing
+              Choose Your Analysis Depth
             </h2>
             <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
-              Choose the plan that fits your needs. Start with a free report and
-              upgrade as you grow.
+              From quick snapshots to comprehensive blueprints. Start free and upgrade as needed.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {pricingPlans.map((plan, index) => (
               <div
                 key={index}
@@ -245,7 +342,7 @@ export default function Home() {
                     {plan.name}
                   </h3>
                   <div className="mb-4">
-                    <span className="text-4xl font-bold text-neutral-900">
+                    <span className="text-3xl font-bold text-neutral-900">
                       {plan.price}
                     </span>
                     <span className="text-neutral-600">{plan.period}</span>
@@ -253,19 +350,19 @@ export default function Home() {
                   <p className="text-neutral-600 mb-6">{plan.description}</p>
                   <ul className="space-y-3 mb-8">
                     {plan.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-center">
-                        <CheckCircle className="h-5 w-5 text-success-500 mr-3" />
+                      <li key={featureIndex} className="flex items-center text-sm">
+                        <CheckCircle className="h-4 w-4 text-success-500 mr-3 flex-shrink-0" />
                         <span className="text-neutral-700">{feature}</span>
                       </li>
                     ))}
                   </ul>
                   <Link
-                    to="/signup"
+                    to={user ? "/dashboard" : "/signup"}
                     className={`w-full ${
                       plan.popular ? "btn-primary" : "btn-outline"
                     }`}
                   >
-                    Get Started
+                    {plan.name === "Basic" ? "Start Free" : "Get Started"}
                   </Link>
                 </div>
               </div>
@@ -274,59 +371,20 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      {/* <section id="testimonials" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
-              Trusted by Industry Leaders
-            </h2>
-            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
-              See what our customers are saying about their experience with
-              Asasy.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div key={index} className="card">
-                <div className="flex items-center mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className="h-5 w-5 text-warning-400 fill-current"
-                    />
-                  ))}
-                </div>
-                <p className="text-neutral-700 mb-6 italic">
-                  "{testimonial.content}"
-                </p>
-                <div>
-                  <p className="font-semibold text-neutral-900">
-                    {testimonial.name}
-                  </p>
-                  <p className="text-neutral-600 text-sm">{testimonial.role}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section> */}
-
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-primary-600 to-secondary-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Ready to Transform Your Technology Assessment Process?
+            Ready to Analyze Your Technology?
           </h2>
           <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of professionals who trust Asasy for their technology
-            evaluation needs.
+            Join thousands of innovators who trust Asasy for their technology assessment needs.
           </p>
           <Link
-            to="/signup"
+            to={user ? "/dashboard" : "/signup"}
             className="btn bg-white text-primary-600 hover:bg-neutral-50 text-lg px-8 py-3"
           >
-            Start Your Free Trial
+            {user ? "Go to Dashboard" : "Start Your Free Analysis"}
             <ArrowRight className="ml-2 h-5 w-5" />
           </Link>
         </div>

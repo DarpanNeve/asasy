@@ -1,183 +1,265 @@
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { BarChart3, FileText, CreditCard, TrendingUp, Users, Clock, Plus } from 'lucide-react'
-import { useAuth } from '../contexts/AuthContext'
-import { api } from '../services/api'
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import {
+  FileText,
+  Plus,
+  Download,
+  Clock,
+  CheckCircle,
+  XCircle,
+  Send,
+  Sparkles,
+  CreditCard,
+  Zap,
+} from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
+import { api } from "../services/api";
+import toast from "react-hot-toast";
 
 export default function Dashboard() {
-  const { user } = useAuth()
+  const { user } = useAuth();
   const [stats, setStats] = useState({
     reportsGenerated: 0,
     totalReports: 0,
     activeSubscription: null,
     lastReportDate: null,
-  })
-  const [recentReports, setRecentReports] = useState([])
-  const [loading, setLoading] = useState(true)
+  });
+  const [recentReports, setRecentReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [generating, setGenerating] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
 
   useEffect(() => {
-    fetchDashboardData()
-  }, [])
+    fetchDashboardData();
+  }, []);
 
   const fetchDashboardData = async () => {
     try {
       const [statsResponse, reportsResponse] = await Promise.all([
-        api.get('/users/me/stats'),
-        api.get('/reports/recent?limit=5'),
-      ])
-      
-      setStats(statsResponse.data)
-      setRecentReports(reportsResponse.data)
-    } catch (error) {
-      console.error('Failed to fetch dashboard data:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
+        api.get("/users/me/stats"),
+        api.get("/reports/recent?limit=5"),
+      ]);
 
-  const statCards = [
-    {
-      name: 'Reports Generated',
-      value: stats.reportsGenerated,
-      icon: FileText,
-      color: 'text-primary-600',
-      bgColor: 'bg-primary-50',
-    },
-    {
-      name: 'Free Reports Left',
-      value: Math.max(0, 1 - stats.reportsGenerated),
-      icon: TrendingUp,
-      color: 'text-secondary-600',
-      bgColor: 'bg-secondary-50',
-    },
-    {
-      name: 'Active Plan',
-      value: stats.activeSubscription?.plan || 'Free',
-      icon: CreditCard,
-      color: 'text-accent-600',
-      bgColor: 'bg-accent-50',
-    },
-    {
-      name: 'Account Status',
-      value: user?.is_verified ? 'Verified' : 'Pending',
-      icon: Users,
-      color: user?.is_verified ? 'text-success-600' : 'text-warning-600',
-      bgColor: user?.is_verified ? 'bg-success-50' : 'bg-warning-50',
-    },
-  ]
+      setStats(statsResponse.data);
+      setRecentReports(reportsResponse.data);
+    } catch (error) {
+      console.error("Failed to fetch dashboard data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGenerateReport = async (data) => {
+    setGenerating(true);
+    try {
+      const response = await api.post("/reports/generate", {
+        idea: data.idea,
+      });
+
+      toast.success("Report generation started! You'll see it below when ready.");
+      reset();
+      fetchDashboardData(); // Refresh the data
+    } catch (error) {
+      if (error.response?.status === 403) {
+        toast.error("You've used your free report. Please upgrade to continue.");
+      } else {
+        toast.error(error.response?.data?.detail || "Failed to generate report");
+      }
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const handleDownload = async (reportId, title) => {
+    try {
+      const response = await api.get(`/reports/${reportId}/download`, {
+        responseType: "blob",
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${title}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+      toast.success("Report downloaded successfully");
+    } catch (error) {
+      toast.error("Failed to download report");
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "completed":
+        return <CheckCircle className="h-5 w-5 text-success-500" />;
+      case "processing":
+        return <Clock className="h-5 w-5 text-warning-500" />;
+      case "failed":
+        return <XCircle className="h-5 w-5 text-error-500" />;
+      default:
+        return <Clock className="h-5 w-5 text-neutral-500" />;
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "completed":
+        return "bg-success-100 text-success-800";
+      case "processing":
+        return "bg-warning-100 text-warning-800";
+      case "failed":
+        return "bg-error-100 text-error-800";
+      default:
+        return "bg-neutral-100 text-neutral-800";
+    }
+  };
 
   if (loading) {
     return (
-      <div className="animate-pulse">
-        <div className="mb-8">
-          <div className="h-8 bg-neutral-200 rounded w-1/3 mb-2"></div>
-          <div className="h-4 bg-neutral-200 rounded w-1/2"></div>
-        </div>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="card">
-              <div className="h-4 bg-neutral-200 rounded w-1/2 mb-4"></div>
-              <div className="h-8 bg-neutral-200 rounded w-1/3"></div>
-            </div>
-          ))}
-        </div>
+      <div className="flex items-center justify-center min-h-96">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
       </div>
-    )
+    );
   }
+
+  const canGenerateReport = !user?.current_subscription_id ? user?.reports_generated < 1 : true;
 
   return (
     <div className="space-y-8">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-neutral-900">
-          Welcome back, {user?.name?.split(' ')[0] || 'User'}!
+          Welcome back, {user?.name?.split(" ")[0] || "User"}!
         </h1>
         <p className="mt-2 text-neutral-600">
-          Here's what's happening with your account today.
+          Describe your technology idea below to generate an assessment report.
         </p>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {statCards.map((stat) => {
-          const IconComponent = stat.icon
-          return (
-            <div key={stat.name} className="card-hover">
-              <div className="flex items-center">
-                <div className={`rounded-lg p-3 ${stat.bgColor}`}>
-                  <IconComponent className={`h-6 w-6 ${stat.color}`} />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-neutral-600">{stat.name}</p>
-                  <p className="text-2xl font-semibold text-neutral-900">{stat.value}</p>
-                </div>
+      {/* Usage Status */}
+      {!user?.current_subscription_id && (
+        <div className="card bg-warning-50 border-warning-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="p-3 bg-warning-100 rounded-lg mr-4">
+                <Zap className="h-6 w-6 text-warning-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-warning-900">
+                  Free Plan Usage
+                </h3>
+                <p className="text-warning-700">
+                  You have used {user?.reports_generated || 0} out of 1 free report.
+                  {user?.reports_generated >= 1 && (
+                    <span className="ml-1">
+                      Upgrade to generate unlimited reports.
+                    </span>
+                  )}
+                </p>
               </div>
             </div>
-          )
-        })}
-      </div>
-
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* Generate Report */}
-        <div className="card">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-neutral-900">Generate New Report</h3>
-            <FileText className="h-6 w-6 text-primary-600" />
+            {user?.reports_generated >= 1 && (
+              <a href="/subscription" className="btn-primary">
+                Upgrade Now
+              </a>
+            )}
           </div>
-          <p className="text-neutral-600 mb-6">
-            Create a comprehensive technology assessment report with AI-powered insights.
+        </div>
+      )}
+
+      {/* ChatGPT-style Report Generator */}
+      <div className="card">
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold text-neutral-900 mb-2">
+            Generate Technology Assessment Report
+          </h2>
+          <p className="text-neutral-600">
+            Describe your technology idea, innovation, or concept to get a comprehensive analysis.
           </p>
-          <Link
-            to="/reports"
-            className="btn-primary w-full flex items-center justify-center"
-          >
-            <Plus className="h-5 w-5 mr-2" />
-            Generate Report
-          </Link>
         </div>
 
-        {/* Subscription Status */}
-        <div className="card">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-neutral-900">Subscription</h3>
-            <CreditCard className="h-6 w-6 text-secondary-600" />
+        <form onSubmit={handleSubmit(handleGenerateReport)} className="space-y-4">
+          <div className="relative">
+            <textarea
+              {...register("idea", {
+                required: "Please describe your technology idea",
+                minLength: {
+                  value: 50,
+                  message: "Please provide at least 50 characters",
+                },
+              })}
+              rows={6}
+              className="w-full p-6 pr-16 border-2 border-neutral-200 rounded-xl shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none resize-none"
+              placeholder="Describe your technology idea here... For example: 'AI-powered smart home automation system with voice control and predictive analytics for energy optimization...'"
+              disabled={generating || !canGenerateReport}
+            />
+            <button
+              type="submit"
+              disabled={generating || !canGenerateReport}
+              className="absolute bottom-4 right-4 p-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            >
+              {generating ? (
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+              ) : (
+                <Send className="h-6 w-6" />
+              )}
+            </button>
           </div>
-          {stats.activeSubscription ? (
-            <div>
-              <p className="text-neutral-600 mb-2">
-                Current Plan: <span className="font-medium">{stats.activeSubscription.plan}</span>
-              </p>
-              <p className="text-neutral-600 mb-6">
-                Expires: {new Date(stats.activeSubscription.activeUntil).toLocaleDateString()}
-              </p>
-            </div>
-          ) : (
-            <p className="text-neutral-600 mb-6">
-              You're on the free plan. Upgrade to generate unlimited reports.
+          {errors.idea && (
+            <p className="text-error-600 text-sm ml-2">{errors.idea.message}</p>
+          )}
+          {!canGenerateReport && (
+            <p className="text-warning-600 text-sm ml-2">
+              You've used your free report. Please upgrade to continue generating reports.
             </p>
           )}
-          <Link
-            to="/subscription"
-            className="btn-secondary w-full"
-          >
-            {stats.activeSubscription ? 'Manage Subscription' : 'View Plans'}
-          </Link>
+        </form>
+
+        {/* Status indicators */}
+        <div className="mt-6 flex items-center justify-between">
+          <div className="flex items-center space-x-6 text-sm text-neutral-600">
+            <div className="flex items-center">
+              <Sparkles className="h-4 w-4 text-primary-500 mr-2" />
+              <span>AI-Powered Analysis</span>
+            </div>
+            <div className="flex items-center">
+              <FileText className="h-4 w-4 text-success-500 mr-2" />
+              <span>Professional PDF</span>
+            </div>
+            <div className="flex items-center">
+              <Clock className="h-4 w-4 text-warning-500 mr-2" />
+              <span>Results in Minutes</span>
+            </div>
+          </div>
+          {stats.activeSubscription && (
+            <div className="text-sm text-neutral-600">
+              Current Plan: <span className="font-medium text-primary-600">{stats.activeSubscription.plan}</span>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Recent Reports */}
       <div className="card">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-neutral-900">Recent Reports</h3>
-          <Link
-            to="/reports"
+          <h3 className="text-lg font-semibold text-neutral-900">Your Reports</h3>
+          <a
+            href="/reports"
             className="text-primary-600 hover:text-primary-700 text-sm font-medium"
           >
             View all
-          </Link>
+          </a>
         </div>
-        
+
         {recentReports.length > 0 ? (
           <div className="space-y-4">
             {recentReports.map((report) => (
@@ -185,37 +267,48 @@ export default function Dashboard() {
                 key={report._id}
                 className="flex items-center justify-between p-4 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
               >
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-4 flex-1">
                   <div className="p-2 bg-primary-50 rounded-lg">
                     <FileText className="h-5 w-5 text-primary-600" />
                   </div>
-                  <div>
-                    <h4 className="font-medium text-neutral-900">{report.reportType}</h4>
-                    <div className="flex items-center space-x-2 text-sm text-neutral-600">
-                      <Clock className="h-4 w-4" />
-                      <span>{new Date(report.generatedAt).toLocaleDateString()}</span>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium text-neutral-900 truncate">
+                      {report.reportType || "Technology Assessment"}
+                    </h4>
+                    <p className="text-sm text-neutral-600 truncate">
+                      {report.idea || "Technology analysis report"}
+                    </p>
+                    <div className="flex items-center space-x-4 mt-1">
+                      <span className="text-xs text-neutral-500">
+                        {new Date(report.generatedAt || report.created_at).toLocaleDateString()}
+                      </span>
+                      {report.plan_name && (
+                        <span className="text-xs bg-primary-100 text-primary-800 px-2 py-1 rounded">
+                          {report.plan_name}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                    report.status === 'completed' 
-                      ? 'bg-success-100 text-success-800'
-                      : report.status === 'processing'
-                      ? 'bg-warning-100 text-warning-800'
-                      : 'bg-error-100 text-error-800'
-                  }`}>
-                    {report.status}
-                  </span>
-                  {report.status === 'completed' && (
-                    <a
-                      href={report.pdfUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                  <div className="flex items-center space-x-1">
+                    {getStatusIcon(report.status)}
+                    <span
+                      className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(
+                        report.status
+                      )}`}
+                    >
+                      {report.status}
+                    </span>
+                  </div>
+                  {report.status === "completed" && (
+                    <button
+                      onClick={() => handleDownload(report._id, report.reportType)}
                       className="btn-outline btn-sm"
                     >
+                      <Download className="h-4 w-4 mr-1" />
                       Download
-                    </a>
+                    </button>
                   )}
                 </div>
               </div>
@@ -226,14 +319,35 @@ export default function Dashboard() {
             <FileText className="h-12 w-12 text-neutral-400 mx-auto mb-4" />
             <h4 className="text-lg font-medium text-neutral-900 mb-2">No reports yet</h4>
             <p className="text-neutral-600 mb-6">
-              Generate your first technology assessment report to get started.
+              Generate your first technology assessment report using the form above.
             </p>
-            <Link to="/reports" className="btn-primary">
-              Generate Your First Report
-            </Link>
           </div>
         )}
       </div>
+
+      {/* Quick Actions */}
+      {!stats.activeSubscription && (
+        <div className="card bg-gradient-to-r from-primary-50 to-secondary-50 border-primary-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="p-3 bg-primary-100 rounded-lg mr-4">
+                <CreditCard className="h-6 w-6 text-primary-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-primary-900">
+                  Upgrade for Unlimited Reports
+                </h3>
+                <p className="text-primary-700">
+                  Get in-depth analysis, comprehensive due-diligence, and unlimited report generation.
+                </p>
+              </div>
+            </div>
+            <a href="/subscription" className="btn-primary">
+              View Plans
+            </a>
+          </div>
+        </div>
+      )}
     </div>
-  )
+  );
 }
