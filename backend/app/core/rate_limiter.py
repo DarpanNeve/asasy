@@ -4,9 +4,16 @@ from slowapi.errors import RateLimitExceeded
 from fastapi import Request, Response
 import redis.asyncio as redis
 from app.core.config import settings
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Create Redis connection for rate limiting
-redis_client = redis.from_url(settings.REDIS_URL)
+try:
+    redis_client = redis.from_url(settings.REDIS_URL)
+except Exception as e:
+    logger.warning(f"Failed to connect to Redis for rate limiting: {e}")
+    redis_client = None
 
 
 def get_client_ip(request: Request):
@@ -27,7 +34,8 @@ def get_client_ip(request: Request):
 # Create limiter instance
 limiter = Limiter(
     key_func=get_client_ip,
-    storage_uri=settings.REDIS_URL,
+    storage_uri=settings.REDIS_URL if redis_client else "memory://",
+    default_limits=["1000/hour"]
 )
 
 
@@ -35,3 +43,4 @@ def setup_rate_limiting(app):
     """Setup rate limiting for the app"""
     app.state.limiter = limiter
     app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+    logger.info("Rate limiting configured successfully")

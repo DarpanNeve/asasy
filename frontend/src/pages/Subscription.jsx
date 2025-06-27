@@ -7,58 +7,59 @@ import {
   Shield,
   ArrowRight,
   CreditCard,
+  AlertCircle,
+  Loader2,
 } from "lucide-react";
 import { api } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
+import { useApp } from "../contexts/AppContext";
 import toast from "react-hot-toast";
 
 export default function Subscription() {
   const { user } = useAuth();
-  const [plans, setPlans] = useState([]);
-  const [currentSubscription, setCurrentSubscription] = useState(null);
+  const { plans, subscription: currentSubscription, fetchSubscription, updateSubscription } = useApp();
   const [loading, setLoading] = useState(true);
   const [processingPlan, setProcessingPlan] = useState(null);
 
   useEffect(() => {
-    fetchPlans();
-    fetchCurrentSubscription();
+    const loadData = async () => {
+      try {
+        await fetchSubscription();
+      } catch (error) {
+        console.error("Failed to load subscription data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
   }, []);
 
-  const fetchPlans = async () => {
-    try {
-      const response = await api.get("/plans");
-      setPlans(response.data);
-    } catch (error) {
-      console.error("Failed to fetch plans:", error);
-      toast.error("Failed to load subscription plans");
-    }
-  };
-
-  const fetchCurrentSubscription = async () => {
-    try {
-      const response = await api.get("/subscriptions/current");
-      setCurrentSubscription(response.data);
-    } catch (error) {
-      // User might not have a subscription
-      setCurrentSubscription(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSubscribe = async (planId) => {
+  const handleSubscribe = async (plan) => {
     if (!user) {
       toast.error("Please log in to subscribe");
       return;
     }
 
-    setProcessingPlan(planId);
+    // Skip payment for free plan
+    if (plan.price_inr === 0) {
+      toast.success("You're already on the free plan!");
+      return;
+    }
+
+    setProcessingPlan(plan.id);
+    
     try {
+      // Create order
       const response = await api.post("/subscriptions/create-order", {
-        plan_id: planId,
+        plan_id: plan.id,
       });
 
       const { order_id, amount, currency } = response.data;
+
+      // Check if Razorpay is loaded
+      if (!window.Razorpay) {
+        throw new Error("Payment gateway not loaded. Please refresh the page.");
+      }
 
       // Initialize Razorpay
       const options = {
@@ -66,19 +67,24 @@ export default function Subscription() {
         amount: amount,
         currency: currency,
         name: "Asasy",
-        description: "Subscription Payment",
+        description: `${plan.name} Plan Subscription`,
         order_id: order_id,
         handler: async function (response) {
           try {
+            // Verify payment
             await api.post("/subscriptions/verify-payment", {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_order_id: response.razorpay_order_id,
               razorpay_signature: response.razorpay_signature,
             });
+            
             toast.success("Subscription activated successfully!");
-            fetchCurrentSubscription();
+            
+            // Refresh subscription data
+            await fetchSubscription();
           } catch (error) {
-            toast.error("Payment verification failed");
+            console.error("Payment verification failed:", error);
+            toast.error("Payment verification failed. Please contact support.");
           }
         },
         prefill: {
@@ -88,48 +94,76 @@ export default function Subscription() {
         theme: {
           color: "#2563eb",
         },
+        modal: {
+          ondismiss: function() {
+            setProcessingPlan(null);
+          }
+        }
       };
 
       const rzp = new window.Razorpay(options);
+      
+      rzp.on('payment.failed', function (response) {
+        console.error('Payment failed:', response.error);
+        toast.error(`Payment failed: ${response.error.description}`);
+        setProcessingPlan(null);
+      });
+
       rzp.open();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Failed to create order");
-    } finally {
+      console.error("Subscription error:", error);
+      toast.error(error.response?.data?.detail || "Failed to create subscription order");
       setProcessingPlan(null);
     }
   };
 
   const handleCancelSubscription = async () => {
-    if (!confirm("Are you sure you want to cancel your subscription?")) {
+    if (!confirm("Are you sure you want to cancel your subscription? You'll lose access to premium features.")) {
       return;
     }
 
     try {
       await api.delete("/subscriptions/cancel");
       toast.success("Subscription cancelled successfully");
-      fetchCurrentSubscription();
+      await fetchSubscription();
     } catch (error) {
-      toast.error("Failed to cancel subscription");
+      console.error("Cancel subscription error:", error);
+      toast.error(error.response?.data?.detail || "Failed to cancel subscription");
     }
   };
 
   const getPlanIcon = (planName) => {
     switch (planName.toLowerCase()) {
-      case "starter":
+      case "basic":
         return Zap;
-      case "professional":
+      case "intermediate":
         return Crown;
-      case "enterprise":
+      case "advanced":
         return Users;
+      case "comprehensive":
+        return Shield;
       default:
         return Shield;
     }
   };
 
+  const isCurrentPlan = (planId) => {
+    return currentSubscription?.plan_id === planId;
+  };
+
+  const canUpgrade = (plan) => {
+    if (!currentSubscription) return plan.price_inr > 0;
+    
+    const currentPlan = plans.find(p => p.id === currentSubscription.plan_id);
+    if (!currentPlan) return true;
+    
+    return plan.price_inr > currentPlan.price_inr;
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-96">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
       </div>
     );
   }
@@ -203,11 +237,12 @@ export default function Subscription() {
       )}
 
       {/* Pricing Plans */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {plans.map((plan) => {
           const IconComponent = getPlanIcon(plan.name);
-          const isCurrentPlan = currentSubscription?.plan_id === plan.id;
+          const isCurrent = isCurrentPlan(plan.id);
           const isProcessing = processingPlan === plan.id;
+          const canUpgradeToThis = canUpgrade(plan);
 
           return (
             <div
@@ -216,17 +251,25 @@ export default function Subscription() {
                 plan.is_popular
                   ? "ring-2 ring-primary-500 scale-105"
                   : "hover:shadow-lg"
-              } ${isCurrentPlan ? "bg-primary-50 border-primary-200" : ""}`}
+              } ${isCurrent ? "bg-primary-50 border-primary-200" : ""}`}
             >
               {plan.is_popular && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                   <span className="bg-primary-600 text-white px-4 py-1 rounded-full text-sm font-medium">
-                    Most Popular
+                    {plan.highlight_text || "Most Popular"}
                   </span>
                 </div>
               )}
 
-              {isCurrentPlan && (
+              {plan.badge_text && !plan.is_popular && (
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                  <span className="bg-secondary-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+                    {plan.badge_text}
+                  </span>
+                </div>
+              )}
+
+              {isCurrent && (
                 <div className="absolute -top-4 right-4">
                   <span className="bg-success-600 text-white px-3 py-1 rounded-full text-xs font-medium">
                     Current Plan
@@ -244,10 +287,16 @@ export default function Subscription() {
                 </h3>
 
                 <div className="mb-4">
-                  <span className="text-4xl font-bold text-neutral-900">
-                    ₹{(plan.price_inr / 100).toLocaleString()}
-                  </span>
-                  <span className="text-neutral-600">/month</span>
+                  {plan.price_inr === 0 ? (
+                    <span className="text-4xl font-bold text-neutral-900">Free</span>
+                  ) : (
+                    <>
+                      <span className="text-4xl font-bold text-neutral-900">
+                        ₹{(plan.price_inr / 100).toLocaleString()}
+                      </span>
+                      <span className="text-neutral-600">/month</span>
+                    </>
+                  )}
                 </div>
 
                 <p className="text-neutral-600 mb-6">{plan.description}</p>
@@ -262,10 +311,12 @@ export default function Subscription() {
                 </ul>
 
                 <button
-                  onClick={() => handleSubscribe(plan.id)}
-                  disabled={isCurrentPlan || isProcessing}
+                  onClick={() => handleSubscribe(plan)}
+                  disabled={isCurrent || isProcessing || (plan.price_inr === 0)}
                   className={`w-full ${
-                    isCurrentPlan
+                    isCurrent
+                      ? "btn bg-neutral-300 text-neutral-500 cursor-not-allowed"
+                      : plan.price_inr === 0
                       ? "btn bg-neutral-300 text-neutral-500 cursor-not-allowed"
                       : plan.is_popular
                       ? "btn-primary"
@@ -274,22 +325,40 @@ export default function Subscription() {
                 >
                   {isProcessing ? (
                     <div className="flex items-center justify-center">
-                      <div className="spinner mr-2" />
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
                       Processing...
                     </div>
-                  ) : isCurrentPlan ? (
+                  ) : isCurrent ? (
                     "Current Plan"
-                  ) : (
+                  ) : plan.price_inr === 0 ? (
+                    "Free Plan"
+                  ) : canUpgradeToThis ? (
                     <>
-                      Get Started
+                      Upgrade Now
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </>
+                  ) : (
+                    "Downgrade"
                   )}
                 </button>
               </div>
             </div>
           );
         })}
+      </div>
+
+      {/* Payment Security Notice */}
+      <div className="card bg-neutral-50 border-neutral-200">
+        <div className="flex items-center">
+          <Shield className="h-6 w-6 text-success-600 mr-3" />
+          <div>
+            <h3 className="font-semibold text-neutral-900">Secure Payments</h3>
+            <p className="text-neutral-600">
+              All payments are processed securely through Razorpay with 256-bit SSL encryption.
+              Your payment information is never stored on our servers.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* FAQ Section */}
@@ -303,8 +372,8 @@ export default function Subscription() {
               Can I change my plan anytime?
             </h3>
             <p className="text-neutral-600">
-              Yes, you can upgrade or downgrade your plan at any time. Changes
-              will be reflected in your next billing cycle.
+              Yes, you can upgrade or downgrade your plan at any time. Upgrades take effect immediately,
+              while downgrades will take effect at the end of your current billing cycle.
             </p>
           </div>
           <div>
@@ -312,9 +381,8 @@ export default function Subscription() {
               What happens to my reports if I cancel?
             </h3>
             <p className="text-neutral-600">
-              Your existing reports will remain accessible even after
-              cancellation. However, you won't be able to generate new reports
-              without a subscription.
+              Your existing reports will remain accessible for 30 days after cancellation. 
+              However, you won't be able to generate new reports without a subscription.
             </p>
           </div>
           <div>
@@ -322,8 +390,8 @@ export default function Subscription() {
               Do you offer refunds?
             </h3>
             <p className="text-neutral-600">
-              We offer a 30-day money-back guarantee for all paid plans. Contact
-              our support team for assistance.
+              We offer a 7-day money-back guarantee for all paid plans. Contact our support team 
+              within 7 days of your purchase for a full refund.
             </p>
           </div>
           <div>
@@ -331,8 +399,8 @@ export default function Subscription() {
               Is there a free trial?
             </h3>
             <p className="text-neutral-600">
-              Yes! Every new user gets one free report to try our service. No
-              credit card required.
+              Yes! Every new user gets one free report to try our service. No credit card required.
+              You can upgrade to a paid plan anytime to unlock unlimited reports.
             </p>
           </div>
         </div>
