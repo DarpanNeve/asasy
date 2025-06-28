@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.responses import JSONResponse
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Optional, Union
 
 from app.core.security import (
     verify_password,
@@ -19,10 +20,12 @@ from app.schemas.auth import (
     UserSignup,
     UserLogin,
     TokenResponse,
+    IncompleteProfileResponse,
     EmailVerification,
     GoogleAuth,
     RefreshTokenRequest,
     ChangePassword,
+    CompleteProfile,
 )
 from app.schemas.user import UserResponse
 import secrets
@@ -180,7 +183,7 @@ async def verify_email_otp(request: Request, verification: EmailVerification):
         traceback.print_exc()
         raise
 
-@router.post("/google", response_model=TokenResponse)
+@router.post("/google")
 @limiter.limit("10/minute")
 async def google_auth(request: Request, google_data: GoogleAuth):
     """Google OAuth authentication"""
@@ -219,17 +222,24 @@ async def google_auth(request: Request, google_data: GoogleAuth):
         # Check if phone is missing - return special response for profile completion
         if not user.phone or len(user.phone.strip()) < 10:
             # Return a special response indicating profile completion is needed
-            return {
-                "profile_incomplete": True,
-                "user": {
-                    "id": str(user.id),
-                    "name": user.name,
-                    "email": user.email,
-                    "phone": user.phone or "",
-                    "is_verified": user.is_verified
-                },
-                "message": "Profile completion required. Please add your phone number."
-            }
+            return JSONResponse(
+                status_code=200,
+                content={
+                    "profile_incomplete": True,
+                    "user": {
+                        "id": str(user.id),
+                        "name": user.name,
+                        "email": user.email,
+                        "phone": user.phone or "",
+                        "is_verified": user.is_verified,
+                        "oauth_provider": user.oauth_provider.value,
+                        "is_active": user.is_active,
+                        "reports_generated": user.reports_generated,
+                        "created_at": user.created_at.isoformat()
+                    },
+                    "message": "Profile completion required. Please add your phone number."
+                }
+            )
 
         # Update last login
         user.update_last_login()
@@ -260,11 +270,11 @@ async def google_auth(request: Request, google_data: GoogleAuth):
 
 @router.post("/complete-profile", response_model=TokenResponse)
 @limiter.limit("10/minute")
-async def complete_profile(request: Request, profile_data: dict):
+async def complete_profile(request: Request, profile_data: CompleteProfile):
     """Complete user profile after Google OAuth"""
     try:
-        user_id = profile_data.get("user_id")
-        phone = profile_data.get("phone", "").strip()
+        user_id = profile_data.user_id
+        phone = profile_data.phone.strip()
         
         if not user_id:
             raise HTTPException(

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field, validator
-from typing import Optional
+from typing import Optional, Union
 from app.schemas.user import UserResponse
 
 class UserSignup(BaseModel):
@@ -30,6 +30,14 @@ class TokenResponse(BaseModel):
     token_type: str = "bearer"
     user: UserResponse
 
+class IncompleteProfileResponse(BaseModel):
+    profile_incomplete: bool = True
+    user: dict
+    message: str
+
+class GoogleAuthResponse(BaseModel):
+    __root__: Union[TokenResponse, IncompleteProfileResponse]
+
 class RefreshTokenRequest(BaseModel):
     refresh_token: str
 
@@ -39,6 +47,10 @@ class EmailVerification(BaseModel):
 
 class GoogleAuth(BaseModel):
     credential: str  # Google JWT token
+
+class CompleteProfile(BaseModel):
+    user_id: str
+    phone: str = Field(..., min_length=10, max_length=20)
 
 class ChangePassword(BaseModel):
     current_password: str
