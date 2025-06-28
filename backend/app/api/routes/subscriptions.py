@@ -20,14 +20,15 @@ from app.schemas.subscription import (
 
 router = APIRouter()
 
-# Initialize Razorpay client
+# Initialize Razorpay client globally
+razorpay_client = None
+
 try:
     razorpay_client = razorpay.Client(
         auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
     )
 except Exception as e:
     print(f"Failed to initialize Razorpay client: {e}")
-    razorpay_client = None
 
 def generate_receipt(user_id: str, plan_id: str) -> str:
     try:
@@ -49,10 +50,11 @@ async def create_subscription_order(
     order_data: OrderCreate,
     current_user: User = Depends(get_current_user)
 ):
+    global razorpay_client
+    
     try:
         if not razorpay_client:
             # Auto-initialize if not loaded
-            global razorpay_client
             razorpay_client = razorpay.Client(
                 auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
             )
