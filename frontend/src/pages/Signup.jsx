@@ -87,16 +87,24 @@ export default function Signup() {
     setGoogleLoading(true);
     try {
       const result = await googleLogin(response.credential);
+      
+      // Check if profile completion is needed
+      if (result.profile_incomplete) {
+        toast.error("Please complete your profile");
+        navigate("/profile-completion", { 
+          state: { 
+            user: result.user 
+          },
+          replace: true 
+        });
+        return;
+      }
+      
       toast.success("Welcome to Asasy!");
       navigate("/dashboard");
     } catch (error) {
       console.error("Google login error:", error);
-      if (error.response?.data?.detail?.includes("Phone number is required")) {
-        toast.error("Please complete your profile");
-        navigate("/profile-completion");
-      } else {
-        toast.error(error.response?.data?.detail || "Google login failed");
-      }
+      toast.error(error.response?.data?.detail || "Google login failed");
     } finally {
       setGoogleLoading(false);
     }

@@ -80,20 +80,26 @@ export default function Login() {
   const handleGoogleResponse = async (response) => {
     setGoogleLoading(true);
     try {
-      await googleLogin(response.credential);
+      const result = await googleLogin(response.credential);
+      
+      // Check if profile completion is needed
+      if (result.profile_incomplete) {
+        toast.error("Please complete your profile");
+        navigate("/profile-completion", { 
+          state: { 
+            user: result.user,
+            from: location 
+          },
+          replace: true 
+        });
+        return;
+      }
+      
       toast.success("Welcome back!");
       navigate(from, { replace: true });
     } catch (error) {
       console.error("Google login error:", error);
-      if (error.response?.data?.detail?.includes("Phone number is required")) {
-        toast.error("Please complete your profile");
-        navigate("/profile-completion", { 
-          state: { from: location },
-          replace: true 
-        });
-      } else {
-        toast.error(error.response?.data?.detail || "Google login failed");
-      }
+      toast.error(error.response?.data?.detail || "Google login failed");
     } finally {
       setGoogleLoading(false);
     }

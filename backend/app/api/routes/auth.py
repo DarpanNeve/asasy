@@ -199,7 +199,7 @@ async def google_auth(request: Request, google_data: GoogleAuth):
                 user.is_verified = True
                 await user.save()
         else:
-            # Create new user - require name and phone
+            # Create new user - require name but allow empty phone initially
             if not google_user.get("name"):
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
@@ -212,16 +212,24 @@ async def google_auth(request: Request, google_data: GoogleAuth):
                 oauth_provider=OAuthProvider.GOOGLE,
                 oauth_id=google_user["sub"],
                 is_verified=True,
-                phone=""  # Will be required to complete profile
+                phone=""  # Empty phone - will be required to complete profile
             )
             await user.insert()
 
-        # Check if phone is missing
+        # Check if phone is missing - return special response for profile completion
         if not user.phone or len(user.phone.strip()) < 10:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Phone number is required. Please complete your profile."
-            )
+            # Return a special response indicating profile completion is needed
+            return {
+                "profile_incomplete": True,
+                "user": {
+                    "id": str(user.id),
+                    "name": user.name,
+                    "email": user.email,
+                    "phone": user.phone or "",
+                    "is_verified": user.is_verified
+                },
+                "message": "Profile completion required. Please add your phone number."
+            }
 
         # Update last login
         user.update_last_login()
@@ -249,6 +257,57 @@ async def google_auth(request: Request, google_data: GoogleAuth):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Google token"
         )
+
+@router.post("/complete-profile", response_model=TokenResponse)
+@limiter.limit("10/minute")
+async def complete_profile(request: Request, profile_data: dict):
+    """Complete user profile after Google OAuth"""
+    try:
+        user_id = profile_data.get("user_id")
+        phone = profile_data.get("phone", "").strip()
+        
+        if not user_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User ID is required"
+            )
+        
+        if not phone or len(phone) < 10:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Phone number is required and must be at least 10 digits"
+            )
+        
+        # Find user
+        user = await User.get(user_id)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+        
+        # Update phone number
+        user.phone = phone
+        user.updated_at = datetime.utcnow()
+        await user.save()
+        
+        # Create tokens
+        access_token = create_access_token({"sub": str(user.id)})
+        refresh_token = create_refresh_token({"sub": str(user.id)})
+
+        user_dict = user.__dict__.copy()
+        user_dict["id"] = str(user_dict["id"])
+
+        return TokenResponse(
+            access_token=access_token,
+            refresh_token=refresh_token,
+            token_type="bearer",
+            user=UserResponse.from_orm(user_dict),
+        )
+        
+    except Exception as e:
+        traceback.print_exc()
+        raise
 
 @router.post("/change-password")
 async def change_password(

@@ -7,9 +7,12 @@ import toast from "react-hot-toast";
 
 export default function ProfileCompletion() {
   const [isLoading, setIsLoading] = useState(false);
-  const { user, updateProfile } = useAuth();
+  const { completeProfile } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Get user data from navigation state
+  const userData = location.state?.user;
 
   const {
     register,
@@ -17,15 +20,21 @@ export default function ProfileCompletion() {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: user?.name || "",
-      phone: user?.phone || "",
+      name: userData?.name || "",
+      phone: userData?.phone || "",
     },
   });
 
   const onSubmit = async (data) => {
+    if (!userData?.id) {
+      toast.error("User information missing. Please try logging in again.");
+      navigate("/login");
+      return;
+    }
+
     setIsLoading(true);
     try {
-      await updateProfile(data);
+      await completeProfile(userData.id, data.phone);
       toast.success("Profile completed successfully!");
       
       // Redirect to intended destination or dashboard
@@ -37,6 +46,12 @@ export default function ProfileCompletion() {
       setIsLoading(false);
     }
   };
+
+  // If no user data, redirect to login
+  if (!userData) {
+    navigate("/login");
+    return null;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-neutral-50">
@@ -50,7 +65,7 @@ export default function ProfileCompletion() {
             Complete Your Profile
           </h2>
           <p className="mt-2 text-sm text-neutral-600">
-            Please provide the required information to continue
+            Please provide your phone number to continue
           </p>
         </div>
 
@@ -61,33 +76,23 @@ export default function ProfileCompletion() {
                 htmlFor="name"
                 className="block text-sm font-medium text-neutral-700"
               >
-                Full Name *
+                Full Name
               </label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <User className="h-5 w-5 text-neutral-400" />
                 </div>
                 <input
-                  {...register("name", {
-                    required: "Name is required",
-                    minLength: {
-                      value: 2,
-                      message: "Name must be at least 2 characters",
-                    },
-                  })}
+                  {...register("name")}
                   type="text"
-                  autoComplete="name"
-                  className={`pl-10 input ${
-                    errors.name ? "input-error" : ""
-                  }`}
-                  placeholder="Enter your full name"
+                  disabled
+                  className="pl-10 input bg-neutral-50 text-neutral-500 cursor-not-allowed"
+                  value={userData.name}
                 />
               </div>
-              {errors.name && (
-                <p className="mt-1 text-sm text-error-600">
-                  {errors.name.message}
-                </p>
-              )}
+              <p className="mt-1 text-xs text-neutral-500">
+                Name cannot be changed after Google sign-in
+              </p>
             </div>
 
             <div>
@@ -122,6 +127,9 @@ export default function ProfileCompletion() {
                   {errors.phone.message}
                 </p>
               )}
+              <p className="mt-1 text-xs text-neutral-500">
+                Required for account verification and support
+              </p>
             </div>
 
             <div>
@@ -133,7 +141,7 @@ export default function ProfileCompletion() {
                 {isLoading ? (
                   <div className="flex items-center justify-center">
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                    Updating Profile...
+                    Completing Profile...
                   </div>
                 ) : (
                   "Complete Profile"
@@ -141,6 +149,19 @@ export default function ProfileCompletion() {
               </button>
             </div>
           </form>
+
+          <div className="mt-6 text-center">
+            <p className="text-xs text-neutral-500">
+              By completing your profile, you agree to our{" "}
+              <a href="/terms" className="text-primary-600 hover:text-primary-500">
+                Terms of Service
+              </a>{" "}
+              and{" "}
+              <a href="/privacy" className="text-primary-600 hover:text-primary-500">
+                Privacy Policy
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </div>

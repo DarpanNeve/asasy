@@ -125,6 +125,15 @@ export const AuthProvider = ({ children }) => {
         credential,
       })
 
+      // Check if profile completion is needed
+      if (response.data.profile_incomplete) {
+        return {
+          profile_incomplete: true,
+          user: response.data.user,
+          message: response.data.message
+        }
+      }
+
       const { access_token, refresh_token, user: userData } = response.data
       
       Cookies.set('access_token', access_token, { 
@@ -143,11 +152,35 @@ export const AuthProvider = ({ children }) => {
       
       return response.data
     } catch (error) {
-      // Handle profile completion requirement
-      if (error.response?.status === 400 && 
-          error.response?.data?.detail?.includes("Phone number is required")) {
-        throw error // Let the calling component handle the redirect
-      }
+      throw error
+    }
+  }
+
+  const completeProfile = async (userId, phone) => {
+    try {
+      const response = await api.post('/auth/complete-profile', {
+        user_id: userId,
+        phone: phone
+      })
+
+      const { access_token, refresh_token, user: userData } = response.data
+      
+      Cookies.set('access_token', access_token, { 
+        expires: 1,
+        secure: window.location.protocol === 'https:',
+        sameSite: 'strict'
+      })
+      Cookies.set('refresh_token', refresh_token, { 
+        expires: 7,
+        secure: window.location.protocol === 'https:',
+        sameSite: 'strict'
+      })
+      
+      setAuthToken(access_token)
+      setUser(userData)
+      
+      return response.data
+    } catch (error) {
       throw error
     }
   }
@@ -200,6 +233,7 @@ export const AuthProvider = ({ children }) => {
     signup,
     verifyEmail,
     googleLogin,
+    completeProfile,
     logout,
     updateProfile,
     refreshToken,
