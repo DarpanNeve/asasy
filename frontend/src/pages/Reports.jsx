@@ -11,6 +11,8 @@ import {
   Filter,
   Calendar,
   Zap,
+  Eye,
+  X,
 } from "lucide-react";
 import { api } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
@@ -22,6 +24,8 @@ export default function Reports() {
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [showGenerateForm, setShowGenerateForm] = useState(false);
+  const [showPDFViewer, setShowPDFViewer] = useState(false);
+  const [selectedReport, setSelectedReport] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [pagination, setPagination] = useState({
@@ -73,8 +77,7 @@ export default function Reports() {
       return;
     }
 
-    // Check if user can generate reports
-    if (!user.current_subscription_id && user.reports_generated >= 1) {
+    if (!user.current_subscription_id && user.reports_generated >= 3) {
       toast.error(
         "You have reached your free report limit. Please upgrade to continue."
       );
@@ -118,6 +121,22 @@ export default function Reports() {
       toast.success("Report downloaded successfully");
     } catch (error) {
       toast.error("Failed to download report");
+    }
+  };
+
+  const handleViewPDF = async (report) => {
+    try {
+      const response = await api.get(`/reports/${report.id}/download`, {
+        responseType: "blob",
+      });
+      
+      const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      
+      setSelectedReport({ ...report, pdfUrl });
+      setShowPDFViewer(true);
+    } catch (error) {
+      toast.error("Failed to load PDF");
     }
   };
 
@@ -175,7 +194,7 @@ export default function Reports() {
           onClick={() => setShowGenerateForm(true)}
           className="btn-primary mt-4 sm:mt-0"
           disabled={
-            !user?.current_subscription_id && user?.reports_generated >= 1
+            !user?.current_subscription_id && user?.reports_generated >= 3
           }
         >
           <Plus className="h-5 w-5 mr-2" />
@@ -195,9 +214,9 @@ export default function Reports() {
                 Free Plan Usage
               </h3>
               <p className="text-warning-700">
-                You have used {user?.reports_generated || 0} out of 1 free
-                report.
-                {user?.reports_generated >= 1 && (
+                You have used {user?.reports_generated || 0} out of 3 free
+                reports.
+                {user?.reports_generated >= 3 && (
                   <span className="ml-1">
                     <a href="/subscription" className="underline font-medium">
                       Upgrade to generate unlimited reports.
@@ -205,6 +224,49 @@ export default function Reports() {
                   </span>
                 )}
               </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* PDF Viewer Modal */}
+      {showPDFViewer && selectedReport && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-6xl w-full h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b">
+              <div className="flex-1 min-w-0">
+                <h2 className="text-xl font-bold text-neutral-900 truncate">
+                  {selectedReport.title}
+                </h2>
+                <p className="text-sm text-neutral-600 truncate">
+                  Generated on {new Date(selectedReport.created_at).toLocaleDateString()}
+                </p>
+              </div>
+              <div className="flex items-center space-x-2 ml-4">
+                <button
+                  onClick={() => handleDownload(selectedReport.id, selectedReport.title)}
+                  className="btn-outline btn-sm"
+                >
+                  <Download className="h-4 w-4 mr-1" />
+                  Download
+                </button>
+                <button
+                  onClick={() => {
+                    setShowPDFViewer(false);
+                    URL.revokeObjectURL(selectedReport.pdfUrl);
+                  }}
+                  className="p-2 text-neutral-400 hover:text-neutral-600"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+            </div>
+            <div className="flex-1 p-4">
+              <iframe
+                src={selectedReport.pdfUrl}
+                className="w-full h-full border-0 rounded-lg"
+                title="PDF Viewer"
+              />
             </div>
           </div>
         </div>
@@ -224,7 +286,7 @@ export default function Reports() {
                   className="text-neutral-400 hover:text-neutral-600"
                   disabled={generating}
                 >
-                  <XCircle className="h-6 w-6" />
+                  <X className="h-6 w-6" />
                 </button>
               </div>
 
@@ -337,7 +399,7 @@ export default function Reports() {
               onClick={() => setShowGenerateForm(true)}
               className="btn-primary"
               disabled={
-                !user?.current_subscription_id && user?.reports_generated >= 1
+                !user?.current_subscription_id && user?.reports_generated >= 3
               }
             >
               <Plus className="h-5 w-5 mr-2" />
@@ -353,46 +415,60 @@ export default function Reports() {
               className="card hover:shadow-md transition-shadow"
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4 flex-1">
-                  <div className="p-3 bg-primary-50 rounded-lg">
+                <div className="flex items-center space-x-4 flex-1 min-w-0">
+                  <div className="p-3 bg-primary-50 rounded-lg flex-shrink-0">
                     <FileText className="h-6 w-6 text-primary-600" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-neutral-900 truncate">
                       {report.title || "Technology Assessment Report"}
                     </h3>
-                    <p className="text-sm text-neutral-600 truncate">
+                    <p className="text-sm text-neutral-600 line-clamp-2 break-words">
                       {report.idea}
                     </p>
-                    <div className="flex items-center space-x-4 mt-2">
+                    <div className="flex items-center space-x-4 mt-2 flex-wrap">
                       <div className="flex items-center space-x-1">
-                        <Calendar className="h-4 w-4 text-neutral-400" />
-                        <span className="text-sm text-neutral-500">
+                        <Calendar className="h-4 w-4 text-neutral-400 flex-shrink-0" />
+                        <span className="text-sm text-neutral-500 whitespace-nowrap">
                           {new Date(report.created_at).toLocaleDateString()}
                         </span>
                       </div>
                       <div className="flex items-center space-x-1">
                         {getStatusIcon(report.status)}
                         <span
-                          className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(
+                          className={`px-2 py-1 text-xs font-medium rounded-full whitespace-nowrap ${getStatusColor(
                             report.status
                           )}`}
                         >
                           {report.status}
                         </span>
                       </div>
+                      {report.plan_name && (
+                        <span className="text-xs bg-primary-100 text-primary-800 px-2 py-1 rounded whitespace-nowrap">
+                          {report.plan_name}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 flex-shrink-0 ml-4">
                   {report.status === "completed" && (
-                    <button
-                      onClick={() => handleDownload(report.id, report.title)}
-                      className="btn-outline btn-sm"
-                    >
-                      <Download className="h-4 w-4 mr-1" />
-                      Download
-                    </button>
+                    <>
+                      <button
+                        onClick={() => handleViewPDF(report)}
+                        className="btn-outline btn-sm"
+                      >
+                        <Eye className="h-4 w-4 mr-1" />
+                        View
+                      </button>
+                      <button
+                        onClick={() => handleDownload(report.id, report.title)}
+                        className="btn-outline btn-sm"
+                      >
+                        <Download className="h-4 w-4 mr-1" />
+                        Download
+                      </button>
+                    </>
                   )}
                 </div>
               </div>

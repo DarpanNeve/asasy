@@ -24,6 +24,20 @@ razorpay_client = razorpay.Client(
     auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
 )
 
+def generate_receipt(user_id: str, plan_id: str) -> str:
+    """Generate a receipt string that's max 40 characters"""
+    timestamp = str(int(datetime.utcnow().timestamp()))
+    base_receipt = f"sub_{user_id[:8]}_{plan_id[:8]}_{timestamp}"
+    
+    # Ensure it's max 40 characters
+    if len(base_receipt) > 40:
+        # Hash if too long
+        import hashlib
+        hash_obj = hashlib.md5(base_receipt.encode())
+        return f"sub_{hash_obj.hexdigest()[:32]}"
+    
+    return base_receipt
+
 @router.post("/create-order", response_model=OrderResponse)
 async def create_subscription_order(
     order_data: OrderCreate,
@@ -39,11 +53,14 @@ async def create_subscription_order(
             detail="Plan not found"
         )
     
+    # Generate receipt with proper length
+    receipt = generate_receipt(str(current_user.id), str(plan.id))
+    
     # Create Razorpay order
     order_data_razorpay = {
         "amount": plan.price_inr,  # Amount in paise
         "currency": "INR",
-        "receipt": f"sub_{current_user.id}_{datetime.utcnow().timestamp()}",
+        "receipt": receipt,
         "notes": {
             "user_id": str(current_user.id),
             "plan_id": str(plan.id),
