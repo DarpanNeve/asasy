@@ -1,2 +1,2 @@
 # API routes package
-from . import reports
+from . import reports, contact

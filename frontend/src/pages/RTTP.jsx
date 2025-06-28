@@ -22,7 +22,6 @@ import {
   MessageSquare,
   Send,
 } from "lucide-react";
-import { api } from "../services/api";
 import toast from "react-hot-toast";
 
 export default function RTTP() {
@@ -86,41 +85,25 @@ export default function RTTP() {
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     try {
-      // Try the exact path first
-      let response;
-      try {
-        response = await api.post('/api/contact', {
+      const response = await fetch('/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           name: data.name,
           phone: data.phone,
           email: data.email,
           message: data.message,
-        });
-      } catch (error) {
-        // If 404, try without /api prefix
-        if (error.response?.status === 404) {
-          const baseUrl = import.meta.env.VITE_API_URL || '';
-          response = await fetch(`${baseUrl}/contact`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              name: data.name,
-              phone: data.phone,
-              email: data.email,
-              message: data.message,
-            }),
-          });
-          
-          if (!response.ok) {
-            throw new Error('Failed to submit contact form');
-          }
-        } else {
-          throw error;
-        }
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to submit contact form');
       }
       
-      toast.success('Thank you for your inquiry! We will get back to you soon.');
+      const result = await response.json();
+      toast.success(result.message || 'Thank you for your inquiry! We will get back to you soon.');
       reset();
     } catch (error) {
       console.error('Contact form error:', error);

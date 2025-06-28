@@ -6,6 +6,7 @@ from app.core.config import settings
 from app.models.user import User, Subscription
 from app.models.plan import Plan
 from app.models.report import ReportLog
+from app.models.contact import ContactSubmission
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +32,7 @@ async def init_database():
                 Subscription,
                 Plan,
                 ReportLog,
+                ContactSubmission,
             ]
         )
         

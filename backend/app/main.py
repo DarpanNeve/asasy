@@ -9,7 +9,7 @@ from app.core.config import settings
 from app.core.database import init_database
 from app.core.security import setup_security_middleware
 from app.core.rate_limiter import setup_rate_limiting
-from app.api.routes import auth, users, plans, subscriptions, reports, webhooks, admin
+from app.api.routes import auth, users, plans, subscriptions, reports, webhooks, admin, contact
 from app.core.exceptions import setup_exception_handlers
 
 # Configure logging
@@ -87,6 +87,7 @@ app.include_router(
 app.include_router(reports.router, prefix="/reports", tags=["Reports"])
 app.include_router(webhooks.router, prefix="/webhooks", tags=["Webhooks"])
 app.include_router(admin.router, prefix="/admin", tags=["Admin"])
+app.include_router(contact.router, tags=["Contact"])
 
 
 # Root endpoint
