@@ -14,6 +14,7 @@ import Subscription from './pages/Subscription'
 import Reports from './pages/Reports'
 import Home from './pages/Home'
 import RTTP from './pages/RTTP'
+import Admin from './pages/Admin'
 import './index.css'
 
 const queryClient = new QueryClient({
@@ -40,6 +41,7 @@ function App() {
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
                   <Route path="/rttp" element={<RTTP />} />
+                  <Route path="/admin" element={<Admin />} />
                   
                   {/* Protected routes */}
                   <Route path="/dashboard" element={
