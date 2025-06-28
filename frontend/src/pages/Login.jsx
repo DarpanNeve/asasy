@@ -62,8 +62,11 @@ export default function Login() {
     } catch (error) {
       console.error("Google login error:", error);
       if (error.response?.data?.detail?.includes("Phone number is required")) {
-        toast.error("Please complete your profile with a phone number");
-        // Could redirect to profile completion
+        toast.error("Please complete your profile");
+        navigate("/profile-completion", { 
+          state: { from: location },
+          replace: true 
+        });
       } else {
         toast.error(error.response?.data?.detail || "Google login failed");
       }

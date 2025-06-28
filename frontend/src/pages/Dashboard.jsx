@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {
   FileText,
-  Download,
   Clock,
   CheckCircle,
   XCircle,
@@ -10,7 +9,6 @@ import {
   Sparkles,
   CreditCard,
   Zap,
-  Eye,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { api } from "../services/api";
@@ -27,8 +25,6 @@ export default function Dashboard() {
   const [recentReports, setRecentReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
-  const [showPDFViewer, setShowPDFViewer] = useState(false);
-  const [selectedReport, setSelectedReport] = useState(null);
 
   const {
     register,
@@ -78,43 +74,6 @@ export default function Dashboard() {
     }
   };
 
-  const handleDownload = async (reportId, title) => {
-    try {
-      const response = await api.get(`/reports/${reportId}/download`, {
-        responseType: "blob",
-      });
-
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `${title}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-
-      toast.success("Report downloaded successfully");
-    } catch (error) {
-      toast.error("Failed to download report");
-    }
-  };
-
-  const handleViewPDF = async (report) => {
-    try {
-      const response = await api.get(`/reports/${report._id}/download`, {
-        responseType: "blob",
-      });
-      
-      const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-      const pdfUrl = URL.createObjectURL(pdfBlob);
-      
-      setSelectedReport({ ...report, pdfUrl });
-      setShowPDFViewer(true);
-    } catch (error) {
-      toast.error("Failed to load PDF");
-    }
-  };
-
   const getStatusIcon = (status) => {
     switch (status) {
       case "completed":
@@ -160,49 +119,6 @@ export default function Dashboard() {
           Describe your technology idea below to generate an assessment report.
         </p>
       </div>
-
-      {/* PDF Viewer Modal */}
-      {showPDFViewer && selectedReport && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl max-w-6xl w-full h-[90vh] flex flex-col">
-            <div className="flex items-center justify-between p-4 border-b">
-              <div className="flex-1 min-w-0">
-                <h2 className="text-xl font-bold text-neutral-900 truncate">
-                  {selectedReport.reportType || "Technology Assessment"}
-                </h2>
-                <p className="text-sm text-neutral-600 truncate">
-                  Generated on {new Date(selectedReport.generatedAt || selectedReport.created_at).toLocaleDateString()}
-                </p>
-              </div>
-              <div className="flex items-center space-x-2 ml-4">
-                <button
-                  onClick={() => handleDownload(selectedReport._id, selectedReport.reportType)}
-                  className="btn-outline btn-sm"
-                >
-                  <Download className="h-4 w-4 mr-1" />
-                  Download
-                </button>
-                <button
-                  onClick={() => {
-                    setShowPDFViewer(false);
-                    URL.revokeObjectURL(selectedReport.pdfUrl);
-                  }}
-                  className="p-2 text-neutral-400 hover:text-neutral-600"
-                >
-                  ×
-                </button>
-              </div>
-            </div>
-            <div className="flex-1 p-4">
-              <iframe
-                src={selectedReport.pdfUrl}
-                className="w-full h-full border-0 rounded-lg"
-                title="PDF Viewer"
-              />
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Usage Status */}
       {!user?.current_subscription_id && (
@@ -287,7 +203,7 @@ export default function Dashboard() {
             </div>
             <div className="flex items-center">
               <FileText className="h-4 w-4 text-success-500 mr-2" />
-              <span>Professional PDF</span>
+              <span>Professional Report</span>
             </div>
             <div className="flex items-center">
               <Clock className="h-4 w-4 text-warning-500 mr-2" />
@@ -355,24 +271,6 @@ export default function Dashboard() {
                       {report.status}
                     </span>
                   </div>
-                  {report.status === "completed" && (
-                    <>
-                      <button
-                        onClick={() => handleViewPDF(report)}
-                        className="btn-outline btn-sm"
-                      >
-                        <Eye className="h-4 w-4 mr-1" />
-                        View
-                      </button>
-                      <button
-                        onClick={() => handleDownload(report._id, report.reportType)}
-                        className="btn-outline btn-sm"
-                      >
-                        <Download className="h-4 w-4 mr-1" />
-                        Download
-                      </button>
-                    </>
-                  )}
                 </div>
               </div>
             ))}

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import {
   BarChart3,
   Award,
@@ -16,10 +17,24 @@ import {
   Building,
   FileText,
   Phone,
+  User,
+  Mail,
+  MessageSquare,
+  Send,
 } from "lucide-react";
+import { api } from "../services/api";
+import toast from "react-hot-toast";
 
 export default function RTTP() {
   const [selectedService, setSelectedService] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
 
   const services = [
     {
@@ -67,6 +82,26 @@ export default function RTTP() {
     "Access to a Global Network of Tech Transfer Offices",
     "Helps Academic & Research Institutions Navigate Commercialisation"
   ];
+
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
+    try {
+      await api.post('/contact', {
+        name: data.name,
+        phone: data.phone,
+        email: data.email,
+        message: data.message,
+      });
+      
+      toast.success('Thank you for your inquiry! We will get back to you soon.');
+      reset();
+    } catch (error) {
+      console.error('Contact form error:', error);
+      toast.error('Failed to submit your inquiry. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -284,6 +319,150 @@ export default function RTTP() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Form Section */}
+      <section className="py-20 bg-neutral-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
+              Get Expert Consultation
+            </h2>
+            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
+              Ready to commercialize your innovation? Contact our RTTP experts for personalized guidance.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-lg p-8">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    Full Name *
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <User className="h-5 w-5 text-neutral-400" />
+                    </div>
+                    <input
+                      {...register("name", {
+                        required: "Full name is required",
+                        minLength: {
+                          value: 2,
+                          message: "Name must be at least 2 characters",
+                        },
+                      })}
+                      type="text"
+                      className={`pl-10 input ${errors.name ? "input-error" : ""}`}
+                      placeholder="Enter your full name"
+                    />
+                  </div>
+                  {errors.name && (
+                    <p className="mt-1 text-sm text-error-600">{errors.name.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    Phone Number *
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Phone className="h-5 w-5 text-neutral-400" />
+                    </div>
+                    <input
+                      {...register("phone", {
+                        required: "Phone number is required",
+                        pattern: {
+                          value: /^[+]?[\d\s\-\(\)]{10,}$/,
+                          message: "Please enter a valid phone number",
+                        },
+                      })}
+                      type="tel"
+                      className={`pl-10 input ${errors.phone ? "input-error" : ""}`}
+                      placeholder="Enter your phone number"
+                    />
+                  </div>
+                  {errors.phone && (
+                    <p className="mt-1 text-sm text-error-600">{errors.phone.message}</p>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  Email Address *
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="h-5 w-5 text-neutral-400" />
+                  </div>
+                  <input
+                    {...register("email", {
+                      required: "Email is required",
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: "Please enter a valid email address",
+                      },
+                    })}
+                    type="email"
+                    className={`pl-10 input ${errors.email ? "input-error" : ""}`}
+                    placeholder="Enter your email address"
+                  />
+                </div>
+                {errors.email && (
+                  <p className="mt-1 text-sm text-error-600">{errors.email.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  Query Message *
+                </label>
+                <div className="relative">
+                  <div className="absolute top-3 left-3 pointer-events-none">
+                    <MessageSquare className="h-5 w-5 text-neutral-400" />
+                  </div>
+                  <textarea
+                    {...register("message", {
+                      required: "Message is required",
+                      minLength: {
+                        value: 10,
+                        message: "Message must be at least 10 characters",
+                      },
+                    })}
+                    rows={5}
+                    className={`pl-10 input resize-none ${errors.message ? "input-error" : ""}`}
+                    placeholder="Describe your technology, innovation, or specific questions about commercialization..."
+                  />
+                </div>
+                {errors.message && (
+                  <p className="mt-1 text-sm text-error-600">{errors.message.message}</p>
+                )}
+              </div>
+
+              <div className="text-center">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="btn-primary text-lg px-8 py-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? (
+                    <div className="flex items-center justify-center">
+                      <div className="spinner mr-2" />
+                      Submitting...
+                    </div>
+                  ) : (
+                    <>
+                      <Send className="h-5 w-5 mr-2" />
+                      Send Inquiry
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </section>

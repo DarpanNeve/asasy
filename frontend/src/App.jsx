@@ -8,6 +8,7 @@ import ErrorBoundary from './components/ErrorBoundary'
 import Layout from './components/Layout'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
+import ProfileCompletion from './pages/ProfileCompletion'
 import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
 import Subscription from './pages/Subscription'
@@ -40,6 +41,7 @@ function App() {
                   <Route path="/" element={<Home />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
+                  <Route path="/profile-completion" element={<ProfileCompletion />} />
                   <Route path="/rttp" element={<RTTP />} />
                   <Route path="/admin" element={<Admin />} />
                   
