@@ -31,7 +31,7 @@ export default function Signup() {
 
   const password = watch("password");
 
-  // Initialize Google Sign-In
+  // Initialize Google Sign-In without FedCM
   useEffect(() => {
     const initializeGoogleSignIn = () => {
       if (window.google && window.google.accounts) {
@@ -39,6 +39,14 @@ export default function Signup() {
           window.google.accounts.id.initialize({
             client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
             callback: handleGoogleResponse,
+            use_fedcm_for_prompt: false, // Disable FedCM
+          });
+          
+          // Also initialize OAuth2 for popup method
+          window.gapi?.load('auth2', () => {
+            window.gapi.auth2.init({
+              client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+            });
           });
         } catch (error) {
           console.error("Google Sign-In initialization error:", error);
@@ -46,15 +54,32 @@ export default function Signup() {
       }
     };
 
+    // Load Google APIs
+    const loadGoogleAPIs = () => {
+      // Load Google Identity Services
+      if (!document.querySelector('script[src*="accounts.google.com/gsi/client"]')) {
+        const gsiScript = document.createElement('script');
+        gsiScript.src = 'https://accounts.google.com/gsi/client';
+        gsiScript.async = true;
+        gsiScript.defer = true;
+        gsiScript.onload = initializeGoogleSignIn;
+        document.head.appendChild(gsiScript);
+      }
+      
+      // Load Google API Platform Library (for popup method)
+      if (!document.querySelector('script[src*="apis.google.com/js/platform.js"]')) {
+        const gapiScript = document.createElement('script');
+        gapiScript.src = 'https://apis.google.com/js/platform.js';
+        gapiScript.async = true;
+        gapiScript.defer = true;
+        document.head.appendChild(gapiScript);
+      }
+    };
+
     if (window.google) {
       initializeGoogleSignIn();
     } else {
-      const script = document.createElement('script');
-      script.src = 'https://accounts.google.com/gsi/client';
-      script.async = true;
-      script.defer = true;
-      script.onload = initializeGoogleSignIn;
-      document.head.appendChild(script);
+      loadGoogleAPIs();
     }
   }, []);
 
@@ -78,10 +103,47 @@ export default function Signup() {
   };
 
   const handleGoogleLogin = () => {
-    if (window.google && window.google.accounts) {
-      window.google.accounts.id.prompt();
-    } else {
-      toast.error("Google Sign-In not loaded. Please refresh the page.");
+    setGoogleLoading(true);
+    
+    try {
+      // Try popup method first (more reliable than FedCM)
+      if (window.gapi && window.gapi.auth2) {
+        const authInstance = window.gapi.auth2.getAuthInstance();
+        if (authInstance) {
+          authInstance.signIn().then(async (googleUser) => {
+            const idToken = googleUser.getAuthResponse().id_token;
+            await handleGoogleResponse({ credential: idToken });
+          }).catch((error) => {
+            console.error("Google popup login error:", error);
+            toast.error("Google Sign-In cancelled or failed");
+            setGoogleLoading(false);
+          });
+          return;
+        }
+      }
+      
+      // Fallback to GSI prompt
+      if (window.google && window.google.accounts) {
+        try {
+          window.google.accounts.id.prompt((notification) => {
+            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+              toast.error("Google Sign-In not available. Please use email signup.");
+              setGoogleLoading(false);
+            }
+          });
+        } catch (error) {
+          console.log("GSI prompt failed:", error);
+          toast.error("Google Sign-In not available. Please use email signup.");
+          setGoogleLoading(false);
+        }
+      } else {
+        toast.error("Google Sign-In not loaded. Please refresh the page.");
+        setGoogleLoading(false);
+      }
+    } catch (error) {
+      console.error("Google login error:", error);
+      toast.error("Google Sign-In error. Please try again.");
+      setGoogleLoading(false);
     }
   };
 
