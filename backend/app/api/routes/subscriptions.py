@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import razorpay
 import hmac
 import hashlib
+import traceback
 
 from app.core.security import get_current_user
 from app.core.config import settings
@@ -20,55 +21,62 @@ from app.schemas.subscription import (
 router = APIRouter()
 
 # Initialize Razorpay client
-razorpay_client = razorpay.Client(
-    auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
-)
+try:
+    razorpay_client = razorpay.Client(
+        auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
+    )
+except Exception as e:
+    print(f"Failed to initialize Razorpay client: {e}")
+    razorpay_client = None
 
 def generate_receipt(user_id: str, plan_id: str) -> str:
-    """Generate a receipt string that's max 40 characters"""
-    timestamp = str(int(datetime.utcnow().timestamp()))
-    base_receipt = f"sub_{user_id[:8]}_{plan_id[:8]}_{timestamp}"
-    
-    # Ensure it's max 40 characters
-    if len(base_receipt) > 40:
-        # Hash if too long
-        import hashlib
-        hash_obj = hashlib.md5(base_receipt.encode())
-        return f"sub_{hash_obj.hexdigest()[:32]}"
-    
-    return base_receipt
+    try:
+        timestamp = str(int(datetime.utcnow().timestamp()))
+        base_receipt = f"sub_{user_id[:8]}_{plan_id[:8]}_{timestamp}"
+        
+        if len(base_receipt) > 40:
+            import hashlib
+            hash_obj = hashlib.md5(base_receipt.encode())
+            return f"sub_{hash_obj.hexdigest()[:32]}"
+        
+        return base_receipt
+    except Exception as e:
+        traceback.print_exc()
+        raise
 
 @router.post("/create-order", response_model=OrderResponse)
 async def create_subscription_order(
     order_data: OrderCreate,
     current_user: User = Depends(get_current_user)
 ):
-    """Create a Razorpay order for subscription"""
-    
-    # Get plan details
-    plan = await Plan.get(order_data.plan_id)
-    if not plan or not plan.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Plan not found"
-        )
-    
-    # Generate receipt with proper length
-    receipt = generate_receipt(str(current_user.id), str(plan.id))
-    
-    # Create Razorpay order
-    order_data_razorpay = {
-        "amount": plan.price_inr,  # Amount in paise
-        "currency": "INR",
-        "receipt": receipt,
-        "notes": {
-            "user_id": str(current_user.id),
-            "plan_id": str(plan.id),
-            "plan_name": plan.name
-        }
-    }
-    
     try:
+        if not razorpay_client:
+            # Auto-initialize if not loaded
+            global razorpay_client
+            razorpay_client = razorpay.Client(
+                auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
+            )
+        
+        plan = await Plan.get(order_data.plan_id)
+        if not plan or not plan.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Plan not found"
+            )
+        
+        receipt = generate_receipt(str(current_user.id), str(plan.id))
+        
+        order_data_razorpay = {
+            "amount": plan.price_inr,
+            "currency": "INR",
+            "receipt": receipt,
+            "notes": {
+                "user_id": str(current_user.id),
+                "plan_id": str(plan.id),
+                "plan_name": plan.name
+            }
+        }
+        
         order = razorpay_client.order.create(order_data_razorpay)
         
         return OrderResponse(
@@ -82,6 +90,7 @@ async def create_subscription_order(
             }
         )
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Failed to create order: {str(e)}"
@@ -92,23 +101,19 @@ async def verify_payment(
     payment_data: PaymentVerification,
     current_user: User = Depends(get_current_user)
 ):
-    """Verify Razorpay payment and activate subscription"""
-    
-    # Verify payment signature
-    generated_signature = hmac.new(
-        settings.RAZORPAY_KEY_SECRET.encode(),
-        f"{payment_data.razorpay_order_id}|{payment_data.razorpay_payment_id}".encode(),
-        hashlib.sha256
-    ).hexdigest()
-    
-    if generated_signature != payment_data.razorpay_signature:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid payment signature"
-        )
-    
-    # Get payment details from Razorpay
     try:
+        generated_signature = hmac.new(
+            settings.RAZORPAY_KEY_SECRET.encode(),
+            f"{payment_data.razorpay_order_id}|{payment_data.razorpay_payment_id}".encode(),
+            hashlib.sha256
+        ).hexdigest()
+        
+        if generated_signature != payment_data.razorpay_signature:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid payment signature"
+            )
+        
         payment = razorpay_client.payment.fetch(payment_data.razorpay_payment_id)
         order = razorpay_client.order.fetch(payment_data.razorpay_order_id)
         
@@ -118,7 +123,6 @@ async def verify_payment(
                 detail="Payment not captured"
             )
         
-        # Get plan from order notes
         plan_id = order["notes"]["plan_id"]
         plan = await Plan.get(plan_id)
         
@@ -128,14 +132,12 @@ async def verify_payment(
                 detail="Plan not found"
             )
         
-        # Cancel existing active subscription
         if current_user.current_subscription_id:
             existing_subscription = await Subscription.get(current_user.current_subscription_id)
             if existing_subscription:
                 existing_subscription.status = SubscriptionStatus.CANCELLED
                 await existing_subscription.save()
         
-        # Create new subscription
         subscription = Subscription(
             user_id=str(current_user.id),
             plan_id=str(plan.id),
@@ -147,13 +149,13 @@ async def verify_payment(
         
         await subscription.insert()
         
-        # Update user's current subscription
         current_user.current_subscription_id = str(subscription.id)
         await current_user.save()
         
         return {"message": "Subscription activated successfully"}
         
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Payment verification failed: {str(e)}"
@@ -161,67 +163,71 @@ async def verify_payment(
 
 @router.get("/current", response_model=Optional[SubscriptionResponse])
 async def get_current_subscription(current_user: User = Depends(get_current_user)):
-    """Get user's current subscription"""
-    
-    subscription = await current_user.get_current_subscription()
-    if not subscription:
-        return None
-    
-    plan = await Plan.get(subscription.plan_id)
-    
-    return SubscriptionResponse(
-        id=str(subscription.id),
-        plan_id=subscription.plan_id,
-        plan_name=plan.name if plan else "Unknown",
-        status=subscription.status,
-        active_until=subscription.active_until,
-        created_at=subscription.created_at
-    )
-
-@router.delete("/cancel")
-async def cancel_subscription(current_user: User = Depends(get_current_user)):
-    """Cancel current subscription"""
-    
-    if not current_user.current_subscription_id:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No active subscription found"
-        )
-    
-    subscription = await Subscription.get(current_user.current_subscription_id)
-    if not subscription:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Subscription not found"
-        )
-    
-    # Cancel subscription
-    subscription.status = SubscriptionStatus.CANCELLED
-    subscription.updated_at = datetime.utcnow()
-    await subscription.save()
-    
-    # Remove from user
-    current_user.current_subscription_id = None
-    await current_user.save()
-    
-    return {"message": "Subscription cancelled successfully"}
-
-@router.get("", response_model=list[SubscriptionResponse])
-async def get_user_subscriptions(current_user: User = Depends(get_current_user)):
-    """Get all user subscriptions"""
-    
-    subscriptions = await Subscription.find({"user_id": str(current_user.id)}).sort([("created_at", -1)]).to_list()
-    
-    result = []
-    for subscription in subscriptions:
+    try:
+        subscription = await current_user.get_current_subscription()
+        if not subscription:
+            return None
+        
         plan = await Plan.get(subscription.plan_id)
-        result.append(SubscriptionResponse(
+        
+        return SubscriptionResponse(
             id=str(subscription.id),
             plan_id=subscription.plan_id,
             plan_name=plan.name if plan else "Unknown",
             status=subscription.status,
             active_until=subscription.active_until,
             created_at=subscription.created_at
-        ))
-    
-    return result
+        )
+    except Exception as e:
+        traceback.print_exc()
+        raise
+
+@router.delete("/cancel")
+async def cancel_subscription(current_user: User = Depends(get_current_user)):
+    try:
+        if not current_user.current_subscription_id:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No active subscription found"
+            )
+        
+        subscription = await Subscription.get(current_user.current_subscription_id)
+        if not subscription:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Subscription not found"
+            )
+        
+        subscription.status = SubscriptionStatus.CANCELLED
+        subscription.updated_at = datetime.utcnow()
+        await subscription.save()
+        
+        current_user.current_subscription_id = None
+        await current_user.save()
+        
+        return {"message": "Subscription cancelled successfully"}
+    except Exception as e:
+        traceback.print_exc()
+        raise
+
+@router.get("", response_model=list[SubscriptionResponse])
+async def get_user_subscriptions(current_user: User = Depends(get_current_user)):
+    try:
+        subscriptions = await Subscription.find({"user_id": str(current_user.id)}).sort([("created_at", -1)]).to_list()
+        
+        result = []
+        for subscription in subscriptions:
+            plan = await Plan.get(subscription.plan_id)
+            result.append(SubscriptionResponse(
+                id=str(subscription.id),
+                plan_id=subscription.plan_id,
+                plan_name=plan.name if plan else "Unknown",
+                status=subscription.status,
+                active_until=subscription.active_until,
+                created_at=subscription.created_at
+            ))
+        
+        return result
+    except Exception as e:
+        traceback.print_exc()
+        raise

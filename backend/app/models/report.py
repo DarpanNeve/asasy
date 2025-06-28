@@ -38,8 +38,8 @@ class ReportLog(Document):
     pdf_path: Optional[str] = None
     file_size: Optional[int] = None
     
-    # AI generation details
-    openai_usage: Optional[Dict[str, Any]] = None
+    # AI generation details with token usage
+    openai_usage: Optional[Dict[str, Any]] = Field(None, description="OpenAI API usage details including token counts")
     generation_time: Optional[float] = None  # seconds
     
     # Content metadata
@@ -95,6 +95,5 @@ class ReportLog(Document):
         """Return report dict for user consumption"""
         return self.dict(exclude={
             "pdf_path",
-            "openai_usage",
             "metadata"
         })
