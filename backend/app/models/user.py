@@ -104,11 +104,15 @@ class User(Document):
         if subscription:
             from app.models.plan import Plan
             plan = await Plan.get(subscription.plan_id)
-            return plan
+            if plan:
+                return plan
         
-        # Return free/starter plan
+        # Return free/starter plan as default
         from app.models.plan import Plan
         starter_plan = await Plan.find_one({"name": "Starter", "is_active": True})
+        if not starter_plan:
+            # Fallback if no Starter plan exists
+            starter_plan = await Plan.find_one({"price_inr": 0, "is_active": True})
         return starter_plan
     
     async def can_generate_report(self) -> bool:

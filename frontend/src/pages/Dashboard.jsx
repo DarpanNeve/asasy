@@ -21,7 +21,7 @@ export default function Dashboard() {
     reportsGenerated: 0,
     totalReports: 0,
     reportsRemaining: 0,
-    currentPlan: "Free",
+    currentPlan: "Starter",
     activeSubscription: null,
     lastReportDate: null,
   });
@@ -47,6 +47,7 @@ export default function Dashboard() {
         api.get("/reports/recent?limit=5"),
       ]);
 
+      console.log("Stats response:", statsResponse.data);
       setStats(statsResponse.data);
       setRecentReports(reportsResponse.data);
       
@@ -54,6 +55,7 @@ export default function Dashboard() {
       await refreshUserData();
     } catch (error) {
       console.error("Failed to fetch dashboard data:", error);
+      toast.error("Failed to load dashboard data");
     } finally {
       setLoading(false);
     }

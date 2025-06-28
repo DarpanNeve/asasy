@@ -44,6 +44,11 @@ async def generate_report_background(report_id: str, idea: str, plan_id: str):
 
         # Update content metadata
         report.content_preview = report_data.get("executive_summary", "")[:500]
+        
+        # Store OpenAI usage info
+        if "_usage_info" in report_data:
+            report.openai_usage = report_data["_usage_info"]
+        
         await report.save()
 
     except Exception as e:
@@ -63,20 +68,13 @@ async def generate_report(
     """Generate a new technology assessment report"""
 
     # Get user's current plan
-    user_plan = None
-    if current_user.current_subscription_id:
-        subscription = await current_user.get_current_subscription()
-        if subscription:
-            user_plan = await Plan.get(subscription.plan_id)
+    user_plan = await current_user.get_current_plan()
     
-    # If no subscription, use Basic (free) plan
     if not user_plan:
-        user_plan = await Plan.find_one({"name": "Starter", "is_active": True})
-        if not user_plan:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Basic plan not found. Please contact support."
-            )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="No plan found. Please contact support."
+        )
 
     # Check if user can generate reports
     if not await current_user.can_generate_report():
@@ -100,6 +98,7 @@ async def generate_report(
 
     # Update user's report count
     current_user.reports_generated += 1
+    current_user.updated_at = datetime.utcnow()
     await current_user.save()
 
     # Start background generation
