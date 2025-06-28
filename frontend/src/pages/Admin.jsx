@@ -44,7 +44,8 @@ export default function Admin() {
     try {
       const basicAuth = btoa(`${credentials.username}:${credentials.password}`)
       
-      const response = await fetch('/api/admin/users', {
+      // Fetch users with plan information
+      const response = await fetch('/api/admin/users?include=plan', {
         headers: {
           'Authorization': `Basic ${basicAuth}`,
           'Content-Type': 'application/json'
@@ -74,7 +75,7 @@ export default function Admin() {
 
   const fetchContactSubmissions = async (auth) => {
     try {
-      const response = await fetch('/api/admin/contact-submissions', {
+      const response = await fetch('/api/contact/submissions', {
         headers: {
           'Authorization': `Basic ${auth}`,
           'Content-Type': 'application/json'
@@ -157,8 +158,35 @@ export default function Admin() {
     }
   }
 
-  const exportUsersToExcel = () => {
+  const exportUsersToExcel = async () => {
     try {
+      // Try API endpoint first
+      const basicAuth = sessionStorage.getItem('adminAuth')
+      try {
+        const response = await fetch('/api/users/export?format=excel', {
+          headers: {
+            'Authorization': `Basic ${basicAuth}`
+          }
+        })
+        
+        if (response.ok) {
+          const blob = await response.blob()
+          const url = window.URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = `asasy-users-${new Date().toISOString().split('T')[0]}.xlsx`
+          document.body.appendChild(link)
+          link.click()
+          link.remove()
+          window.URL.revokeObjectURL(url)
+          toast.success('User list exported successfully')
+          return
+        }
+      } catch (apiError) {
+        console.log('API export failed, using client-side export')
+      }
+      
+      // Fallback to client-side export
       const exportData = users.map(user => ({
         'Name': user.name,
         'Email': user.email,
@@ -179,6 +207,35 @@ export default function Admin() {
     }
   }
 
+  const exportContactSubmissions = async () => {
+    try {
+      const basicAuth = sessionStorage.getItem('adminAuth')
+      const response = await fetch('/api/contact/export', {
+        headers: {
+          'Authorization': `Basic ${basicAuth}`
+        }
+      })
+      
+      if (response.ok) {
+        const blob = await response.blob()
+        const url = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = `contact-submissions-${new Date().toISOString().split('T')[0]}.csv`
+        document.body.appendChild(link)
+        link.click()
+        link.remove()
+        window.URL.revokeObjectURL(url)
+        toast.success('Contact submissions exported successfully')
+      } else {
+        toast.error('Failed to export contact submissions')
+      }
+    } catch (error) {
+      console.error('Export error:', error)
+      toast.error('Failed to export contact submissions')
+    }
+  }
+
   const filteredUsers = users.filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
@@ -194,7 +251,7 @@ export default function Admin() {
       new Date(submission.submitted_at).toDateString() === new Date(contactDateFilter).toDateString()
     
     return matchesSearch && matchesDate
-  })
+  }).sort((a, b) => new Date(b.submitted_at) - new Date(a.submitted_at))
 
   const formatTokenUsage = (usage) => {
     if (!usage || usage.total === 0) return 'No usage data'
@@ -319,7 +376,7 @@ export default function Admin() {
                 }`}
               >
                 <MessageSquare className="h-5 w-5 inline mr-2" />
-                Contact Submissions
+                Contact Submissions ({contactSubmissions.length})
               </button>
             </nav>
           </div>
@@ -385,7 +442,7 @@ export default function Admin() {
                     </div>
                     <div className="flex items-center space-x-2">
                       <span className="text-sm text-neutral-500">
-                        {expandedUsers.has(user.id) ? 'Hide' : 'Show'} Reports
+                        {expandedUsers.has(user.id) ? 'Hide' : 'View All'} Reports
                       </span>
                       {expandedUsers.has(user.id) ? (
                         <ChevronDown className="h-5 w-5 text-neutral-400" />
@@ -530,6 +587,13 @@ export default function Admin() {
                       Clear
                     </button>
                   )}
+                  <button
+                    onClick={exportContactSubmissions}
+                    className="btn-primary flex items-center"
+                  >
+                    <Download className="h-4 w-4 mr-1" />
+                    Download CSV
+                  </button>
                 </div>
               </div>
             </div>

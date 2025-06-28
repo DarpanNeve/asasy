@@ -86,12 +86,39 @@ export default function RTTP() {
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     try {
-      await api.post('/contact', {
-        name: data.name,
-        phone: data.phone,
-        email: data.email,
-        message: data.message,
-      });
+      // Try the exact path first
+      let response;
+      try {
+        response = await api.post('/api/contact', {
+          name: data.name,
+          phone: data.phone,
+          email: data.email,
+          message: data.message,
+        });
+      } catch (error) {
+        // If 404, try without /api prefix
+        if (error.response?.status === 404) {
+          const baseUrl = import.meta.env.VITE_API_URL || '';
+          response = await fetch(`${baseUrl}/contact`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              name: data.name,
+              phone: data.phone,
+              email: data.email,
+              message: data.message,
+            }),
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to submit contact form');
+          }
+        } else {
+          throw error;
+        }
+      }
       
       toast.success('Thank you for your inquiry! We will get back to you soon.');
       reset();

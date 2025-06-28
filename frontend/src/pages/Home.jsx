@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { api } from "../services/api";
+import { createReportPdf } from "../utils/reportUtils";
 import toast from "react-hot-toast";
 
 export default function Home() {
@@ -132,9 +133,16 @@ export default function Home() {
         idea: data.idea,
       });
 
-      toast.success("Report generation started! Redirecting to dashboard...");
+      // Generate PDF using the original function with backend data
+      const reportData = await api.get(`/reports/${response.data.id}`);
+      const pdfData = createReportPdf(reportData.data);
+      
+      toast.success("Report generated successfully!");
       reset();
-      navigate("/dashboard");
+      
+      if (user) {
+        navigate("/dashboard");
+      }
     } catch (error) {
       if (error.response?.status === 403) {
         toast.error("You've reached your report limit. Please upgrade to continue.");
