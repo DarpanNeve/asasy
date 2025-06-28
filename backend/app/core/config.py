@@ -25,10 +25,9 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_ID: str
     GOOGLE_CLIENT_SECRET: str
     
-    # msg91
-    MSG91_API_KEY: str
-    MSG91_TEMPLATE_ID: str
-    MSG91_SENDER_ID: str = "ASASY"
+    # OneSignal (replacing msg91)
+    ONESIGNAL_APP_ID: Optional[str] = None
+    ONESIGNAL_API_KEY: Optional[str] = None
     
     # Razorpay
     RAZORPAY_KEY_ID: str
@@ -44,7 +43,7 @@ class Settings(BaseSettings):
     AWS_BUCKET_NAME: Optional[str] = None
     AWS_REGION: str = "us-east-1"
     
-    # Email settings
+    # Email settings (fallback)
     SMTP_HOST: Optional[str] = None
     SMTP_PORT: int = 587
     SMTP_USER: Optional[str] = None
@@ -83,8 +82,6 @@ required_settings = [
     "MONGODB_URL", 
     "GOOGLE_CLIENT_ID",
     "GOOGLE_CLIENT_SECRET",
-    "MSG91_API_KEY",
-    "MSG91_TEMPLATE_ID",
     "RAZORPAY_KEY_ID",
     "RAZORPAY_KEY_SECRET",
     "RAZORPAY_WEBHOOK_SECRET",

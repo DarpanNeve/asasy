@@ -11,6 +11,9 @@ import {
   Calendar,
   Zap,
   X,
+  Download,
+  Eye,
+  ExternalLink,
 } from "lucide-react";
 import { api } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
@@ -24,6 +27,8 @@ export default function Reports() {
   const [showGenerateForm, setShowGenerateForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [selectedReport, setSelectedReport] = useState(null);
+  const [showReportModal, setShowReportModal] = useState(false);
   const [pagination, setPagination] = useState({
     page: 1,
     pages: 1,
@@ -73,13 +78,6 @@ export default function Reports() {
       return;
     }
 
-    if (!user.current_subscription_id && user.reports_generated >= 3) {
-      toast.error(
-        "You have reached your free report limit. Please upgrade to continue."
-      );
-      return;
-    }
-
     setGenerating(true);
     try {
       const response = await api.post("/reports/generate", {
@@ -96,6 +94,40 @@ export default function Reports() {
       toast.error(error.response?.data?.detail || "Failed to generate report");
     } finally {
       setGenerating(false);
+    }
+  };
+
+  const handleViewReport = async (reportId) => {
+    try {
+      const response = await api.get(`/reports/${reportId}`);
+      setSelectedReport(response.data);
+      setShowReportModal(true);
+    } catch (error) {
+      console.error("Failed to fetch report details:", error);
+      toast.error("Failed to load report details");
+    }
+  };
+
+  const handleDownloadReport = async (reportId, reportTitle) => {
+    try {
+      const response = await api.get(`/reports/${reportId}/download`, {
+        responseType: 'blob'
+      });
+
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${reportTitle || 'report'}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      
+      toast.success("Report downloaded successfully");
+    } catch (error) {
+      console.error("Failed to download report:", error);
+      toast.error("Failed to download report");
     }
   };
 
@@ -152,41 +184,11 @@ export default function Reports() {
         <button
           onClick={() => setShowGenerateForm(true)}
           className="btn-primary mt-4 sm:mt-0"
-          disabled={
-            !user?.current_subscription_id && user?.reports_generated >= 3
-          }
         >
           <Plus className="h-5 w-5 mr-2" />
           Generate Report
         </button>
       </div>
-
-      {/* Usage Status */}
-      {!user?.current_subscription_id && (
-        <div className="card bg-warning-50 border-warning-200">
-          <div className="flex items-center">
-            <div className="p-3 bg-warning-100 rounded-lg mr-4">
-              <Zap className="h-6 w-6 text-warning-600" />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-lg font-semibold text-warning-900">
-                Free Plan Usage
-              </h3>
-              <p className="text-warning-700">
-                You have used {user?.reports_generated || 0} out of 3 free
-                reports.
-                {user?.reports_generated >= 3 && (
-                  <span className="ml-1">
-                    <a href="/subscription" className="underline font-medium">
-                      Upgrade to generate unlimited reports.
-                    </a>
-                  </span>
-                )}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Generate Report Modal */}
       {showGenerateForm && (
@@ -270,6 +272,138 @@ export default function Reports() {
         </div>
       )}
 
+      {/* Report View Modal */}
+      {showReportModal && selectedReport && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-neutral-900">
+                  {selectedReport.title}
+                </h2>
+                <div className="flex items-center space-x-2">
+                  {selectedReport.status === "completed" && selectedReport.pdf_url && (
+                    <button
+                      onClick={() => handleDownloadReport(selectedReport.id, selectedReport.title)}
+                      className="btn-outline btn-sm"
+                    >
+                      <Download className="h-4 w-4 mr-1" />
+                      Download PDF
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setShowReportModal(false)}
+                    className="text-neutral-400 hover:text-neutral-600"
+                  >
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                {/* Report Metadata */}
+                <div className="bg-neutral-50 rounded-lg p-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                      <span className="font-medium text-neutral-900">Status:</span>
+                      <div className="flex items-center mt-1">
+                        {getStatusIcon(selectedReport.status)}
+                        <span className={`ml-2 px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(selectedReport.status)}`}>
+                          {selectedReport.status}
+                        </span>
+                      </div>
+                    </div>
+                    <div>
+                      <span className="font-medium text-neutral-900">Plan:</span>
+                      <p className="text-neutral-600 mt-1">{selectedReport.plan_name}</p>
+                    </div>
+                    <div>
+                      <span className="font-medium text-neutral-900">Created:</span>
+                      <p className="text-neutral-600 mt-1">
+                        {new Date(selectedReport.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div>
+                      <span className="font-medium text-neutral-900">Type:</span>
+                      <p className="text-neutral-600 mt-1">{selectedReport.report_type}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Original Idea */}
+                <div>
+                  <h3 className="text-lg font-semibold text-neutral-900 mb-3">Original Idea</h3>
+                  <div className="bg-neutral-50 rounded-lg p-4">
+                    <p className="text-neutral-700">{selectedReport.idea}</p>
+                  </div>
+                </div>
+
+                {/* Report Content Preview */}
+                {selectedReport.content_preview && (
+                  <div>
+                    <h3 className="text-lg font-semibold text-neutral-900 mb-3">Executive Summary</h3>
+                    <div className="bg-neutral-50 rounded-lg p-4">
+                      <p className="text-neutral-700">{selectedReport.content_preview}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Download Section */}
+                {selectedReport.status === "completed" && selectedReport.pdf_url && (
+                  <div className="bg-primary-50 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-semibold text-primary-900">Full Report Available</h3>
+                        <p className="text-primary-700 text-sm">
+                          Download the complete PDF report with detailed analysis and insights.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => handleDownloadReport(selectedReport.id, selectedReport.title)}
+                        className="btn-primary"
+                      >
+                        <Download className="h-5 w-5 mr-2" />
+                        Download PDF
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Processing Status */}
+                {selectedReport.status === "processing" && (
+                  <div className="bg-warning-50 rounded-lg p-4">
+                    <div className="flex items-center">
+                      <Clock className="h-6 w-6 text-warning-600 mr-3" />
+                      <div>
+                        <h3 className="font-semibold text-warning-900">Report in Progress</h3>
+                        <p className="text-warning-700 text-sm">
+                          Your report is being generated. This usually takes 2-5 minutes.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Failed Status */}
+                {selectedReport.status === "failed" && (
+                  <div className="bg-error-50 rounded-lg p-4">
+                    <div className="flex items-center">
+                      <XCircle className="h-6 w-6 text-error-600 mr-3" />
+                      <div>
+                        <h3 className="font-semibold text-error-900">Report Generation Failed</h3>
+                        <p className="text-error-700 text-sm">
+                          {selectedReport.error_message || "An error occurred during report generation. Please try again."}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Filters and Search */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
@@ -314,9 +448,6 @@ export default function Reports() {
             <button
               onClick={() => setShowGenerateForm(true)}
               className="btn-primary"
-              disabled={
-                !user?.current_subscription_id && user?.reports_generated >= 3
-              }
             >
               <Plus className="h-5 w-5 mr-2" />
               Generate Your First Report
@@ -366,6 +497,26 @@ export default function Reports() {
                       )}
                     </div>
                   </div>
+                </div>
+                
+                <div className="flex items-center space-x-2 ml-4">
+                  <button
+                    onClick={() => handleViewReport(report.id)}
+                    className="btn-outline btn-sm"
+                  >
+                    <Eye className="h-4 w-4 mr-1" />
+                    View
+                  </button>
+                  
+                  {report.status === "completed" && report.pdf_url && (
+                    <button
+                      onClick={() => handleDownloadReport(report.id, report.title)}
+                      className="btn-primary btn-sm"
+                    >
+                      <Download className="h-4 w-4 mr-1" />
+                      Download
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

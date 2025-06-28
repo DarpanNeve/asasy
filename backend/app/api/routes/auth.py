@@ -13,7 +13,7 @@ from app.core.security import (
     verify_token,
 )
 from app.core.rate_limiter import limiter
-from app.services.email_service import send_otp_email
+from app.services.email_service import send_otp_email, send_welcome_email
 from app.services.oauth_service import verify_google_token
 from app.models.user import User, OAuthProvider
 from app.schemas.auth import (
@@ -178,6 +178,12 @@ async def verify_email_otp(request: Request, verification: EmailVerification):
 
         await user.save()
 
+        # Send welcome email
+        try:
+            await send_welcome_email(user.email, user.name)
+        except Exception as e:
+            logger.error(f"Failed to send welcome email: {e}")
+
         return {"message": "Email verified successfully"}
     except Exception as e:
         traceback.print_exc()
@@ -300,6 +306,12 @@ async def complete_profile(request: Request, profile_data: CompleteProfile):
         user.phone = phone
         user.updated_at = datetime.utcnow()
         await user.save()
+        
+        # Send welcome email
+        try:
+            await send_welcome_email(user.email, user.name)
+        except Exception as e:
+            logger.error(f"Failed to send welcome email: {e}")
         
         # Create tokens
         access_token = create_access_token({"sub": str(user.id)})

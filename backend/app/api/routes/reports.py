@@ -10,13 +10,14 @@ from app.models.user import User
 from app.models.plan import Plan
 from app.models.report import ReportLog, ReportStatus, ReportType
 from app.services.report_generator import generate_technology_report
+from app.services.email_service import send_report_ready_email
 from app.core.config import settings
 from app.schemas.report import ReportCreate, ReportResponse, ReportListResponse
 
 router = APIRouter()
 
 
-async def generate_report_background(report_id: str, idea: str, plan_id: str):
+async def generate_report_background(report_id: str, idea: str, plan_id: str, user_email: str, user_name: str):
     """Background task to generate report"""
     try:
         report = await ReportLog.get(report_id)
@@ -50,6 +51,12 @@ async def generate_report_background(report_id: str, idea: str, plan_id: str):
             report.openai_usage = report_data["_usage_info"]
         
         await report.save()
+
+        # Send notification email
+        try:
+            await send_report_ready_email(user_email, user_name, report.title, report_id)
+        except Exception as e:
+            print(f"Failed to send report ready email: {e}")
 
     except Exception as e:
         # Mark as failed
@@ -103,7 +110,12 @@ async def generate_report(
 
     # Start background generation
     background_tasks.add_task(
-        generate_report_background, str(report.id), report_data.idea, str(user_plan.id)
+        generate_report_background, 
+        str(report.id), 
+        report_data.idea, 
+        str(user_plan.id),
+        current_user.email,
+        current_user.name
     )
 
     return ReportResponse(
