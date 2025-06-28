@@ -32,6 +32,7 @@ export default function Login() {
             auto_select: false,
             cancel_on_tap_outside: true,
           });
+          console.log("Google Sign-In initialized successfully");
         } catch (error) {
           console.error("Google Sign-In initialization error:", error);
         }
@@ -43,15 +44,12 @@ export default function Login() {
       initializeGoogleSignIn();
     } else {
       // Wait for Google script to load
-      const checkGoogleLoaded = setInterval(() => {
-        if (window.google) {
-          initializeGoogleSignIn();
-          clearInterval(checkGoogleLoaded);
-        }
-      }, 100);
-
-      // Clear interval after 10 seconds to prevent infinite checking
-      setTimeout(() => clearInterval(checkGoogleLoaded), 10000);
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      script.onload = initializeGoogleSignIn;
+      document.head.appendChild(script);
     }
   }, []);
 
@@ -63,7 +61,12 @@ export default function Login() {
       navigate(from, { replace: true });
     } catch (error) {
       console.error("Google login error:", error);
-      toast.error(error.response?.data?.detail || "Google login failed");
+      if (error.response?.data?.detail?.includes("Phone number is required")) {
+        toast.error("Please complete your profile with a phone number");
+        // Could redirect to profile completion
+      } else {
+        toast.error(error.response?.data?.detail || "Google login failed");
+      }
     } finally {
       setGoogleLoading(false);
     }

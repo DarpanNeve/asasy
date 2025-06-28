@@ -83,26 +83,26 @@ class User(Document):
         return subscription is not None
     
     async def can_generate_report(self) -> bool:
-        """Check if user can generate a report"""
-        # Users with active subscriptions can generate unlimited reports
-        if await self.has_active_subscription():
-            return True
+        """Check if user can generate a report based on their plan"""
+        subscription = await self.get_current_subscription()
         
-        # Free users can generate limited reports
-        from app.core.config import settings
-        return self.reports_generated < 3  # Updated to 3 free reports
+        if subscription:
+            from app.models.plan import Plan
+            plan = await Plan.get(subscription.plan_id)
+            if plan and plan.reports_limit is None:
+                return True  # Unlimited
+            elif plan and plan.reports_limit:
+                return self.reports_generated < plan.reports_limit
+        
+        # Free users - get starter plan limits
+        from app.models.plan import Plan
+        starter_plan = await Plan.find_one({"name": "Starter", "is_active": True})
+        if starter_plan:
+            return self.reports_generated < starter_plan.reports_limit
+        
+        return False
     
     def update_last_login(self):
         """Update last login timestamp"""
         self.last_login = datetime.utcnow()
         self.updated_at = datetime.utcnow()
-    
-    def dict_exclude_sensitive(self) -> dict:
-        """Return user dict without sensitive fields"""
-        return self.dict(exclude={
-            "password_hash",
-            "email_verification_code", 
-            "email_verification_expires",
-            "password_reset_token",
-            "password_reset_expires"
-        })

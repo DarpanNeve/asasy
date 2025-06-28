@@ -20,17 +20,21 @@ from app.schemas.subscription import (
 
 router = APIRouter()
 
-# Initialize Razorpay client globally
-razorpay_client = None
-
-try:
-    razorpay_client = razorpay.Client(
-        auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
-    )
-except Exception as e:
-    print(f"Failed to initialize Razorpay client: {e}")
+def get_razorpay_client():
+    """Get or create Razorpay client"""
+    try:
+        return razorpay.Client(
+            auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
+        )
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Payment gateway initialization failed: {str(e)}"
+        )
 
 def generate_receipt(user_id: str, plan_id: str) -> str:
+    """Generate receipt ID with max 40 characters"""
     try:
         timestamp = str(int(datetime.utcnow().timestamp()))
         base_receipt = f"sub_{user_id[:8]}_{plan_id[:8]}_{timestamp}"
@@ -50,14 +54,8 @@ async def create_subscription_order(
     order_data: OrderCreate,
     current_user: User = Depends(get_current_user)
 ):
-    global razorpay_client
-    
     try:
-        if not razorpay_client:
-            # Auto-initialize if not loaded
-            razorpay_client = razorpay.Client(
-                auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
-            )
+        razorpay_client = get_razorpay_client()
         
         plan = await Plan.get(order_data.plan_id)
         if not plan or not plan.is_active:
@@ -104,6 +102,8 @@ async def verify_payment(
     current_user: User = Depends(get_current_user)
 ):
     try:
+        razorpay_client = get_razorpay_client()
+        
         generated_signature = hmac.new(
             settings.RAZORPAY_KEY_SECRET.encode(),
             f"{payment_data.razorpay_order_id}|{payment_data.razorpay_payment_id}".encode(),

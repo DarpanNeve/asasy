@@ -33,11 +33,28 @@ export default function Signup() {
 
   // Initialize Google Sign-In
   useEffect(() => {
+    const initializeGoogleSignIn = () => {
+      if (window.google && window.google.accounts) {
+        try {
+          window.google.accounts.id.initialize({
+            client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+            callback: handleGoogleResponse,
+          });
+        } catch (error) {
+          console.error("Google Sign-In initialization error:", error);
+        }
+      }
+    };
+
     if (window.google) {
-      window.google.accounts.id.initialize({
-        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-        callback: handleGoogleResponse,
-      });
+      initializeGoogleSignIn();
+    } else {
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      script.onload = initializeGoogleSignIn;
+      document.head.appendChild(script);
     }
   }, []);
 
@@ -45,27 +62,23 @@ export default function Signup() {
     setGoogleLoading(true);
     try {
       const result = await googleLogin(response.credential);
-      
-      // Check if user has required fields
-      if (!result.user.name || !result.user.phone) {
-        // Show form to collect missing data
-        toast.error("Please complete your profile with name and phone number");
-        // You could redirect to profile completion or show inline form
-        return;
-      }
-      
       toast.success("Welcome to Asasy!");
       navigate("/dashboard");
     } catch (error) {
       console.error("Google login error:", error);
-      toast.error(error.response?.data?.detail || "Google login failed");
+      if (error.response?.data?.detail?.includes("Phone number is required")) {
+        toast.error("Please complete your profile with a phone number");
+        // Could show a form to collect phone number
+      } else {
+        toast.error(error.response?.data?.detail || "Google login failed");
+      }
     } finally {
       setGoogleLoading(false);
     }
   };
 
   const handleGoogleLogin = () => {
-    if (window.google) {
+    if (window.google && window.google.accounts) {
       window.google.accounts.id.prompt();
     } else {
       toast.error("Google Sign-In not loaded. Please refresh the page.");
@@ -348,7 +361,7 @@ export default function Signup() {
                   htmlFor="email"
                   className="block text-sm font-medium text-neutral-700"
                 >
-                  Email address
+                  Email address *
                 </label>
                 <div className="mt-1 relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -416,7 +429,7 @@ export default function Signup() {
                   htmlFor="password"
                   className="block text-sm font-medium text-neutral-700"
                 >
-                  Password
+                  Password *
                 </label>
                 <div className="mt-1 relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -466,7 +479,7 @@ export default function Signup() {
                   htmlFor="confirmPassword"
                   className="block text-sm font-medium text-neutral-700"
                 >
-                  Confirm password
+                  Confirm password *
                 </label>
                 <div className="mt-1 relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

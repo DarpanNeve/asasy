@@ -209,7 +209,7 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Hero Section with ChatGPT-style Interface */}
+      {/* Hero Section with Report Generator */}
       <section className="relative bg-gradient-to-br from-primary-50 to-secondary-50 py-20 lg:py-32">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -223,7 +223,7 @@ export default function Home() {
             </p>
           </div>
 
-          {/* ChatGPT-style Input Interface */}
+          {/* Report Generator */}
           <div className="max-w-3xl mx-auto">
             <form onSubmit={handleSubmit(handleGenerateReport)} className="space-y-4">
               <div className="relative">
