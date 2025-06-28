@@ -23,11 +23,35 @@ export default function Login() {
 
   // Initialize Google Sign-In
   useEffect(() => {
+    const initializeGoogleSignIn = () => {
+      if (window.google && window.google.accounts) {
+        try {
+          window.google.accounts.id.initialize({
+            client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+            callback: handleGoogleResponse,
+            auto_select: false,
+            cancel_on_tap_outside: true,
+          });
+        } catch (error) {
+          console.error("Google Sign-In initialization error:", error);
+        }
+      }
+    };
+
+    // Check if Google script is already loaded
     if (window.google) {
-      window.google.accounts.id.initialize({
-        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-        callback: handleGoogleResponse,
-      });
+      initializeGoogleSignIn();
+    } else {
+      // Wait for Google script to load
+      const checkGoogleLoaded = setInterval(() => {
+        if (window.google) {
+          initializeGoogleSignIn();
+          clearInterval(checkGoogleLoaded);
+        }
+      }, 100);
+
+      // Clear interval after 10 seconds to prevent infinite checking
+      setTimeout(() => clearInterval(checkGoogleLoaded), 10000);
     }
   }, []);
 
@@ -62,8 +86,13 @@ export default function Login() {
   };
 
   const handleGoogleLogin = () => {
-    if (window.google) {
-      window.google.accounts.id.prompt();
+    if (window.google && window.google.accounts) {
+      try {
+        window.google.accounts.id.prompt();
+      } catch (error) {
+        console.error("Google prompt error:", error);
+        toast.error("Google Sign-In error. Please try again.");
+      }
     } else {
       toast.error("Google Sign-In not loaded. Please refresh the page.");
     }
@@ -79,7 +108,7 @@ export default function Login() {
               <BarChart3 className="h-8 w-8 text-primary-600" />
               <span className="text-2xl font-bold text-gradient">Asasy</span>
             </div>
-            <h2 className="text-3xl font-bold tracking-tight text-neutral-900">
+            <h2 className="text-3xl font-bold tracking-tight" style={{ color: '#000' }}>
               Welcome back
             </h2>
             <p className="mt-2 text-sm text-neutral-600">
@@ -279,7 +308,7 @@ export default function Login() {
               <h1 className="text-4xl font-bold mb-6">Welcome to Asasy</h1>
               <p className="text-xl opacity-90 mb-8">
                 Generate comprehensive technology assessment reports with
-                AI-powered insights
+                AI-powered insights and RTTP expert guidance
               </p>
               <div className="grid grid-cols-1 gap-4 max-w-md mx-auto">
                 <div className="bg-white bg-opacity-10 rounded-lg p-4 backdrop-blur-sm">
@@ -300,10 +329,10 @@ export default function Login() {
                 </div>
                 <div className="bg-white bg-opacity-10 rounded-lg p-4 backdrop-blur-sm">
                   <h3 className="font-semibold mb-2 text-white">
-                    Scalable Platform
+                    RTTP Certified
                   </h3>
                   <p className="text-sm opacity-90 text-white">
-                    From startup to enterprise solutions
+                    Expert guidance from certified professionals
                   </p>
                 </div>
               </div>

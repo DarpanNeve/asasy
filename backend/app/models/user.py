@@ -30,6 +30,7 @@ class Subscription(Document):
 class User(Document):
     name: str = Field(..., min_length=1, max_length=100)
     email: EmailStr = Field(..., description="User email address")
+    phone: Optional[str] = Field(None, description="User phone number")
     password_hash: Optional[str] = None
     oauth_provider: OAuthProvider = OAuthProvider.EMAIL
     oauth_id: Optional[str] = None
@@ -37,9 +38,6 @@ class User(Document):
     # Profile
     is_active: bool = True
     is_verified: bool = False
-    phone: Optional[str] = None
-    company: Optional[str] = None
-    job_title: Optional[str] = None
     
     # Subscription & Usage
     reports_generated: int = 0
@@ -92,7 +90,7 @@ class User(Document):
         
         # Free users can generate limited reports
         from app.core.config import settings
-        return self.reports_generated < settings.MAX_REPORTS_FREE_USERS
+        return self.reports_generated < 3  # Updated to 3 free reports
     
     def update_last_login(self):
         """Update last login timestamp"""

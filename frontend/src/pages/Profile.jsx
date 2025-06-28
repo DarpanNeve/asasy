@@ -1,13 +1,16 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { User, Mail, Building, Briefcase, Shield, Calendar, Edit3, Save, X } from 'lucide-react'
+import { User, Mail, Shield, Calendar, Edit3, Save, X, Lock } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import { api } from '../services/api'
 import toast from 'react-hot-toast'
 
 export default function Profile() {
   const { user, updateProfile } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [showPasswordForm, setShowPasswordForm] = useState(false)
+  const [passwordLoading, setPasswordLoading] = useState(false)
 
   const {
     register,
@@ -17,11 +20,19 @@ export default function Profile() {
   } = useForm({
     defaultValues: {
       name: user?.name || '',
-      phone: user?.phone || '',
-      company: user?.company || '',
-      job_title: user?.job_title || ''
+      phone: user?.phone || ''
     }
   })
+
+  const {
+    register: registerPassword,
+    handleSubmit: handlePasswordSubmit,
+    formState: { errors: passwordErrors },
+    reset: resetPassword,
+    watch
+  } = useForm()
+
+  const newPassword = watch('newPassword')
 
   const onSubmit = async (data) => {
     setIsLoading(true)
@@ -36,12 +47,27 @@ export default function Profile() {
     }
   }
 
+  const onPasswordSubmit = async (data) => {
+    setPasswordLoading(true)
+    try {
+      await api.post('/auth/change-password', {
+        current_password: data.currentPassword,
+        new_password: data.newPassword
+      })
+      toast.success('Password changed successfully!')
+      setShowPasswordForm(false)
+      resetPassword()
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to change password')
+    } finally {
+      setPasswordLoading(false)
+    }
+  }
+
   const handleCancel = () => {
     reset({
       name: user?.name || '',
-      phone: user?.phone || '',
-      company: user?.company || '',
-      job_title: user?.job_title || ''
+      phone: user?.phone || ''
     })
     setIsEditing(false)
   }
@@ -155,15 +181,21 @@ export default function Profile() {
                   </p>
                 </div>
 
-                <div>
+                <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-neutral-700 mb-2">
                     Phone Number
                   </label>
                   {isEditing ? (
                     <input
-                      {...register('phone')}
+                      {...register('phone', {
+                        required: 'Phone number is required',
+                        pattern: {
+                          value: /^[+]?[\d\s\-\(\)]{10,}$/,
+                          message: 'Please enter a valid phone number'
+                        }
+                      })}
                       type="tel"
-                      className="input"
+                      className={`input ${errors.phone ? 'input-error' : ''}`}
                       placeholder="Enter your phone number"
                     />
                   ) : (
@@ -171,49 +203,131 @@ export default function Profile() {
                       <span className="text-neutral-900">{user.phone || 'Not provided'}</span>
                     </div>
                   )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-2">
-                    Company
-                  </label>
-                  {isEditing ? (
-                    <div>
-                      <input
-                        {...register('company')}
-                        type="text"
-                        className="input"
-                        placeholder="Enter your company name"
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex items-center p-3 bg-neutral-50 rounded-lg">
-                      <Building className="h-5 w-5 text-neutral-400 mr-3" />
-                      <span className="text-neutral-900">{user.company || 'Not provided'}</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-neutral-700 mb-2">
-                    Job Title
-                  </label>
-                  {isEditing ? (
-                    <input
-                      {...register('job_title')}
-                      type="text"
-                      className="input"
-                      placeholder="Enter your job title"
-                    />
-                  ) : (
-                    <div className="flex items-center p-3 bg-neutral-50 rounded-lg">
-                      <Briefcase className="h-5 w-5 text-neutral-400 mr-3" />
-                      <span className="text-neutral-900">{user.job_title || 'Not provided'}</span>
-                    </div>
+                  {errors.phone && (
+                    <p className="mt-1 text-sm text-error-600">{errors.phone.message}</p>
                   )}
                 </div>
               </div>
             </form>
+          </div>
+
+          {/* Password Change Section */}
+          <div className="card mt-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-neutral-900">Security</h2>
+            </div>
+            
+            {!showPasswordForm ? (
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-neutral-900">Password</p>
+                  <p className="text-sm text-neutral-600">Change your account password</p>
+                </div>
+                <button 
+                  onClick={() => setShowPasswordForm(true)}
+                  className="btn-outline btn-sm"
+                >
+                  <Lock className="h-4 w-4 mr-1" />
+                  Change Password
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handlePasswordSubmit(onPasswordSubmit)} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    Current Password
+                  </label>
+                  <input
+                    {...registerPassword('currentPassword', {
+                      required: 'Current password is required'
+                    })}
+                    type="password"
+                    className={`input ${passwordErrors.currentPassword ? 'input-error' : ''}`}
+                    placeholder="Enter current password"
+                  />
+                  {passwordErrors.currentPassword && (
+                    <p className="mt-1 text-sm text-error-600">
+                      {passwordErrors.currentPassword.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    New Password
+                  </label>
+                  <input
+                    {...registerPassword('newPassword', {
+                      required: 'New password is required',
+                      minLength: {
+                        value: 8,
+                        message: 'Password must be at least 8 characters'
+                      },
+                      pattern: {
+                        value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+                        message: 'Password must contain uppercase, lowercase, and number'
+                      }
+                    })}
+                    type="password"
+                    className={`input ${passwordErrors.newPassword ? 'input-error' : ''}`}
+                    placeholder="Enter new password"
+                  />
+                  {passwordErrors.newPassword && (
+                    <p className="mt-1 text-sm text-error-600">
+                      {passwordErrors.newPassword.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    Confirm New Password
+                  </label>
+                  <input
+                    {...registerPassword('confirmPassword', {
+                      required: 'Please confirm your password',
+                      validate: value => value === newPassword || 'Passwords do not match'
+                    })}
+                    type="password"
+                    className={`input ${passwordErrors.confirmPassword ? 'input-error' : ''}`}
+                    placeholder="Confirm new password"
+                  />
+                  {passwordErrors.confirmPassword && (
+                    <p className="mt-1 text-sm text-error-600">
+                      {passwordErrors.confirmPassword.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="flex space-x-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowPasswordForm(false)
+                      resetPassword()
+                    }}
+                    className="btn-outline"
+                    disabled={passwordLoading}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn-primary"
+                    disabled={passwordLoading}
+                  >
+                    {passwordLoading ? (
+                      <div className="flex items-center">
+                        <div className="spinner mr-2" />
+                        Updating...
+                      </div>
+                    ) : (
+                      'Update Password'
+                    )}
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
 
@@ -250,45 +364,6 @@ export default function Profile() {
                   </span>
                 </div>
               )}
-            </div>
-          </div>
-
-          <div className="card">
-            <h3 className="text-lg font-semibold text-neutral-900 mb-4">Account Security</h3>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium text-neutral-900">Password</p>
-                  <p className="text-sm text-neutral-600">Last updated 30 days ago</p>
-                </div>
-                <button className="btn-outline btn-sm">
-                  Change
-                </button>
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium text-neutral-900">Two-Factor Auth</p>
-                  <p className="text-sm text-neutral-600">Add extra security</p>
-                </div>
-                <button className="btn-outline btn-sm">
-                  Enable
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="card border-error-200">
-            <h3 className="text-lg font-semibold text-error-900 mb-4">Danger Zone</h3>
-            <div className="space-y-4">
-              <div>
-                <p className="font-medium text-error-900">Delete Account</p>
-                <p className="text-sm text-error-600 mb-3">
-                  Permanently delete your account and all data. This action cannot be undone.
-                </p>
-                <button className="btn bg-error-600 text-white hover:bg-error-700 btn-sm">
-                  Delete Account
-                </button>
-              </div>
             </div>
           </div>
         </div>

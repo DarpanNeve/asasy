@@ -22,6 +22,7 @@ from app.schemas.auth import (
     EmailVerification,
     GoogleAuth,
     RefreshTokenRequest,
+    ChangePassword,
 )
 from app.schemas.user import UserResponse
 import secrets
@@ -50,6 +51,7 @@ async def signup(request: Request, user_data: UserSignup):
     user = User(
         name=user_data.name,
         email=user_data.email,
+        phone=user_data.phone,
         password_hash=get_password_hash(user_data.password),
         oauth_provider=OAuthProvider.EMAIL,
         email_verification_code=verification_code,
@@ -203,6 +205,27 @@ async def google_auth(request: Request, google_data: GoogleAuth):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Google token"
         )
+
+
+@router.post("/change-password")
+async def change_password(
+    password_data: ChangePassword,
+    current_user: User = Depends(get_current_user)
+):
+    """Change user password"""
+    # Verify current password
+    if not verify_password(password_data.current_password, current_user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Current password is incorrect"
+        )
+    
+    # Update password
+    current_user.password_hash = get_password_hash(password_data.new_password)
+    current_user.updated_at = datetime.utcnow()
+    await current_user.save()
+    
+    return {"message": "Password changed successfully"}
 
 
 @router.post("/refresh", response_model=TokenResponse)
