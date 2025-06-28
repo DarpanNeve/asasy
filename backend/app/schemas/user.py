@@ -1,10 +1,11 @@
+from beanie import PydanticObjectId
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, Dict, Any
 from datetime import datetime
 from app.models.user import OAuthProvider
 
 class UserResponse(BaseModel):
-    id: str
+    id: PydanticObjectId
     name: str
     email: EmailStr
     oauth_provider: OAuthProvider
