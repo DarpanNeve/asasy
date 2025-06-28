@@ -7,7 +7,10 @@ import logging
 from app.core.rate_limiter import limiter
 
 logger = logging.getLogger(__name__)
-router = APIRouter()
+router = APIRouter(
+    prefix="/contact",
+    tags=["Contact"],
+)
 
 class ContactSubmission(BaseModel):
     name: str = Field(..., min_length=2, max_length=100)
@@ -19,7 +22,7 @@ class ContactSubmission(BaseModel):
 # In production, you'd want to store this in MongoDB
 contact_submissions = []
 
-@router.post("/contact")
+@router.post("/")
 @limiter.limit("5/minute")
 async def submit_contact_form(request: Request, submission: ContactSubmission):
     """Submit contact form for RTTP consultation"""
@@ -57,7 +60,7 @@ async def submit_contact_form(request: Request, submission: ContactSubmission):
             detail="Failed to submit contact form. Please try again."
         )
 
-@router.get("/contact/submissions")
+@router.get("/submissions")
 async def get_contact_submissions():
     """Get all contact submissions (admin only in production)"""
     try:
@@ -75,7 +78,7 @@ async def get_contact_submissions():
             detail="Failed to fetch contact submissions"
         )
 
-@router.get("/contact/export")
+@router.get("/export")
 async def export_contact_submissions():
     """Export contact submissions as CSV (admin only in production)"""
     try:

@@ -10,7 +10,7 @@ router = APIRouter()
 security = HTTPBasic()
 
 ADMIN_USERNAME = "admin"
-ADMIN_PASSWORD = "P@ssw0rd!"
+ADMIN_PASSWORD = "password"
 
 def verify_admin_credentials(credentials: HTTPBasicCredentials = Depends(security)):
     try:

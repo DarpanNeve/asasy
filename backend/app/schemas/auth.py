@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field, validator
+from pydantic import BaseModel, EmailStr, Field, validator,RootModel
 from typing import Optional, Union
 from app.schemas.user import UserResponse
 
@@ -36,7 +36,7 @@ class IncompleteProfileResponse(BaseModel):
     message: str
 
 class GoogleAuthResponse(BaseModel):
-    __root__: Union[TokenResponse, IncompleteProfileResponse]
+    RootModel: Union[TokenResponse, IncompleteProfileResponse]
 
 class RefreshTokenRequest(BaseModel):
     refresh_token: str

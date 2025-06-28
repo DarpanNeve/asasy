@@ -40,55 +40,61 @@ export default function RTTP() {
       area: "Tech Scouting",
       description: "Validate your innovation and position it correctly",
       icon: Lightbulb,
-      details: "Our RTTP experts help you identify market gaps, validate technical feasibility, and position your innovation for maximum commercial impact."
+      details:
+        "Our RTTP experts help you identify market gaps, validate technical feasibility, and position your innovation for maximum commercial impact.",
     },
     {
-      area: "IP Licensing Strategy", 
+      area: "IP Licensing Strategy",
       description: "Help you license to industry, startups, or global players",
       icon: FileText,
-      details: "Develop comprehensive licensing strategies, negotiate terms, and connect with potential licensees across industries and geographies."
+      details:
+        "Develop comprehensive licensing strategies, negotiate terms, and connect with potential licensees across industries and geographies.",
     },
     {
       area: "Startup Formation",
-      description: "Guide business model, cap tables, and investor readiness", 
+      description: "Guide business model, cap tables, and investor readiness",
       icon: TrendingUp,
-      details: "From concept to company - we guide you through business model development, equity structures, and preparing for investment rounds."
+      details:
+        "From concept to company - we guide you through business model development, equity structures, and preparing for investment rounds.",
     },
     {
       area: "Funding Roadmap",
       description: "Map SBIR/VC/CSR/Angel investments and pitch readiness",
       icon: DollarSign,
-      details: "Create strategic funding pathways including government grants, venture capital, corporate partnerships, and angel investments."
+      details:
+        "Create strategic funding pathways including government grants, venture capital, corporate partnerships, and angel investments.",
     },
     {
       area: "Global Market Access",
       description: "Prepare your tech/IP for international commercialisation",
       icon: Globe,
-      details: "Navigate international markets, regulatory requirements, and establish global partnerships for technology transfer."
+      details:
+        "Navigate international markets, regulatory requirements, and establish global partnerships for technology transfer.",
     },
     {
       area: "Compliance & Risk",
       description: "Ensure regulatory and legal due diligence is done right",
       icon: Shield,
-      details: "Comprehensive risk assessment, regulatory compliance guidance, and legal due diligence for technology commercialization."
-    }
+      details:
+        "Comprehensive risk assessment, regulatory compliance guidance, and legal due diligence for technology commercialization.",
+    },
   ];
 
   const benefits = [
     "Builds Trust for Investors",
-    "Increases Commercialisation Success Rate", 
+    "Increases Commercialisation Success Rate",
     "Avoids Legal/IP Mistakes",
     "Access to a Global Network of Tech Transfer Offices",
-    "Helps Academic & Research Institutions Navigate Commercialisation"
+    "Helps Academic & Research Institutions Navigate Commercialisation",
   ];
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     try {
-      const response = await fetch('/contact', {
-        method: 'POST',
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/contact`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           name: data.name,
@@ -97,17 +103,20 @@ export default function RTTP() {
           message: data.message,
         }),
       });
-      
+
       if (!response.ok) {
-        throw new Error('Failed to submit contact form');
+        throw new Error("Failed to submit contact form");
       }
-      
+
       const result = await response.json();
-      toast.success(result.message || 'Thank you for your inquiry! We will get back to you soon.');
+      toast.success(
+        result.message ||
+          "Thank you for your inquiry! We will get back to you soon."
+      );
       reset();
     } catch (error) {
-      console.error('Contact form error:', error);
-      toast.error('Failed to submit your inquiry. Please try again.');
+      console.error("Contact form error:", error);
+      toast.error("Failed to submit your inquiry. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -121,7 +130,9 @@ export default function RTTP() {
           <div className="flex justify-between items-center h-16">
             <Link to="/" className="flex items-center">
               <BarChart3 className="h-8 w-8 text-primary-600" />
-              <span className="ml-2 text-xl font-bold text-gradient">Asasy</span>
+              <span className="ml-2 text-xl font-bold text-gradient">
+                Asasy
+              </span>
             </Link>
             <div className="flex items-center space-x-6">
               <Link to="/" className="text-neutral-600 hover:text-neutral-900">
@@ -147,9 +158,10 @@ export default function RTTP() {
               <span className="text-gradient block">RTTP Experts</span>
             </h1>
             <p className="text-xl text-neutral-600 mb-8 max-w-3xl mx-auto">
-              Access Registered Technology Transfer Professionals (RTTPs) – experts in IP licensing, 
-              tech transfer, and commercialisation. Get the guidance you need to transform your 
-              innovation into commercial success.
+              Access Registered Technology Transfer Professionals (RTTPs) –
+              experts in IP licensing, tech transfer, and commercialisation. Get
+              the guidance you need to transform your innovation into commercial
+              success.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/signup" className="btn-primary text-lg px-8 py-3">
@@ -173,37 +185,54 @@ export default function RTTP() {
                 What Is RTTP?
               </h2>
               <p className="text-lg text-neutral-600 mb-8">
-                RTTP (Registered Technology Transfer Professional) is a global accreditation 
-                by ATTP (Alliance of Technology Transfer Professionals) for experts who 
-                specialize in transforming innovations into commercial success.
+                RTTP (Registered Technology Transfer Professional) is a global
+                accreditation by ATTP (Alliance of Technology Transfer
+                Professionals) for experts who specialize in transforming
+                innovations into commercial success.
               </p>
               <div className="space-y-4">
                 <div className="flex items-start space-x-3">
                   <CheckCircle className="h-6 w-6 text-success-500 mt-1 flex-shrink-0" />
                   <div>
-                    <h3 className="font-semibold text-neutral-900">Intellectual Property Licensing</h3>
-                    <p className="text-neutral-600">Expert guidance on IP strategy and licensing deals</p>
+                    <h3 className="font-semibold text-neutral-900">
+                      Intellectual Property Licensing
+                    </h3>
+                    <p className="text-neutral-600">
+                      Expert guidance on IP strategy and licensing deals
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
                   <CheckCircle className="h-6 w-6 text-success-500 mt-1 flex-shrink-0" />
                   <div>
-                    <h3 className="font-semibold text-neutral-900">Startup Formation & Fundraising</h3>
-                    <p className="text-neutral-600">From concept to company with investor readiness</p>
+                    <h3 className="font-semibold text-neutral-900">
+                      Startup Formation & Fundraising
+                    </h3>
+                    <p className="text-neutral-600">
+                      From concept to company with investor readiness
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
                   <CheckCircle className="h-6 w-6 text-success-500 mt-1 flex-shrink-0" />
                   <div>
-                    <h3 className="font-semibold text-neutral-900">University-Industry Collaborations</h3>
-                    <p className="text-neutral-600">Bridge academic research with industry needs</p>
+                    <h3 className="font-semibold text-neutral-900">
+                      University-Industry Collaborations
+                    </h3>
+                    <p className="text-neutral-600">
+                      Bridge academic research with industry needs
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
                   <CheckCircle className="h-6 w-6 text-success-500 mt-1 flex-shrink-0" />
                   <div>
-                    <h3 className="font-semibold text-neutral-900">Technology Transfer & Commercialisation Strategy</h3>
-                    <p className="text-neutral-600">End-to-end commercialization planning and execution</p>
+                    <h3 className="font-semibold text-neutral-900">
+                      Technology Transfer & Commercialisation Strategy
+                    </h3>
+                    <p className="text-neutral-600">
+                      End-to-end commercialization planning and execution
+                    </p>
                   </div>
                 </div>
               </div>
@@ -215,29 +244,45 @@ export default function RTTP() {
                     <div className="w-16 h-16 bg-primary-600 rounded-full flex items-center justify-center mx-auto mb-4">
                       <Globe className="h-8 w-8 text-white" />
                     </div>
-                    <h3 className="font-semibold text-neutral-900">Global Network</h3>
-                    <p className="text-sm text-neutral-600">Worldwide tech transfer offices</p>
+                    <h3 className="font-semibold text-neutral-900">
+                      Global Network
+                    </h3>
+                    <p className="text-sm text-neutral-600">
+                      Worldwide tech transfer offices
+                    </p>
                   </div>
                   <div className="text-center">
                     <div className="w-16 h-16 bg-secondary-600 rounded-full flex items-center justify-center mx-auto mb-4">
                       <Users className="h-8 w-8 text-white" />
                     </div>
-                    <h3 className="font-semibold text-neutral-900">Expert Network</h3>
-                    <p className="text-sm text-neutral-600">Certified professionals</p>
+                    <h3 className="font-semibold text-neutral-900">
+                      Expert Network
+                    </h3>
+                    <p className="text-sm text-neutral-600">
+                      Certified professionals
+                    </p>
                   </div>
                   <div className="text-center">
                     <div className="w-16 h-16 bg-accent-600 rounded-full flex items-center justify-center mx-auto mb-4">
                       <Building className="h-8 w-8 text-white" />
                     </div>
-                    <h3 className="font-semibold text-neutral-900">Industry Focus</h3>
-                    <p className="text-sm text-neutral-600">Sector-specific expertise</p>
+                    <h3 className="font-semibold text-neutral-900">
+                      Industry Focus
+                    </h3>
+                    <p className="text-sm text-neutral-600">
+                      Sector-specific expertise
+                    </p>
                   </div>
                   <div className="text-center">
                     <div className="w-16 h-16 bg-success-600 rounded-full flex items-center justify-center mx-auto mb-4">
                       <Award className="h-8 w-8 text-white" />
                     </div>
-                    <h3 className="font-semibold text-neutral-900">Proven Results</h3>
-                    <p className="text-sm text-neutral-600">Track record of success</p>
+                    <h3 className="font-semibold text-neutral-900">
+                      Proven Results
+                    </h3>
+                    <p className="text-sm text-neutral-600">
+                      Track record of success
+                    </p>
                   </div>
                 </div>
               </div>
@@ -254,19 +299,21 @@ export default function RTTP() {
               How RTTP Experts Help You
             </h2>
             <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
-              Our certified RTTP professionals provide comprehensive support across 
-              all aspects of technology commercialization
+              Our certified RTTP professionals provide comprehensive support
+              across all aspects of technology commercialization
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((service, index) => {
               const IconComponent = service.icon;
               return (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className="card hover:shadow-lg transition-all duration-200 cursor-pointer"
-                  onClick={() => setSelectedService(selectedService === index ? null : index)}
+                  onClick={() =>
+                    setSelectedService(selectedService === index ? null : index)
+                  }
                 >
                   <div className="text-center">
                     <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-xl mb-6">
@@ -304,11 +351,11 @@ export default function RTTP() {
               Why It Matters
             </h2>
             <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
-              Working with RTTP-certified experts significantly increases your 
+              Working with RTTP-certified experts significantly increases your
               chances of successful technology commercialization
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {benefits.map((benefit, index) => (
               <div key={index} className="flex items-start space-x-4">
@@ -318,13 +365,20 @@ export default function RTTP() {
                   </div>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-neutral-900 mb-2">{benefit}</h3>
+                  <h3 className="font-semibold text-neutral-900 mb-2">
+                    {benefit}
+                  </h3>
                   <p className="text-neutral-600 text-sm">
-                    {index === 0 && "Professional credentials and proven track record build confidence with investors and partners."}
-                    {index === 1 && "RTTP-guided projects have significantly higher success rates in reaching market."}
-                    {index === 2 && "Expert guidance helps you navigate complex IP and legal landscapes safely."}
-                    {index === 3 && "Connect with universities, research institutions, and industry partners worldwide."}
-                    {index === 4 && "Specialized support for academic institutions transitioning research to market."}
+                    {index === 0 &&
+                      "Professional credentials and proven track record build confidence with investors and partners."}
+                    {index === 1 &&
+                      "RTTP-guided projects have significantly higher success rates in reaching market."}
+                    {index === 2 &&
+                      "Expert guidance helps you navigate complex IP and legal landscapes safely."}
+                    {index === 3 &&
+                      "Connect with universities, research institutions, and industry partners worldwide."}
+                    {index === 4 &&
+                      "Specialized support for academic institutions transitioning research to market."}
                   </p>
                 </div>
               </div>
@@ -341,7 +395,8 @@ export default function RTTP() {
               Get Expert Consultation
             </h2>
             <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
-              Ready to commercialize your innovation? Contact our RTTP experts for personalized guidance.
+              Ready to commercialize your innovation? Contact our RTTP experts
+              for personalized guidance.
             </p>
           </div>
 
@@ -365,12 +420,16 @@ export default function RTTP() {
                         },
                       })}
                       type="text"
-                      className={`pl-10 input ${errors.name ? "input-error" : ""}`}
+                      className={`pl-10 input ${
+                        errors.name ? "input-error" : ""
+                      }`}
                       placeholder="Enter your full name"
                     />
                   </div>
                   {errors.name && (
-                    <p className="mt-1 text-sm text-error-600">{errors.name.message}</p>
+                    <p className="mt-1 text-sm text-error-600">
+                      {errors.name.message}
+                    </p>
                   )}
                 </div>
 
@@ -391,12 +450,16 @@ export default function RTTP() {
                         },
                       })}
                       type="tel"
-                      className={`pl-10 input ${errors.phone ? "input-error" : ""}`}
+                      className={`pl-10 input ${
+                        errors.phone ? "input-error" : ""
+                      }`}
                       placeholder="Enter your phone number"
                     />
                   </div>
                   {errors.phone && (
-                    <p className="mt-1 text-sm text-error-600">{errors.phone.message}</p>
+                    <p className="mt-1 text-sm text-error-600">
+                      {errors.phone.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -418,12 +481,16 @@ export default function RTTP() {
                       },
                     })}
                     type="email"
-                    className={`pl-10 input ${errors.email ? "input-error" : ""}`}
+                    className={`pl-10 input ${
+                      errors.email ? "input-error" : ""
+                    }`}
                     placeholder="Enter your email address"
                   />
                 </div>
                 {errors.email && (
-                  <p className="mt-1 text-sm text-error-600">{errors.email.message}</p>
+                  <p className="mt-1 text-sm text-error-600">
+                    {errors.email.message}
+                  </p>
                 )}
               </div>
 
@@ -444,12 +511,16 @@ export default function RTTP() {
                       },
                     })}
                     rows={5}
-                    className={`pl-10 input resize-none ${errors.message ? "input-error" : ""}`}
+                    className={`pl-10 input resize-none ${
+                      errors.message ? "input-error" : ""
+                    }`}
                     placeholder="Describe your technology, innovation, or specific questions about commercialization..."
                   />
                 </div>
                 {errors.message && (
-                  <p className="mt-1 text-sm text-error-600">{errors.message.message}</p>
+                  <p className="mt-1 text-sm text-error-600">
+                    {errors.message.message}
+                  </p>
                 )}
               </div>
 
@@ -486,8 +557,9 @@ export default function RTTP() {
               Need Expert Help to Commercialise Your IP?
             </h2>
             <p className="text-xl text-primary-100 mb-8">
-              Connect with an RTTP-certified expert on our platform. Schedule your first 
-              consultation or bundle it in your report plan for comprehensive support.
+              Connect with an RTTP-certified expert on our platform. Schedule
+              your first consultation or bundle it in your report plan for
+              comprehensive support.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -542,7 +614,10 @@ export default function RTTP() {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/#pricing" className="hover:text-white transition-colors">
+                  <Link
+                    to="/#pricing"
+                    className="hover:text-white transition-colors"
+                  >
                     Pricing
                   </Link>
                 </li>

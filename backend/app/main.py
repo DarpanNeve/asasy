@@ -87,7 +87,7 @@ app.include_router(
 app.include_router(reports.router, prefix="/reports", tags=["Reports"])
 app.include_router(webhooks.router, prefix="/webhooks", tags=["Webhooks"])
 app.include_router(admin.router, prefix="/admin", tags=["Admin"])
-app.include_router(contact.router, tags=["Contact"])
+app.include_router(contact.router)
 
 
 # Root endpoint

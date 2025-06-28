@@ -58,6 +58,7 @@ export default function Subscription() {
 
       // Check if Razorpay is loaded
       if (!window.Razorpay) {
+        console.log("")
         throw new Error("Payment gateway not loaded. Please refresh the page.");
       }
 

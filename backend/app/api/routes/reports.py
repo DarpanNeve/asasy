@@ -71,7 +71,7 @@ async def generate_report(
     
     # If no subscription, use Basic (free) plan
     if not user_plan:
-        user_plan = await Plan.find_one({"name": "Basic", "is_active": True})
+        user_plan = await Plan.find_one({"name": "Starter", "is_active": True})
         if not user_plan:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
