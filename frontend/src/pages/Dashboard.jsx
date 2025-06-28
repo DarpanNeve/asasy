@@ -9,16 +9,19 @@ import {
   Sparkles,
   CreditCard,
   Zap,
+  AlertTriangle,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { api } from "../services/api";
 import toast from "react-hot-toast";
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, refreshUserData } = useAuth();
   const [stats, setStats] = useState({
     reportsGenerated: 0,
     totalReports: 0,
+    reportsRemaining: 0,
+    currentPlan: "Free",
     activeSubscription: null,
     lastReportDate: null,
   });
@@ -46,6 +49,9 @@ export default function Dashboard() {
 
       setStats(statsResponse.data);
       setRecentReports(reportsResponse.data);
+      
+      // Refresh user data to get latest subscription info
+      await refreshUserData();
     } catch (error) {
       console.error("Failed to fetch dashboard data:", error);
     } finally {
@@ -100,6 +106,11 @@ export default function Dashboard() {
     }
   };
 
+  const canGenerateReport = () => {
+    if (stats.reportsRemaining === -1) return true; // Unlimited
+    return stats.reportsRemaining > 0;
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-96">
@@ -120,33 +131,66 @@ export default function Dashboard() {
         </p>
       </div>
 
-      {/* Usage Status */}
-      {!user?.current_subscription_id && (
-        <div className="card bg-warning-50 border-warning-200">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="p-3 bg-warning-100 rounded-lg mr-4">
-                <Zap className="h-6 w-6 text-warning-600" />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-warning-900">
-                  Free Plan Usage
-                </h3>
-                <p className="text-warning-700">
-                  You have used {user?.reports_generated || 0} out of 3 free reports.
-                  {user?.reports_generated >= 3 && (
-                    <span className="ml-1">
-                      Upgrade to generate unlimited reports.
-                    </span>
-                  )}
-                </p>
-              </div>
+      {/* Plan Status */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="card">
+          <div className="flex items-center">
+            <div className="p-3 bg-primary-100 rounded-lg mr-4">
+              <CreditCard className="h-6 w-6 text-primary-600" />
             </div>
-            {user?.reports_generated >= 3 && (
-              <a href="/subscription" className="btn-primary">
-                Upgrade Now
-              </a>
-            )}
+            <div>
+              <h3 className="font-semibold text-neutral-900">Current Plan</h3>
+              <p className="text-primary-600 font-medium">{stats.currentPlan}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="flex items-center">
+            <div className="p-3 bg-success-100 rounded-lg mr-4">
+              <FileText className="h-6 w-6 text-success-600" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-neutral-900">Reports Generated</h3>
+              <p className="text-success-600 font-medium">{stats.reportsGenerated}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="flex items-center">
+            <div className="p-3 bg-warning-100 rounded-lg mr-4">
+              <Zap className="h-6 w-6 text-warning-600" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-neutral-900">Reports Remaining</h3>
+              <p className="text-warning-600 font-medium">
+                {stats.reportsRemaining === -1 ? "Unlimited" : stats.reportsRemaining}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Usage Warning */}
+      {!canGenerateReport() && (
+        <div className="card bg-error-50 border-error-200">
+          <div className="flex items-center">
+            <div className="p-3 bg-error-100 rounded-lg mr-4">
+              <AlertTriangle className="h-6 w-6 text-error-600" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-error-900">
+                Report Limit Reached
+              </h3>
+              <p className="text-error-700">
+                You have used all your available reports for the {stats.currentPlan} plan.
+                Upgrade to generate more reports.
+              </p>
+            </div>
+            <a href="/subscription" className="btn-primary">
+              Upgrade Now
+            </a>
           </div>
         </div>
       )}
@@ -175,11 +219,11 @@ export default function Dashboard() {
               rows={6}
               className="w-full p-6 pr-16 border-2 border-neutral-200 rounded-xl shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none resize-none"
               placeholder="Describe your technology idea here... For example: 'AI-powered smart home automation system with voice control and predictive analytics for energy optimization...'"
-              disabled={generating}
+              disabled={generating || !canGenerateReport()}
             />
             <button
               type="submit"
-              disabled={generating}
+              disabled={generating || !canGenerateReport()}
               className="absolute bottom-4 right-4 p-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
               {generating ? (
@@ -210,11 +254,9 @@ export default function Dashboard() {
               <span>Results in Minutes</span>
             </div>
           </div>
-          {stats.activeSubscription && (
-            <div className="text-sm text-neutral-600">
-              Current Plan: <span className="font-medium text-primary-600">{stats.activeSubscription.plan}</span>
-            </div>
-          )}
+          <div className="text-sm text-neutral-600">
+            Plan: <span className="font-medium text-primary-600">{stats.currentPlan}</span>
+          </div>
         </div>
       </div>
 
@@ -286,8 +328,8 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* Quick Actions */}
-      {!stats.activeSubscription && (
+      {/* Upgrade CTA */}
+      {stats.currentPlan === "Starter" && (
         <div className="card bg-gradient-to-r from-primary-50 to-secondary-50 border-primary-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
@@ -296,10 +338,10 @@ export default function Dashboard() {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-primary-900">
-                  Upgrade for Unlimited Reports
+                  Upgrade for More Reports
                 </h3>
                 <p className="text-primary-700">
-                  Get in-depth analysis, comprehensive due-diligence, and unlimited report generation.
+                  Get unlimited reports, advanced analysis, and priority support.
                 </p>
               </div>
             </div>

@@ -3,7 +3,8 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 import secrets
 import traceback
 
-from app.models.user import User
+from app.models.user import User, Subscription
+from app.models.plan import Plan
 from app.models.report import ReportLog
 
 router = APIRouter()
@@ -33,15 +34,29 @@ async def get_all_users(credentials: HTTPBasicCredentials = Depends(verify_admin
     try:
         users = await User.find_all().to_list()
         
-        return [
-            {
+        result = []
+        for user in users:
+            # Get current plan
+            current_plan = await user.get_current_plan()
+            plan_name = current_plan.name if current_plan else "Free"
+            
+            # Get subscription info
+            subscription = await user.get_current_subscription()
+            subscription_status = subscription.status if subscription else "none"
+            
+            result.append({
                 "id": str(user.id),
                 "name": user.name,
                 "email": user.email,
-                "phone": user.phone or "Not provided"
-            }
-            for user in users
-        ]
+                "phone": user.phone or "Not provided",
+                "plan_name": plan_name,
+                "subscription_status": subscription_status,
+                "reports_generated": user.reports_generated,
+                "created_at": user.created_at.isoformat(),
+                "last_login": user.last_login.isoformat() if user.last_login else None
+            })
+        
+        return result
     except Exception as e:
         traceback.print_exc()
         raise
@@ -69,12 +84,91 @@ async def get_user_reports(user_id: str, credentials: HTTPBasicCredentials = Dep
             
             result.append({
                 "id": str(report.id),
+                "title": report.title,
+                "status": report.status,
+                "plan_name": report.plan_name,
                 "file_url": f"/reports/{report.id}/download" if report.status == "completed" else None,
                 "created_at": report.created_at.isoformat(),
                 "token_usage": token_usage
             })
         
         return result
+    except Exception as e:
+        traceback.print_exc()
+        raise
+
+@router.get("/users/{user_id}/subscriptions")
+async def get_user_subscriptions(user_id: str, credentials: HTTPBasicCredentials = Depends(verify_admin_credentials)):
+    try:
+        subscriptions = await Subscription.find({"user_id": user_id}).sort([("created_at", -1)]).to_list()
+        
+        result = []
+        for subscription in subscriptions:
+            plan = await Plan.get(subscription.plan_id)
+            
+            result.append({
+                "id": str(subscription.id),
+                "plan_name": plan.name if plan else "Unknown",
+                "status": subscription.status,
+                "amount_paid": subscription.amount_paid,
+                "razorpay_payment_id": subscription.razorpay_payment_id,
+                "razorpay_order_id": subscription.razorpay_order_id,
+                "active_until": subscription.active_until.isoformat(),
+                "created_at": subscription.created_at.isoformat()
+            })
+        
+        return result
+    except Exception as e:
+        traceback.print_exc()
+        raise
+
+@router.get("/transactions")
+async def get_all_transactions(credentials: HTTPBasicCredentials = Depends(verify_admin_credentials)):
+    try:
+        subscriptions = await Subscription.find({"status": {"$in": ["active", "cancelled", "expired"]}}).sort([("created_at", -1)]).to_list()
+        
+        result = []
+        for subscription in subscriptions:
+            user = await User.get(subscription.user_id)
+            plan = await Plan.get(subscription.plan_id)
+            
+            result.append({
+                "id": str(subscription.id),
+                "user_name": user.name if user else "Unknown",
+                "user_email": user.email if user else "Unknown",
+                "plan_name": plan.name if plan else "Unknown",
+                "amount_paid": subscription.amount_paid,
+                "status": subscription.status,
+                "razorpay_payment_id": subscription.razorpay_payment_id,
+                "razorpay_order_id": subscription.razorpay_order_id,
+                "active_until": subscription.active_until.isoformat(),
+                "created_at": subscription.created_at.isoformat()
+            })
+        
+        return result
+    except Exception as e:
+        traceback.print_exc()
+        raise
+
+@router.get("/stats")
+async def get_admin_stats(credentials: HTTPBasicCredentials = Depends(verify_admin_credentials)):
+    try:
+        total_users = await User.find_all().count()
+        total_reports = await ReportLog.find_all().count()
+        active_subscriptions = await Subscription.find({"status": "active"}).count()
+        total_revenue = 0
+        
+        # Calculate total revenue
+        paid_subscriptions = await Subscription.find({"amount_paid": {"$exists": True, "$ne": None}}).to_list()
+        total_revenue = sum(sub.amount_paid for sub in paid_subscriptions if sub.amount_paid)
+        
+        return {
+            "total_users": total_users,
+            "total_reports": total_reports,
+            "active_subscriptions": active_subscriptions,
+            "total_revenue": total_revenue,
+            "total_revenue_inr": total_revenue / 100  # Convert paise to rupees
+        }
     except Exception as e:
         traceback.print_exc()
         raise

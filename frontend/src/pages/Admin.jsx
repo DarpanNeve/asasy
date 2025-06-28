@@ -16,7 +16,10 @@ import {
   CreditCard,
   MessageSquare,
   Filter,
-  FileSpreadsheet
+  FileSpreadsheet,
+  DollarSign,
+  TrendingUp,
+  Activity
 } from 'lucide-react'
 import { api } from '../services/api'
 import toast from 'react-hot-toast'
@@ -28,11 +31,14 @@ export default function Admin() {
   const [users, setUsers] = useState([])
   const [selectedUser, setSelectedUser] = useState(null)
   const [userReports, setUserReports] = useState([])
+  const [userSubscriptions, setUserSubscriptions] = useState([])
   const [expandedUsers, setExpandedUsers] = useState(new Set())
   const [searchTerm, setSearchTerm] = useState('')
   const [credentials, setCredentials] = useState({ username: '', password: '' })
   const [activeTab, setActiveTab] = useState('users')
   const [contactSubmissions, setContactSubmissions] = useState([])
+  const [transactions, setTransactions] = useState([])
+  const [stats, setStats] = useState({})
   const [contactSearchTerm, setContactSearchTerm] = useState('')
   const [contactDateFilter, setContactDateFilter] = useState('')
   const navigate = useNavigate()
@@ -44,8 +50,7 @@ export default function Admin() {
     try {
       const basicAuth = btoa(`${credentials.username}:${credentials.password}`)
       
-      // Fetch users with plan information
-      const response = await fetch('/api/admin/users?include=plan', {
+      const response = await fetch('/api/admin/users', {
         headers: {
           'Authorization': `Basic ${basicAuth}`,
           'Content-Type': 'application/json'
@@ -60,8 +65,12 @@ export default function Admin() {
         
         sessionStorage.setItem('adminAuth', basicAuth)
         
-        // Fetch contact submissions
-        await fetchContactSubmissions(basicAuth)
+        // Fetch additional data
+        await Promise.all([
+          fetchContactSubmissions(basicAuth),
+          fetchTransactions(basicAuth),
+          fetchStats(basicAuth)
+        ])
       } else {
         toast.error('Invalid admin credentials')
       }
@@ -91,6 +100,42 @@ export default function Admin() {
     }
   }
 
+  const fetchTransactions = async (auth) => {
+    try {
+      const response = await fetch('/api/admin/transactions', {
+        headers: {
+          'Authorization': `Basic ${auth}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (response.ok) {
+        const transactionsData = await response.json()
+        setTransactions(transactionsData)
+      }
+    } catch (error) {
+      console.error('Error fetching transactions:', error)
+    }
+  }
+
+  const fetchStats = async (auth) => {
+    try {
+      const response = await fetch('/api/admin/stats', {
+        headers: {
+          'Authorization': `Basic ${auth}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (response.ok) {
+        const statsData = await response.json()
+        setStats(statsData)
+      }
+    } catch (error) {
+      console.error('Error fetching stats:', error)
+    }
+  }
+
   const fetchUserReports = async (userId) => {
     try {
       const basicAuth = sessionStorage.getItem('adminAuth')
@@ -104,13 +149,34 @@ export default function Admin() {
       if (response.ok) {
         const reportsData = await response.json()
         setUserReports(reportsData)
-        setSelectedUser(userId)
       } else {
         toast.error('Failed to fetch user reports')
       }
     } catch (error) {
       console.error('Error fetching reports:', error)
       toast.error('Failed to fetch reports')
+    }
+  }
+
+  const fetchUserSubscriptions = async (userId) => {
+    try {
+      const basicAuth = sessionStorage.getItem('adminAuth')
+      const response = await fetch(`/api/admin/users/${userId}/subscriptions`, {
+        headers: {
+          'Authorization': `Basic ${basicAuth}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (response.ok) {
+        const subscriptionsData = await response.json()
+        setUserSubscriptions(subscriptionsData)
+      } else {
+        toast.error('Failed to fetch user subscriptions')
+      }
+    } catch (error) {
+      console.error('Error fetching subscriptions:', error)
+      toast.error('Failed to fetch subscriptions')
     }
   }
 
@@ -121,10 +187,13 @@ export default function Admin() {
       if (selectedUser === userId) {
         setSelectedUser(null)
         setUserReports([])
+        setUserSubscriptions([])
       }
     } else {
       newExpanded.add(userId)
+      setSelectedUser(userId)
       fetchUserReports(userId)
+      fetchUserSubscriptions(userId)
     }
     setExpandedUsers(newExpanded)
   }
@@ -160,39 +229,15 @@ export default function Admin() {
 
   const exportUsersToExcel = async () => {
     try {
-      // Try API endpoint first
-      const basicAuth = sessionStorage.getItem('adminAuth')
-      try {
-        const response = await fetch('/api/users/export?format=excel', {
-          headers: {
-            'Authorization': `Basic ${basicAuth}`
-          }
-        })
-        
-        if (response.ok) {
-          const blob = await response.blob()
-          const url = window.URL.createObjectURL(blob)
-          const link = document.createElement('a')
-          link.href = url
-          link.download = `asasy-users-${new Date().toISOString().split('T')[0]}.xlsx`
-          document.body.appendChild(link)
-          link.click()
-          link.remove()
-          window.URL.revokeObjectURL(url)
-          toast.success('User list exported successfully')
-          return
-        }
-      } catch (apiError) {
-        console.log('API export failed, using client-side export')
-      }
-      
-      // Fallback to client-side export
       const exportData = users.map(user => ({
         'Name': user.name,
         'Email': user.email,
         'Phone': user.phone || 'Not provided',
         'Plan Name': user.plan_name || 'Free',
-        'Registration Date': new Date(user.created_at || Date.now()).toLocaleDateString()
+        'Subscription Status': user.subscription_status || 'none',
+        'Reports Generated': user.reports_generated || 0,
+        'Registration Date': new Date(user.created_at || Date.now()).toLocaleDateString(),
+        'Last Login': user.last_login ? new Date(user.last_login).toLocaleDateString() : 'Never'
       }))
 
       const worksheet = XLSX.utils.json_to_sheet(exportData)
@@ -204,6 +249,33 @@ export default function Admin() {
     } catch (error) {
       console.error('Export error:', error)
       toast.error('Failed to export user list')
+    }
+  }
+
+  const exportTransactions = async () => {
+    try {
+      const exportData = transactions.map(transaction => ({
+        'Transaction ID': transaction.id,
+        'User Name': transaction.user_name,
+        'User Email': transaction.user_email,
+        'Plan Name': transaction.plan_name,
+        'Amount (₹)': transaction.amount_paid ? (transaction.amount_paid / 100).toFixed(2) : '0.00',
+        'Status': transaction.status,
+        'Razorpay Payment ID': transaction.razorpay_payment_id || '',
+        'Razorpay Order ID': transaction.razorpay_order_id || '',
+        'Active Until': new Date(transaction.active_until).toLocaleDateString(),
+        'Created At': new Date(transaction.created_at).toLocaleDateString()
+      }))
+
+      const worksheet = XLSX.utils.json_to_sheet(exportData)
+      const workbook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Transactions')
+      
+      XLSX.writeFile(workbook, `asasy-transactions-${new Date().toISOString().split('T')[0]}.xlsx`)
+      toast.success('Transactions exported successfully')
+    } catch (error) {
+      console.error('Export error:', error)
+      toast.error('Failed to export transactions')
     }
   }
 
@@ -340,7 +412,9 @@ export default function Admin() {
                   setUsers([])
                   setSelectedUser(null)
                   setUserReports([])
+                  setUserSubscriptions([])
                   setContactSubmissions([])
+                  setTransactions([])
                 }}
                 className="btn-outline btn-sm"
               >
@@ -352,6 +426,57 @@ export default function Admin() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="card">
+            <div className="flex items-center">
+              <div className="p-3 bg-primary-100 rounded-lg mr-4">
+                <Users className="h-6 w-6 text-primary-600" />
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-neutral-600">Total Users</h3>
+                <p className="text-2xl font-bold text-neutral-900">{stats.total_users || 0}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="card">
+            <div className="flex items-center">
+              <div className="p-3 bg-success-100 rounded-lg mr-4">
+                <FileText className="h-6 w-6 text-success-600" />
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-neutral-600">Total Reports</h3>
+                <p className="text-2xl font-bold text-neutral-900">{stats.total_reports || 0}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="card">
+            <div className="flex items-center">
+              <div className="p-3 bg-warning-100 rounded-lg mr-4">
+                <Activity className="h-6 w-6 text-warning-600" />
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-neutral-600">Active Subscriptions</h3>
+                <p className="text-2xl font-bold text-neutral-900">{stats.active_subscriptions || 0}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="card">
+            <div className="flex items-center">
+              <div className="p-3 bg-secondary-100 rounded-lg mr-4">
+                <DollarSign className="h-6 w-6 text-secondary-600" />
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-neutral-600">Total Revenue</h3>
+                <p className="text-2xl font-bold text-neutral-900">₹{stats.total_revenue_inr?.toFixed(2) || '0.00'}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Tab Navigation */}
         <div className="mb-8">
           <div className="border-b border-neutral-200">
@@ -366,6 +491,17 @@ export default function Admin() {
               >
                 <Users className="h-5 w-5 inline mr-2" />
                 Users & Reports
+              </button>
+              <button
+                onClick={() => setActiveTab('transactions')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'transactions'
+                    ? 'border-primary-500 text-primary-600'
+                    : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
+                }`}
+              >
+                <CreditCard className="h-5 w-5 inline mr-2" />
+                Transactions ({transactions.length})
               </button>
               <button
                 onClick={() => setActiveTab('contacts')}
@@ -435,14 +571,18 @@ export default function Admin() {
                           </div>
                           <div className="flex items-center">
                             <CreditCard className="h-4 w-4 mr-1" />
-                            {user.plan_name || 'Free Plan'}
+                            {user.plan_name} ({user.subscription_status})
+                          </div>
+                          <div className="flex items-center">
+                            <FileText className="h-4 w-4 mr-1" />
+                            {user.reports_generated} reports
                           </div>
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
                       <span className="text-sm text-neutral-500">
-                        {expandedUsers.has(user.id) ? 'Hide' : 'View All'} Reports
+                        {expandedUsers.has(user.id) ? 'Hide' : 'View'} Details
                       </span>
                       {expandedUsers.has(user.id) ? (
                         <ChevronDown className="h-5 w-5 text-neutral-400" />
@@ -452,105 +592,228 @@ export default function Admin() {
                     </div>
                   </div>
 
-                  {/* User Reports */}
+                  {/* User Details */}
                   {expandedUsers.has(user.id) && selectedUser === user.id && (
                     <div className="mt-6 pt-6 border-t border-neutral-200">
-                      <div className="flex items-center justify-between mb-4">
-                        <h4 className="text-lg font-semibold text-neutral-900 flex items-center">
+                      {/* Subscriptions */}
+                      <div className="mb-6">
+                        <h4 className="text-lg font-semibold text-neutral-900 mb-4 flex items-center">
+                          <CreditCard className="h-5 w-5 mr-2" />
+                          Subscriptions ({userSubscriptions.length})
+                        </h4>
+                        {userSubscriptions.length === 0 ? (
+                          <p className="text-neutral-600">No subscriptions found</p>
+                        ) : (
+                          <div className="space-y-3">
+                            {userSubscriptions.map((subscription) => (
+                              <div key={subscription.id} className="bg-neutral-50 rounded-lg p-4">
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                                  <div>
+                                    <span className="font-medium text-neutral-900">Plan:</span>
+                                    <p className="text-neutral-600">{subscription.plan_name}</p>
+                                  </div>
+                                  <div>
+                                    <span className="font-medium text-neutral-900">Status:</span>
+                                    <p className={`text-sm font-medium ${
+                                      subscription.status === 'active' ? 'text-success-600' :
+                                      subscription.status === 'cancelled' ? 'text-error-600' :
+                                      'text-warning-600'
+                                    }`}>
+                                      {subscription.status}
+                                    </p>
+                                  </div>
+                                  <div>
+                                    <span className="font-medium text-neutral-900">Amount:</span>
+                                    <p className="text-neutral-600">
+                                      ₹{subscription.amount_paid ? (subscription.amount_paid / 100).toFixed(2) : '0.00'}
+                                    </p>
+                                  </div>
+                                  <div>
+                                    <span className="font-medium text-neutral-900">Active Until:</span>
+                                    <p className="text-neutral-600">
+                                      {new Date(subscription.active_until).toLocaleDateString()}
+                                    </p>
+                                  </div>
+                                </div>
+                                {subscription.razorpay_payment_id && (
+                                  <div className="mt-2 text-xs text-neutral-500">
+                                    Payment ID: {subscription.razorpay_payment_id}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Reports */}
+                      <div>
+                        <h4 className="text-lg font-semibold text-neutral-900 mb-4 flex items-center">
                           <FileText className="h-5 w-5 mr-2" />
                           Reports ({userReports.length})
                         </h4>
-                      </div>
-
-                      {userReports.length === 0 ? (
-                        <div className="text-center py-8">
-                          <FileText className="h-12 w-12 text-neutral-400 mx-auto mb-4" />
+                        {userReports.length === 0 ? (
                           <p className="text-neutral-600">No reports generated yet</p>
-                        </div>
-                      ) : (
-                        <div className="space-y-4">
-                          {userReports.map((report) => (
-                            <div key={report.id} className="bg-neutral-50 rounded-lg p-4">
-                              <div className="flex items-center justify-between">
-                                <div className="flex-1">
-                                  <div className="flex items-center space-x-4 mb-2">
-                                    <div className="flex items-center">
-                                      <Hash className="h-4 w-4 text-neutral-400 mr-1" />
-                                      <span className="text-sm font-mono text-neutral-600">
-                                        {report.id.slice(-8)}
+                        ) : (
+                          <div className="space-y-4">
+                            {userReports.map((report) => (
+                              <div key={report.id} className="bg-neutral-50 rounded-lg p-4">
+                                <div className="flex items-center justify-between">
+                                  <div className="flex-1">
+                                    <div className="flex items-center space-x-4 mb-2">
+                                      <div className="flex items-center">
+                                        <Hash className="h-4 w-4 text-neutral-400 mr-1" />
+                                        <span className="text-sm font-mono text-neutral-600">
+                                          {report.id.slice(-8)}
+                                        </span>
+                                      </div>
+                                      <div className="flex items-center">
+                                        <Calendar className="h-4 w-4 text-neutral-400 mr-1" />
+                                        <span className="text-sm text-neutral-600">
+                                          {new Date(report.created_at).toLocaleDateString()}
+                                        </span>
+                                      </div>
+                                      <span className="text-xs bg-primary-100 text-primary-800 px-2 py-1 rounded">
+                                        {report.plan_name}
                                       </span>
                                     </div>
-                                    <div className="flex items-center">
-                                      <Calendar className="h-4 w-4 text-neutral-400 mr-1" />
-                                      <span className="text-sm text-neutral-600">
-                                        {new Date(report.created_at).toLocaleDateString()}
-                                      </span>
+                                    
+                                    {/* Token Usage */}
+                                    <div className="bg-white rounded p-3 mb-3">
+                                      <h5 className="text-sm font-medium text-neutral-900 mb-2">
+                                        ChatGPT Token Usage
+                                      </h5>
+                                      <div className="grid grid-cols-3 gap-4 text-sm">
+                                        <div>
+                                          <span className="text-neutral-600">Prompt:</span>
+                                          <span className="ml-2 font-medium text-neutral-900">
+                                            {report.token_usage.prompt.toLocaleString()}
+                                          </span>
+                                        </div>
+                                        <div>
+                                          <span className="text-neutral-600">Completion:</span>
+                                          <span className="ml-2 font-medium text-neutral-900">
+                                            {report.token_usage.completion.toLocaleString()}
+                                          </span>
+                                        </div>
+                                        <div>
+                                          <span className="text-neutral-600">Total:</span>
+                                          <span className="ml-2 font-semibold text-primary-600">
+                                            {report.token_usage.total.toLocaleString()}
+                                          </span>
+                                        </div>
+                                      </div>
                                     </div>
                                   </div>
                                   
-                                  {/* Token Usage */}
-                                  <div className="bg-white rounded p-3 mb-3">
-                                    <h5 className="text-sm font-medium text-neutral-900 mb-2">
-                                      ChatGPT Token Usage
-                                    </h5>
-                                    <div className="grid grid-cols-3 gap-4 text-sm">
-                                      <div>
-                                        <span className="text-neutral-600">Prompt:</span>
-                                        <span className="ml-2 font-medium text-neutral-900">
-                                          {report.token_usage.prompt.toLocaleString()}
-                                        </span>
-                                      </div>
-                                      <div>
-                                        <span className="text-neutral-600">Completion:</span>
-                                        <span className="ml-2 font-medium text-neutral-900">
-                                          {report.token_usage.completion.toLocaleString()}
-                                        </span>
-                                      </div>
-                                      <div>
-                                        <span className="text-neutral-600">Total:</span>
-                                        <span className="ml-2 font-semibold text-primary-600">
-                                          {report.token_usage.total.toLocaleString()}
-                                        </span>
-                                      </div>
-                                    </div>
+                                  <div className="ml-4">
+                                    {report.file_url ? (
+                                      <button
+                                        onClick={() => handleDownloadReport(report.id)}
+                                        className="btn-outline btn-sm"
+                                      >
+                                        <Download className="h-4 w-4 mr-1" />
+                                        Download PDF
+                                      </button>
+                                    ) : (
+                                      <span className="text-sm text-neutral-500 px-3 py-2 bg-neutral-200 rounded">
+                                        {report.status}
+                                      </span>
+                                    )}
                                   </div>
                                 </div>
-                                
-                                <div className="ml-4">
-                                  {report.file_url ? (
-                                    <button
-                                      onClick={() => handleDownloadReport(report.id)}
-                                      className="btn-outline btn-sm"
-                                    >
-                                      <Download className="h-4 w-4 mr-1" />
-                                      Download PDF
-                                    </button>
-                                  ) : (
-                                    <span className="text-sm text-neutral-500 px-3 py-2 bg-neutral-200 rounded">
-                                      Processing...
-                                    </span>
-                                  )}
-                                </div>
                               </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
               ))}
             </div>
+          </>
+        )}
 
-            {filteredUsers.length === 0 && (
-              <div className="text-center py-12">
-                <Users className="h-12 w-12 text-neutral-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-neutral-900 mb-2">No users found</h3>
-                <p className="text-neutral-600">
-                  {searchTerm ? 'Try adjusting your search criteria' : 'No users have registered yet'}
-                </p>
+        {activeTab === 'transactions' && (
+          <>
+            <div className="mb-8">
+              <div className="flex justify-end">
+                <button
+                  onClick={exportTransactions}
+                  className="btn-primary flex items-center"
+                >
+                  <Download className="h-4 w-4 mr-1" />
+                  Export Transactions
+                </button>
               </div>
-            )}
+            </div>
+
+            <div className="card overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-neutral-200">
+                  <thead className="bg-neutral-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
+                        User
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
+                        Plan
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
+                        Amount
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
+                        Date
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
+                        Payment ID
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-neutral-200">
+                    {transactions.map((transaction) => (
+                      <tr key={transaction.id}>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div>
+                            <div className="text-sm font-medium text-neutral-900">
+                              {transaction.user_name}
+                            </div>
+                            <div className="text-sm text-neutral-500">
+                              {transaction.user_email}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900">
+                          {transaction.plan_name}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900">
+                          ₹{transaction.amount_paid ? (transaction.amount_paid / 100).toFixed(2) : '0.00'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                            transaction.status === 'active' ? 'bg-success-100 text-success-800' :
+                            transaction.status === 'cancelled' ? 'bg-error-100 text-error-800' :
+                            'bg-warning-100 text-warning-800'
+                          }`}>
+                            {transaction.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">
+                          {new Date(transaction.created_at).toLocaleDateString()}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 font-mono">
+                          {transaction.razorpay_payment_id?.slice(-8) || 'N/A'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </>
         )}
 

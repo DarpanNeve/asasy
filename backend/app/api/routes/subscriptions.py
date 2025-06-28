@@ -134,24 +134,31 @@ async def verify_payment(
                 detail="Plan not found"
             )
         
+        # Cancel existing subscription if any
         if current_user.current_subscription_id:
             existing_subscription = await Subscription.get(current_user.current_subscription_id)
             if existing_subscription:
                 existing_subscription.status = SubscriptionStatus.CANCELLED
+                existing_subscription.updated_at = datetime.utcnow()
                 await existing_subscription.save()
         
+        # Create new subscription
         subscription = Subscription(
             user_id=str(current_user.id),
             plan_id=str(plan.id),
             razorpay_payment_id=payment_data.razorpay_payment_id,
             razorpay_subscription_id=payment_data.razorpay_order_id,
+            razorpay_order_id=payment_data.razorpay_order_id,
             status=SubscriptionStatus.ACTIVE,
-            active_until=datetime.utcnow() + timedelta(days=plan.duration_days)
+            active_until=datetime.utcnow() + timedelta(days=plan.duration_days),
+            amount_paid=payment["amount"]
         )
         
         await subscription.insert()
         
+        # Update user's current subscription
         current_user.current_subscription_id = str(subscription.id)
+        current_user.updated_at = datetime.utcnow()
         await current_user.save()
         
         return {"message": "Subscription activated successfully"}
@@ -205,6 +212,7 @@ async def cancel_subscription(current_user: User = Depends(get_current_user)):
         await subscription.save()
         
         current_user.current_subscription_id = None
+        current_user.updated_at = datetime.utcnow()
         await current_user.save()
         
         return {"message": "Subscription cancelled successfully"}

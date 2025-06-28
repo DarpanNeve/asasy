@@ -32,7 +32,6 @@ export const AuthProvider = ({ children }) => {
       setUser(response.data)
     } catch (error) {
       console.error('Failed to fetch user:', error)
-      // Don't logout on fetch error, token might still be valid
       if (error.response?.status === 401) {
         logout()
       }
@@ -88,14 +87,13 @@ export const AuthProvider = ({ children }) => {
 
     const { access_token, refresh_token, user: userData } = response.data
     
-    // Store tokens in cookies
     Cookies.set('access_token', access_token, { 
-      expires: 1, // 1 day
+      expires: 1,
       secure: window.location.protocol === 'https:',
       sameSite: 'strict'
     })
     Cookies.set('refresh_token', refresh_token, { 
-      expires: 7, // 7 days
+      expires: 7,
       secure: window.location.protocol === 'https:',
       sameSite: 'strict'
     })
@@ -125,7 +123,6 @@ export const AuthProvider = ({ children }) => {
         credential,
       })
 
-      // Check if profile completion is needed
       if (response.data.profile_incomplete) {
         return {
           profile_incomplete: true,
@@ -187,14 +184,12 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      // Only call logout endpoint if we have a token
       const token = Cookies.get('access_token')
       if (token) {
         await api.post('/auth/logout')
       }
     } catch (error) {
       console.error('Logout error:', error)
-      // Continue with logout even if API call fails
     } finally {
       Cookies.remove('access_token')
       Cookies.remove('refresh_token')
@@ -209,19 +204,28 @@ export const AuthProvider = ({ children }) => {
       setUser(response.data)
       return response.data
     } catch (error) {
-      // Handle 401 Unauthorized - try to refresh token
       if (error.response?.status === 401) {
         try {
           await refreshToken()
-          // Retry the update after token refresh
           const response = await api.patch('/users/me', profileData)
           setUser(response.data)
           return response.data
         } catch (refreshError) {
-          // If refresh fails, redirect to profile completion
           throw new Error("Phone number is required. Please complete your profile.")
         }
       }
+      throw error
+    }
+  }
+
+  // Function to refresh user data (including subscription status)
+  const refreshUserData = async () => {
+    try {
+      const response = await api.get('/users/me')
+      setUser(response.data)
+      return response.data
+    } catch (error) {
+      console.error('Failed to refresh user data:', error)
       throw error
     }
   }
@@ -237,6 +241,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     updateProfile,
     refreshToken,
+    refreshUserData,
     isAuthenticated: !!user,
   }
 

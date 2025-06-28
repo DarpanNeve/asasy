@@ -16,15 +16,19 @@ import { useApp } from "../contexts/AppContext";
 import toast from "react-hot-toast";
 
 export default function Subscription() {
-  const { user } = useAuth();
+  const { user, refreshUserData } = useAuth();
   const { plans, subscription: currentSubscription, fetchSubscription, updateSubscription } = useApp();
   const [loading, setLoading] = useState(true);
   const [processingPlan, setProcessingPlan] = useState(null);
+  const [userStats, setUserStats] = useState(null);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        await fetchSubscription();
+        await Promise.all([
+          fetchSubscription(),
+          fetchUserStats()
+        ]);
       } catch (error) {
         console.error("Failed to load subscription data:", error);
       } finally {
@@ -33,6 +37,15 @@ export default function Subscription() {
     };
     loadData();
   }, []);
+
+  const fetchUserStats = async () => {
+    try {
+      const response = await api.get('/users/me/stats');
+      setUserStats(response.data);
+    } catch (error) {
+      console.error('Failed to fetch user stats:', error);
+    }
+  };
 
   const handleSubscribe = async (plan) => {
     if (!user) {
@@ -58,7 +71,6 @@ export default function Subscription() {
 
       // Check if Razorpay is loaded
       if (!window.Razorpay) {
-        console.log("")
         throw new Error("Payment gateway not loaded. Please refresh the page.");
       }
 
@@ -81,8 +93,12 @@ export default function Subscription() {
             
             toast.success("Subscription activated successfully!");
             
-            // Refresh subscription data
-            await fetchSubscription();
+            // Refresh all data
+            await Promise.all([
+              fetchSubscription(),
+              fetchUserStats(),
+              refreshUserData()
+            ]);
           } catch (error) {
             console.error("Payment verification failed:", error);
             toast.error("Payment verification failed. Please contact support.");
@@ -126,7 +142,11 @@ export default function Subscription() {
     try {
       await api.delete("/subscriptions/cancel");
       toast.success("Subscription cancelled successfully");
-      await fetchSubscription();
+      await Promise.all([
+        fetchSubscription(),
+        fetchUserStats(),
+        refreshUserData()
+      ]);
     } catch (error) {
       console.error("Cancel subscription error:", error);
       toast.error(error.response?.data?.detail || "Failed to cancel subscription");
@@ -135,13 +155,13 @@ export default function Subscription() {
 
   const getPlanIcon = (planName) => {
     switch (planName.toLowerCase()) {
-      case "basic":
+      case "starter":
         return Zap;
-      case "intermediate":
+      case "explorer":
         return Crown;
-      case "advanced":
+      case "professional":
         return Users;
-      case "comprehensive":
+      case "enterprise":
         return Shield;
       default:
         return Shield;
@@ -182,7 +202,52 @@ export default function Subscription() {
         </p>
       </div>
 
-      {/* Current Subscription Status */}
+      {/* Current Plan Status */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="card">
+          <div className="flex items-center">
+            <div className="p-3 bg-primary-100 rounded-lg mr-4">
+              <CreditCard className="h-6 w-6 text-primary-600" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-neutral-900">Current Plan</h3>
+              <p className="text-primary-600 font-medium">
+                {userStats?.current_plan || "Free"}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="flex items-center">
+            <div className="p-3 bg-success-100 rounded-lg mr-4">
+              <Zap className="h-6 w-6 text-success-600" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-neutral-900">Reports Remaining</h3>
+              <p className="text-success-600 font-medium">
+                {userStats?.reports_remaining === -1 ? "Unlimited" : userStats?.reports_remaining || 0}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="flex items-center">
+            <div className="p-3 bg-warning-100 rounded-lg mr-4">
+              <AlertCircle className="h-6 w-6 text-warning-600" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-neutral-900">Status</h3>
+              <p className="text-warning-600 font-medium">
+                {currentSubscription?.status === "active" ? "Active" : "Free Plan"}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Current Subscription Details */}
       {currentSubscription && (
         <div className="card bg-primary-50 border-primary-200">
           <div className="flex items-center justify-between">
@@ -192,7 +257,7 @@ export default function Subscription() {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-primary-900">
-                  Current Plan: {currentSubscription.plan_name}
+                  Current Subscription: {currentSubscription.plan_name}
                 </h3>
                 <p className="text-primary-700">
                   {currentSubscription.status === "active"
@@ -211,28 +276,6 @@ export default function Subscription() {
                 Cancel Subscription
               </button>
             )}
-          </div>
-        </div>
-      )}
-
-      {/* Free Usage Status */}
-      {!currentSubscription && (
-        <div className="card bg-warning-50 border-warning-200">
-          <div className="flex items-center">
-            <div className="p-3 bg-warning-100 rounded-lg mr-4">
-              <Zap className="h-6 w-6 text-warning-600" />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-warning-900">
-                Free Plan
-              </h3>
-              <p className="text-warning-700">
-                You have generated {user?.reports_generated || 0} out of 1 free
-                report.
-                {user?.reports_generated >= 1 &&
-                  " Upgrade to generate unlimited reports."}
-              </p>
-            </div>
           </div>
         </div>
       )}
@@ -400,7 +443,7 @@ export default function Subscription() {
               Is there a free trial?
             </h3>
             <p className="text-neutral-600">
-              Yes! Every new user gets one free report to try our service. No credit card required.
+              Yes! Every new user gets free reports to try our service. No credit card required.
               You can upgrade to a paid plan anytime to unlock unlimited reports.
             </p>
           </div>
