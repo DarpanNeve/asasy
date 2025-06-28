@@ -21,6 +21,10 @@ async def get_plans():
             duration_days=plan.duration_days,
             reports_limit=plan.reports_limit,
             features=plan.features,
+            report_formats=plan.report_formats,
+            sections=plan.sections,
+            report_pages=plan.report_pages,
+            report_type=plan.report_type,
             is_popular=plan.is_popular,
             highlight_text=plan.highlight_text,
             badge_text=plan.badge_text
@@ -47,6 +51,10 @@ async def get_plan(plan_id: str):
         duration_days=plan.duration_days,
         reports_limit=plan.reports_limit,
         features=plan.features,
+        report_formats=plan.report_formats,
+        sections=plan.sections,
+        report_pages=plan.report_pages,
+        report_type=plan.report_type,
         is_popular=plan.is_popular,
         highlight_text=plan.highlight_text,
         badge_text=plan.badge_text

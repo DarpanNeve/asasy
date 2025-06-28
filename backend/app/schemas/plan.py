@@ -10,6 +10,10 @@ class PlanResponse(BaseModel):
     duration_days: int
     reports_limit: Optional[int]
     features: List[str]
+    report_formats: List[int]
+    sections: List[str]
+    report_pages: str
+    report_type: str
     is_popular: bool
     highlight_text: Optional[str] = None
     badge_text: Optional[str] = None

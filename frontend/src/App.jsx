@@ -13,6 +13,7 @@ import Profile from './pages/Profile'
 import Subscription from './pages/Subscription'
 import Reports from './pages/Reports'
 import Home from './pages/Home'
+import RTTP from './pages/RTTP'
 import './index.css'
 
 const queryClient = new QueryClient({
@@ -38,6 +39,7 @@ function App() {
                   <Route path="/" element={<Home />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
+                  <Route path="/rttp" element={<RTTP />} />
                   
                   {/* Protected routes */}
                   <Route path="/dashboard" element={

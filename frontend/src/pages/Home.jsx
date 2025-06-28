@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import {
@@ -12,6 +12,12 @@ import {
   Star,
   Send,
   Sparkles,
+  Lightbulb,
+  Target,
+  TrendingUp,
+  Award,
+  Globe,
+  BookOpen,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { api } from "../services/api";
@@ -21,6 +27,8 @@ export default function Home() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const {
     register,
@@ -28,6 +36,22 @@ export default function Home() {
     formState: { errors },
     reset,
   } = useForm();
+
+  useEffect(() => {
+    fetchPlans();
+  }, []);
+
+  const fetchPlans = async () => {
+    try {
+      const response = await api.get("/plans");
+      setPlans(response.data);
+    } catch (error) {
+      console.error("Failed to fetch plans:", error);
+      toast.error("Failed to load subscription plans");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const features = [
     {
@@ -44,71 +68,55 @@ export default function Home() {
     },
     {
       icon: Shield,
-      title: "Secure & Reliable",
+      title: "RTTP Certified",
       description:
-        "Enterprise-grade security with data encryption and reliable cloud infrastructure.",
+        "Work with Registered Technology Transfer Professionals for expert IP commercialization guidance.",
     },
     {
       icon: Users,
-      title: "Team Collaboration",
+      title: "Global Network",
       description:
-        "Share reports with your team and collaborate on technology assessments seamlessly.",
+        "Access to worldwide network of technology transfer offices and IP licensing experts.",
     },
   ];
 
-  const pricingPlans = [
+  const commercializationSteps = [
     {
-      name: "Basic",
-      price: "Free",
-      period: "",
-      description: "Perfect for getting started",
-      features: [
-        "1 free AI-powered report",
-        "Basic PDF export",
-        "Email support",
-        "Rapid snapshot analysis",
-      ],
-      popular: false,
+      step: 1,
+      title: "Identify & Protect Your Innovation",
+      description: "Draft your invention. File for a Research Paper, Patent, Design, or Copyright. Ensure IP is legally protected before disclosure.",
+      icon: Lightbulb
     },
     {
-      name: "Intermediate",
-      price: "₹999",
-      period: "/month",
-      description: "In-depth feasibility analysis",
-      features: [
-        "10 AI-powered reports",
-        "In-depth feasibility analysis",
-        "Technical readiness assessment",
-        "Priority support",
-      ],
-      popular: true,
+      step: 2,
+      title: "Conduct a Technology Assessment",
+      description: "Analyse technical feasibility. Study market demand, competition, and IP strength. Choose from 4 report formats (Basic to Comprehensive).",
+      icon: FileText
     },
     {
-      name: "Advanced",
-      price: "₹2,999",
-      period: "/month",
-      description: "Comprehensive due-diligence",
-      features: [
-        "25 AI-powered reports",
-        "Comprehensive due-diligence",
-        "TRL assessment",
-        "Commercialization options",
-      ],
-      popular: false,
+      step: 3,
+      title: "Evaluate Commercial Potential",
+      description: "Who will use it? What problems does it solve? What's the ROI? Which countries/industries are best suited?",
+      icon: Target
     },
     {
-      name: "Comprehensive",
-      price: "₹9,999",
-      period: "/month",
-      description: "Full commercialization blueprint",
-      features: [
-        "Unlimited reports",
-        "Full commercialization blueprint",
-        "Global FTO analysis",
-        "24/7 dedicated support",
-      ],
-      popular: false,
+      step: 4,
+      title: "Choose a Commercialisation Path",
+      description: "Licensing to industry, Startup/Spin-off creation, Joint Ventures & Partnerships, Government or CSR Integration.",
+      icon: TrendingUp
     },
+    {
+      step: 5,
+      title: "Go-to-Market & Launch",
+      description: "Prototype and test. Secure regulatory approvals. Develop marketing and customer strategy. Launch MVP.",
+      icon: Award
+    },
+    {
+      step: 6,
+      title: "Scale, Monetise & Monitor",
+      description: "Track performance. Optimize business model. Expand IP portfolio globally. License to more territories or sectors.",
+      icon: Globe
+    }
   ];
 
   const handleGenerateReport = async (data) => {
@@ -129,7 +137,7 @@ export default function Home() {
       navigate("/dashboard");
     } catch (error) {
       if (error.response?.status === 403) {
-        toast.error("You've used your free report. Please upgrade to continue.");
+        toast.error("You've reached your report limit. Please upgrade to continue.");
         navigate("/subscription");
       } else {
         toast.error(error.response?.data?.detail || "Failed to generate report");
@@ -159,11 +167,23 @@ export default function Home() {
                 Features
               </a>
               <a
+                href="#journey"
+                className="text-neutral-600 hover:text-neutral-900 transition-colors"
+              >
+                IP Journey
+              </a>
+              <a
                 href="#pricing"
                 className="text-neutral-600 hover:text-neutral-900 transition-colors"
               >
                 Pricing
               </a>
+              <Link
+                to="/rttp"
+                className="text-neutral-600 hover:text-neutral-900 transition-colors"
+              >
+                RTTP Experts
+              </Link>
               {user ? (
                 <Link
                   to="/dashboard"
@@ -194,12 +214,12 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-6xl font-bold text-neutral-900 mb-6">
-              AI-Powered Technology
-              <span className="text-gradient block">Assessment Reports</span>
+              AI-Powered IP
+              <span className="text-gradient block">Commercialization Reports</span>
             </h1>
             <p className="text-xl text-neutral-600 mb-8 max-w-3xl mx-auto">
-              Describe your technology idea and get a comprehensive assessment report in minutes.
-              Start with a free report - no credit card required.
+              Transform your innovation into commercial success. Get comprehensive technology assessment 
+              reports with expert RTTP guidance. Start with a free report - no credit card required.
             </p>
           </div>
 
@@ -217,7 +237,7 @@ export default function Home() {
                   })}
                   rows={6}
                   className="w-full p-6 pr-16 border-2 border-neutral-200 rounded-2xl shadow-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none resize-none text-lg"
-                  placeholder="Describe your technology idea, innovation, or concept here... For example: 'AI-powered smart home automation system with voice control and predictive analytics for energy optimization...'"
+                  placeholder="Describe your technology innovation, patent idea, or research concept here... For example: 'AI-powered smart home automation system with voice control and predictive analytics for energy optimization...'"
                   disabled={isGenerating}
                 />
                 <button
@@ -269,7 +289,7 @@ export default function Home() {
               </div>
               <div className="flex items-center">
                 <Shield className="h-4 w-4 text-success-500 mr-2" />
-                <span>Secure & Private</span>
+                <span>RTTP Certified</span>
               </div>
               <div className="flex items-center">
                 <Zap className="h-4 w-4 text-warning-500 mr-2" />
@@ -285,11 +305,11 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
-              Powerful Features for Modern Teams
+              Powerful Features for IP Commercialization
             </h2>
             <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
               Everything you need to conduct thorough technology assessments and
-              make data-driven decisions.
+              make data-driven commercialization decisions.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -311,82 +331,169 @@ export default function Home() {
         </div>
       </section>
 
+      {/* IP Commercialization Journey */}
+      <section id="journey" className="py-20 bg-neutral-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
+              IP Commercialisation Journey
+            </h2>
+            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
+              Follow our proven 6-step process to transform your innovation into commercial success
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {commercializationSteps.map((step, index) => {
+              const IconComponent = step.icon;
+              return (
+                <div key={index} className="card hover:shadow-lg transition-shadow">
+                  <div className="flex items-start space-x-4">
+                    <div className="flex-shrink-0">
+                      <div className="w-12 h-12 bg-primary-600 text-white rounded-full flex items-center justify-center font-bold text-lg">
+                        {step.step}
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center mb-3">
+                        <IconComponent className="h-6 w-6 text-primary-600 mr-2" />
+                        <h3 className="text-lg font-semibold text-neutral-900">
+                          {step.title}
+                        </h3>
+                      </div>
+                      <p className="text-neutral-600 text-sm leading-relaxed">
+                        {step.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 bg-neutral-50">
+      <section id="pricing" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
               Choose Your Analysis Depth
             </h2>
             <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
-              From quick snapshots to comprehensive blueprints. Start free and upgrade as needed.
+              From basic assessments to comprehensive IP commercialization blueprints. 
+              Start free and upgrade as needed.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {pricingPlans.map((plan, index) => (
-              <div
-                key={index}
-                className={`card relative ${
-                  plan.popular ? "ring-2 ring-primary-500 scale-105" : ""
-                }`}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-primary-600 text-white px-4 py-1 rounded-full text-sm font-medium">
-                      Most Popular
-                    </span>
+          
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {plans.map((plan, index) => (
+                <div
+                  key={plan.id}
+                  className={`card relative ${
+                    plan.is_popular ? "ring-2 ring-primary-500 scale-105" : ""
+                  }`}
+                >
+                  {plan.is_popular && (
+                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                      <span className="bg-primary-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+                        {plan.highlight_text || "Most Popular"}
+                      </span>
+                    </div>
+                  )}
+                  
+                  {plan.badge_text && !plan.is_popular && (
+                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                      <span className="bg-secondary-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+                        {plan.badge_text}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="text-center">
+                    <h3 className="text-xl font-semibold text-neutral-900 mb-2">
+                      {plan.name}
+                    </h3>
+                    <div className="mb-4">
+                      {plan.price_inr === 0 ? (
+                        <span className="text-4xl font-bold text-neutral-900">Free</span>
+                      ) : (
+                        <>
+                          <span className="text-4xl font-bold text-neutral-900">
+                            ₹{Math.round(plan.price_inr / 100)}
+                          </span>
+                          <span className="text-neutral-600">/month</span>
+                        </>
+                      )}
+                    </div>
+                    <p className="text-neutral-600 mb-6">{plan.description}</p>
+                    
+                    {/* Report Formats */}
+                    <div className="mb-4 p-3 bg-primary-50 rounded-lg">
+                      <p className="text-sm font-medium text-primary-900 mb-1">
+                        Report Formats: {plan.report_formats.join(", ")}
+                      </p>
+                      <p className="text-xs text-primary-700">
+                        {plan.report_pages} • {plan.reports_limit || "Unlimited"} reports/month
+                      </p>
+                    </div>
+
+                    <ul className="space-y-3 mb-8 text-left">
+                      {plan.features.map((feature, featureIndex) => (
+                        <li key={featureIndex} className="flex items-center text-sm">
+                          <CheckCircle className="h-4 w-4 text-success-500 mr-3 flex-shrink-0" />
+                          <span className="text-neutral-700">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <Link
+                      to={user ? "/dashboard" : "/signup"}
+                      className={`w-full ${
+                        plan.is_popular ? "btn-primary" : "btn-outline"
+                      }`}
+                    >
+                      {plan.price_inr === 0 ? "Start Free" : "Get Started"}
+                    </Link>
                   </div>
-                )}
-                <div className="text-center">
-                  <h3 className="text-xl font-semibold text-neutral-900 mb-2">
-                    {plan.name}
-                  </h3>
-                  <div className="mb-4">
-                    <span className="text-3xl font-bold text-neutral-900">
-                      {plan.price}
-                    </span>
-                    <span className="text-neutral-600">{plan.period}</span>
-                  </div>
-                  <p className="text-neutral-600 mb-6">{plan.description}</p>
-                  <ul className="space-y-3 mb-8">
-                    {plan.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-center text-sm">
-                        <CheckCircle className="h-4 w-4 text-success-500 mr-3 flex-shrink-0" />
-                        <span className="text-neutral-700">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Link
-                    to={user ? "/dashboard" : "/signup"}
-                    className={`w-full ${
-                      plan.popular ? "btn-primary" : "btn-outline"
-                    }`}
-                  >
-                    {plan.name === "Basic" ? "Start Free" : "Get Started"}
-                  </Link>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* RTTP Section */}
       <section className="py-20 bg-gradient-to-r from-primary-600 to-secondary-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Ready to Analyze Your Technology?
-          </h2>
-          <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of innovators who trust Asasy for their technology assessment needs.
-          </p>
-          <Link
-            to={user ? "/dashboard" : "/signup"}
-            className="btn bg-white text-primary-600 hover:bg-neutral-50 text-lg px-8 py-3"
-          >
-            {user ? "Go to Dashboard" : "Start Your Free Analysis"}
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Link>
+          <div className="max-w-3xl mx-auto">
+            <BookOpen className="h-16 w-16 text-white mx-auto mb-6" />
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Work with Certified RTTP Experts
+            </h2>
+            <p className="text-xl text-primary-100 mb-8">
+              Access Registered Technology Transfer Professionals (RTTPs) – experts in IP licensing, 
+              tech transfer, and commercialisation. Get expert guidance to maximize your innovation's potential.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                to="/rttp"
+                className="btn bg-white text-primary-600 hover:bg-neutral-50 text-lg px-8 py-3"
+              >
+                Learn About RTTP
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+              <Link
+                to={user ? "/dashboard" : "/signup"}
+                className="btn border-2 border-white text-white hover:bg-white hover:text-primary-600 text-lg px-8 py-3"
+              >
+                {user ? "Get Expert Help" : "Start Your Journey"}
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -400,7 +507,7 @@ export default function Home() {
                 <span className="ml-2 text-xl font-bold">Asasy</span>
               </div>
               <p className="text-neutral-400">
-                AI-powered technology assessment reports for modern businesses.
+                AI-powered IP commercialization reports for modern innovators and researchers.
               </p>
             </div>
             <div>
@@ -433,21 +540,24 @@ export default function Home() {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Company</h3>
+              <h3 className="font-semibold mb-4">Services</h3>
               <ul className="space-y-2 text-neutral-400">
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    About
+                  <Link
+                    to="/rttp"
+                    className="hover:text-white transition-colors"
+                  >
+                    RTTP Experts
+                  </Link>
+                </li>
+                <li>
+                  <a href="#journey" className="hover:text-white transition-colors">
+                    IP Journey
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-white transition-colors">
-                    Contact
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Privacy
+                    Consulting
                   </a>
                 </li>
               </ul>
