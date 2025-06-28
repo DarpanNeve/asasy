@@ -2,6 +2,7 @@ from google.auth.transport import requests
 from google.oauth2 import id_token
 from typing import Dict, Any
 import logging
+import traceback
 
 from app.core.config import settings
 
@@ -35,7 +36,9 @@ async def verify_google_token(credential: str) -> Dict[str, Any]:
         
     except ValueError as e:
         logger.error(f"Google token verification failed: {e}")
+        traceback.print_exc()
         raise ValueError(f"Invalid Google token: {e}")
     except Exception as e:
         logger.error(f"Unexpected error during Google token verification: {e}")
+        traceback.print_exc()
         raise ValueError("Failed to verify Google token")

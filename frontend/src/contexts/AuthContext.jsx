@@ -32,7 +32,10 @@ export const AuthProvider = ({ children }) => {
       setUser(response.data)
     } catch (error) {
       console.error('Failed to fetch user:', error)
-      logout()
+      // Don't logout on fetch error, token might still be valid
+      if (error.response?.status === 401) {
+        logout()
+      }
     } finally {
       setLoading(false)
     }
@@ -51,14 +54,14 @@ export const AuthProvider = ({ children }) => {
       
       Cookies.set('access_token', access_token, { 
         expires: 1,
-        secure: true,
+        secure: window.location.protocol === 'https:',
         sameSite: 'strict'
       })
       
       if (newRefreshToken) {
         Cookies.set('refresh_token', newRefreshToken, { 
           expires: 7,
-          secure: true,
+          secure: window.location.protocol === 'https:',
           sameSite: 'strict'
         })
       }
@@ -73,10 +76,11 @@ export const AuthProvider = ({ children }) => {
   }
 
   const login = async (email, password) => {
-    const response = await api.post('/auth/login', {
-      username: email,
-      password,
-    }, {
+    const formData = new FormData()
+    formData.append('username', email)
+    formData.append('password', password)
+
+    const response = await api.post('/auth/login', formData, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
@@ -84,15 +88,15 @@ export const AuthProvider = ({ children }) => {
 
     const { access_token, refresh_token, user: userData } = response.data
     
-    // Store tokens in httpOnly cookies for security
+    // Store tokens in cookies
     Cookies.set('access_token', access_token, { 
       expires: 1, // 1 day
-      secure: true,
+      secure: window.location.protocol === 'https:',
       sameSite: 'strict'
     })
     Cookies.set('refresh_token', refresh_token, { 
       expires: 7, // 7 days
-      secure: true,
+      secure: window.location.protocol === 'https:',
       sameSite: 'strict'
     })
     
@@ -125,12 +129,12 @@ export const AuthProvider = ({ children }) => {
       
       Cookies.set('access_token', access_token, { 
         expires: 1,
-        secure: true,
+        secure: window.location.protocol === 'https:',
         sameSite: 'strict'
       })
       Cookies.set('refresh_token', refresh_token, { 
         expires: 7,
-        secure: true,
+        secure: window.location.protocol === 'https:',
         sameSite: 'strict'
       })
       
@@ -150,9 +154,14 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await api.post('/auth/logout')
+      // Only call logout endpoint if we have a token
+      const token = Cookies.get('access_token')
+      if (token) {
+        await api.post('/auth/logout')
+      }
     } catch (error) {
       console.error('Logout error:', error)
+      // Continue with logout even if API call fails
     } finally {
       Cookies.remove('access_token')
       Cookies.remove('refresh_token')

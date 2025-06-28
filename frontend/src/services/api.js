@@ -45,7 +45,7 @@ api.interceptors.response.use(
           const { access_token } = response.data
           Cookies.set('access_token', access_token, { 
             expires: 1,
-            secure: true,
+            secure: window.location.protocol === 'https:',
             sameSite: 'strict'
           })
 
@@ -57,15 +57,25 @@ api.interceptors.response.use(
         // Refresh failed, redirect to login
         Cookies.remove('access_token')
         Cookies.remove('refresh_token')
-        window.location.href = '/login'
+        
+        // Only redirect if we're not already on login/signup pages
+        if (!window.location.pathname.includes('/login') && 
+            !window.location.pathname.includes('/signup') &&
+            !window.location.pathname.includes('/')) {
+          window.location.href = '/login'
+        }
         return Promise.reject(refreshError)
       }
     }
 
-    // Show error toast for non-401 errors
-    if (error.response?.status !== 401) {
+    // Don't show error toast for auth errors or network errors
+    if (error.response?.status !== 401 && error.response?.status !== 403) {
       const message = error.response?.data?.detail || 'An error occurred'
-      toast.error(message)
+      if (error.response?.status >= 500) {
+        toast.error('Server error. Please try again later.')
+      } else if (error.response?.status >= 400) {
+        toast.error(message)
+      }
     }
 
     return Promise.reject(error)
@@ -87,8 +97,16 @@ export const removeAuthToken = () => {
 
 // API methods
 export const authAPI = {
-  login: (email, password) =>
-    api.post('/auth/login', { username: email, password }),
+  login: (email, password) => {
+    const formData = new FormData()
+    formData.append('username', email)
+    formData.append('password', password)
+    return api.post('/auth/login', formData, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
+  },
   
   signup: (userData) =>
     api.post('/auth/signup', userData),

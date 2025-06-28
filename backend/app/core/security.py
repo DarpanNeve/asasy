@@ -5,9 +5,13 @@ from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 import secrets
+import traceback
+import logging
 
 from app.core.config import settings
 from app.models.user import User
+
+logger = logging.getLogger(__name__)
 
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -52,7 +56,8 @@ def verify_token(token: str) -> dict:
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         return payload
-    except JWTError:
+    except JWTError as e:
+        logger.error(f"Token verification failed: {e}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
@@ -73,16 +78,35 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
         token_type: str = payload.get("type")
         
         if user_id is None or token_type != "access":
+            logger.error(f"Invalid token payload: user_id={user_id}, token_type={token_type}")
             raise credentials_exception
             
-    except JWTError:
+    except JWTError as e:
+        logger.error(f"JWT decode error: {e}")
+        raise credentials_exception
+    except Exception as e:
+        logger.error(f"Unexpected error in token validation: {e}")
+        traceback.print_exc()
         raise credentials_exception
     
-    user = await User.get(user_id)
-    if user is None:
+    try:
+        user = await User.get(user_id)
+        if user is None:
+            logger.error(f"User not found for ID: {user_id}")
+            raise credentials_exception
+        
+        if not user.is_active:
+            logger.error(f"User {user_id} is not active")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="User account is disabled"
+            )
+        
+        return user
+    except Exception as e:
+        logger.error(f"Error fetching user {user_id}: {e}")
+        traceback.print_exc()
         raise credentials_exception
-    
-    return user
 
 def setup_security_middleware(app):
     """Setup security middleware"""
