@@ -14,6 +14,8 @@ import {
   Download,
   Eye,
   ExternalLink,
+  Maximize2,
+  Minimize2,
 } from "lucide-react";
 import { api } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
@@ -29,6 +31,10 @@ export default function Reports() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedReport, setSelectedReport] = useState(null);
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showPdfPreview, setShowPdfPreview] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState(null);
+  const [pdfLoading, setPdfLoading] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [pagination, setPagination] = useState({
     page: 1,
     pages: 1,
@@ -108,6 +114,32 @@ export default function Reports() {
     }
   };
 
+  const handlePreviewPdf = async (reportId, reportTitle) => {
+    if (!reportId) {
+      toast.error("Report ID not available");
+      return;
+    }
+
+    setPdfLoading(true);
+    try {
+      const response = await api.get(`/reports/${reportId}/download`, {
+        responseType: 'blob'
+      });
+
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      setPdfUrl(url);
+      setShowPdfPreview(true);
+      
+      toast.success("PDF preview loaded");
+    } catch (error) {
+      console.error("Failed to load PDF preview:", error);
+      toast.error("Failed to load PDF preview");
+    } finally {
+      setPdfLoading(false);
+    }
+  };
+
   const handleDownloadReport = async (reportId, reportTitle) => {
     try {
       const response = await api.get(`/reports/${reportId}/download`, {
@@ -129,6 +161,19 @@ export default function Reports() {
       console.error("Failed to download report:", error);
       toast.error("Failed to download report");
     }
+  };
+
+  const closePdfPreview = () => {
+    setShowPdfPreview(false);
+    setIsFullscreen(false);
+    if (pdfUrl) {
+      window.URL.revokeObjectURL(pdfUrl);
+      setPdfUrl(null);
+    }
+  };
+
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
   };
 
   const getStatusIcon = (status) => {
@@ -272,6 +317,57 @@ export default function Reports() {
         </div>
       )}
 
+      {/* PDF Preview Modal */}
+      {showPdfPreview && pdfUrl && (
+        <div className={`fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center p-4 z-50 ${isFullscreen ? 'p-0' : ''}`}>
+          <div className={`bg-white rounded-xl w-full h-full max-w-6xl max-h-[95vh] flex flex-col ${isFullscreen ? 'max-w-none max-h-none rounded-none' : ''}`}>
+            {/* PDF Preview Header */}
+            <div className="flex items-center justify-between p-4 border-b border-neutral-200">
+              <h3 className="text-lg font-semibold text-neutral-900">PDF Preview</h3>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={toggleFullscreen}
+                  className="p-2 text-neutral-600 hover:text-neutral-900 transition-colors"
+                  title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+                >
+                  {isFullscreen ? (
+                    <Minimize2 className="h-5 w-5" />
+                  ) : (
+                    <Maximize2 className="h-5 w-5" />
+                  )}
+                </button>
+                <button
+                  onClick={closePdfPreview}
+                  className="p-2 text-neutral-600 hover:text-neutral-900 transition-colors"
+                  title="Close Preview"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* PDF Viewer */}
+            <div className="flex-1 overflow-hidden">
+              {pdfLoading ? (
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+                    <p className="text-neutral-600">Loading PDF preview...</p>
+                  </div>
+                </div>
+              ) : (
+                <iframe
+                  src={pdfUrl}
+                  className="w-full h-full border-0"
+                  title="PDF Preview"
+                  style={{ minHeight: '500px' }}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Report View Modal */}
       {showReportModal && selectedReport && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -283,13 +379,32 @@ export default function Reports() {
                 </h2>
                 <div className="flex items-center space-x-2">
                   {selectedReport.status === "completed" && selectedReport.pdf_url && (
-                    <button
-                      onClick={() => handleDownloadReport(selectedReport.id, selectedReport.title)}
-                      className="btn-outline btn-sm"
-                    >
-                      <Download className="h-4 w-4 mr-1" />
-                      Download PDF
-                    </button>
+                    <>
+                      <button
+                        onClick={() => handlePreviewPdf(selectedReport.id, selectedReport.title)}
+                        className="btn-outline btn-sm"
+                        disabled={pdfLoading}
+                      >
+                        {pdfLoading ? (
+                          <div className="flex items-center">
+                            <div className="spinner mr-1" />
+                            Loading...
+                          </div>
+                        ) : (
+                          <>
+                            <Eye className="h-4 w-4 mr-1" />
+                            Preview PDF
+                          </>
+                        )}
+                      </button>
+                      <button
+                        onClick={() => handleDownloadReport(selectedReport.id, selectedReport.title)}
+                        className="btn-primary btn-sm"
+                      >
+                        <Download className="h-4 w-4 mr-1" />
+                        Download PDF
+                      </button>
+                    </>
                   )}
                   <button
                     onClick={() => setShowReportModal(false)}
@@ -355,16 +470,35 @@ export default function Reports() {
                       <div>
                         <h3 className="font-semibold text-primary-900">Full Report Available</h3>
                         <p className="text-primary-700 text-sm">
-                          Download the complete PDF report with detailed analysis and insights.
+                          Preview or download the complete PDF report with detailed analysis and insights.
                         </p>
                       </div>
-                      <button
-                        onClick={() => handleDownloadReport(selectedReport.id, selectedReport.title)}
-                        className="btn-primary"
-                      >
-                        <Download className="h-5 w-5 mr-2" />
-                        Download PDF
-                      </button>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => handlePreviewPdf(selectedReport.id, selectedReport.title)}
+                          className="btn-outline"
+                          disabled={pdfLoading}
+                        >
+                          {pdfLoading ? (
+                            <div className="flex items-center">
+                              <div className="spinner mr-2" />
+                              Loading...
+                            </div>
+                          ) : (
+                            <>
+                              <Eye className="h-5 w-5 mr-2" />
+                              Preview
+                            </>
+                          )}
+                        </button>
+                        <button
+                          onClick={() => handleDownloadReport(selectedReport.id, selectedReport.title)}
+                          className="btn-primary"
+                        >
+                          <Download className="h-5 w-5 mr-2" />
+                          Download PDF
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -509,13 +643,29 @@ export default function Reports() {
                   </button>
                   
                   {report.status === "completed" && report.pdf_url && (
-                    <button
-                      onClick={() => handleDownloadReport(report.id, report.title)}
-                      className="btn-primary btn-sm"
-                    >
-                      <Download className="h-4 w-4 mr-1" />
-                      Download
-                    </button>
+                    <>
+                      <button
+                        onClick={() => handlePreviewPdf(report.id, report.title)}
+                        className="btn-outline btn-sm"
+                        disabled={pdfLoading}
+                      >
+                        {pdfLoading ? (
+                          <div className="spinner" />
+                        ) : (
+                          <>
+                            <Eye className="h-4 w-4 mr-1" />
+                            Preview
+                          </>
+                        )}
+                      </button>
+                      <button
+                        onClick={() => handleDownloadReport(report.id, report.title)}
+                        className="btn-primary btn-sm"
+                      >
+                        <Download className="h-4 w-4 mr-1" />
+                        Download
+                      </button>
+                    </>
                   )}
                 </div>
               </div>

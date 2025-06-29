@@ -25,9 +25,13 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_ID: str
     GOOGLE_CLIENT_SECRET: str
     
-    # OneSignal (replacing msg91)
-    ONESIGNAL_APP_ID: Optional[str] = None
-    ONESIGNAL_API_KEY: Optional[str] = None
+    # MSG91 Email Service
+    MSG91_API_KEY: Optional[str] = None
+    MSG91_TEMPLATE_ID: Optional[str] = None
+    MSG91_WELCOME_TEMPLATE_ID: Optional[str] = None
+    MSG91_REPORT_TEMPLATE_ID: Optional[str] = None
+    MSG91_FROM_EMAIL: Optional[str] = None
+    MSG91_DOMAIN: Optional[str] = None
     
     # Razorpay
     RAZORPAY_KEY_ID: str
