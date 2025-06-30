@@ -30,7 +30,6 @@ async def generate_report_json(idea: str, plan: Plan) -> tuple[dict, dict]:
         
         # Create plan-specific JSON structure based on plan sections
         required_sections = {}
-        table_sections = {}
         
         # Map plan sections to JSON keys
         section_mapping = {
@@ -97,29 +96,92 @@ async def generate_report_json(idea: str, plan: Plan) -> tuple[dict, dict]:
             content_depth = "in-depth professional analysis with institutional-grade data"
             num_tables = 9
         
-        # Add comprehensive tables for all plans
+        # FIXED: Define table structure with explicit examples
         table_sections = {
-            "market_data_table": "[{\"metric\": \"string\", \"value\": \"string\", \"growth_rate\": \"string\", \"source\": \"string\", \"year\": \"string\"}]",
-            "competitor_analysis_table": "[{\"company\": \"string\", \"market_share\": \"string\", \"revenue\": \"string\", \"key_features\": \"string\", \"rating\": \"string\", \"strengths\": \"string\"}]",
-            "development_timeline_table": "[{\"phase\": \"string\", \"duration\": \"string\", \"cost\": \"string\", \"milestones\": \"string\", \"risk_level\": \"string\", \"dependencies\": \"string\"}]",
-            "financial_projections_table": "[{\"year\": \"string\", \"revenue\": \"string\", \"costs\": \"string\", \"profit\": \"string\", \"roi\": \"string\", \"market_share\": \"string\"}]",
-            "technology_comparison_table": "[{\"feature\": \"string\", \"current_solution\": \"string\", \"proposed_solution\": \"string\", \"improvement\": \"string\", \"priority\": \"string\", \"impact\": \"string\"}]"
+            "market_data_table": [
+                {"metric": "Total Addressable Market", "value": "$12.5B", "growth_rate": "15.2% CAGR", "source": "Industry Report 2024", "year": "2024"},
+                {"metric": "Serviceable Available Market", "value": "$3.8B", "growth_rate": "18.5% CAGR", "source": "Market Research Inc", "year": "2024"},
+                {"metric": "Market Penetration Rate", "value": "2.3%", "growth_rate": "12.1% annually", "source": "Tech Analytics", "year": "2024"},
+                {"metric": "Average Deal Size", "value": "$125K", "growth_rate": "8.7% annually", "source": "Sales Data", "year": "2024"},
+                {"metric": "Customer Acquisition Cost", "value": "$15K", "growth_rate": "-5.2% annually", "source": "Marketing Analytics", "year": "2024"},
+                {"metric": "Customer Lifetime Value", "value": "$450K", "growth_rate": "22.3% annually", "source": "Revenue Analytics", "year": "2024"}
+            ],
+            "competitor_analysis_table": [
+                {"company": "TechCorp Solutions", "market_share": "23.5%", "revenue": "$2.8B", "key_features": "AI-powered automation", "rating": "Strong", "strengths": "Market leader, strong R&D"},
+                {"company": "InnovateTech Ltd", "market_share": "18.2%", "revenue": "$2.1B", "key_features": "Cloud-native platform", "rating": "Strong", "strengths": "Scalable architecture"},
+                {"company": "NextGen Systems", "market_share": "15.7%", "revenue": "$1.9B", "key_features": "Real-time analytics", "rating": "Moderate", "strengths": "Fast deployment"},
+                {"company": "SmartTech Inc", "market_share": "12.3%", "revenue": "$1.4B", "key_features": "Mobile-first design", "rating": "Moderate", "strengths": "User experience"},
+                {"company": "FutureTech Corp", "market_share": "8.9%", "revenue": "$1.1B", "key_features": "Blockchain integration", "rating": "Emerging", "strengths": "Innovation focus"},
+                {"company": "DataFlow Systems", "market_share": "6.4%", "revenue": "$780M", "key_features": "Advanced security", "rating": "Emerging", "strengths": "Security expertise"}
+            ],
+            "development_timeline_table": [
+                {"phase": "Research & Development", "duration": "6 months", "cost": "$500K", "milestones": "Proof of concept, MVP", "risk_level": "Medium", "dependencies": "Technical team hiring"},
+                {"phase": "Prototype Development", "duration": "4 months", "cost": "$300K", "milestones": "Working prototype, testing", "risk_level": "Low", "dependencies": "R&D completion"},
+                {"phase": "Beta Testing", "duration": "3 months", "cost": "$200K", "milestones": "User feedback, iterations", "risk_level": "Medium", "dependencies": "Prototype completion"},
+                {"phase": "Regulatory Approval", "duration": "8 months", "cost": "$400K", "milestones": "Compliance certification", "risk_level": "High", "dependencies": "Beta testing results"},
+                {"phase": "Production Setup", "duration": "5 months", "cost": "$600K", "milestones": "Manufacturing ready", "risk_level": "Medium", "dependencies": "Regulatory approval"},
+                {"phase": "Market Launch", "duration": "2 months", "cost": "$350K", "milestones": "Product launch, marketing", "risk_level": "Low", "dependencies": "Production setup"}
+            ],
+            "financial_projections_table": [
+                {"year": "Year 1", "revenue": "$2.5M", "costs": "$1.8M", "profit": "$0.7M", "roi": "38.9%", "market_share": "0.8%"},
+                {"year": "Year 2", "revenue": "$6.2M", "costs": "$3.9M", "profit": "$2.3M", "roi": "59.0%", "market_share": "1.9%"},
+                {"year": "Year 3", "revenue": "$12.8M", "costs": "$7.1M", "profit": "$5.7M", "roi": "80.3%", "market_share": "3.2%"},
+                {"year": "Year 4", "revenue": "$24.5M", "costs": "$12.8M", "profit": "$11.7M", "roi": "91.4%", "market_share": "5.1%"},
+                {"year": "Year 5", "revenue": "$42.3M", "costs": "$21.2M", "profit": "$21.1M", "roi": "99.5%", "market_share": "7.8%"},
+                {"year": "Year 6", "revenue": "$68.9M", "costs": "$32.1M", "profit": "$36.8M", "roi": "114.6%", "market_share": "11.2%"}
+            ],
+            "technology_comparison_table": [
+                {"feature": "Processing Speed", "current_solution": "2.3 seconds", "proposed_solution": "0.8 seconds", "improvement": "65% faster", "priority": "High", "impact": "Critical"},
+                {"feature": "Accuracy Rate", "current_solution": "87.5%", "proposed_solution": "96.2%", "improvement": "8.7% increase", "priority": "High", "impact": "Critical"},
+                {"feature": "Energy Efficiency", "current_solution": "450W", "proposed_solution": "180W", "improvement": "60% reduction", "priority": "Medium", "impact": "Significant"},
+                {"feature": "Scalability", "current_solution": "1K users", "proposed_solution": "50K users", "improvement": "5000% increase", "priority": "High", "impact": "Critical"},
+                {"feature": "Cost per Transaction", "current_solution": "$0.45", "proposed_solution": "$0.12", "improvement": "73% reduction", "priority": "Medium", "impact": "Significant"},
+                {"feature": "Deployment Time", "current_solution": "6 weeks", "proposed_solution": "2 days", "improvement": "95% reduction", "priority": "Low", "impact": "Moderate"}
+            ]
         }
         
         # Add advanced tables for higher tier plans
         if plan.name in ["Advanced", "Comprehensive"]:
             table_sections.update({
-                "ip_landscape_table": "[{\"patent_id\": \"string\", \"assignee\": \"string\", \"jurisdiction\": \"string\", \"status\": \"string\", \"relevance\": \"string\", \"expiry_date\": \"string\"}]",
-                "regulatory_timeline_table": "[{\"jurisdiction\": \"string\", \"requirement\": \"string\", \"timeline\": \"string\", \"cost\": \"string\", \"complexity\": \"string\", \"approval_rate\": \"string\"}]"
+                "ip_landscape_table": [
+                    {"patent_id": "US10,123,456", "assignee": "TechCorp Inc", "jurisdiction": "United States", "status": "Active", "relevance": "High", "expiry_date": "2041-03-15"},
+                    {"patent_id": "EP3456789", "assignee": "EuroTech Ltd", "jurisdiction": "European Union", "status": "Active", "relevance": "Medium", "expiry_date": "2039-08-22"},
+                    {"patent_id": "CN201980012345", "assignee": "Asia Innovations", "jurisdiction": "China", "status": "Pending", "relevance": "Medium", "expiry_date": "2042-01-10"},
+                    {"patent_id": "JP2020-123456", "assignee": "Nippon Tech", "jurisdiction": "Japan", "status": "Active", "relevance": "Low", "expiry_date": "2040-06-30"},
+                    {"patent_id": "KR10-2019-0123456", "assignee": "Korea Advanced Tech", "jurisdiction": "South Korea", "status": "Active", "relevance": "Medium", "expiry_date": "2041-11-18"},
+                    {"patent_id": "AU2019123456", "assignee": "Aussie Innovations", "jurisdiction": "Australia", "status": "Active", "relevance": "Low", "expiry_date": "2040-09-05"}
+                ],
+                "regulatory_timeline_table": [
+                    {"jurisdiction": "United States", "requirement": "FDA Approval", "timeline": "12-18 months", "cost": "$250K", "complexity": "High", "approval_rate": "78%"},
+                    {"jurisdiction": "European Union", "requirement": "CE Marking", "timeline": "8-12 months", "cost": "$180K", "complexity": "Medium", "approval_rate": "85%"},
+                    {"jurisdiction": "Canada", "requirement": "Health Canada", "timeline": "6-10 months", "cost": "$120K", "complexity": "Medium", "approval_rate": "82%"},
+                    {"jurisdiction": "Japan", "requirement": "PMDA Approval", "timeline": "10-14 months", "cost": "$200K", "complexity": "High", "approval_rate": "75%"},
+                    {"jurisdiction": "China", "requirement": "NMPA Approval", "timeline": "14-20 months", "cost": "$300K", "complexity": "High", "approval_rate": "68%"},
+                    {"jurisdiction": "Australia", "requirement": "TGA Approval", "timeline": "6-9 months", "cost": "$100K", "complexity": "Low", "approval_rate": "88%"}
+                ]
             })
         
         # Add premium tables for Comprehensive plan
         if plan.name == "Comprehensive":
             table_sections.update({
-                "funding_sources_table": "[{\"source_type\": \"string\", \"amount_range\": \"string\", \"timeline\": \"string\", \"requirements\": \"string\", \"success_rate\": \"string\", \"contact_info\": \"string\"}]",
-                "licensing_terms_table": "[{\"license_type\": \"string\", \"royalty_rate\": \"string\", \"upfront_fee\": \"string\", \"territory\": \"string\", \"exclusivity\": \"string\", \"duration\": \"string\"}]"
+                "funding_sources_table": [
+                    {"source_type": "Venture Capital", "amount_range": "$5M-$50M", "timeline": "6-12 months", "requirements": "Proven traction, scalable model", "success_rate": "15%", "contact_info": "VC firms, accelerators"},
+                    {"source_type": "Angel Investors", "amount_range": "$100K-$2M", "timeline": "3-6 months", "requirements": "Strong team, clear vision", "success_rate": "25%", "contact_info": "Angel networks, platforms"},
+                    {"source_type": "Government Grants", "amount_range": "$50K-$5M", "timeline": "6-18 months", "requirements": "Innovation focus, compliance", "success_rate": "35%", "contact_info": "SBIR, STTR programs"},
+                    {"source_type": "Corporate Partnerships", "amount_range": "$500K-$10M", "timeline": "9-18 months", "requirements": "Strategic alignment", "success_rate": "20%", "contact_info": "Corporate venture arms"},
+                    {"source_type": "Crowdfunding", "amount_range": "$10K-$1M", "timeline": "2-4 months", "requirements": "Consumer appeal, marketing", "success_rate": "40%", "contact_info": "Kickstarter, Indiegogo"},
+                    {"source_type": "Bank Loans", "amount_range": "$100K-$5M", "timeline": "1-3 months", "requirements": "Collateral, credit history", "success_rate": "60%", "contact_info": "Commercial banks, SBA"}
+                ],
+                "licensing_terms_table": [
+                    {"license_type": "Exclusive License", "royalty_rate": "8-15%", "upfront_fee": "$500K-$2M", "territory": "Global", "exclusivity": "Full", "duration": "Patent life"},
+                    {"license_type": "Non-Exclusive License", "royalty_rate": "3-8%", "upfront_fee": "$100K-$500K", "territory": "Regional", "exclusivity": "None", "duration": "5-10 years"},
+                    {"license_type": "Field-of-Use License", "royalty_rate": "5-12%", "upfront_fee": "$200K-$1M", "territory": "Specific market", "exclusivity": "Field-limited", "duration": "Patent life"},
+                    {"license_type": "Cross-License", "royalty_rate": "2-6%", "upfront_fee": "$50K-$300K", "territory": "Mutual", "exclusivity": "Shared", "duration": "Negotiable"},
+                    {"license_type": "Sublicense Rights", "royalty_rate": "10-20%", "upfront_fee": "$1M-$5M", "territory": "Global", "exclusivity": "Sublicense", "duration": "Patent life"},
+                    {"license_type": "Research License", "royalty_rate": "1-3%", "upfront_fee": "$10K-$100K", "territory": "Academic only", "exclusivity": "Non-commercial", "duration": "3-5 years"}
+                ]
             })
-        
+
         # Create comprehensive system prompt with enhanced table requirements
         system_prompt = f"""
 You are a world-class technology commercialization expert and RTTP (Registered Technology Transfer Professional) generating a {plan.report_type}.
@@ -132,32 +194,21 @@ You must output STRICTLY ONE JSON DOCUMENT with these exact keys:
 **Required Text Sections:**
 {json.dumps(required_sections, indent=2)}
 
-**Required Table Sections (MUST include {num_tables} tables with EXACTLY 6-8 entries each):**
+**Required Table Sections (MUST include {num_tables} tables with EXACTLY the structure shown):**
 {json.dumps(table_sections, indent=2)}
 
-**ENHANCED CONTENT LENGTH REQUIREMENTS:**
-- Each text section: {min_words}-{max_words} words ({content_depth})
-- Include specific quantitative data, metrics, statistics, and financial figures
-- Use professional, analytical tone appropriate for {plan.name} plan level
-- Provide actionable insights and concrete recommendations with supporting data
-- Each table: EXACTLY 6-8 realistic entries with specific, credible, industry-standard data
-- All values must be strings for JSON compatibility
-
 **MANDATORY TABLE REQUIREMENTS:**
-- Each table MUST have exactly 6-8 rows of data
-- Each row must be a complete JSON object with all required fields
-- Use realistic company names, market data, financial figures, and technical specifications
-- Include specific numbers, percentages, dates, and quantified metrics
-- All table data must be relevant to the technology idea provided
+- Each table MUST have exactly 6 entries (arrays of 6 objects)
+- Each object must have ALL the fields shown in the example
+- Use realistic data relevant to the technology idea
+- All values must be strings
+- Tables must be named exactly as shown above
 
-**COMPREHENSIVE DATA QUALITY STANDARDS:**
-- Market data: Include realistic market sizes (e.g., "$2.5B market growing at 12% CAGR"), TAM/SAM/SOM figures
-- Technology metrics: Specific TRL levels (e.g., "TRL 6-7"), development timelines, technical specifications
-- Financial data: Realistic development costs, revenue projections, ROI calculations, funding requirements
-- Competitive data: Actual company names where possible, market share percentages, revenue figures
-- IP data: Patent numbers, filing dates, jurisdictions, legal status, expiry dates
-- Regulatory data: Specific approval timelines, cost estimates, success rates by jurisdiction
-- Timeline data: Specific phases, duration estimates, cost breakdowns, risk assessments
+**CONTENT REQUIREMENTS:**
+- Each text section: {min_words}-{max_words} words
+- Professional, analytical tone
+- Include specific quantitative data and metrics
+- All table data must be realistic and relevant to the technology
 
 OUTPUT ONLY THE JSON - NO ADDITIONAL TEXT, MARKDOWN, OR FORMATTING.
 """
@@ -169,12 +220,12 @@ Generate a comprehensive {plan.report_type} following the exact JSON structure s
 
 **CRITICAL REQUIREMENTS:**
 1. Ensure ALL sections meet the {min_words}-{max_words} word requirement
-2. Include ALL {num_tables} required tables with EXACTLY 6-8 realistic entries each
-3. Include specific, quantitative data appropriate for {plan.name} plan level analysis
-4. Use realistic market data, financial projections, and competitive intelligence
-5. Maintain professional tone suitable for {plan.name} plan stakeholders
+2. Include ALL {num_tables} required tables with EXACTLY 6 realistic entries each
+3. Use the EXACT table structure provided in the system prompt
+4. All table data must be relevant to the technology idea: {idea}
+5. Include specific, quantitative data appropriate for {plan.name} plan level analysis
 
-Focus on creating realistic, professional content that would be suitable for actual business use in {plan.name.lower()} scenarios. Include comprehensive tables with industry-standard data that supports the analysis.
+Focus on creating realistic, professional content that would be suitable for actual business use.
 """
         
         logger.info("Preparing OpenAI API call...")
@@ -244,7 +295,7 @@ Focus on creating realistic, professional content that would be suitable for act
             if missing_sections:
                 logger.warning(f"Missing sections for {plan.name} plan: {missing_sections}")
             
-            # Log content lengths and validate word counts
+            # Log content lengths and validate tables
             for key, value in parsed_content.items():
                 if isinstance(value, str):
                     word_count = len(value.split())
@@ -255,6 +306,9 @@ Focus on creating realistic, professional content that would be suitable for act
                     logger.info(f"Table '{key}' entries: {len(value)}")
                     if len(value) < 6:
                         logger.warning(f"Table '{key}' has only {len(value)} entries, minimum is 6")
+                    # Validate table structure
+                    if len(value) > 0 and isinstance(value[0], dict):
+                        logger.info(f"Table '{key}' first entry keys: {list(value[0].keys())}")
             
             return parsed_content, usage_info
             
@@ -370,14 +424,19 @@ class ReportPDF(FPDF):
 
     def add_data_table(self, title, data, column_widths=None):
         try:
-            logger.info(f"Adding table: {title}")
+            logger.info(f"=== ADDING TABLE: {title} ===")
             logger.info(f"Table data type: {type(data)}")
             logger.info(f"Table data length: {len(data) if isinstance(data, list) else 'N/A'}")
             
+            if data:
+                logger.info(f"First entry: {data[0] if isinstance(data, list) and len(data) > 0 else 'No data'}")
+            
+            # Validate data
             if not data or not isinstance(data, list) or len(data) == 0:
                 logger.warning(f"No valid data for table: {title}")
                 # Add a placeholder message
                 self.set_font("Helvetica", "B", 12)
+                self.set_text_color(200, 0, 0)  # Red color for error
                 self.cell(0, 10, f"{title} - No data available", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="L")
                 self.ln(5)
                 return
@@ -397,6 +456,7 @@ class ReportPDF(FPDF):
             if not isinstance(data[0], dict):
                 logger.warning(f"Invalid table data structure for {title}")
                 self.set_font("Helvetica", "", 10)
+                self.set_text_color(200, 0, 0)
                 self.cell(0, 8, "Invalid table data format", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="L")
                 self.ln(5)
                 return
@@ -516,6 +576,7 @@ class ReportPDF(FPDF):
             logger.error(f"Traceback: {traceback.format_exc()}")
             # Add error message to PDF
             self.set_font("Helvetica", "", 10)
+            self.set_text_color(200, 0, 0)
             self.cell(0, 8, f"Error rendering table: {title}", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="L")
             self.ln(5)
 
@@ -659,6 +720,7 @@ def create_pdf(report: dict, output_path: str, plan: Plan):
             })
 
         # Add all tables with enhanced formatting
+        logger.info("=== ADDING TABLES TO PDF ===")
         for table_title, table_key in table_mapping.items():
             table_data = report.get(table_key, [])
             logger.info(f"Processing table {table_title}: {table_key}")
