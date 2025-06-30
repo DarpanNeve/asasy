@@ -91,24 +91,37 @@ DEFAULT_PLANS = [
         "highlight_text": "Get Started Free",
         "badge_text": "Free",
         "prompt_template": """
-You are generating a BASIC Technology Assessment Report (1-2 pages) for outreach and teaser purposes.
+You are generating a BASIC Technology Assessment Report for outreach and teaser purposes.
 
-**Target Audience**: General outreach, initial interest generation
-**Analysis Depth**: Surface-level overview
-**Use Cases**: Outreach, Teasers
+**Target Audience**: General outreach, initial interest generation, early-stage evaluation
+**Analysis Depth**: Surface-level overview with key highlights
+**Use Cases**: Outreach, Teasers, Initial stakeholder presentations
 
-**Required Sections (keep each section concise, 2-3 sentences max)**:
-1. Executive Summary: 1-2 line value proposition
-2. Problem/Opportunity Statement: Brief market need
-3. Technology Overview: Core idea and brief features
-4. Key Benefits: Unique Selling Proposition (USP)
-5. Applications: Primary markets/use cases
-6. IP Snapshot: Status & country
-7. Next Steps: Pilot studies, further R&D recommendations
+**Content Requirements**:
+- Write concise, accessible content suitable for general business audience
+- Focus on high-level value proposition and market opportunity
+- Include basic feasibility indicators and next steps
+- Keep technical details minimal but accurate
+- Emphasize commercial potential and market need
 
-**Tone**: Accessible and engaging for general audience
-**Length**: Keep total content under 500 words
-**Focus**: High-level overview suitable for initial interest generation
+**Specific Section Guidelines**:
+1. Executive Summary: Clear 1-2 sentence value proposition with market size
+2. Problem/Opportunity Statement: Market pain point and opportunity size
+3. Technology Overview: Core innovation without deep technical details
+4. Key Benefits: 3-4 key competitive advantages and USPs
+5. Applications: Primary target markets and use cases
+6. IP Snapshot: Basic IP status and protection strategy
+7. Next Steps: Immediate actions for development/validation
+
+**Data Requirements**:
+- Include basic market size estimates (TAM level)
+- Mention relevant industry growth rates
+- Reference technology readiness indicators
+- Provide realistic development timelines
+- Include preliminary competitive landscape
+
+**Tone**: Professional yet accessible, optimistic but realistic
+**Focus**: Commercial viability and market opportunity
 """
     },
     {
@@ -152,30 +165,37 @@ You are generating a BASIC Technology Assessment Report (1-2 pages) for outreach
         "highlight_text": "Most Popular",
         "badge_text": "Best Value",
         "prompt_template": """
-You are generating an INTERMEDIATE Technology Assessment Report (3-5 pages) for institutional feasibility review.
+You are generating an INTERMEDIATE Technology Assessment Report for institutional feasibility review.
 
-**Target Audience**: Internal stakeholders, limited partners
-**Analysis Depth**: Feasibility assessment with go/no-go recommendation
-**Use Cases**: Institutional Feasibility
+**Target Audience**: Internal stakeholders, limited partners, institutional decision-makers
+**Analysis Depth**: Detailed feasibility assessment with go/no-go recommendation
+**Use Cases**: Institutional Feasibility, Internal investment decisions, Partnership evaluation
 
-**Required Sections**:
-1. Expanded Executive Summary: Go/no-go recommendation with justification
-2. Problem & Solution Fit: Background justification and market need validation
-3. Technical Feasibility: Prototype status, TRL stage assessment
-4. IP Summary: Landscape overview and freedom-to-operate analysis
-5. Market Signals: Interest letters, pilot test data, early adoption indicators
-6. Early Competitors: Known technologies and patent citations
-7. Regulatory/Compliance Overview: Basic regulatory requirements
-8. Risk Summary and Key Questions: Technical, market, and IP risks
+**Content Requirements**:
+- Provide detailed analysis suitable for institutional decision-making
+- Include quantitative assessments and data-driven insights
+- Offer clear go/no-go recommendations with supporting rationale
+- Address key technical, market, and commercial risks
+- Include preliminary competitive intelligence
 
-**Enhanced Features to Include**:
-- TRL Analysis (Initial assessment)
-- Market Signals analysis
-- Competitor Analysis (basic landscape)
-- Legal & Regulatory (basic overview)
+**Enhanced Analysis Areas**:
+1. Expanded Executive Summary: Clear investment recommendation with key metrics
+2. Problem & Solution Fit: Detailed market validation and solution alignment
+3. Technical Feasibility: TRL assessment, development requirements, scalability
+4. IP Summary: Patent landscape overview, freedom-to-operate analysis
+5. Market Signals: Early adoption indicators, customer validation data
+6. Early Competitors: Competitive positioning and differentiation analysis
+7. Regulatory/Compliance: Basic regulatory requirements and approval pathways
+8. Risk Summary: Technical, market, and commercial risk assessment
 
-**Tone**: Professional analytical suitable for internal decision-making
-**Length**: 800-1200 words total
+**Data Requirements**:
+- Include TAM/SAM estimates with growth projections
+- Provide TRL assessment with development roadmap
+- Reference specific competitors and market positioning
+- Include regulatory timeline and cost estimates
+- Provide risk-adjusted financial projections
+
+**Tone**: Analytical and professional, suitable for institutional review
 **Focus**: Feasibility assessment with actionable recommendations
 """
     },
@@ -231,34 +251,38 @@ You are generating an INTERMEDIATE Technology Assessment Report (3-5 pages) for 
         "highlight_text": "Professional Grade",
         "badge_text": "Advanced",
         "prompt_template": """
-You are generating an ADVANCED Technology Assessment Report (5-8 pages) for pre-commercial diligence.
+You are generating an ADVANCED Technology Assessment Report for pre-commercial diligence.
 
-**Target Audience**: Professional investors, incubators, tech-transfer offices
-**Analysis Depth**: Full pre-commercial diligence
-**Use Cases**: Incubators, Angel/Seed funding
+**Target Audience**: Professional investors, incubators, tech-transfer offices, angel investors
+**Analysis Depth**: Comprehensive pre-commercial diligence suitable for investment decisions
+**Use Cases**: Incubators, Angel/Seed funding, Professional investment evaluation
 
-**Required Sections**:
-1. Detailed Business Case: VC-ready narrative with investment thesis
-2. Technology Description: Core claims, development stage, TRL framework analysis
-3. Market & Competition: Segmentation, SWOT analysis, barriers to entry
-4. TRL & Technical Challenges: Scale-up readiness assessment
-5. Detailed IP & Legal Status: Global patent families, claims analysis, FTO risks
-6. Regulatory Pathways: CE, FDA, BIS, AIS approval processes
-7. Commercialization Options: Spin-off, licensing, joint ventures analysis
-8. Preliminary Financial Estimates: Cost vs ROI model with assumptions
-9. Summary & Go-to-Market Plan: Strategic roadmap with milestones
+**Content Requirements**:
+- Provide investment-grade analysis suitable for funding decisions
+- Include comprehensive market and competitive intelligence
+- Offer detailed technical and commercial risk assessment
+- Present multiple commercialization pathways with analysis
+- Include preliminary financial modeling and projections
 
-**Enhanced Features to Include**:
-- Executive Summary (VC-ready with investment recommendation)
-- TRL Analysis (With supporting data and development roadmap)
-- IP Snapshot (Enhanced with claim analysis)
-- Market Signals (Segmentation and trend analysis)
-- Competitor Analysis (SWOT, competitive landscape mapping)
-- Commercialization Paths (Multiple options with pros/cons)
-- ROI Forecast (Preliminary with key assumptions)
+**Professional Analysis Areas**:
+1. Detailed Business Case: Investment thesis with clear value proposition
+2. Technology Description: Comprehensive technical analysis with TRL framework
+3. Market & Competition: Detailed market segmentation and competitive landscape
+4. TRL & Technical Challenges: Development roadmap with risk assessment
+5. Detailed IP & Legal Status: Patent analysis and freedom-to-operate review
+6. Regulatory Pathways: Approval processes and regulatory strategy
+7. Commercialization Options: Multiple pathways with pros/cons analysis
+8. Preliminary Financial Estimates: Revenue models and ROI projections
+9. Summary & Go-to-Market Plan: Strategic roadmap with implementation timeline
+
+**Data Requirements**:
+- Include detailed TAM/SAM/SOM analysis with market sizing
+- Provide comprehensive TRL assessment with development milestones
+- Include competitive intelligence with market share data
+- Reference specific regulatory requirements and timelines
+- Provide financial projections with sensitivity analysis
 
 **Tone**: Investment-grade professional suitable for funding decisions
-**Length**: 1500-2000 words total
 **Focus**: Pre-commercial diligence with investment readiness assessment
 """
     },
@@ -327,37 +351,40 @@ You are generating an ADVANCED Technology Assessment Report (5-8 pages) for pre-
         "highlight_text": "Enterprise Solution",
         "badge_text": "Complete",
         "prompt_template": """
-You are generating a COMPREHENSIVE IP Commercialization Report (10-20 pages) for investment-grade analysis.
+You are generating a COMPREHENSIVE IP Commercialization Report for investment-grade analysis.
 
-**Target Audience**: Venture capitalists, government grant applications, startup launch
-**Analysis Depth**: Investment-grade commercialization plan
-**Use Cases**: VC Decks, Government Grants, Licensing Negotiations
+**Target Audience**: Venture capitalists, government grant applications, startup launch, licensing negotiations
+**Analysis Depth**: Investment-grade commercialization plan suitable for institutional funding
+**Use Cases**: VC Decks, Government Grants, Licensing Negotiations, Startup Launch
 
-**Required Sections**:
-1. In-depth IP Claims Analysis: Protection scope, robustness assessment
-2. Global Freedom-to-Operate Report: US, EU, India, China analysis
-3. Market Analysis: Size, trends, addressable market, adoption barriers
-4. Business Models: Licensing, SaaS, product, hybrid model analysis
-5. 5-Year ROI & Revenue Projections: Unit cost, pricing, TAM/SAM/SOM
-6. Funding Strategy: Grants, accelerators, VC, PE, SBIR mapping
-7. Licensing & Exit Strategy: Terms, IP deal structures, valuation
-8. Team & Strategic Partners Required: Talent, advisors, partnerships
-9. Implementation Roadmap: Milestones, MVP, pilot scaling timeline
-10. Appendices: Patent tables, market research data, technical drawings
+**Content Requirements**:
+- Provide institutional-grade analysis suitable for board presentations
+- Include comprehensive global market analysis and competitive intelligence
+- Offer detailed financial modeling with multiple scenarios
+- Present complete commercialization strategy with implementation roadmap
+- Include comprehensive risk assessment and mitigation strategies
 
-**Premium Features to Include**:
-- Executive Summary (Investor-grade with clear investment thesis)
-- TRL Analysis (Detailed roadmap with development milestones)
-- IP Snapshot (Full claim analysis with competitive positioning)
-- Market Signals (Global trends + forecasts with data sources)
-- Competitor Analysis (Market share data and competitive intelligence)
-- Commercialization Paths (Financial modeling for each option)
-- ROI Forecast (5-year plan with funding requirements)
-- Legal & Regulatory (By jurisdiction with timeline estimates)
+**Comprehensive Analysis Areas**:
+1. In-depth IP Claims Analysis: Detailed patent protection scope and robustness
+2. Global Freedom-to-Operate Report: Multi-jurisdiction IP landscape analysis
+3. Market Analysis: Comprehensive market sizing, trends, and opportunity assessment
+4. Business Models: Detailed analysis of licensing, SaaS, product, and hybrid models
+5. 5-Year ROI & Revenue Projections: Comprehensive financial modeling with scenarios
+6. Funding Strategy: Complete funding roadmap including grants, VC, PE, and SBIR
+7. Licensing & Exit Strategy: Detailed IP monetization and exit strategies
+8. Team & Strategic Partners: Organizational requirements and partnership strategy
+9. Implementation Roadmap: Detailed milestone-based execution plan
+10. Appendices: Supporting data, patent tables, and technical documentation
 
-**Tone**: Institutional-grade professional suitable for board presentations
-**Length**: 3000-4000 words total
-**Focus**: Complete commercialization strategy with detailed financial modeling
+**Data Requirements**:
+- Include comprehensive global market analysis with regional breakdowns
+- Provide detailed 5-year financial projections with multiple scenarios
+- Include complete competitive landscape with market share analysis
+- Reference specific funding sources and grant opportunities
+- Provide detailed regulatory analysis by jurisdiction
+
+**Tone**: Institutional-grade professional suitable for board and investor presentations
+**Focus**: Complete commercialization strategy with detailed financial modeling and implementation plan
 """
     }
 ]

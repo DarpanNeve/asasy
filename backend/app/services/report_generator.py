@@ -75,6 +75,24 @@ async def generate_report_json(idea: str, plan: Plan) -> tuple[dict, dict]:
             if section in section_mapping:
                 required_sections[section_mapping[section]] = "string"
         
+        # Define content length requirements based on plan
+        if plan.name == "Basic":
+            min_words = 50
+            max_words = 150
+            content_depth = "concise overview"
+        elif plan.name == "Intermediate":
+            min_words = 100
+            max_words = 250
+            content_depth = "detailed analysis"
+        elif plan.name == "Advanced":
+            min_words = 150
+            max_words = 350
+            content_depth = "comprehensive analysis"
+        else:  # Comprehensive
+            min_words = 200
+            max_words = 500
+            content_depth = "in-depth professional analysis"
+        
         # Add standard tables for all plans
         table_sections = {
             "market_data_table": "[{\"metric\": \"string\", \"value\": \"string\", \"growth_rate\": \"string\", \"source\": \"string\"}]",
@@ -99,7 +117,7 @@ async def generate_report_json(idea: str, plan: Plan) -> tuple[dict, dict]:
         
         # Create comprehensive system prompt
         system_prompt = f"""
-You are a world-class technology commercialization expert generating a {plan.report_type}.
+You are a world-class technology commercialization expert and RTTP (Registered Technology Transfer Professional) generating a {plan.report_type}.
 
 {plan.prompt_template}
 
@@ -112,29 +130,39 @@ You must output STRICTLY ONE JSON DOCUMENT with these exact keys:
 **Required Table Sections:**
 {json.dumps(table_sections, indent=2)}
 
-**Content Requirements:**
-- Each text section: Minimum 150 words, maximum 400 words
-- Include specific data points, metrics, and statistics
-- Use professional, analytical tone
-- Provide actionable insights and recommendations
-- Each table: 5-8 realistic entries with specific data
+**CONTENT LENGTH REQUIREMENTS:**
+- Each text section: {min_words}-{max_words} words ({content_depth})
+- Include specific quantitative data, metrics, and statistics
+- Use professional, analytical tone appropriate for {plan.name} plan level
+- Provide actionable insights and concrete recommendations
+- Each table: 5-8 realistic entries with specific, credible data
 - All values must be strings for JSON compatibility
 
-**Quality Standards:**
-- Data-driven analysis with quantitative metrics
-- Industry-specific terminology and insights
-- Realistic market data and projections
-- Professional formatting suitable for {plan.report_type}
-- Clear recommendations and next steps
+**DATA QUALITY STANDARDS:**
+- Include realistic market sizes (e.g., "$2.5B market growing at 12% CAGR")
+- Provide specific technology metrics (e.g., "TRL 6-7, prototype tested")
+- Use industry-standard terminology and frameworks
+- Include credible competitor names and market data
+- Provide realistic financial projections and timelines
+- Reference appropriate regulatory bodies and standards
 
-OUTPUT ONLY THE JSON - NO ADDITIONAL TEXT OR FORMATTING.
+**PROFESSIONAL FORMATTING:**
+- Write in third person, analytical style
+- Use bullet points sparingly, prefer flowing paragraphs
+- Include specific dates, percentages, and dollar amounts
+- Cite hypothetical but realistic data sources
+- Maintain consistency across all sections
+
+OUTPUT ONLY THE JSON - NO ADDITIONAL TEXT, MARKDOWN, OR FORMATTING.
 """
 
         user_prompt = f"""
 Technology Idea: {idea}
 
 Generate a comprehensive {plan.report_type} following the exact JSON structure specified. 
-Ensure all sections are detailed, data-rich, and professionally written for {plan.name} plan level analysis.
+Ensure all sections meet the {min_words}-{max_words} word requirement and include specific, quantitative data appropriate for {plan.name} plan level analysis.
+
+Focus on creating realistic, professional content that would be suitable for actual business use in {plan.name.lower()} scenarios.
 """
         
         logger.info("Preparing OpenAI API call...")
@@ -204,10 +232,13 @@ Ensure all sections are detailed, data-rich, and professionally written for {pla
             if missing_sections:
                 logger.warning(f"Missing sections for {plan.name} plan: {missing_sections}")
             
-            # Log content lengths
+            # Log content lengths and validate word counts
             for key, value in parsed_content.items():
                 if isinstance(value, str):
-                    logger.info(f"Section '{key}' length: {len(value)} characters")
+                    word_count = len(value.split())
+                    logger.info(f"Section '{key}' length: {len(value)} characters, {word_count} words")
+                    if word_count < min_words:
+                        logger.warning(f"Section '{key}' has only {word_count} words, minimum is {min_words}")
                 elif isinstance(value, list):
                     logger.info(f"Table '{key}' entries: {len(value)}")
             
@@ -304,7 +335,15 @@ class ReportPDF(FPDF):
                 text = "Information not available at this time. Further analysis recommended."
 
             text = self.clean_text(text)
-            self.multi_cell(0, 6, text, align="L")
+            
+            # Add proper paragraph spacing and formatting
+            paragraphs = text.split('\n\n')
+            for i, paragraph in enumerate(paragraphs):
+                if paragraph.strip():
+                    self.multi_cell(0, 6, paragraph.strip(), align="L")
+                    if i < len(paragraphs) - 1:  # Add space between paragraphs
+                        self.ln(2)
+            
             self.ln(4)
             logger.info(f"Added paragraph with {len(text)} characters")
         except Exception as e:
@@ -312,8 +351,8 @@ class ReportPDF(FPDF):
 
     def add_data_table(self, title, data, column_widths=None):
         try:
-            if not data:
-                logger.info(f"No data for table: {title}")
+            if not data or not isinstance(data, list) or len(data) == 0:
+                logger.info(f"No valid data for table: {title}")
                 return
 
             if self.get_y() > 220:
@@ -324,6 +363,11 @@ class ReportPDF(FPDF):
             title = self.clean_text(title)
             self.cell(0, 10, title, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="L")
             self.ln(3)
+
+            # Ensure we have valid data structure
+            if not isinstance(data[0], dict):
+                logger.warning(f"Invalid table data structure for {title}")
+                return
 
             headers = list(data[0].keys())
             num_cols = len(headers)
@@ -528,7 +572,7 @@ def create_pdf(report: dict, output_path: str, plan: Plan):
 
         for table_title, table_key in table_mapping.items():
             table_data = report.get(table_key, [])
-            if table_data:
+            if table_data and isinstance(table_data, list) and len(table_data) > 0:
                 logger.info(f"Adding table: {table_title}")
                 pdf.add_data_table(table_title, table_data)
 
