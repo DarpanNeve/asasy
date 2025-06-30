@@ -38,7 +38,7 @@ class Settings(BaseSettings):
     RAZORPAY_KEY_SECRET: str
     RAZORPAY_WEBHOOK_SECRET: str
     
-    # OpenAI
+    # OpenAI - CRITICAL: This must be set correctly
     OPENAI_API_KEY: str
     
     # AWS S3
@@ -95,3 +95,11 @@ required_settings = [
 for setting in required_settings:
     if not getattr(settings, setting, None):
         raise ValueError(f"Required setting {setting} is not set")
+
+# Log OpenAI API key status (without exposing the key)
+import logging
+logger = logging.getLogger(__name__)
+if settings.OPENAI_API_KEY:
+    logger.info(f"OpenAI API Key configured: {settings.OPENAI_API_KEY[:10]}...{settings.OPENAI_API_KEY[-4:]}")
+else:
+    logger.error("OpenAI API Key is not configured!")
