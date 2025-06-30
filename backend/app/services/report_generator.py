@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 openai.api_key = settings.OPENAI_API_KEY
 
 async def generate_report_json(idea: str, plan: Plan) -> tuple[dict, dict]:
-    """Generate report content using OpenAI API with plan-specific structure"""
+    """Generate report content using OpenAI API with plan-specific structure and comprehensive tables"""
     
     logger.info(f"Starting report generation for plan: {plan.name}")
     logger.info(f"Plan sections: {plan.sections}")
@@ -79,43 +79,44 @@ async def generate_report_json(idea: str, plan: Plan) -> tuple[dict, dict]:
         if plan.name == "Basic":
             min_words = 50
             max_words = 150
-            content_depth = "concise overview"
+            content_depth = "concise overview with essential data"
         elif plan.name == "Intermediate":
             min_words = 100
             max_words = 250
-            content_depth = "detailed analysis"
+            content_depth = "detailed analysis with comprehensive data"
         elif plan.name == "Advanced":
             min_words = 150
             max_words = 350
-            content_depth = "comprehensive analysis"
+            content_depth = "comprehensive analysis with investment-grade data"
         else:  # Comprehensive
             min_words = 200
             max_words = 500
-            content_depth = "in-depth professional analysis"
+            content_depth = "in-depth professional analysis with institutional-grade data"
         
-        # Add standard tables for all plans
+        # Add comprehensive tables for all plans (5 standard tables)
         table_sections = {
-            "market_data_table": "[{\"metric\": \"string\", \"value\": \"string\", \"growth_rate\": \"string\", \"source\": \"string\"}]",
-            "competitor_analysis_table": "[{\"company\": \"string\", \"market_share\": \"string\", \"revenue\": \"string\", \"key_features\": \"string\", \"rating\": \"string\"}]",
-            "development_timeline_table": "[{\"phase\": \"string\", \"duration\": \"string\", \"cost\": \"string\", \"milestones\": \"string\", \"risk_level\": \"string\"}]",
-            "financial_projections_table": "[{\"year\": \"string\", \"revenue\": \"string\", \"costs\": \"string\", \"profit\": \"string\", \"roi\": \"string\"}]",
-            "technology_comparison_table": "[{\"feature\": \"string\", \"current_solution\": \"string\", \"proposed_solution\": \"string\", \"improvement\": \"string\", \"priority\": \"string\"}]"
+            "market_data_table": "[{\"metric\": \"string\", \"value\": \"string\", \"growth_rate\": \"string\", \"source\": \"string\", \"year\": \"string\"}]",
+            "competitor_analysis_table": "[{\"company\": \"string\", \"market_share\": \"string\", \"revenue\": \"string\", \"key_features\": \"string\", \"rating\": \"string\", \"strengths\": \"string\"}]",
+            "development_timeline_table": "[{\"phase\": \"string\", \"duration\": \"string\", \"cost\": \"string\", \"milestones\": \"string\", \"risk_level\": \"string\", \"dependencies\": \"string\"}]",
+            "financial_projections_table": "[{\"year\": \"string\", \"revenue\": \"string\", \"costs\": \"string\", \"profit\": \"string\", \"roi\": \"string\", \"market_share\": \"string\"}]",
+            "technology_comparison_table": "[{\"feature\": \"string\", \"current_solution\": \"string\", \"proposed_solution\": \"string\", \"improvement\": \"string\", \"priority\": \"string\", \"impact\": \"string\"}]"
         }
         
-        # Add advanced tables for higher tier plans
+        # Add advanced tables for higher tier plans (7 total for Advanced)
         if plan.name in ["Advanced", "Comprehensive"]:
             table_sections.update({
-                "ip_landscape_table": "[{\"patent_id\": \"string\", \"assignee\": \"string\", \"jurisdiction\": \"string\", \"status\": \"string\", \"relevance\": \"string\"}]",
-                "regulatory_timeline_table": "[{\"jurisdiction\": \"string\", \"requirement\": \"string\", \"timeline\": \"string\", \"cost\": \"string\", \"complexity\": \"string\"}]"
+                "ip_landscape_table": "[{\"patent_id\": \"string\", \"assignee\": \"string\", \"jurisdiction\": \"string\", \"status\": \"string\", \"relevance\": \"string\", \"expiry_date\": \"string\"}]",
+                "regulatory_timeline_table": "[{\"jurisdiction\": \"string\", \"requirement\": \"string\", \"timeline\": \"string\", \"cost\": \"string\", \"complexity\": \"string\", \"approval_rate\": \"string\"}]"
             })
         
+        # Add premium tables for Comprehensive plan (9 total)
         if plan.name == "Comprehensive":
             table_sections.update({
-                "funding_sources_table": "[{\"source_type\": \"string\", \"amount_range\": \"string\", \"timeline\": \"string\", \"requirements\": \"string\", \"success_rate\": \"string\"}]",
-                "licensing_terms_table": "[{\"license_type\": \"string\", \"royalty_rate\": \"string\", \"upfront_fee\": \"string\", \"territory\": \"string\", \"exclusivity\": \"string\"}]"
+                "funding_sources_table": "[{\"source_type\": \"string\", \"amount_range\": \"string\", \"timeline\": \"string\", \"requirements\": \"string\", \"success_rate\": \"string\", \"contact_info\": \"string\"}]",
+                "licensing_terms_table": "[{\"license_type\": \"string\", \"royalty_rate\": \"string\", \"upfront_fee\": \"string\", \"territory\": \"string\", \"exclusivity\": \"string\", \"duration\": \"string\"}]"
             })
         
-        # Create comprehensive system prompt
+        # Create comprehensive system prompt with enhanced table requirements
         system_prompt = f"""
 You are a world-class technology commercialization expert and RTTP (Registered Technology Transfer Professional) generating a {plan.report_type}.
 
@@ -127,31 +128,46 @@ You must output STRICTLY ONE JSON DOCUMENT with these exact keys:
 **Required Text Sections:**
 {json.dumps(required_sections, indent=2)}
 
-**Required Table Sections:**
+**Required Table Sections (MUST include {len(table_sections)} tables):**
 {json.dumps(table_sections, indent=2)}
 
-**CONTENT LENGTH REQUIREMENTS:**
+**ENHANCED CONTENT LENGTH REQUIREMENTS:**
 - Each text section: {min_words}-{max_words} words ({content_depth})
-- Include specific quantitative data, metrics, and statistics
+- Include specific quantitative data, metrics, statistics, and financial figures
 - Use professional, analytical tone appropriate for {plan.name} plan level
-- Provide actionable insights and concrete recommendations
-- Each table: 5-8 realistic entries with specific, credible data
+- Provide actionable insights and concrete recommendations with supporting data
+- Each table: 6-8 realistic entries with specific, credible, industry-standard data
 - All values must be strings for JSON compatibility
 
-**DATA QUALITY STANDARDS:**
-- Include realistic market sizes (e.g., "$2.5B market growing at 12% CAGR")
-- Provide specific technology metrics (e.g., "TRL 6-7, prototype tested")
-- Use industry-standard terminology and frameworks
-- Include credible competitor names and market data
-- Provide realistic financial projections and timelines
-- Reference appropriate regulatory bodies and standards
+**COMPREHENSIVE DATA QUALITY STANDARDS:**
+- Market data: Include realistic market sizes (e.g., "$2.5B market growing at 12% CAGR"), TAM/SAM/SOM figures
+- Technology metrics: Specific TRL levels (e.g., "TRL 6-7"), development timelines, technical specifications
+- Financial data: Realistic development costs, revenue projections, ROI calculations, funding requirements
+- Competitive data: Actual company names where possible, market share percentages, revenue figures
+- IP data: Patent numbers, filing dates, jurisdictions, legal status, expiry dates
+- Regulatory data: Specific approval timelines, cost estimates, success rates by jurisdiction
+- Timeline data: Specific phases, duration estimates, cost breakdowns, risk assessments
 
-**PROFESSIONAL FORMATTING:**
-- Write in third person, analytical style
-- Use bullet points sparingly, prefer flowing paragraphs
-- Include specific dates, percentages, and dollar amounts
-- Cite hypothetical but realistic data sources
-- Maintain consistency across all sections
+**PROFESSIONAL TABLE REQUIREMENTS:**
+- Market Data Table: Include metrics like market size, growth rates, adoption rates, pricing trends
+- Competitor Analysis: Real or realistic company names, market positions, revenue data, key differentiators
+- Development Timeline: Specific phases (R&D, Prototype, Testing, Regulatory, Launch), realistic timelines and costs
+- Financial Projections: 5-year projections with revenue, costs, profit margins, ROI calculations
+- Technology Comparison: Feature-by-feature comparison with quantified improvements and impact assessments
+
+**ENHANCED PROFESSIONAL FORMATTING:**
+- Write in third person, analytical style suitable for business presentations
+- Use industry-standard terminology and frameworks (TRL, TAM/SAM/SOM, SWOT, etc.)
+- Include specific dates, percentages, dollar amounts, and quantified metrics
+- Reference credible but hypothetical data sources and industry reports
+- Maintain consistency across all sections and tables
+- Ensure all financial figures are realistic and properly scaled
+
+**PLAN-SPECIFIC REQUIREMENTS:**
+- {plan.name} Plan: Target {plan.name.lower()} use cases with appropriate depth and sophistication
+- Content suitable for: {plan.description}
+- Analysis depth: {content_depth}
+- Professional standards appropriate for {plan.name} plan stakeholders
 
 OUTPUT ONLY THE JSON - NO ADDITIONAL TEXT, MARKDOWN, OR FORMATTING.
 """
@@ -160,9 +176,15 @@ OUTPUT ONLY THE JSON - NO ADDITIONAL TEXT, MARKDOWN, OR FORMATTING.
 Technology Idea: {idea}
 
 Generate a comprehensive {plan.report_type} following the exact JSON structure specified. 
-Ensure all sections meet the {min_words}-{max_words} word requirement and include specific, quantitative data appropriate for {plan.name} plan level analysis.
 
-Focus on creating realistic, professional content that would be suitable for actual business use in {plan.name.lower()} scenarios.
+**CRITICAL REQUIREMENTS:**
+1. Ensure ALL sections meet the {min_words}-{max_words} word requirement
+2. Include ALL {len(table_sections)} required tables with 6-8 realistic entries each
+3. Include specific, quantitative data appropriate for {plan.name} plan level analysis
+4. Use realistic market data, financial projections, and competitive intelligence
+5. Maintain professional tone suitable for {plan.name} plan stakeholders
+
+Focus on creating realistic, professional content that would be suitable for actual business use in {plan.name.lower()} scenarios. Include comprehensive tables with industry-standard data that supports the analysis.
 """
         
         logger.info("Preparing OpenAI API call...")
@@ -241,6 +263,8 @@ Focus on creating realistic, professional content that would be suitable for act
                         logger.warning(f"Section '{key}' has only {word_count} words, minimum is {min_words}")
                 elif isinstance(value, list):
                     logger.info(f"Table '{key}' entries: {len(value)}")
+                    if len(value) < 5:
+                        logger.warning(f"Table '{key}' has only {len(value)} entries, recommended minimum is 6")
             
             return parsed_content, usage_info
             
@@ -336,15 +360,20 @@ class ReportPDF(FPDF):
 
             text = self.clean_text(text)
             
-            # Add proper paragraph spacing and formatting
+            # Enhanced paragraph formatting with better spacing
             paragraphs = text.split('\n\n')
             for i, paragraph in enumerate(paragraphs):
                 if paragraph.strip():
-                    self.multi_cell(0, 6, paragraph.strip(), align="L")
+                    # Handle bullet points and formatting
+                    lines = paragraph.split('\n')
+                    for line in lines:
+                        if line.strip():
+                            self.multi_cell(0, 6, line.strip(), align="L")
+                            self.ln(1)
                     if i < len(paragraphs) - 1:  # Add space between paragraphs
-                        self.ln(2)
+                        self.ln(3)
             
-            self.ln(4)
+            self.ln(5)
             logger.info(f"Added paragraph with {len(text)} characters")
         except Exception as e:
             logger.error(f"Error adding paragraph: {e}")
@@ -355,14 +384,15 @@ class ReportPDF(FPDF):
                 logger.info(f"No valid data for table: {title}")
                 return
 
-            if self.get_y() > 220:
+            if self.get_y() > 200:  # More conservative page break for tables
                 self.add_page()
 
+            # Table title with enhanced formatting
             self.set_font("Helvetica", "B", 12)
             self.set_text_color(0, 0, 0)
             title = self.clean_text(title)
             self.cell(0, 10, title, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="L")
-            self.ln(3)
+            self.ln(5)
 
             # Ensure we have valid data structure
             if not isinstance(data[0], dict):
@@ -372,23 +402,33 @@ class ReportPDF(FPDF):
             headers = list(data[0].keys())
             num_cols = len(headers)
 
+            # Enhanced column width calculation
             if column_widths is None:
                 available_width = 170
-                column_widths = [available_width // num_cols] * num_cols
+                # Adjust column widths based on content
+                if num_cols <= 3:
+                    column_widths = [available_width // num_cols] * num_cols
+                elif num_cols <= 5:
+                    column_widths = [max(25, available_width // num_cols)] * num_cols
+                else:
+                    column_widths = [max(20, available_width // num_cols)] * num_cols
 
             total_width = sum(column_widths)
             if total_width > 170:
                 factor = 170 / total_width
                 column_widths = [int(w * factor) for w in column_widths]
 
-            # Add headers
+            # Enhanced table headers
             self.set_font("Helvetica", "B", 9)
-            self.set_fill_color(200, 200, 200)
+            self.set_fill_color(220, 220, 220)
+            self.set_text_color(0, 0, 0)
 
             for i, header in enumerate(headers):
                 header_text = self.clean_text(header.replace("_", " ").title())
+                if len(header_text) > 15:
+                    header_text = header_text[:12] + "..."
+                
                 is_last = i == len(headers) - 1
-
                 self.cell(
                     column_widths[i],
                     8,
@@ -400,17 +440,36 @@ class ReportPDF(FPDF):
                     fill=True,
                 )
 
-            # Add data rows
+            # Enhanced data rows with alternating colors
             self.set_font("Helvetica", "", 8)
-            self.set_fill_color(255, 255, 255)
-
+            
             for row_idx, row in enumerate(data):
-                if self.get_y() > 250:
+                if self.get_y() > 260:  # Check for page break
                     self.add_page()
+                    # Re-add headers on new page
+                    self.set_font("Helvetica", "B", 9)
+                    self.set_fill_color(220, 220, 220)
+                    for i, header in enumerate(headers):
+                        header_text = self.clean_text(header.replace("_", " ").title())
+                        if len(header_text) > 15:
+                            header_text = header_text[:12] + "..."
+                        is_last = i == len(headers) - 1
+                        self.cell(
+                            column_widths[i],
+                            8,
+                            header_text,
+                            border=1,
+                            new_x=XPos.RIGHT if not is_last else XPos.LMARGIN,
+                            new_y=YPos.TOP if not is_last else YPos.NEXT,
+                            align="C",
+                            fill=True,
+                        )
+                    self.set_font("Helvetica", "", 8)
 
+                # Alternating row colors
                 fill = row_idx % 2 == 0
                 if fill:
-                    self.set_fill_color(245, 245, 245)
+                    self.set_fill_color(248, 248, 248)
                 else:
                     self.set_fill_color(255, 255, 255)
 
@@ -419,8 +478,10 @@ class ReportPDF(FPDF):
                     if not value:
                         value = "N/A"
 
-                    if len(value) > 25:
-                        value = value[:22] + "..."
+                    # Smart text truncation based on column width
+                    max_chars = max(10, column_widths[i] // 3)
+                    if len(value) > max_chars:
+                        value = value[:max_chars-3] + "..."
 
                     value = self.clean_text(value)
                     is_last = i == len(headers) - 1
@@ -436,41 +497,42 @@ class ReportPDF(FPDF):
                         fill=fill,
                     )
 
-            self.ln(5)
-            logger.info(f"Added data table: {title} with {len(data)} rows")
+            self.ln(8)  # Extra space after table
+            logger.info(f"Added enhanced data table: {title} with {len(data)} rows")
         except Exception as e:
             logger.error(f"Error adding data table {title}: {e}")
 
     def clean_text(self, text):
-        """Clean text to remove problematic Unicode characters"""
+        """Enhanced text cleaning for better PDF compatibility"""
         try:
             if not text:
                 return ""
 
+            # Enhanced character replacements
             replacements = {
-                """: '"',
-                """: '"',
-                "'": "'",
-                "'": "'",
-                "–": "-",
-                "—": "-",
-                "…": "...",
-                "®": "(R)",
-                "™": "(TM)",
-                "©": "(C)",
+                """: '"', """: '"', "'": "'", "'": "'",
+                "–": "-", "—": "-", "…": "...",
+                "®": "(R)", "™": "(TM)", "©": "(C)",
+                "€": "EUR", "£": "GBP", "¥": "JPY",
+                "°": " degrees", "±": "+/-", "×": "x"
             }
 
             for old, new in replacements.items():
                 text = text.replace(old, new)
 
+            # Remove or replace non-ASCII characters
             text = "".join(char if ord(char) < 128 else "?" for char in text)
+            
+            # Clean up extra whitespace
+            text = " ".join(text.split())
+            
             return text
         except Exception as e:
             logger.error(f"Error cleaning text: {e}")
             return str(text)
 
 def create_pdf(report: dict, output_path: str, plan: Plan):
-    """Create PDF from report data with plan-specific structure"""
+    """Create enhanced PDF from report data with comprehensive tables"""
     logger.info(f"Starting PDF creation for plan: {plan.name}")
     logger.info(f"Plan sections: {plan.sections}")
     logger.info(f"Report keys: {list(report.keys())}")
@@ -479,15 +541,22 @@ def create_pdf(report: dict, output_path: str, plan: Plan):
         pdf = ReportPDF(plan)
         pdf.add_page()
 
-        # Title
+        # Enhanced title page
         pdf.add_title(f"{plan.report_type.upper()}")
         
-        # Subtitle
+        # Enhanced subtitle with plan details
         pdf.set_font("Helvetica", "B", 12)
         pdf.set_text_color(0, 0, 0)
-        subtitle = f"{plan.name} Plan ({plan.report_pages})"
+        subtitle = f"{plan.name} Plan - {plan.report_pages}"
         subtitle = pdf.clean_text(subtitle)
         pdf.multi_cell(0, 8, subtitle, align="C")
+        pdf.ln(5)
+
+        # Plan features summary
+        pdf.set_font("Helvetica", "", 10)
+        pdf.set_text_color(100, 100, 100)
+        features_text = f"Features: {len(plan.sections)} sections, {len([k for k in report.keys() if 'table' in k])} data tables"
+        pdf.multi_cell(0, 6, features_text, align="C")
         pdf.ln(10)
 
         # Add timestamp
@@ -496,7 +565,7 @@ def create_pdf(report: dict, output_path: str, plan: Plan):
         pdf.set_text_color(128, 128, 128)
         timestamp = f"Generated on {datetime.now().strftime('%B %d, %Y at %I:%M %p')}"
         pdf.multi_cell(0, 6, timestamp, align="C")
-        pdf.ln(10)
+        pdf.ln(15)
 
         # Section mapping for consistent ordering based on plan sections
         section_mapping = {
@@ -548,62 +617,67 @@ def create_pdf(report: dict, output_path: str, plan: Plan):
                     pdf.add_paragraph(content)
                     section_num += 1
 
-        # Add tables based on plan level
+        # Add comprehensive tables based on plan level
         table_mapping = {
-            "Technology Comparison": "technology_comparison_table",
-            "Development Timeline": "development_timeline_table", 
-            "Market Data": "market_data_table",
-            "Competitor Analysis": "competitor_analysis_table",
-            "Financial Projections": "financial_projections_table"
+            "Market Data Analysis": "market_data_table",
+            "Competitive Landscape": "competitor_analysis_table",
+            "Development Timeline & Milestones": "development_timeline_table",
+            "Financial Projections": "financial_projections_table",
+            "Technology Comparison Matrix": "technology_comparison_table"
         }
         
         # Add advanced tables for higher tier plans
         if plan.name in ["Advanced", "Comprehensive"]:
             table_mapping.update({
-                "IP Landscape": "ip_landscape_table",
+                "IP Landscape Analysis": "ip_landscape_table",
                 "Regulatory Timeline": "regulatory_timeline_table"
             })
         
+        # Add premium tables for Comprehensive plan
         if plan.name == "Comprehensive":
             table_mapping.update({
-                "Funding Sources": "funding_sources_table",
-                "Licensing Terms": "licensing_terms_table"
+                "Funding Sources & Opportunities": "funding_sources_table",
+                "Licensing Terms & Strategies": "licensing_terms_table"
             })
 
+        # Add all tables with enhanced formatting
         for table_title, table_key in table_mapping.items():
             table_data = report.get(table_key, [])
             if table_data and isinstance(table_data, list) and len(table_data) > 0:
-                logger.info(f"Adding table: {table_title}")
+                logger.info(f"Adding enhanced table: {table_title}")
                 pdf.add_data_table(table_title, table_data)
 
         # Save PDF
         pdf.output(output_path)
-        logger.info(f"PDF generated successfully at: {output_path}")
+        logger.info(f"Enhanced PDF generated successfully at: {output_path}")
         
-        # Verify file was created and has content
+        # Verify file was created and has substantial content
         if os.path.exists(output_path):
             file_size = os.path.getsize(output_path)
             logger.info(f"PDF file size: {file_size} bytes")
             if file_size == 0:
                 logger.error("PDF file is empty!")
                 raise ValueError("Generated PDF file is empty")
+            elif file_size < 10000:  # Less than 10KB might indicate insufficient content
+                logger.warning(f"PDF file size ({file_size} bytes) seems small for {plan.name} plan")
         else:
             logger.error("PDF file was not created!")
             raise ValueError("PDF file was not created")
 
     except Exception as e:
-        logger.error(f"Error creating PDF: {e}")
+        logger.error(f"Error creating enhanced PDF: {e}")
         logger.error(f"Traceback: {traceback.format_exc()}")
         raise
 
 async def generate_technology_report(idea: str, output_path: str, plan: Plan) -> dict:
-    """Main function to generate a complete technology assessment report"""
+    """Main function to generate a comprehensive technology assessment report with enhanced tables"""
     logger.info("="*50)
-    logger.info("STARTING TECHNOLOGY REPORT GENERATION")
+    logger.info("STARTING ENHANCED TECHNOLOGY REPORT GENERATION")
     logger.info("="*50)
     logger.info(f"Plan: {plan.name}")
     logger.info(f"Report Type: {plan.report_type}")
     logger.info(f"Sections: {len(plan.sections)}")
+    logger.info(f"Expected Tables: 5+ comprehensive data tables")
     logger.info(f"Idea: {idea[:100]}...")
     logger.info(f"Output path: {output_path}")
     
@@ -612,13 +686,13 @@ async def generate_technology_report(idea: str, output_path: str, plan: Plan) ->
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         logger.info(f"Output directory ensured: {os.path.dirname(output_path)}")
 
-        logger.info("Step 1: Generating report content...")
+        logger.info("Step 1: Generating comprehensive report content with tables...")
         report_json, usage_info = await generate_report_json(idea, plan)
         
-        logger.info("Step 2: Creating PDF...")
+        logger.info("Step 2: Creating enhanced PDF with comprehensive tables...")
         create_pdf(report_json, output_path, plan)
 
-        logger.info("Step 3: Report generation completed successfully!")
+        logger.info("Step 3: Enhanced report generation completed successfully!")
         logger.info("="*50)
         
         # Return the report data with usage info
