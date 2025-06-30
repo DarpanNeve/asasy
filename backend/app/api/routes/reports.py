@@ -5,6 +5,7 @@ from datetime import datetime
 import os
 import asyncio
 import logging
+import traceback
 
 from app.core.security import get_current_user
 from app.models.user import User
@@ -88,7 +89,7 @@ async def generate_report_background(report_id: str, idea: str, plan_id: str, us
         logger.error(f"Error in background report generation: {e}")
         logger.error(f"Traceback: {traceback.format_exc()}")
         
-        # Mark as failed
+        # Mark as failed - no fallback report generation
         try:
             report = await ReportLog.get(report_id)
             if report:

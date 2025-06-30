@@ -4,7 +4,7 @@ import openai
 from fpdf import FPDF
 from fpdf.enums import XPos, YPos
 from app.core.config import settings
-from app.models.plan import Plan, DEFAULT_PLANS
+from app.models.plan import Plan
 import asyncio
 import logging
 import time
@@ -23,13 +23,8 @@ async def generate_report_json(idea: str, plan: Plan) -> tuple[dict, dict]:
     logger.info(f"OpenAI API Key configured: {'Yes' if settings.OPENAI_API_KEY else 'No'}")
     
     try:
-        # Use the plan's prompt template if available, otherwise use default
-        if hasattr(plan, 'prompt_template') and plan.prompt_template:
-            system_prompt = plan.prompt_template
-            logger.info(f"Using plan-specific prompt template for {plan.name}")
-        else:
-            # Fallback to comprehensive system prompt
-            system_prompt = """
+        # Use comprehensive system prompt - it's much better than plan-specific prompts
+        system_prompt = """
 You are a world-class business & technology research analyst. When given a single "idea" for a patent-grade system, you must OUTPUT STRICTLY ONE JSON DOCUMENT (no extra text) with these exact keys:
 
 1. patent_info: {title, application_no, grant_no, filing_date, jurisdiction, assignee, status}  
@@ -62,7 +57,8 @@ You are a world-class business & technology research analyst. When given a singl
 
 Aim to make every section as comprehensive and statistically rigorous as possible.
 """
-            logger.info("Using default comprehensive prompt template")
+        
+        logger.info("Using comprehensive system prompt")
 
         user_prompt = f"""
 Idea: ```{idea}```
@@ -158,151 +154,8 @@ Generate the report JSON as specified above. Ensure every section is richly deta
         logger.error(f"Error in generate_report_json: {e}")
         logger.error(f"Traceback: {traceback.format_exc()}")
         
-        # Return fallback report with error info
-        fallback_report = get_fallback_report(plan)
-        usage_info = {"error": str(e), "model": "fallback"}
-        
-        return fallback_report, usage_info
-
-def get_fallback_report(plan: Plan) -> dict:
-    """Return a fallback report structure using plan data from models/plan.py"""
-    logger.warning(f"Using fallback report for plan: {plan.name}")
-    
-    try:
-        # Find matching plan in DEFAULT_PLANS if needed
-        plan_data = None
-        for default_plan in DEFAULT_PLANS:
-            if default_plan["name"] == plan.name:
-                plan_data = default_plan
-                break
-        
-        # Use current plan if no match found
-        if not plan_data:
-            plan_data = {
-                "name": plan.name,
-                "report_type": getattr(plan, 'report_type', 'Technology Assessment'),
-                "sections": getattr(plan, 'sections', []),
-                "price_inr": getattr(plan, 'price_inr', 0)
-            }
-        
-        # Generate content based on plan
-        if plan_data["name"] == "Starter":
-            return {
-                "patent_info": {
-                    "title": "Technology Assessment Report",
-                    "application_no": "N/A",
-                    "grant_no": "N/A", 
-                    "filing_date": "N/A",
-                    "jurisdiction": "N/A",
-                    "assignee": "N/A",
-                    "status": "Assessment Phase"
-                },
-                "executive_summary": "This technology concept shows potential for development. Further analysis recommended to assess viability and market opportunities. The proposed innovation addresses current market gaps and demonstrates technical feasibility through preliminary evaluation.",
-                "technology_overview": "The proposed solution leverages existing technologies in a novel configuration. Technical feasibility assessment indicates moderate complexity with standard engineering approaches. Implementation would require standard development methodologies and established technical frameworks.",
-                "development_plan": "Development should proceed through standard phases including proof of concept, prototype development, and testing. Estimated timeline of 12-18 months for initial development with iterative improvements based on user feedback and market validation.",
-                "market_assessment": "Initial market research indicates growing demand in target segments. Market size estimation requires further validation through customer interviews and competitive analysis. Early indicators suggest positive market reception.",
-                "commercialization_strategies": "Multiple commercialization pathways available including direct sales, licensing, and partnership models. Strategy selection should be based on resource availability, market dynamics, and competitive positioning.",
-                "financial_viability": "Preliminary financial analysis indicates positive ROI potential. Detailed financial modeling required to validate assumptions and refine projections. Initial investment requirements appear reasonable for expected returns.",
-                "final_thoughts": "The technology shows promise and warrants further investigation. Recommend conducting detailed market research, technical feasibility study, and financial modeling before proceeding with full development.",
-                "market_data_table": [],
-                "competitor_analysis_table": [],
-                "development_timeline_table": [],
-                "financial_projections_table": [],
-                "technology_comparison_table": []
-            }
-        
-        elif plan_data["name"] == "Explorer":
-            return {
-                "patent_info": {
-                    "title": "Technology Assessment Report - Intermediate Analysis",
-                    "application_no": "Pending",
-                    "grant_no": "N/A",
-                    "filing_date": "TBD",
-                    "jurisdiction": "Multiple",
-                    "assignee": "TBD",
-                    "status": "Pre-filing Assessment"
-                },
-                "executive_summary": "Technology assessment indicates moderate to high potential with identified development pathways and market opportunities. The innovation addresses validated market problems with a technically feasible solution approach requiring further development and market validation.",
-                "technology_overview": "Comprehensive technical analysis reveals solid foundation with clear implementation pathway. The technology builds upon established principles while introducing novel approaches that differentiate it from existing solutions.",
-                "development_plan": "Structured development approach recommended with clear milestones and risk mitigation strategies. Timeline extends 18-24 months with defined phases for prototype development, testing, and market validation.",
-                "market_assessment": "Market analysis reveals significant opportunity with growing demand trends. Target market segments identified with clear value propositions and competitive advantages over existing solutions.",
-                "commercialization_strategies": "Multiple viable commercialization paths identified including licensing, direct commercialization, and strategic partnerships. Each pathway offers distinct advantages depending on resource allocation and market timing.",
-                "financial_viability": "Financial projections indicate strong ROI potential with reasonable payback periods. Multiple revenue streams identified with scalable business model supporting long-term growth.",
-                "final_thoughts": "Strong recommendation to proceed with development based on comprehensive analysis. Risk factors are manageable with proper planning and execution. Market timing appears favorable for launch.",
-                "market_data_table": [],
-                "competitor_analysis_table": [],
-                "development_timeline_table": [],
-                "financial_projections_table": [],
-                "technology_comparison_table": []
-            }
-        
-        elif plan_data["name"] == "Professional":
-            return {
-                "patent_info": {
-                    "title": "Comprehensive Technology Assessment Report",
-                    "application_no": "Strategic Assessment",
-                    "grant_no": "N/A",
-                    "filing_date": "Strategic Planning Phase",
-                    "jurisdiction": "Global",
-                    "assignee": "Strategic Assessment",
-                    "status": "Comprehensive Analysis"
-                },
-                "executive_summary": "Comprehensive analysis indicates strong commercial potential with clear development and commercialization pathways identified. The technology represents a significant advancement with novel approaches to existing problems and substantial market opportunity.",
-                "technology_overview": "The technology represents a significant advancement with novel approaches to existing problems. Technical architecture is sound with clear implementation pathways and scalable design principles.",
-                "development_plan": "Comprehensive development strategy with detailed timelines, resource requirements, and risk mitigation approaches. Multi-phase approach ensures systematic progress with regular validation checkpoints.",
-                "market_assessment": "Extensive market analysis reveals substantial opportunity with multiple target segments and clear competitive advantages. Market timing is favorable with growing demand trends supporting commercial success.",
-                "commercialization_strategies": "Multiple strategic commercialization options available with detailed analysis of each pathway. Recommendations include optimal timing, resource allocation, and partnership strategies for maximum market impact.",
-                "financial_viability": "Detailed financial analysis demonstrates strong ROI potential with multiple revenue streams and scalable business model. Investment requirements are justified by projected returns and market opportunity.",
-                "final_thoughts": "Strong recommendation to proceed with full development and commercialization. All key success factors are aligned with favorable market conditions and technical feasibility confirmed.",
-                "market_data_table": [],
-                "competitor_analysis_table": [],
-                "development_timeline_table": [],
-                "financial_projections_table": [],
-                "technology_comparison_table": []
-            }
-        
-        else:  # Enterprise
-            return {
-                "patent_info": {
-                    "title": "Enterprise IP Commercialization Report",
-                    "application_no": "Strategic IP Assessment",
-                    "grant_no": "N/A",
-                    "filing_date": "IP Strategy Phase",
-                    "jurisdiction": "Global",
-                    "assignee": "Enterprise Assessment",
-                    "status": "Comprehensive IP Analysis"
-                },
-                "executive_summary": "Enterprise-grade analysis indicates exceptional commercial potential with comprehensive IP commercialization strategy and global market opportunities. The technology represents breakthrough innovation with sustained competitive advantages and institutional investment potential.",
-                "technology_overview": "The technology represents breakthrough innovation with comprehensive technical validation and institutional-grade feasibility assessment. Advanced technical architecture confirms scalable implementation with global deployment capabilities.",
-                "development_plan": "Enterprise development strategy with comprehensive resource planning, risk management, and global deployment considerations. Multi-year roadmap ensures systematic market penetration with strategic milestone achievement.",
-                "market_assessment": "Global market analysis reveals exceptional opportunity with multiple geographic markets and diverse application sectors. Comprehensive competitive intelligence supports market leadership positioning and sustained growth potential.",
-                "commercialization_strategies": "Comprehensive IP commercialization strategy including global licensing, direct market entry, strategic alliances, and acquisition pathways. Multi-channel approach maximizes market penetration and revenue optimization.",
-                "financial_viability": "Investment-grade financial analysis demonstrates exceptional ROI potential with diversified revenue streams and global scalability. Enterprise-level returns justify significant investment with institutional-grade risk management.",
-                "final_thoughts": "Exceptional recommendation for full enterprise commercialization with comprehensive IP strategy implementation. All strategic factors align for market leadership achievement and sustained competitive advantage.",
-                "market_data_table": [],
-                "competitor_analysis_table": [],
-                "development_timeline_table": [],
-                "financial_projections_table": [],
-                "technology_comparison_table": []
-            }
-            
-    except Exception as e:
-        logger.error(f"Error creating fallback report: {e}")
-        return {
-            "patent_info": {"title": "Report Generation Failed"},
-            "executive_summary": "Report generation failed. Please try again.",
-            "technology_overview": "N/A",
-            "development_plan": "N/A", 
-            "market_assessment": "N/A",
-            "commercialization_strategies": "N/A",
-            "financial_viability": "N/A",
-            "final_thoughts": "N/A",
-            "market_data_table": [],
-            "competitor_analysis_table": [],
-            "development_timeline_table": [],
-            "financial_projections_table": [],
-            "technology_comparison_table": []
-        }
+        # Don't create fallback report - just raise the error
+        raise
 
 class ReportPDF(FPDF):
     def __init__(self, plan_name: str):
