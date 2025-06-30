@@ -4,7 +4,7 @@ import openai
 from fpdf import FPDF
 from fpdf.enums import XPos, YPos
 from app.core.config import settings
-from app.models.plan import Plan
+from app.models.plan import Plan, DEFAULT_PLANS
 import asyncio
 import logging
 import time
@@ -165,204 +165,144 @@ Generate the report JSON as specified above. Ensure every section is richly deta
         return fallback_report, usage_info
 
 def get_fallback_report(plan: Plan) -> dict:
-    """Return a dynamic fallback report structure based on plan configuration"""
-    logger.warning(f"Using dynamic fallback report for plan: {plan.name}")
+    """Return a fallback report structure using plan data from models/plan.py"""
+    logger.warning(f"Using fallback report for plan: {plan.name}")
     
     try:
-        # Generate dynamic content based on plan attributes
-        plan_level = _get_plan_complexity_level(plan)
-        sections_count = len(plan.sections) if plan.sections else 7
+        # Find matching plan in DEFAULT_PLANS if needed
+        plan_data = None
+        for default_plan in DEFAULT_PLANS:
+            if default_plan["name"] == plan.name:
+                plan_data = default_plan
+                break
         
-        # Base patent info using plan data
-        patent_info = {
-            "title": f"{plan.report_type} Report",
-            "application_no": "Assessment Phase",
-            "grant_no": "N/A",
-            "filing_date": "Assessment Stage",
-            "jurisdiction": _get_jurisdiction_scope(plan),
-            "assignee": "Assessment Phase",
-            "status": f"{plan_level} Assessment"
-        }
+        # Use current plan if no match found
+        if not plan_data:
+            plan_data = {
+                "name": plan.name,
+                "report_type": getattr(plan, 'report_type', 'Technology Assessment'),
+                "sections": getattr(plan, 'sections', []),
+                "price_inr": getattr(plan, 'price_inr', 0)
+            }
         
-        # Generate content based on plan sophistication
-        executive_summary = _generate_executive_summary(plan, plan_level)
-        technology_overview = _generate_technology_overview(plan, plan_level)
-        development_plan = _generate_development_plan(plan, plan_level)
-        market_assessment = _generate_market_assessment(plan, plan_level)
-        commercialization_strategies = _generate_commercialization_strategies(plan, plan_level)
-        financial_viability = _generate_financial_viability(plan, plan_level)
-        final_thoughts = _generate_final_thoughts(plan, plan_level)
+        # Generate content based on plan
+        if plan_data["name"] == "Starter":
+            return {
+                "patent_info": {
+                    "title": "Technology Assessment Report",
+                    "application_no": "N/A",
+                    "grant_no": "N/A", 
+                    "filing_date": "N/A",
+                    "jurisdiction": "N/A",
+                    "assignee": "N/A",
+                    "status": "Assessment Phase"
+                },
+                "executive_summary": "This technology concept shows potential for development. Further analysis recommended to assess viability and market opportunities. The proposed innovation addresses current market gaps and demonstrates technical feasibility through preliminary evaluation.",
+                "technology_overview": "The proposed solution leverages existing technologies in a novel configuration. Technical feasibility assessment indicates moderate complexity with standard engineering approaches. Implementation would require standard development methodologies and established technical frameworks.",
+                "development_plan": "Development should proceed through standard phases including proof of concept, prototype development, and testing. Estimated timeline of 12-18 months for initial development with iterative improvements based on user feedback and market validation.",
+                "market_assessment": "Initial market research indicates growing demand in target segments. Market size estimation requires further validation through customer interviews and competitive analysis. Early indicators suggest positive market reception.",
+                "commercialization_strategies": "Multiple commercialization pathways available including direct sales, licensing, and partnership models. Strategy selection should be based on resource availability, market dynamics, and competitive positioning.",
+                "financial_viability": "Preliminary financial analysis indicates positive ROI potential. Detailed financial modeling required to validate assumptions and refine projections. Initial investment requirements appear reasonable for expected returns.",
+                "final_thoughts": "The technology shows promise and warrants further investigation. Recommend conducting detailed market research, technical feasibility study, and financial modeling before proceeding with full development.",
+                "market_data_table": [],
+                "competitor_analysis_table": [],
+                "development_timeline_table": [],
+                "financial_projections_table": [],
+                "technology_comparison_table": []
+            }
         
-        # Generate tables based on plan report formats
-        tables = _generate_fallback_tables(plan)
+        elif plan_data["name"] == "Explorer":
+            return {
+                "patent_info": {
+                    "title": "Technology Assessment Report - Intermediate Analysis",
+                    "application_no": "Pending",
+                    "grant_no": "N/A",
+                    "filing_date": "TBD",
+                    "jurisdiction": "Multiple",
+                    "assignee": "TBD",
+                    "status": "Pre-filing Assessment"
+                },
+                "executive_summary": "Technology assessment indicates moderate to high potential with identified development pathways and market opportunities. The innovation addresses validated market problems with a technically feasible solution approach requiring further development and market validation.",
+                "technology_overview": "Comprehensive technical analysis reveals solid foundation with clear implementation pathway. The technology builds upon established principles while introducing novel approaches that differentiate it from existing solutions.",
+                "development_plan": "Structured development approach recommended with clear milestones and risk mitigation strategies. Timeline extends 18-24 months with defined phases for prototype development, testing, and market validation.",
+                "market_assessment": "Market analysis reveals significant opportunity with growing demand trends. Target market segments identified with clear value propositions and competitive advantages over existing solutions.",
+                "commercialization_strategies": "Multiple viable commercialization paths identified including licensing, direct commercialization, and strategic partnerships. Each pathway offers distinct advantages depending on resource allocation and market timing.",
+                "financial_viability": "Financial projections indicate strong ROI potential with reasonable payback periods. Multiple revenue streams identified with scalable business model supporting long-term growth.",
+                "final_thoughts": "Strong recommendation to proceed with development based on comprehensive analysis. Risk factors are manageable with proper planning and execution. Market timing appears favorable for launch.",
+                "market_data_table": [],
+                "competitor_analysis_table": [],
+                "development_timeline_table": [],
+                "financial_projections_table": [],
+                "technology_comparison_table": []
+            }
         
-        return {
-            "patent_info": patent_info,
-            "executive_summary": executive_summary,
-            "technology_overview": technology_overview,
-            "development_plan": development_plan,
-            "market_assessment": market_assessment,
-            "commercialization_strategies": commercialization_strategies,
-            "financial_viability": financial_viability,
-            "final_thoughts": final_thoughts,
-            **tables
-        }
+        elif plan_data["name"] == "Professional":
+            return {
+                "patent_info": {
+                    "title": "Comprehensive Technology Assessment Report",
+                    "application_no": "Strategic Assessment",
+                    "grant_no": "N/A",
+                    "filing_date": "Strategic Planning Phase",
+                    "jurisdiction": "Global",
+                    "assignee": "Strategic Assessment",
+                    "status": "Comprehensive Analysis"
+                },
+                "executive_summary": "Comprehensive analysis indicates strong commercial potential with clear development and commercialization pathways identified. The technology represents a significant advancement with novel approaches to existing problems and substantial market opportunity.",
+                "technology_overview": "The technology represents a significant advancement with novel approaches to existing problems. Technical architecture is sound with clear implementation pathways and scalable design principles.",
+                "development_plan": "Comprehensive development strategy with detailed timelines, resource requirements, and risk mitigation approaches. Multi-phase approach ensures systematic progress with regular validation checkpoints.",
+                "market_assessment": "Extensive market analysis reveals substantial opportunity with multiple target segments and clear competitive advantages. Market timing is favorable with growing demand trends supporting commercial success.",
+                "commercialization_strategies": "Multiple strategic commercialization options available with detailed analysis of each pathway. Recommendations include optimal timing, resource allocation, and partnership strategies for maximum market impact.",
+                "financial_viability": "Detailed financial analysis demonstrates strong ROI potential with multiple revenue streams and scalable business model. Investment requirements are justified by projected returns and market opportunity.",
+                "final_thoughts": "Strong recommendation to proceed with full development and commercialization. All key success factors are aligned with favorable market conditions and technical feasibility confirmed.",
+                "market_data_table": [],
+                "competitor_analysis_table": [],
+                "development_timeline_table": [],
+                "financial_projections_table": [],
+                "technology_comparison_table": []
+            }
         
+        else:  # Enterprise
+            return {
+                "patent_info": {
+                    "title": "Enterprise IP Commercialization Report",
+                    "application_no": "Strategic IP Assessment",
+                    "grant_no": "N/A",
+                    "filing_date": "IP Strategy Phase",
+                    "jurisdiction": "Global",
+                    "assignee": "Enterprise Assessment",
+                    "status": "Comprehensive IP Analysis"
+                },
+                "executive_summary": "Enterprise-grade analysis indicates exceptional commercial potential with comprehensive IP commercialization strategy and global market opportunities. The technology represents breakthrough innovation with sustained competitive advantages and institutional investment potential.",
+                "technology_overview": "The technology represents breakthrough innovation with comprehensive technical validation and institutional-grade feasibility assessment. Advanced technical architecture confirms scalable implementation with global deployment capabilities.",
+                "development_plan": "Enterprise development strategy with comprehensive resource planning, risk management, and global deployment considerations. Multi-year roadmap ensures systematic market penetration with strategic milestone achievement.",
+                "market_assessment": "Global market analysis reveals exceptional opportunity with multiple geographic markets and diverse application sectors. Comprehensive competitive intelligence supports market leadership positioning and sustained growth potential.",
+                "commercialization_strategies": "Comprehensive IP commercialization strategy including global licensing, direct market entry, strategic alliances, and acquisition pathways. Multi-channel approach maximizes market penetration and revenue optimization.",
+                "financial_viability": "Investment-grade financial analysis demonstrates exceptional ROI potential with diversified revenue streams and global scalability. Enterprise-level returns justify significant investment with institutional-grade risk management.",
+                "final_thoughts": "Exceptional recommendation for full enterprise commercialization with comprehensive IP strategy implementation. All strategic factors align for market leadership achievement and sustained competitive advantage.",
+                "market_data_table": [],
+                "competitor_analysis_table": [],
+                "development_timeline_table": [],
+                "financial_projections_table": [],
+                "technology_comparison_table": []
+            }
+            
     except Exception as e:
-        logger.error(f"Error creating dynamic fallback report: {e}")
-        return _get_minimal_fallback_report()
-
-def _get_plan_complexity_level(plan: Plan) -> str:
-    """Determine complexity level based on plan attributes"""
-    if plan.price_inr == 0:
-        return "Basic"
-    elif plan.price_inr <= 2000:
-        return "Intermediate"
-    elif plan.price_inr <= 5000:
-        return "Advanced" 
-    else:
-        return "Comprehensive"
-
-def _get_jurisdiction_scope(plan: Plan) -> str:
-    """Determine jurisdiction scope based on plan level"""
-    if plan.price_inr == 0:
-        return "Local/Regional"
-    elif plan.price_inr <= 2000:
-        return "National"
-    elif plan.price_inr <= 5000:
-        return "International"
-    else:
-        return "Global"
-
-def _generate_executive_summary(plan: Plan, level: str) -> str:
-    """Generate executive summary based on plan level"""
-    base_text = f"This {level.lower()} technology assessment provides "
-    
-    if level == "Basic":
-        return f"{base_text}an overview of the technology concept with preliminary analysis of its potential. The assessment covers fundamental aspects including technical feasibility, basic market opportunity, and initial commercialization considerations. This evaluation serves as a starting point for further detailed analysis and strategic planning."
-    
-    elif level == "Intermediate":
-        return f"{base_text}a comprehensive evaluation of the technology with detailed market analysis and commercialization pathways. The assessment includes technical feasibility validation, competitive landscape analysis, market opportunity quantification, and strategic recommendations for development and market entry. This evaluation provides stakeholders with actionable insights for investment and development decisions."
-    
-    elif level == "Advanced":
-        return f"{base_text}an in-depth strategic analysis with detailed business case development and comprehensive market intelligence. The assessment encompasses technical due diligence, competitive positioning analysis, financial projections, regulatory compliance pathways, and detailed commercialization strategies. This evaluation supports executive decision-making and investor presentations with institutional-grade analysis."
-    
-    else:  # Comprehensive
-        return f"{base_text}a complete strategic framework for technology commercialization with investment-grade analysis and global market intelligence. The assessment delivers comprehensive technical validation, detailed competitive analysis, multi-scenario financial modeling, regulatory strategy development, and complete go-to-market planning. This evaluation provides the foundation for board-level decisions, investor due diligence, and successful technology transfer execution."
-
-def _generate_technology_overview(plan: Plan, level: str) -> str:
-    """Generate technology overview based on plan sophistication"""
-    if level == "Basic":
-        return "The proposed technology represents an innovative approach to addressing current market challenges. Technical analysis indicates feasibility within established engineering parameters. The solution builds upon proven methodologies while introducing novel elements that provide competitive differentiation. Implementation would follow standard development practices with manageable technical complexity."
-    
-    elif level == "Intermediate":
-        return "The technology demonstrates strong technical foundation with clear implementation pathways and scalable architecture. Detailed technical evaluation reveals moderate complexity requiring specialized expertise but achievable within reasonable timelines. The solution incorporates advanced methodologies while maintaining practical implementation considerations. Technical risk assessment indicates manageable challenges with established mitigation strategies."
-    
-    elif level == "Advanced":
-        return "Comprehensive technical analysis reveals sophisticated solution architecture with advanced implementation requirements. The technology leverages cutting-edge methodologies and innovative approaches that establish significant competitive advantages. Technical feasibility assessment confirms achievable development pathway with appropriate resource allocation and expert team assembly. Risk mitigation strategies address technical challenges through proven development methodologies."
-    
-    else:  # Comprehensive
-        return "The technology represents a paradigm-shifting innovation with comprehensive technical validation and institutional-grade feasibility assessment. Advanced technical architecture analysis confirms scalable implementation with global deployment capabilities. The solution incorporates breakthrough methodologies that establish sustained competitive moats and market leadership positions. Technical due diligence validates implementation pathway with detailed resource requirements and risk mitigation frameworks."
-
-def _generate_development_plan(plan: Plan, level: str) -> str:
-    """Generate development plan based on plan complexity"""
-    base_timeline = "12-18 months" if level == "Basic" else "18-24 months" if level == "Intermediate" else "24-36 months" if level == "Advanced" else "36-48 months"
-    
-    return f"Structured development approach recommended with {base_timeline} timeline for initial deployment. The development strategy incorporates phased milestones, risk mitigation protocols, and quality assurance frameworks. Resource allocation includes technical team assembly, infrastructure development, and validation protocols. Implementation pathway ensures systematic progress with regular stakeholder communication and strategic checkpoint reviews."
-
-def _generate_market_assessment(plan: Plan, level: str) -> str:
-    """Generate market assessment based on plan scope"""
-    if level == "Basic":
-        scope = "local and regional markets"
-        depth = "preliminary market research"
-    elif level == "Intermediate":
-        scope = "national and international markets"
-        depth = "comprehensive market analysis"
-    elif level == "Advanced":
-        scope = "global markets with regional specialization"
-        depth = "detailed market intelligence and competitive analysis"
-    else:
-        scope = "global markets with multi-regional deployment strategy"
-        depth = "institutional-grade market research with predictive analytics"
-    
-    return f"Market analysis reveals significant opportunity in {scope} with growing demand trends supporting commercial viability. {depth.title()} indicates favorable market conditions with identifiable target segments and clear value propositions. Competitive landscape assessment reveals differentiation opportunities and strategic positioning advantages for successful market entry and growth."
-
-def _generate_commercialization_strategies(plan: Plan, level: str) -> str:
-    """Generate commercialization strategies based on plan features"""
-    if level == "Basic":
-        strategies = "direct sales and basic licensing models"
-    elif level == "Intermediate":
-        strategies = "licensing, direct commercialization, and strategic partnerships"
-    elif level == "Advanced":
-        strategies = "comprehensive licensing portfolio, direct market entry, strategic alliances, and joint venture opportunities"
-    else:
-        strategies = "global licensing strategy, multi-channel commercialization, strategic partnerships, joint ventures, and acquisition pathways"
-    
-    return f"Multiple viable commercialization pathways identified including {strategies}. Each pathway offers distinct advantages based on resource availability, market timing, and strategic objectives. Commercialization strategy selection depends on risk tolerance, capital requirements, and desired market penetration speed. Implementation roadmap provides clear pathways for sustainable revenue generation and market leadership establishment."
-
-def _generate_financial_viability(plan: Plan, level: str) -> str:
-    """Generate financial viability assessment based on plan depth"""
-    roi_timeline = "2-3 years" if level == "Basic" else "3-5 years" if level == "Intermediate" else "5-7 years" if level == "Advanced" else "7-10 years"
-    
-    return f"Financial analysis demonstrates strong ROI potential with {roi_timeline} payback timeline and scalable revenue model. Multiple revenue streams identified with diversified income sources supporting long-term sustainability. Investment requirements appear reasonable relative to projected returns and market opportunity size. Financial projections indicate positive cash flow generation with acceptable risk-return profiles for stakeholder investment."
-
-def _generate_final_thoughts(plan: Plan, level: str) -> str:
-    """Generate final recommendations based on plan comprehensiveness"""
-    if level == "Basic":
-        recommendation = "proceed with further detailed analysis"
-        confidence = "preliminary indicators suggest viability"
-    elif level == "Intermediate":
-        recommendation = "advance to development phase with strategic planning"
-        confidence = "comprehensive analysis supports commercial potential"
-    elif level == "Advanced":
-        recommendation = "execute full commercialization strategy"
-        confidence = "detailed evaluation confirms strong commercial viability"
-    else:
-        recommendation = "implement comprehensive commercialization program"
-        confidence = "institutional-grade analysis validates exceptional commercial opportunity"
-    
-    return f"Strong recommendation to {recommendation} based on comprehensive assessment results. {confidence.title()} with favorable market conditions and technical feasibility confirmation. Risk factors appear manageable with proper planning and execution. Strategic timing appears optimal for market entry and commercial success achievement."
-
-def _generate_fallback_tables(plan: Plan) -> dict:
-    """Generate table data based on plan report formats"""
-    tables = {}
-    
-    # Only include tables for plans that support them
-    if len(plan.report_formats) > 1:  # Intermediate and above
-        tables["market_data_table"] = []
-        tables["competitor_analysis_table"] = []
-        tables["development_timeline_table"] = []
-        
-    if len(plan.report_formats) > 2:  # Advanced and above
-        tables["financial_projections_table"] = []
-        tables["technology_comparison_table"] = []
-    else:
-        # Basic plans get empty tables
-        tables["market_data_table"] = []
-        tables["competitor_analysis_table"] = []
-        tables["development_timeline_table"] = []
-        tables["financial_projections_table"] = []
-        tables["technology_comparison_table"] = []
-    
-    return tables
-
-def _get_minimal_fallback_report() -> dict:
-    """Minimal fallback when all else fails"""
-    return {
-        "patent_info": {"title": "Technology Assessment Failed"},
-        "executive_summary": "Report generation encountered an error. Please try again with a more detailed technology description.",
-        "technology_overview": "Unable to generate technology overview at this time.",
-        "development_plan": "Development planning requires successful technology analysis.",
-        "market_assessment": "Market assessment unavailable due to generation error.",
-        "commercialization_strategies": "Commercialization analysis requires complete technology evaluation.",
-        "financial_viability": "Financial analysis unavailable due to system error.",
-        "final_thoughts": "Please retry report generation with enhanced technology description for optimal results.",
-        "market_data_table": [],
-        "competitor_analysis_table": [],
-        "development_timeline_table": [],
-        "financial_projections_table": [],
-        "technology_comparison_table": []
-    }
+        logger.error(f"Error creating fallback report: {e}")
+        return {
+            "patent_info": {"title": "Report Generation Failed"},
+            "executive_summary": "Report generation failed. Please try again.",
+            "technology_overview": "N/A",
+            "development_plan": "N/A", 
+            "market_assessment": "N/A",
+            "commercialization_strategies": "N/A",
+            "financial_viability": "N/A",
+            "final_thoughts": "N/A",
+            "market_data_table": [],
+            "competitor_analysis_table": [],
+            "development_timeline_table": [],
+            "financial_projections_table": [],
+            "technology_comparison_table": []
+        }
 
 class ReportPDF(FPDF):
     def __init__(self, plan_name: str):
