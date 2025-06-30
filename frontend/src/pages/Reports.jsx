@@ -123,14 +123,14 @@ export default function Reports() {
     setPdfLoading(true);
     try {
       const response = await api.get(`/reports/${reportId}/download`, {
-        responseType: 'blob'
+        responseType: "blob",
       });
 
-      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const blob = new Blob([response.data], { type: "application/pdf" });
       const url = window.URL.createObjectURL(blob);
       setPdfUrl(url);
       setShowPdfPreview(true);
-      
+
       toast.success("PDF preview loaded");
     } catch (error) {
       console.error("Failed to load PDF preview:", error);
@@ -143,19 +143,19 @@ export default function Reports() {
   const handleDownloadReport = async (reportId, reportTitle) => {
     try {
       const response = await api.get(`/reports/${reportId}/download`, {
-        responseType: 'blob'
+        responseType: "blob",
       });
 
-      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const blob = new Blob([response.data], { type: "application/pdf" });
       const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.download = `${reportTitle || 'report'}.pdf`;
+      link.download = `${reportTitle || "report"}.pdf`;
       document.body.appendChild(link);
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
-      
+
       toast.success("Report downloaded successfully");
     } catch (error) {
       console.error("Failed to download report:", error);
@@ -319,11 +319,21 @@ export default function Reports() {
 
       {/* PDF Preview Modal */}
       {showPdfPreview && pdfUrl && (
-        <div className={`fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center p-4 z-50 ${isFullscreen ? 'p-0' : ''}`}>
-          <div className={`bg-white rounded-xl w-full h-full max-w-6xl max-h-[95vh] flex flex-col ${isFullscreen ? 'max-w-none max-h-none rounded-none' : ''}`}>
+        <div
+          className={`fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center p-4 z-50 ${
+            isFullscreen ? "p-0" : ""
+          }`}
+        >
+          <div
+            className={`bg-white rounded-xl w-full h-full max-w-6xl max-h-[95vh] flex flex-col ${
+              isFullscreen ? "max-w-none max-h-none rounded-none" : ""
+            }`}
+          >
             {/* PDF Preview Header */}
             <div className="flex items-center justify-between p-4 border-b border-neutral-200">
-              <h3 className="text-lg font-semibold text-neutral-900">PDF Preview</h3>
+              <h3 className="text-lg font-semibold text-neutral-900">
+                PDF Preview
+              </h3>
               <div className="flex items-center space-x-2">
                 <button
                   onClick={toggleFullscreen}
@@ -360,7 +370,7 @@ export default function Reports() {
                   src={pdfUrl}
                   className="w-full h-full border-0"
                   title="PDF Preview"
-                  style={{ minHeight: '500px' }}
+                  style={{ minHeight: "500px" }}
                 />
               )}
             </div>
@@ -378,34 +388,45 @@ export default function Reports() {
                   {selectedReport.title}
                 </h2>
                 <div className="flex items-center space-x-2">
-                  {selectedReport.status === "completed" && selectedReport.pdf_url && (
-                    <>
-                      <button
-                        onClick={() => handlePreviewPdf(selectedReport.id, selectedReport.title)}
-                        className="btn-outline btn-sm"
-                        disabled={pdfLoading}
-                      >
-                        {pdfLoading ? (
-                          <div className="flex items-center">
-                            <div className="spinner mr-1" />
-                            Loading...
-                          </div>
-                        ) : (
-                          <>
-                            <Eye className="h-4 w-4 mr-1" />
-                            Preview PDF
-                          </>
-                        )}
-                      </button>
-                      <button
-                        onClick={() => handleDownloadReport(selectedReport.id, selectedReport.title)}
-                        className="btn-primary btn-sm"
-                      >
-                        <Download className="h-4 w-4 mr-1" />
-                        Download PDF
-                      </button>
-                    </>
-                  )}
+                  {selectedReport.status === "completed" &&
+                    selectedReport.pdf_url && (
+                      <>
+                        <button
+                          onClick={() =>
+                            handlePreviewPdf(
+                              selectedReport.id,
+                              selectedReport.title
+                            )
+                          }
+                          className="btn-outline btn-sm"
+                          disabled={pdfLoading}
+                        >
+                          {pdfLoading ? (
+                            <div className="flex items-center">
+                              <div className="spinner mr-1" />
+                              Loading...
+                            </div>
+                          ) : (
+                            <>
+                              <Eye className="h-4 w-4 mr-1" />
+                              Preview PDF
+                            </>
+                          )}
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleDownloadReport(
+                              selectedReport.id,
+                              selectedReport.title
+                            )
+                          }
+                          className="btn-primary btn-sm"
+                        >
+                          <Download className="h-4 w-4 mr-1" />
+                          Download PDF
+                        </button>
+                      </>
+                    )}
                   <button
                     onClick={() => setShowReportModal(false)}
                     className="text-neutral-400 hover:text-neutral-600"
@@ -420,34 +441,54 @@ export default function Reports() {
                 <div className="bg-neutral-50 rounded-lg p-4">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
-                      <span className="font-medium text-neutral-900">Status:</span>
+                      <span className="font-medium text-neutral-900">
+                        Status:
+                      </span>
                       <div className="flex items-center mt-1">
                         {getStatusIcon(selectedReport.status)}
-                        <span className={`ml-2 px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(selectedReport.status)}`}>
+                        <span
+                          className={`ml-2 px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(
+                            selectedReport.status
+                          )}`}
+                        >
                           {selectedReport.status}
                         </span>
                       </div>
                     </div>
                     <div>
-                      <span className="font-medium text-neutral-900">Plan:</span>
-                      <p className="text-neutral-600 mt-1">{selectedReport.plan_name}</p>
-                    </div>
-                    <div>
-                      <span className="font-medium text-neutral-900">Created:</span>
+                      <span className="font-medium text-neutral-900">
+                        Plan:
+                      </span>
                       <p className="text-neutral-600 mt-1">
-                        {new Date(selectedReport.created_at).toLocaleDateString()}
+                        {selectedReport.plan_name}
                       </p>
                     </div>
                     <div>
-                      <span className="font-medium text-neutral-900">Type:</span>
-                      <p className="text-neutral-600 mt-1">{selectedReport.report_type}</p>
+                      <span className="font-medium text-neutral-900">
+                        Created:
+                      </span>
+                      <p className="text-neutral-600 mt-1">
+                        {new Date(
+                          selectedReport.created_at
+                        ).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div>
+                      <span className="font-medium text-neutral-900">
+                        Type:
+                      </span>
+                      <p className="text-neutral-600 mt-1">
+                        {selectedReport.report_type}
+                      </p>
                     </div>
                   </div>
                 </div>
 
                 {/* Original Idea */}
                 <div>
-                  <h3 className="text-lg font-semibold text-neutral-900 mb-3">Original Idea</h3>
+                  <h3 className="text-lg font-semibold text-neutral-900 mb-3">
+                    Original Idea
+                  </h3>
                   <div className="bg-neutral-50 rounded-lg p-4">
                     <p className="text-neutral-700">{selectedReport.idea}</p>
                   </div>
@@ -456,52 +497,70 @@ export default function Reports() {
                 {/* Report Content Preview */}
                 {selectedReport.content_preview && (
                   <div>
-                    <h3 className="text-lg font-semibold text-neutral-900 mb-3">Executive Summary</h3>
+                    <h3 className="text-lg font-semibold text-neutral-900 mb-3">
+                      Executive Summary
+                    </h3>
                     <div className="bg-neutral-50 rounded-lg p-4">
-                      <p className="text-neutral-700">{selectedReport.content_preview}</p>
+                      <p className="text-neutral-700">
+                        {selectedReport.content_preview}
+                      </p>
                     </div>
                   </div>
                 )}
 
                 {/* Download Section */}
-                {selectedReport.status === "completed" && selectedReport.pdf_url && (
-                  <div className="bg-primary-50 rounded-lg p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="font-semibold text-primary-900">Full Report Available</h3>
-                        <p className="text-primary-700 text-sm">
-                          Preview or download the complete PDF report with detailed analysis and insights.
-                        </p>
-                      </div>
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => handlePreviewPdf(selectedReport.id, selectedReport.title)}
-                          className="btn-outline"
-                          disabled={pdfLoading}
-                        >
-                          {pdfLoading ? (
-                            <div className="flex items-center">
-                              <div className="spinner mr-2" />
-                              Loading...
-                            </div>
-                          ) : (
-                            <>
-                              <Eye className="h-5 w-5 mr-2" />
-                              Preview
-                            </>
-                          )}
-                        </button>
-                        <button
-                          onClick={() => handleDownloadReport(selectedReport.id, selectedReport.title)}
-                          className="btn-primary"
-                        >
-                          <Download className="h-5 w-5 mr-2" />
-                          Download PDF
-                        </button>
+                {selectedReport.status === "completed" &&
+                  selectedReport.pdf_url && (
+                    <div className="bg-primary-50 rounded-lg p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="font-semibold text-primary-900">
+                            Full Report Available
+                          </h3>
+                          <p className="text-primary-700 text-sm">
+                            Preview or download the complete PDF report with
+                            detailed analysis and insights.
+                          </p>
+                        </div>
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() =>
+                              handlePreviewPdf(
+                                selectedReport.id,
+                                selectedReport.title
+                              )
+                            }
+                            className="btn-outline"
+                            disabled={pdfLoading}
+                          >
+                            {pdfLoading ? (
+                              <div className="flex items-center">
+                                <div className="spinner mr-2" />
+                                Loading...
+                              </div>
+                            ) : (
+                              <>
+                                <Eye className="h-5 w-5 mr-2" />
+                                Preview
+                              </>
+                            )}
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleDownloadReport(
+                                selectedReport.id,
+                                selectedReport.title
+                              )
+                            }
+                            className="btn-primary"
+                          >
+                            <Download className="h-5 w-5 mr-2" />
+                            Download PDF
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
                 {/* Processing Status */}
                 {selectedReport.status === "processing" && (
@@ -509,9 +568,12 @@ export default function Reports() {
                     <div className="flex items-center">
                       <Clock className="h-6 w-6 text-warning-600 mr-3" />
                       <div>
-                        <h3 className="font-semibold text-warning-900">Report in Progress</h3>
+                        <h3 className="font-semibold text-warning-900">
+                          Report in Progress
+                        </h3>
                         <p className="text-warning-700 text-sm">
-                          Your report is being generated. This usually takes 2-5 minutes.
+                          Your report is being generated. This usually takes 2-5
+                          minutes.
                         </p>
                       </div>
                     </div>
@@ -524,9 +586,12 @@ export default function Reports() {
                     <div className="flex items-center">
                       <XCircle className="h-6 w-6 text-error-600 mr-3" />
                       <div>
-                        <h3 className="font-semibold text-error-900">Report Generation Failed</h3>
+                        <h3 className="font-semibold text-error-900">
+                          Report Generation Failed
+                        </h3>
                         <p className="text-error-700 text-sm">
-                          {selectedReport.error_message || "An error occurred during report generation. Please try again."}
+                          {selectedReport.error_message ||
+                            "An error occurred during report generation. Please try again."}
                         </p>
                       </div>
                     </div>
@@ -632,20 +697,14 @@ export default function Reports() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-2 ml-4">
-                  <button
-                    onClick={() => handleViewReport(report.id)}
-                    className="btn-outline btn-sm"
-                  >
-                    <Eye className="h-4 w-4 mr-1" />
-                    View
-                  </button>
-                  
                   {report.status === "completed" && report.pdf_url && (
                     <>
                       <button
-                        onClick={() => handlePreviewPdf(report.id, report.title)}
+                        onClick={() =>
+                          handlePreviewPdf(report.id, report.title)
+                        }
                         className="btn-outline btn-sm"
                         disabled={pdfLoading}
                       >
@@ -659,7 +718,9 @@ export default function Reports() {
                         )}
                       </button>
                       <button
-                        onClick={() => handleDownloadReport(report.id, report.title)}
+                        onClick={() =>
+                          handleDownloadReport(report.id, report.title)
+                        }
                         className="btn-primary btn-sm"
                       >
                         <Download className="h-4 w-4 mr-1" />

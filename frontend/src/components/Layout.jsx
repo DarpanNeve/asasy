@@ -1,47 +1,53 @@
-import { useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { 
-  BarChart3, 
-  User, 
-  CreditCard, 
-  FileText, 
-  Menu, 
-  X, 
+import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import {
+  BarChart3,
+  User,
+  CreditCard,
+  FileText,
+  Menu,
+  X,
   LogOut,
   Settings,
-  Home
-} from 'lucide-react'
-import { useAuth } from '../contexts/AuthContext'
-import toast from 'react-hot-toast'
+  Home,
+} from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
+import toast from "react-hot-toast";
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: Home },
-  { name: 'Reports', href: '/reports', icon: FileText },
-  { name: 'Subscription', href: '/subscription', icon: CreditCard },
-  { name: 'Profile', href: '/profile', icon: User },
-]
+  { name: "Reports", href: "/reports", icon: FileText },
+  { name: "Subscription", href: "/subscription", icon: CreditCard },
+  { name: "Profile", href: "/profile", icon: User },
+];
 
 export default function Layout({ children }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const location = useLocation()
-  const navigate = useNavigate()
-  const { user, logout } = useAuth()
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const handleLogout = async () => {
     try {
-      await logout()
-      toast.success('Logged out successfully')
-      navigate('/login')
+      await logout();
+      toast.success("Logged out successfully");
+      navigate("/login");
     } catch (error) {
-      toast.error('Failed to logout')
+      toast.error("Failed to logout");
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-neutral-50">
       {/* Mobile sidebar */}
-      <div className={`fixed inset-0 z-50 lg:hidden ${sidebarOpen ? 'block' : 'hidden'}`}>
-        <div className="fixed inset-0 bg-neutral-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
+      <div
+        className={`fixed inset-0 z-50 lg:hidden ${
+          sidebarOpen ? "block" : "hidden"
+        }`}
+      >
+        <div
+          className="fixed inset-0 bg-neutral-600 bg-opacity-75"
+          onClick={() => setSidebarOpen(false)}
+        />
         <div className="relative flex w-full max-w-xs flex-1 flex-col bg-white">
           <div className="absolute top-0 right-0 -mr-12 pt-2">
             <button
@@ -81,13 +87,15 @@ export default function Layout({ children }) {
                 <button className="flex items-center gap-x-2 text-sm font-medium text-neutral-700 hover:text-neutral-900">
                   <div className="h-8 w-8 rounded-full bg-primary-600 flex items-center justify-center">
                     <span className="text-sm font-medium text-white">
-                      {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                      {user?.name?.charAt(0)?.toUpperCase() || "U"}
                     </span>
                   </div>
-                  <span className="hidden sm:block">{user?.name || 'User'}</span>
+                  <span className="hidden sm:block">
+                    {user?.name || "User"}
+                  </span>
                 </button>
               </div>
-              
+
               <button
                 onClick={handleLogout}
                 className="p-2 text-neutral-600 hover:text-neutral-900 transition-colors"
@@ -107,7 +115,7 @@ export default function Layout({ children }) {
         </main>
       </div>
     </div>
-  )
+  );
 
   function SidebarContent() {
     return (
@@ -123,30 +131,37 @@ export default function Layout({ children }) {
             <li>
               <ul className="-mx-2 space-y-1">
                 {navigation.map((item) => {
-                  const isCurrent = location.pathname === item.href
+                  const isCurrent = location.pathname === item.href;
                   return (
                     <li key={item.name}>
                       <Link
                         to={item.href}
                         className={`
                           group flex gap-x-3 rounded-lg p-2 text-sm leading-6 font-medium transition-all duration-200
-                          ${isCurrent
-                            ? 'bg-primary-50 text-primary-600 border-r-2 border-primary-600'
-                            : 'text-neutral-700 hover:text-primary-600 hover:bg-neutral-50'
+                          ${
+                            isCurrent
+                              ? "bg-primary-50 text-primary-600 border-r-2 border-primary-600"
+                              : "text-neutral-700 hover:text-primary-600 hover:bg-neutral-50"
                           }
                         `}
                       >
-                        <item.icon className={`h-5 w-5 shrink-0 ${isCurrent ? 'text-primary-600' : 'text-neutral-400 group-hover:text-primary-600'}`} />
+                        <item.icon
+                          className={`h-5 w-5 shrink-0 ${
+                            isCurrent
+                              ? "text-primary-600"
+                              : "text-neutral-400 group-hover:text-primary-600"
+                          }`}
+                        />
                         {item.name}
                       </Link>
                     </li>
-                  )
+                  );
                 })}
               </ul>
             </li>
           </ul>
         </nav>
       </div>
-    )
+    );
   }
 }

@@ -9,7 +9,6 @@ import Layout from './components/Layout'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import ProfileCompletion from './pages/ProfileCompletion'
-import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
 import Subscription from './pages/Subscription'
 import Reports from './pages/Reports'
@@ -46,13 +45,7 @@ function App() {
                   <Route path="/admin" element={<Admin />} />
                   
                   {/* Protected routes */}
-                  <Route path="/dashboard" element={
-                    <ProtectedRoute>
-                      <Layout>
-                        <Dashboard />
-                      </Layout>
-                    </ProtectedRoute>
-                  } />
+                
                   <Route path="/profile" element={
                     <ProtectedRoute>
                       <Layout>

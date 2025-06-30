@@ -141,7 +141,7 @@ export default function Home() {
       reset();
       
       if (user) {
-        navigate("/dashboard");
+        navigate("/reports");
       }
     } catch (error) {
       if (error.response?.status === 403) {
@@ -194,7 +194,7 @@ export default function Home() {
               </Link>
               {user ? (
                 <Link
-                  to="/dashboard"
+                  to="/reports"
                   className="btn-primary"
                 >
                   Dashboard
@@ -459,7 +459,7 @@ export default function Home() {
                       ))}
                     </ul>
                     <Link
-                      to={user ? "/dashboard" : "/signup"}
+                      to={user ? "/reports" : "/signup"}
                       className={`w-full ${
                         plan.is_popular ? "btn-primary" : "btn-outline"
                       }`}
@@ -495,7 +495,7 @@ export default function Home() {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
               <Link
-                to={user ? "/dashboard" : "/signup"}
+                to={user ? "/reports" : "/signup"}
                 className="btn border-2 border-white text-white hover:bg-white hover:text-primary-600 text-lg px-8 py-3"
               >
                 {user ? "Get Expert Help" : "Start Your Journey"}

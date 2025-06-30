@@ -36,9 +36,9 @@ export default function ProfileCompletion() {
     try {
       await completeProfile(userData.id, data.phone);
       toast.success("Profile completed successfully!");
-      
+
       // Redirect to intended destination or dashboard
-      const from = location.state?.from?.pathname || "/dashboard";
+      const from = location.state?.from?.pathname || "/reports";
       navigate(from, { replace: true });
     } catch (error) {
       toast.error(error.response?.data?.detail || "Failed to update profile");
@@ -116,9 +116,7 @@ export default function ProfileCompletion() {
                   })}
                   type="tel"
                   autoComplete="tel"
-                  className={`pl-10 input ${
-                    errors.phone ? "input-error" : ""
-                  }`}
+                  className={`pl-10 input ${errors.phone ? "input-error" : ""}`}
                   placeholder="Enter your phone number"
                 />
               </div>
@@ -153,11 +151,17 @@ export default function ProfileCompletion() {
           <div className="mt-6 text-center">
             <p className="text-xs text-neutral-500">
               By completing your profile, you agree to our{" "}
-              <a href="/terms" className="text-primary-600 hover:text-primary-500">
+              <a
+                href="/terms"
+                className="text-primary-600 hover:text-primary-500"
+              >
                 Terms of Service
               </a>{" "}
               and{" "}
-              <a href="/privacy" className="text-primary-600 hover:text-primary-500">
+              <a
+                href="/privacy"
+                className="text-primary-600 hover:text-primary-500"
+              >
                 Privacy Policy
               </a>
             </p>
