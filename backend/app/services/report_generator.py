@@ -16,11 +16,11 @@ logger = logging.getLogger(__name__)
 openai.api_key = settings.OPENAI_API_KEY
 
 async def generate_report_json(idea: str, plan: Plan) -> tuple[dict, dict]:
-    """Generate report content using OpenAI API with comprehensive logging"""
+    """Generate report content using OpenAI API with plan-specific structure"""
     
     logger.info(f"Starting report generation for plan: {plan.name}")
-    logger.info(f"Idea length: {len(idea)} characters")
-    logger.info(f"OpenAI API Key configured: {'Yes' if settings.OPENAI_API_KEY else 'No'}")
+    logger.info(f"Plan sections: {plan.sections}")
+    logger.info(f"Plan report type: {plan.report_type}")
     
     try:
         # Check if plan has a prompt template
@@ -28,50 +28,113 @@ async def generate_report_json(idea: str, plan: Plan) -> tuple[dict, dict]:
             logger.error(f"No prompt template found for plan: {plan.name}")
             raise ValueError(f"No prompt template configured for plan: {plan.name}")
         
-        # Create enhanced system prompt by combining base structure with plan-specific template
-        base_structure = """
-You are a world-class business & technology research analyst. When given a single "idea" for a patent-grade system, you must OUTPUT STRICTLY ONE JSON DOCUMENT (no extra text) with these exact keys:
+        # Create plan-specific JSON structure based on plan sections
+        required_sections = {}
+        table_sections = {}
+        
+        # Map plan sections to JSON keys
+        section_mapping = {
+            "Executive Summary": "executive_summary",
+            "Problem/Opportunity Statement": "problem_opportunity_statement",
+            "Technology Overview": "technology_overview",
+            "Key Benefits": "key_benefits",
+            "Applications": "applications",
+            "IP Snapshot": "ip_snapshot",
+            "Next Steps": "next_steps",
+            "Expanded Executive Summary": "expanded_executive_summary",
+            "Problem & Solution Fit": "problem_solution_fit",
+            "Technical Feasibility": "technical_feasibility",
+            "IP Summary": "ip_summary",
+            "Market Signals": "market_signals",
+            "Early Competitors": "early_competitors",
+            "Regulatory/Compliance Overview": "regulatory_compliance_overview",
+            "Risk Summary and Key Questions": "risk_summary_key_questions",
+            "Detailed Business Case": "detailed_business_case",
+            "Technology Description": "technology_description",
+            "Market & Competition": "market_competition",
+            "TRL & Technical Challenges": "trl_technical_challenges",
+            "Detailed IP & Legal Status": "detailed_ip_legal_status",
+            "Regulatory Pathways": "regulatory_pathways",
+            "Commercialization Options": "commercialization_options",
+            "Preliminary Financial Estimates": "preliminary_financial_estimates",
+            "Summary & Go-to-Market Plan": "summary_go_to_market_plan",
+            "In-depth IP Claims Analysis": "indepth_ip_claims_analysis",
+            "Global Freedom-to-Operate Report": "global_freedom_to_operate_report",
+            "Market Analysis": "market_analysis",
+            "Business Models": "business_models",
+            "5-Year ROI & Revenue Projections": "five_year_roi_revenue_projections",
+            "Funding Strategy": "funding_strategy",
+            "Licensing & Exit Strategy": "licensing_exit_strategy",
+            "Team & Strategic Partners Required": "team_strategic_partners_required",
+            "Implementation Roadmap": "implementation_roadmap",
+            "Appendices": "appendices"
+        }
+        
+        # Build required sections based on plan
+        for section in plan.sections:
+            if section in section_mapping:
+                required_sections[section_mapping[section]] = "string"
+        
+        # Add standard tables for all plans
+        table_sections = {
+            "market_data_table": "[{\"metric\": \"string\", \"value\": \"string\", \"growth_rate\": \"string\", \"source\": \"string\"}]",
+            "competitor_analysis_table": "[{\"company\": \"string\", \"market_share\": \"string\", \"revenue\": \"string\", \"key_features\": \"string\", \"rating\": \"string\"}]",
+            "development_timeline_table": "[{\"phase\": \"string\", \"duration\": \"string\", \"cost\": \"string\", \"milestones\": \"string\", \"risk_level\": \"string\"}]",
+            "financial_projections_table": "[{\"year\": \"string\", \"revenue\": \"string\", \"costs\": \"string\", \"profit\": \"string\", \"roi\": \"string\"}]",
+            "technology_comparison_table": "[{\"feature\": \"string\", \"current_solution\": \"string\", \"proposed_solution\": \"string\", \"improvement\": \"string\", \"priority\": \"string\"}]"
+        }
+        
+        # Add advanced tables for higher tier plans
+        if plan.name in ["Advanced", "Comprehensive"]:
+            table_sections.update({
+                "ip_landscape_table": "[{\"patent_id\": \"string\", \"assignee\": \"string\", \"jurisdiction\": \"string\", \"status\": \"string\", \"relevance\": \"string\"}]",
+                "regulatory_timeline_table": "[{\"jurisdiction\": \"string\", \"requirement\": \"string\", \"timeline\": \"string\", \"cost\": \"string\", \"complexity\": \"string\"}]"
+            })
+        
+        if plan.name == "Comprehensive":
+            table_sections.update({
+                "funding_sources_table": "[{\"source_type\": \"string\", \"amount_range\": \"string\", \"timeline\": \"string\", \"requirements\": \"string\", \"success_rate\": \"string\"}]",
+                "licensing_terms_table": "[{\"license_type\": \"string\", \"royalty_rate\": \"string\", \"upfront_fee\": \"string\", \"territory\": \"string\", \"exclusivity\": \"string\"}]"
+            })
+        
+        # Create comprehensive system prompt
+        system_prompt = f"""
+You are a world-class technology commercialization expert generating a {plan.report_type}.
 
-1. patent_info: {title, application_no, grant_no, filing_date, jurisdiction, assignee, status}  
-2. executive_summary: string  
-3. technology_overview: string  
-4. development_plan: string  
-5. market_assessment: string  
-6. commercialization_strategies: string  
-7. financial_viability: string  
-8. final_thoughts: string
-9. market_data_table: [{"metric": "string", "value": "string", "growth_rate": "string", "source": "string"}]
-10. competitor_analysis_table: [{"company": "string", "market_share": "string", "revenue": "string", "key_features": "string", "rating": "string"}]
-11. development_timeline_table: [{"phase": "string", "duration": "string", "cost": "string", "milestones": "string", "risk_level": "string"}]
-12. financial_projections_table: [{"year": "string", "revenue": "string", "costs": "string", "profit": "string", "roi": "string"}]
-13. technology_comparison_table: [{"feature": "string", "current_solution": "string", "proposed_solution": "string", "improvement": "string", "priority": "string"}]
+{plan.prompt_template}
 
-**Requirements for ALL textual fields**  
-• **Length**: Minimum **300** words per section.  
-• **Data density**: Embed at least **5** distinct quantitative metrics or statistics in each section (e.g., market size in USD, CAGR percentages, user-adoption rates, cost breakdowns, projected ROI timelines, comparative benchmarks).  
-• **Formatting**: Keep prose in **concise paragraphs**—avoid bullet lists or tables.  
-• **Date style**: Use "DD Month YYYY" for all dates.  
-• **Character set**: Only ASCII characters—no special quotes, en-dashes, or non-ASCII.  
-• **Sophistication**: Write with authoritative, analytical tone, citing hypothetical data points ("According to Gartner, global market will grow by 12.5% CAGR…").  
+**CRITICAL OUTPUT REQUIREMENTS:**
+You must output STRICTLY ONE JSON DOCUMENT with these exact keys:
 
-**Requirements for TABLE fields**
-• Each table should have 5-8 realistic entries
-• Use specific, realistic data points and figures
-• Ensure all values are strings for JSON compatibility
-• Make data relevant to the technology idea provided
+**Required Text Sections:**
+{json.dumps(required_sections, indent=2)}
 
-**Plan-Specific Requirements:**
+**Required Table Sections:**
+{json.dumps(table_sections, indent=2)}
+
+**Content Requirements:**
+- Each text section: Minimum 150 words, maximum 400 words
+- Include specific data points, metrics, and statistics
+- Use professional, analytical tone
+- Provide actionable insights and recommendations
+- Each table: 5-8 realistic entries with specific data
+- All values must be strings for JSON compatibility
+
+**Quality Standards:**
+- Data-driven analysis with quantitative metrics
+- Industry-specific terminology and insights
+- Realistic market data and projections
+- Professional formatting suitable for {plan.report_type}
+- Clear recommendations and next steps
+
+OUTPUT ONLY THE JSON - NO ADDITIONAL TEXT OR FORMATTING.
 """
-        
-        # Combine base structure with plan-specific template
-        system_prompt = base_structure + plan.prompt_template
-        
-        logger.info(f"Using enhanced prompt template for {plan.name}")
 
         user_prompt = f"""
-Idea: ```{idea}```
+Technology Idea: {idea}
 
-Generate the report JSON as specified above. Ensure every section is richly detailed, with at least five numerical data points per section and a minimum of 300 words each. Include realistic tabular data for all 5 table sections.
+Generate a comprehensive {plan.report_type} following the exact JSON structure specified. 
+Ensure all sections are detailed, data-rich, and professionally written for {plan.name} plan level analysis.
 """
         
         logger.info("Preparing OpenAI API call...")
@@ -108,9 +171,8 @@ Generate the report JSON as specified above. Ensure every section is richly deta
             
         content = response.choices[0].message.content
         logger.info(f"OpenAI response content length: {len(content)} characters")
-        logger.info(f"OpenAI response preview: {content[:200]}...")
         
-        # Extract usage information with proper token structure
+        # Extract usage information
         usage_info = {
             "model": "gpt-4o-mini",
             "usage": {
@@ -131,17 +193,16 @@ Generate the report JSON as specified above. Ensure every section is richly deta
             logger.info("Successfully parsed JSON response")
             logger.info(f"JSON keys: {list(parsed_content.keys())}")
             
-            # Validate required keys
-            required_keys = [
-                'patent_info', 'executive_summary', 'technology_overview',
-                'development_plan', 'market_assessment', 'commercialization_strategies',
-                'financial_viability', 'final_thoughts'
-            ]
+            # Validate that we have the required sections for this plan
+            missing_sections = []
+            for section in plan.sections:
+                if section in section_mapping:
+                    json_key = section_mapping[section]
+                    if json_key not in parsed_content:
+                        missing_sections.append(section)
             
-            missing_keys = [key for key in required_keys if key not in parsed_content]
-            if missing_keys:
-                logger.error(f"Missing required keys: {missing_keys}")
-                raise ValueError(f"OpenAI response missing required keys: {missing_keys}")
+            if missing_sections:
+                logger.warning(f"Missing sections for {plan.name} plan: {missing_sections}")
             
             # Log content lengths
             for key, value in parsed_content.items():
@@ -149,8 +210,6 @@ Generate the report JSON as specified above. Ensure every section is richly deta
                     logger.info(f"Section '{key}' length: {len(value)} characters")
                 elif isinstance(value, list):
                     logger.info(f"Table '{key}' entries: {len(value)}")
-                elif isinstance(value, dict):
-                    logger.info(f"Dict '{key}' keys: {list(value.keys())}")
             
             return parsed_content, usage_info
             
@@ -162,16 +221,14 @@ Generate the report JSON as specified above. Ensure every section is richly deta
     except Exception as e:
         logger.error(f"Error in generate_report_json: {e}")
         logger.error(f"Traceback: {traceback.format_exc()}")
-        
-        # Re-raise the exception instead of returning fallback
         raise
 
 class ReportPDF(FPDF):
-    def __init__(self, plan_name: str):
+    def __init__(self, plan: Plan):
         super().__init__(format="A4")
         self.set_auto_page_break(auto=True, margin=20)
         self.set_margins(20, 20, 20)
-        self.plan_name = plan_name
+        self.plan = plan
 
     def header(self):
         try:
@@ -180,7 +237,7 @@ class ReportPDF(FPDF):
             self.cell(
                 0,
                 10,
-                f"Technology Assessment Report - {self.plan_name} Plan",
+                f"{self.plan.report_type} - {self.plan.name} Plan",
                 new_x=XPos.LMARGIN,
                 new_y=YPos.NEXT,
                 align="C",
@@ -252,63 +309,6 @@ class ReportPDF(FPDF):
             logger.info(f"Added paragraph with {len(text)} characters")
         except Exception as e:
             logger.error(f"Error adding paragraph: {e}")
-
-    def add_info_table(self, patent_info):
-        try:
-            self.set_font("Helvetica", "B", 12)
-            self.cell(
-                0, 10, "Patent Information", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="L"
-            )
-            self.ln(3)
-
-            self.set_font("Helvetica", "", 10)
-            label_width = 50
-            value_width = 120
-
-            for key, value in patent_info.items():
-                label = key.replace("_", " ").title() + ":"
-                label = self.clean_text(label)
-
-                value_str = str(value).strip() if value else "N/A"
-                value_str = self.clean_text(value_str)
-
-                self.set_font("Helvetica", "B", 10)
-                self.cell(
-                    label_width,
-                    8,
-                    label,
-                    border=1,
-                    new_x=XPos.RIGHT,
-                    new_y=YPos.TOP,
-                    align="L",
-                )
-                self.set_font("Helvetica", "", 10)
-
-                if len(value_str) > 50:
-                    self.cell(
-                        value_width,
-                        8,
-                        value_str[:47] + "...",
-                        border=1,
-                        new_x=XPos.LMARGIN,
-                        new_y=YPos.NEXT,
-                        align="L",
-                    )
-                else:
-                    self.cell(
-                        value_width,
-                        8,
-                        value_str,
-                        border=1,
-                        new_x=XPos.LMARGIN,
-                        new_y=YPos.NEXT,
-                        align="L",
-                    )
-
-            self.ln(5)
-            logger.info("Added patent information table")
-        except Exception as e:
-            logger.error(f"Error adding info table: {e}")
 
     def add_data_table(self, title, data, column_widths=None):
         try:
@@ -426,22 +426,22 @@ class ReportPDF(FPDF):
             return str(text)
 
 def create_pdf(report: dict, output_path: str, plan: Plan):
-    """Create PDF from report data with comprehensive logging"""
+    """Create PDF from report data with plan-specific structure"""
     logger.info(f"Starting PDF creation for plan: {plan.name}")
-    logger.info(f"Output path: {output_path}")
+    logger.info(f"Plan sections: {plan.sections}")
     logger.info(f"Report keys: {list(report.keys())}")
     
     try:
-        pdf = ReportPDF(plan.name)
+        pdf = ReportPDF(plan)
         pdf.add_page()
 
         # Title
-        pdf.add_title(f"TECHNOLOGY ASSESSMENT REPORT")
+        pdf.add_title(f"{plan.report_type.upper()}")
         
         # Subtitle
         pdf.set_font("Helvetica", "B", 12)
         pdf.set_text_color(0, 0, 0)
-        subtitle = f"{plan.report_type} ({plan.report_pages})"
+        subtitle = f"{plan.name} Plan ({plan.report_pages})"
         subtitle = pdf.clean_text(subtitle)
         pdf.multi_cell(0, 8, subtitle, align="C")
         pdf.ln(10)
@@ -454,33 +454,57 @@ def create_pdf(report: dict, output_path: str, plan: Plan):
         pdf.multi_cell(0, 6, timestamp, align="C")
         pdf.ln(10)
 
-        # Section mapping for consistent ordering
+        # Section mapping for consistent ordering based on plan sections
         section_mapping = {
-            "Patent Information": ("patent_info", "add_info_table"),
-            "Executive Summary": ("executive_summary", "add_paragraph"),
-            "Technology Overview": ("technology_overview", "add_paragraph"),
-            "Development Plan": ("development_plan", "add_paragraph"),
-            "Market Assessment": ("market_assessment", "add_paragraph"),
-            "Commercialization Strategies": ("commercialization_strategies", "add_paragraph"),
-            "Financial Viability": ("financial_viability", "add_paragraph"),
-            "Final Thoughts": ("final_thoughts", "add_paragraph"),
+            "Executive Summary": "executive_summary",
+            "Problem/Opportunity Statement": "problem_opportunity_statement",
+            "Technology Overview": "technology_overview",
+            "Key Benefits": "key_benefits",
+            "Applications": "applications",
+            "IP Snapshot": "ip_snapshot",
+            "Next Steps": "next_steps",
+            "Expanded Executive Summary": "expanded_executive_summary",
+            "Problem & Solution Fit": "problem_solution_fit",
+            "Technical Feasibility": "technical_feasibility",
+            "IP Summary": "ip_summary",
+            "Market Signals": "market_signals",
+            "Early Competitors": "early_competitors",
+            "Regulatory/Compliance Overview": "regulatory_compliance_overview",
+            "Risk Summary and Key Questions": "risk_summary_key_questions",
+            "Detailed Business Case": "detailed_business_case",
+            "Technology Description": "technology_description",
+            "Market & Competition": "market_competition",
+            "TRL & Technical Challenges": "trl_technical_challenges",
+            "Detailed IP & Legal Status": "detailed_ip_legal_status",
+            "Regulatory Pathways": "regulatory_pathways",
+            "Commercialization Options": "commercialization_options",
+            "Preliminary Financial Estimates": "preliminary_financial_estimates",
+            "Summary & Go-to-Market Plan": "summary_go_to_market_plan",
+            "In-depth IP Claims Analysis": "indepth_ip_claims_analysis",
+            "Global Freedom-to-Operate Report": "global_freedom_to_operate_report",
+            "Market Analysis": "market_analysis",
+            "Business Models": "business_models",
+            "5-Year ROI & Revenue Projections": "five_year_roi_revenue_projections",
+            "Funding Strategy": "funding_strategy",
+            "Licensing & Exit Strategy": "licensing_exit_strategy",
+            "Team & Strategic Partners Required": "team_strategic_partners_required",
+            "Implementation Roadmap": "implementation_roadmap",
+            "Appendices": "appendices"
         }
 
+        # Add sections based on plan configuration
         section_num = 1
-        for section_title, (content_key, method_name) in section_mapping.items():
-            content = report.get(content_key, "")
-            if content:
-                logger.info(f"Adding section {section_num}: {section_title}")
-                pdf.add_section_header(section_num, section_title)
-                
-                if method_name == "add_info_table":
-                    pdf.add_info_table(content)
-                else:
+        for section_title in plan.sections:
+            if section_title in section_mapping:
+                content_key = section_mapping[section_title]
+                content = report.get(content_key, "")
+                if content:
+                    logger.info(f"Adding section {section_num}: {section_title}")
+                    pdf.add_section_header(section_num, section_title)
                     pdf.add_paragraph(content)
-                
-                section_num += 1
+                    section_num += 1
 
-        # Add tables if they exist
+        # Add tables based on plan level
         table_mapping = {
             "Technology Comparison": "technology_comparison_table",
             "Development Timeline": "development_timeline_table", 
@@ -488,6 +512,19 @@ def create_pdf(report: dict, output_path: str, plan: Plan):
             "Competitor Analysis": "competitor_analysis_table",
             "Financial Projections": "financial_projections_table"
         }
+        
+        # Add advanced tables for higher tier plans
+        if plan.name in ["Advanced", "Comprehensive"]:
+            table_mapping.update({
+                "IP Landscape": "ip_landscape_table",
+                "Regulatory Timeline": "regulatory_timeline_table"
+            })
+        
+        if plan.name == "Comprehensive":
+            table_mapping.update({
+                "Funding Sources": "funding_sources_table",
+                "Licensing Terms": "licensing_terms_table"
+            })
 
         for table_title, table_key in table_mapping.items():
             table_data = report.get(table_key, [])
@@ -516,11 +553,13 @@ def create_pdf(report: dict, output_path: str, plan: Plan):
         raise
 
 async def generate_technology_report(idea: str, output_path: str, plan: Plan) -> dict:
-    """Main function to generate a complete technology assessment report with comprehensive logging"""
+    """Main function to generate a complete technology assessment report"""
     logger.info("="*50)
     logger.info("STARTING TECHNOLOGY REPORT GENERATION")
     logger.info("="*50)
     logger.info(f"Plan: {plan.name}")
+    logger.info(f"Report Type: {plan.report_type}")
+    logger.info(f"Sections: {len(plan.sections)}")
     logger.info(f"Idea: {idea[:100]}...")
     logger.info(f"Output path: {output_path}")
     
