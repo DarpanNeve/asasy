@@ -58,12 +58,12 @@ class Plan(Document):
         """Calculate monthly price for comparison"""
         return (self.price_inr / 100) / (self.duration_days / 30)
 
-# Enhanced plans data with comprehensive AI prompts aligned to specifications
+# Enhanced plans data with explicit table instructions in AI prompts
 DEFAULT_PLANS = [
     {
         "name": "Basic",
         "description": "Free plan - Perfect for outreach and teasers",
-        "price_inr": 0,  # Free
+        "price_inr": 0,
         "duration_days": 30,
         "reports_limit": 3,
         "report_pages": "3-4 pages",
@@ -104,6 +104,10 @@ You are generating a BASIC Technology Assessment Report for outreach and teaser 
 - Provide realistic financial estimates and development timelines
 - Include quantitative data to support all claims
 
+**Tables Requirement**:
+- Generate 5 concise data tables distributed across the report, each clearly titled and referenced in the relevant section.
+- Tables should include key metrics such as market size, growth rates, TRL levels, cost estimates, and competitor comparison.
+
 **Professional Standards**:
 - Include market size estimates with growth projections
 - Reference technology readiness levels and development stages
@@ -124,7 +128,7 @@ You are generating a BASIC Technology Assessment Report for outreach and teaser 
     {
         "name": "Intermediate",
         "description": "In-depth feasibility check for internal reviews",
-        "price_inr": 2000,  # ₹20
+        "price_inr": 2000,
         "duration_days": 30,
         "reports_limit": 10,
         "report_pages": "6-8 pages",
@@ -176,6 +180,10 @@ You are generating an INTERMEDIATE Technology Assessment Report for institutiona
 - Include competitive intelligence with SWOT analysis
 - Offer clear go/no-go recommendations with supporting data
 
+**Tables Requirement**:
+- Generate 5 comprehensive data tables, each placed in the relevant section (e.g., Market Analysis, Technical Feasibility, Competitor Analysis, Financial Projections, Risk Assessment).
+- Each table should be clearly titled, referenced in the text, and present actionable insights.
+
 **Enhanced Analysis Areas**:
 - Market validation with customer research data
 - Technical risk assessment with mitigation strategies
@@ -204,7 +212,7 @@ You are generating an INTERMEDIATE Technology Assessment Report for institutiona
     {
         "name": "Advanced",
         "description": "Full pre-commercial diligence for investors and incubators",
-        "price_inr": 5000,  # ₹50
+        "price_inr": 5000,
         "duration_days": 30,
         "reports_limit": 20,
         "report_pages": "10-12 pages",
@@ -268,6 +276,10 @@ You are generating an ADVANCED Technology Assessment Report for pre-commercial d
 - Present multiple commercialization pathways with detailed analysis
 - Include preliminary financial modeling with scenario planning
 
+**Tables Requirement**:
+- Generate 7 advanced data tables, each aligned to a major analysis area (e.g., Market Segmentation, TRL Analysis, SWOT, Financial Projections, IP Landscape, Regulatory Pathways, Risk Assessment).
+- Each table should be clearly titled, referenced in the text, and provide actionable, investment-grade insights.
+
 **Professional Analysis Areas**:
 - Investment thesis with clear value proposition and market opportunity
 - Comprehensive technical analysis with detailed TRL framework
@@ -300,9 +312,9 @@ You are generating an ADVANCED Technology Assessment Report for pre-commercial d
     {
         "name": "Comprehensive",
         "description": "Investment-grade commercialization plan for VC funding",
-        "price_inr": 10200,  # ₹102
+        "price_inr": 10200,
         "duration_days": 30,
-        "reports_limit": None,  # Unlimited
+        "reports_limit": None,
         "report_pages": "15-25 pages",
         "report_type": "Comprehensive IP Commercialization Report",
         "report_formats": [1, 2, 3, 4],
@@ -377,35 +389,28 @@ You are generating a COMPREHENSIVE IP Commercialization Report for investment-gr
 - Present complete commercialization strategy with detailed implementation roadmap
 - Include comprehensive risk assessment with quantified impact and mitigation strategies
 
-**Comprehensive Analysis Areas**:
-- Institutional-grade investment thesis with detailed market opportunity
-- Complete technical due diligence with scalability and manufacturing analysis
-- Global market analysis with regional opportunity assessment and competitive intelligence
-- Comprehensive IP strategy with global patent portfolio optimization
-- Detailed business model analysis with multiple revenue streams
-- 5-year financial projections with scenario planning and sensitivity analysis
-- Complete funding strategy with capital requirements and investor targeting
-- Comprehensive regulatory compliance strategy for multiple jurisdictions
-- Strategic partnership and licensing framework with valuation models
-- Detailed implementation roadmap with milestone tracking and KPIs
+**Tables Requirement**:
+- Generate 9 premium data tables, each corresponding to a major analysis area (e.g., Global Market Analysis, TRL Roadmap, IP Claims, FTO, Financial Projections, Funding Strategy, Licensing Options, Team & Partners, Implementation Roadmap).
+- Each table must be clearly titled, referenced in the text, and provide actionable, investor-ready insights.
 
-**Data Requirements**:
-- Global market intelligence: Regional market analysis, adoption patterns, regulatory landscapes
-- Technology assessment: Complete TRL roadmap, scalability analysis, manufacturing requirements
-- IP intelligence: Global patent landscape, citation analysis, licensing opportunities
-- Financial modeling: Detailed 5-year projections, multiple scenarios, sensitivity analysis
-- Competitive intelligence: Market share analysis, strategic positioning, partnership opportunities
-- Regulatory analysis: Multi-jurisdiction compliance requirements, approval timelines, costs
-- Funding analysis: Capital requirements, funding sources, investor profiles, grant opportunities
+**Comprehensive Analysis Areas**:
+- Market intelligence: Global and regional market sizing, trends, and forecasts
+- Technology assessment: TRL roadmap with milestones
+- IP analysis: In-depth claims analysis and global FTO
+- Financial modeling: 5-year projections, scenarios, and sensitivity analysis
+- Funding strategy: Grants, equity, and non-dilutive options
+- Licensing and exit strategies: Models and timelines
+- Team and partners: Required roles and strategic relationships
+- Implementation roadmap: Phased execution plan
 
 **Professional Standards**:
-- Institutional-grade analysis suitable for board and investor presentations
-- Comprehensive due diligence with supporting data, assumptions, and methodologies
-- Strategic recommendations with detailed implementation plans and success metrics
-- Risk management framework with quantified assessments and mitigation strategies
-- Professional formatting and presentation suitable for institutional stakeholders
+- Institutional-grade analysis suitable for VC and grant applications
+- Comprehensive due diligence with supporting data and rationale
+- Strategic recommendations with implementation roadmap
+- Risk assessment with quantified impact and mitigation strategies
+- Professional formatting suitable for investor presentations
 
-**Tone**: Institutional-grade professional suitable for board presentations, VC pitches, and government grant applications
+**Tone**: Institutional and investment-grade, suitable for high-stakes funding decisions
 """
     }
 ]
