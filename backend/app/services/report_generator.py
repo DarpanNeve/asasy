@@ -96,47 +96,47 @@ async def generate_report_json(idea: str, plan: Plan) -> tuple[dict, dict]:
             content_depth = "in-depth professional analysis with institutional-grade data"
             num_tables = 9
         
-        # FIXED: Define table structure with explicit examples
+        # FIXED: Define table structure with SHORT, CONCISE text
         table_sections = {
             "market_data_table": [
-                {"metric": "Total Addressable Market", "value": "$12.5B", "growth_rate": "15.2% CAGR", "source": "Industry Report 2024", "year": "2024"},
-                {"metric": "Serviceable Available Market", "value": "$3.8B", "growth_rate": "18.5% CAGR", "source": "Market Research Inc", "year": "2024"},
-                {"metric": "Market Penetration Rate", "value": "2.3%", "growth_rate": "12.1% annually", "source": "Tech Analytics", "year": "2024"},
-                {"metric": "Average Deal Size", "value": "$125K", "growth_rate": "8.7% annually", "source": "Sales Data", "year": "2024"},
-                {"metric": "Customer Acquisition Cost", "value": "$15K", "growth_rate": "-5.2% annually", "source": "Marketing Analytics", "year": "2024"},
-                {"metric": "Customer Lifetime Value", "value": "$450K", "growth_rate": "22.3% annually", "source": "Revenue Analytics", "year": "2024"}
+                {"metric": "TAM", "value": "$12.5B", "growth": "15.2%", "source": "Industry 2024", "region": "Global"},
+                {"metric": "SAM", "value": "$3.8B", "growth": "18.5%", "source": "Market Research", "region": "US/EU"},
+                {"metric": "Penetration", "value": "2.3%", "growth": "12.1%", "source": "Analytics", "region": "Current"},
+                {"metric": "Deal Size", "value": "$125K", "growth": "8.7%", "source": "Sales Data", "region": "Average"},
+                {"metric": "CAC", "value": "$15K", "growth": "-5.2%", "source": "Marketing", "region": "Blended"},
+                {"metric": "LTV", "value": "$450K", "growth": "22.3%", "source": "Revenue", "region": "Projected"}
             ],
             "competitor_analysis_table": [
-                {"company": "TechCorp Solutions", "market_share": "23.5%", "revenue": "$2.8B", "key_features": "AI-powered automation", "rating": "Strong", "strengths": "Market leader, strong R&D"},
-                {"company": "InnovateTech Ltd", "market_share": "18.2%", "revenue": "$2.1B", "key_features": "Cloud-native platform", "rating": "Strong", "strengths": "Scalable architecture"},
-                {"company": "NextGen Systems", "market_share": "15.7%", "revenue": "$1.9B", "key_features": "Real-time analytics", "rating": "Moderate", "strengths": "Fast deployment"},
-                {"company": "SmartTech Inc", "market_share": "12.3%", "revenue": "$1.4B", "key_features": "Mobile-first design", "rating": "Moderate", "strengths": "User experience"},
-                {"company": "FutureTech Corp", "market_share": "8.9%", "revenue": "$1.1B", "key_features": "Blockchain integration", "rating": "Emerging", "strengths": "Innovation focus"},
-                {"company": "DataFlow Systems", "market_share": "6.4%", "revenue": "$780M", "key_features": "Advanced security", "rating": "Emerging", "strengths": "Security expertise"}
+                {"company": "TechCorp", "share": "23.5%", "revenue": "$2.8B", "strength": "Market Leader", "weakness": "High Cost"},
+                {"company": "InnovateTech", "share": "18.2%", "revenue": "$2.1B", "strength": "Scalable", "weakness": "Limited Features"},
+                {"company": "NextGen", "share": "15.7%", "revenue": "$1.9B", "strength": "Fast Deploy", "weakness": "Support Issues"},
+                {"company": "SmartTech", "share": "12.3%", "revenue": "$1.4B", "strength": "User UX", "weakness": "Integration"},
+                {"company": "FutureTech", "share": "8.9%", "revenue": "$1.1B", "strength": "Innovation", "weakness": "Stability"},
+                {"company": "DataFlow", "share": "6.4%", "revenue": "$780M", "strength": "Security", "weakness": "Complexity"}
             ],
             "development_timeline_table": [
-                {"phase": "Research & Development", "duration": "6 months", "cost": "$500K", "milestones": "Proof of concept, MVP", "risk_level": "Medium", "dependencies": "Technical team hiring"},
-                {"phase": "Prototype Development", "duration": "4 months", "cost": "$300K", "milestones": "Working prototype, testing", "risk_level": "Low", "dependencies": "R&D completion"},
-                {"phase": "Beta Testing", "duration": "3 months", "cost": "$200K", "milestones": "User feedback, iterations", "risk_level": "Medium", "dependencies": "Prototype completion"},
-                {"phase": "Regulatory Approval", "duration": "8 months", "cost": "$400K", "milestones": "Compliance certification", "risk_level": "High", "dependencies": "Beta testing results"},
-                {"phase": "Production Setup", "duration": "5 months", "cost": "$600K", "milestones": "Manufacturing ready", "risk_level": "Medium", "dependencies": "Regulatory approval"},
-                {"phase": "Market Launch", "duration": "2 months", "cost": "$350K", "milestones": "Product launch, marketing", "risk_level": "Low", "dependencies": "Production setup"}
+                {"phase": "R&D", "duration": "6 months", "cost": "$500K", "milestone": "MVP Ready", "risk": "Medium"},
+                {"phase": "Prototype", "duration": "4 months", "cost": "$300K", "milestone": "Beta Testing", "risk": "Low"},
+                {"phase": "Testing", "duration": "3 months", "cost": "$200K", "milestone": "User Feedback", "risk": "Medium"},
+                {"phase": "Regulatory", "duration": "8 months", "cost": "$400K", "milestone": "Compliance", "risk": "High"},
+                {"phase": "Production", "duration": "5 months", "cost": "$600K", "milestone": "Manufacturing", "risk": "Medium"},
+                {"phase": "Launch", "duration": "2 months", "cost": "$350K", "milestone": "Go-to-Market", "risk": "Low"}
             ],
             "financial_projections_table": [
-                {"year": "Year 1", "revenue": "$2.5M", "costs": "$1.8M", "profit": "$0.7M", "roi": "38.9%", "market_share": "0.8%"},
-                {"year": "Year 2", "revenue": "$6.2M", "costs": "$3.9M", "profit": "$2.3M", "roi": "59.0%", "market_share": "1.9%"},
-                {"year": "Year 3", "revenue": "$12.8M", "costs": "$7.1M", "profit": "$5.7M", "roi": "80.3%", "market_share": "3.2%"},
-                {"year": "Year 4", "revenue": "$24.5M", "costs": "$12.8M", "profit": "$11.7M", "roi": "91.4%", "market_share": "5.1%"},
-                {"year": "Year 5", "revenue": "$42.3M", "costs": "$21.2M", "profit": "$21.1M", "roi": "99.5%", "market_share": "7.8%"},
-                {"year": "Year 6", "revenue": "$68.9M", "costs": "$32.1M", "profit": "$36.8M", "roi": "114.6%", "market_share": "11.2%"}
+                {"year": "Y1", "revenue": "$2.5M", "costs": "$1.8M", "profit": "$0.7M", "roi": "38.9%"},
+                {"year": "Y2", "revenue": "$6.2M", "costs": "$3.9M", "profit": "$2.3M", "roi": "59.0%"},
+                {"year": "Y3", "revenue": "$12.8M", "costs": "$7.1M", "profit": "$5.7M", "roi": "80.3%"},
+                {"year": "Y4", "revenue": "$24.5M", "costs": "$12.8M", "profit": "$11.7M", "roi": "91.4%"},
+                {"year": "Y5", "revenue": "$42.3M", "costs": "$21.2M", "profit": "$21.1M", "roi": "99.5%"},
+                {"year": "Y6", "revenue": "$68.9M", "costs": "$32.1M", "profit": "$36.8M", "roi": "114.6%"}
             ],
             "technology_comparison_table": [
-                {"feature": "Processing Speed", "current_solution": "2.3 seconds", "proposed_solution": "0.8 seconds", "improvement": "65% faster", "priority": "High", "impact": "Critical"},
-                {"feature": "Accuracy Rate", "current_solution": "87.5%", "proposed_solution": "96.2%", "improvement": "8.7% increase", "priority": "High", "impact": "Critical"},
-                {"feature": "Energy Efficiency", "current_solution": "450W", "proposed_solution": "180W", "improvement": "60% reduction", "priority": "Medium", "impact": "Significant"},
-                {"feature": "Scalability", "current_solution": "1K users", "proposed_solution": "50K users", "improvement": "5000% increase", "priority": "High", "impact": "Critical"},
-                {"feature": "Cost per Transaction", "current_solution": "$0.45", "proposed_solution": "$0.12", "improvement": "73% reduction", "priority": "Medium", "impact": "Significant"},
-                {"feature": "Deployment Time", "current_solution": "6 weeks", "proposed_solution": "2 days", "improvement": "95% reduction", "priority": "Low", "impact": "Moderate"}
+                {"feature": "Speed", "current": "2.3s", "proposed": "0.8s", "improvement": "65% faster", "priority": "High"},
+                {"feature": "Accuracy", "current": "87.5%", "proposed": "96.2%", "improvement": "8.7% increase", "priority": "High"},
+                {"feature": "Energy", "current": "450W", "proposed": "180W", "improvement": "60% reduction", "priority": "Medium"},
+                {"feature": "Scale", "current": "1K users", "proposed": "50K users", "improvement": "50x increase", "priority": "High"},
+                {"feature": "Cost", "current": "$0.45", "proposed": "$0.12", "improvement": "73% reduction", "priority": "Medium"},
+                {"feature": "Deploy", "current": "6 weeks", "proposed": "2 days", "improvement": "95% reduction", "priority": "Low"}
             ]
         }
         
@@ -144,20 +144,20 @@ async def generate_report_json(idea: str, plan: Plan) -> tuple[dict, dict]:
         if plan.name in ["Advanced", "Comprehensive"]:
             table_sections.update({
                 "ip_landscape_table": [
-                    {"patent_id": "US10,123,456", "assignee": "TechCorp Inc", "jurisdiction": "United States", "status": "Active", "relevance": "High", "expiry_date": "2041-03-15"},
-                    {"patent_id": "EP3456789", "assignee": "EuroTech Ltd", "jurisdiction": "European Union", "status": "Active", "relevance": "Medium", "expiry_date": "2039-08-22"},
-                    {"patent_id": "CN201980012345", "assignee": "Asia Innovations", "jurisdiction": "China", "status": "Pending", "relevance": "Medium", "expiry_date": "2042-01-10"},
-                    {"patent_id": "JP2020-123456", "assignee": "Nippon Tech", "jurisdiction": "Japan", "status": "Active", "relevance": "Low", "expiry_date": "2040-06-30"},
-                    {"patent_id": "KR10-2019-0123456", "assignee": "Korea Advanced Tech", "jurisdiction": "South Korea", "status": "Active", "relevance": "Medium", "expiry_date": "2041-11-18"},
-                    {"patent_id": "AU2019123456", "assignee": "Aussie Innovations", "jurisdiction": "Australia", "status": "Active", "relevance": "Low", "expiry_date": "2040-09-05"}
+                    {"patent": "US10123456", "owner": "TechCorp", "status": "Active", "relevance": "High", "expires": "2041"},
+                    {"patent": "EP3456789", "owner": "EuroTech", "status": "Active", "relevance": "Medium", "expires": "2039"},
+                    {"patent": "CN201980012", "owner": "Asia Innov", "status": "Pending", "relevance": "Medium", "expires": "2042"},
+                    {"patent": "JP2020123", "owner": "Nippon Tech", "status": "Active", "relevance": "Low", "expires": "2040"},
+                    {"patent": "KR102019012", "owner": "Korea Tech", "status": "Active", "relevance": "Medium", "expires": "2041"},
+                    {"patent": "AU2019123", "owner": "Aussie Innov", "status": "Active", "relevance": "Low", "expires": "2040"}
                 ],
                 "regulatory_timeline_table": [
-                    {"jurisdiction": "United States", "requirement": "FDA Approval", "timeline": "12-18 months", "cost": "$250K", "complexity": "High", "approval_rate": "78%"},
-                    {"jurisdiction": "European Union", "requirement": "CE Marking", "timeline": "8-12 months", "cost": "$180K", "complexity": "Medium", "approval_rate": "85%"},
-                    {"jurisdiction": "Canada", "requirement": "Health Canada", "timeline": "6-10 months", "cost": "$120K", "complexity": "Medium", "approval_rate": "82%"},
-                    {"jurisdiction": "Japan", "requirement": "PMDA Approval", "timeline": "10-14 months", "cost": "$200K", "complexity": "High", "approval_rate": "75%"},
-                    {"jurisdiction": "China", "requirement": "NMPA Approval", "timeline": "14-20 months", "cost": "$300K", "complexity": "High", "approval_rate": "68%"},
-                    {"jurisdiction": "Australia", "requirement": "TGA Approval", "timeline": "6-9 months", "cost": "$100K", "complexity": "Low", "approval_rate": "88%"}
+                    {"region": "US", "requirement": "FDA", "timeline": "12-18 mo", "cost": "$250K", "success": "78%"},
+                    {"region": "EU", "requirement": "CE Mark", "timeline": "8-12 mo", "cost": "$180K", "success": "85%"},
+                    {"region": "Canada", "requirement": "Health CA", "timeline": "6-10 mo", "cost": "$120K", "success": "82%"},
+                    {"region": "Japan", "requirement": "PMDA", "timeline": "10-14 mo", "cost": "$200K", "success": "75%"},
+                    {"region": "China", "requirement": "NMPA", "timeline": "14-20 mo", "cost": "$300K", "success": "68%"},
+                    {"region": "Australia", "requirement": "TGA", "timeline": "6-9 mo", "cost": "$100K", "success": "88%"}
                 ]
             })
         
@@ -165,20 +165,20 @@ async def generate_report_json(idea: str, plan: Plan) -> tuple[dict, dict]:
         if plan.name == "Comprehensive":
             table_sections.update({
                 "funding_sources_table": [
-                    {"source_type": "Venture Capital", "amount_range": "$5M-$50M", "timeline": "6-12 months", "requirements": "Proven traction, scalable model", "success_rate": "15%", "contact_info": "VC firms, accelerators"},
-                    {"source_type": "Angel Investors", "amount_range": "$100K-$2M", "timeline": "3-6 months", "requirements": "Strong team, clear vision", "success_rate": "25%", "contact_info": "Angel networks, platforms"},
-                    {"source_type": "Government Grants", "amount_range": "$50K-$5M", "timeline": "6-18 months", "requirements": "Innovation focus, compliance", "success_rate": "35%", "contact_info": "SBIR, STTR programs"},
-                    {"source_type": "Corporate Partnerships", "amount_range": "$500K-$10M", "timeline": "9-18 months", "requirements": "Strategic alignment", "success_rate": "20%", "contact_info": "Corporate venture arms"},
-                    {"source_type": "Crowdfunding", "amount_range": "$10K-$1M", "timeline": "2-4 months", "requirements": "Consumer appeal, marketing", "success_rate": "40%", "contact_info": "Kickstarter, Indiegogo"},
-                    {"source_type": "Bank Loans", "amount_range": "$100K-$5M", "timeline": "1-3 months", "requirements": "Collateral, credit history", "success_rate": "60%", "contact_info": "Commercial banks, SBA"}
+                    {"source": "VC", "range": "$5M-50M", "timeline": "6-12 mo", "success": "15%", "requirements": "Traction"},
+                    {"source": "Angel", "range": "$100K-2M", "timeline": "3-6 mo", "success": "25%", "requirements": "Team"},
+                    {"source": "Grants", "range": "$50K-5M", "timeline": "6-18 mo", "success": "35%", "requirements": "Innovation"},
+                    {"source": "Corporate", "range": "$500K-10M", "timeline": "9-18 mo", "success": "20%", "requirements": "Alignment"},
+                    {"source": "Crowdfund", "range": "$10K-1M", "timeline": "2-4 mo", "success": "40%", "requirements": "Appeal"},
+                    {"source": "Bank", "range": "$100K-5M", "timeline": "1-3 mo", "success": "60%", "requirements": "Collateral"}
                 ],
                 "licensing_terms_table": [
-                    {"license_type": "Exclusive License", "royalty_rate": "8-15%", "upfront_fee": "$500K-$2M", "territory": "Global", "exclusivity": "Full", "duration": "Patent life"},
-                    {"license_type": "Non-Exclusive License", "royalty_rate": "3-8%", "upfront_fee": "$100K-$500K", "territory": "Regional", "exclusivity": "None", "duration": "5-10 years"},
-                    {"license_type": "Field-of-Use License", "royalty_rate": "5-12%", "upfront_fee": "$200K-$1M", "territory": "Specific market", "exclusivity": "Field-limited", "duration": "Patent life"},
-                    {"license_type": "Cross-License", "royalty_rate": "2-6%", "upfront_fee": "$50K-$300K", "territory": "Mutual", "exclusivity": "Shared", "duration": "Negotiable"},
-                    {"license_type": "Sublicense Rights", "royalty_rate": "10-20%", "upfront_fee": "$1M-$5M", "territory": "Global", "exclusivity": "Sublicense", "duration": "Patent life"},
-                    {"license_type": "Research License", "royalty_rate": "1-3%", "upfront_fee": "$10K-$100K", "territory": "Academic only", "exclusivity": "Non-commercial", "duration": "3-5 years"}
+                    {"type": "Exclusive", "royalty": "8-15%", "upfront": "$500K-2M", "territory": "Global", "duration": "Patent Life"},
+                    {"type": "Non-Exclusive", "royalty": "3-8%", "upfront": "$100K-500K", "territory": "Regional", "duration": "5-10 years"},
+                    {"type": "Field-of-Use", "royalty": "5-12%", "upfront": "$200K-1M", "territory": "Specific", "duration": "Patent Life"},
+                    {"type": "Cross-License", "royalty": "2-6%", "upfront": "$50K-300K", "territory": "Mutual", "duration": "Negotiable"},
+                    {"type": "Sublicense", "royalty": "10-20%", "upfront": "$1M-5M", "territory": "Global", "duration": "Patent Life"},
+                    {"type": "Research", "royalty": "1-3%", "upfront": "$10K-100K", "territory": "Academic", "duration": "3-5 years"}
                 ]
             })
 
@@ -200,9 +200,9 @@ You must output STRICTLY ONE JSON DOCUMENT with these exact keys:
 **MANDATORY TABLE REQUIREMENTS:**
 - Each table MUST have exactly 6 entries (arrays of 6 objects)
 - Each object must have ALL the fields shown in the example
-- Use realistic data relevant to the technology idea
-- All values must be strings
+- Use SHORT, CONCISE text (max 15 characters per field)
 - Tables must be named exactly as shown above
+- NO long sentences in table cells
 
 **CONTENT REQUIREMENTS:**
 - Each text section: {min_words}-{max_words} words
@@ -223,7 +223,8 @@ Generate a comprehensive {plan.report_type} following the exact JSON structure s
 2. Include ALL {num_tables} required tables with EXACTLY 6 realistic entries each
 3. Use the EXACT table structure provided in the system prompt
 4. All table data must be relevant to the technology idea: {idea}
-5. Include specific, quantitative data appropriate for {plan.name} plan level analysis
+5. Keep table text SHORT and CONCISE (max 15 characters per cell)
+6. Include specific, quantitative data appropriate for {plan.name} plan level analysis
 
 Focus on creating realistic, professional content that would be suitable for actual business use.
 """
@@ -404,7 +405,7 @@ class ReportPDF(FPDF):
 
             text = self.clean_text(text)
             
-            # Enhanced paragraph formatting with better spacing
+            # Enhanced paragraph formatting with proper line breaks
             paragraphs = text.split('\n\n')
             for i, paragraph in enumerate(paragraphs):
                 if paragraph.strip():
@@ -412,6 +413,7 @@ class ReportPDF(FPDF):
                     lines = paragraph.split('\n')
                     for line in lines:
                         if line.strip():
+                            # Use multi_cell with proper width to prevent overflow
                             self.multi_cell(0, 6, line.strip(), align="L")
                             self.ln(1)
                     if i < len(paragraphs) - 1:  # Add space between paragraphs
@@ -466,33 +468,31 @@ class ReportPDF(FPDF):
             logger.info(f"Table headers: {headers}")
             logger.info(f"Number of columns: {num_cols}")
 
-            # Calculate column widths
+            # FIXED: Better column width calculation
             available_width = 170  # A4 width minus margins
             if column_widths is None:
-                if num_cols <= 3:
-                    column_widths = [available_width // num_cols] * num_cols
-                elif num_cols <= 5:
-                    column_widths = [max(25, available_width // num_cols)] * num_cols
-                else:
-                    column_widths = [max(20, available_width // num_cols)] * num_cols
-
-            # Ensure total width doesn't exceed available space
-            total_width = sum(column_widths)
-            if total_width > available_width:
-                factor = available_width / total_width
-                column_widths = [int(w * factor) for w in column_widths]
+                # Distribute width more evenly
+                base_width = available_width / num_cols
+                column_widths = [max(25, base_width) for _ in range(num_cols)]
+                
+                # Adjust if total exceeds available width
+                total_width = sum(column_widths)
+                if total_width > available_width:
+                    factor = available_width / total_width
+                    column_widths = [int(w * factor) for w in column_widths]
 
             logger.info(f"Column widths: {column_widths}")
 
-            # Draw table headers
-            self.set_font("Helvetica", "B", 9)
+            # Draw table headers with smaller font
+            self.set_font("Helvetica", "B", 8)  # Smaller font for headers
             self.set_fill_color(220, 220, 220)
             self.set_text_color(0, 0, 0)
 
             for i, header in enumerate(headers):
                 header_text = self.clean_text(header.replace("_", " ").title())
-                if len(header_text) > 15:
-                    header_text = header_text[:12] + "..."
+                # FIXED: Truncate header text properly
+                if len(header_text) > 12:
+                    header_text = header_text[:9] + "..."
                 
                 is_last = i == len(headers) - 1
                 self.cell(
@@ -506,8 +506,8 @@ class ReportPDF(FPDF):
                     fill=True,
                 )
 
-            # Draw data rows
-            self.set_font("Helvetica", "", 8)
+            # Draw data rows with smaller font
+            self.set_font("Helvetica", "", 7)  # Even smaller font for data
             
             for row_idx, row in enumerate(data):
                 # Check for page break
@@ -518,12 +518,12 @@ class ReportPDF(FPDF):
                     self.cell(0, 10, title, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="L")
                     self.ln(5)
                     
-                    self.set_font("Helvetica", "B", 9)
+                    self.set_font("Helvetica", "B", 8)
                     self.set_fill_color(220, 220, 220)
                     for i, header in enumerate(headers):
                         header_text = self.clean_text(header.replace("_", " ").title())
-                        if len(header_text) > 15:
-                            header_text = header_text[:12] + "..."
+                        if len(header_text) > 12:
+                            header_text = header_text[:9] + "..."
                         is_last = i == len(headers) - 1
                         self.cell(
                             column_widths[i],
@@ -535,7 +535,7 @@ class ReportPDF(FPDF):
                             align="C",
                             fill=True,
                         )
-                    self.set_font("Helvetica", "", 8)
+                    self.set_font("Helvetica", "", 7)
 
                 # Alternating row colors
                 fill = row_idx % 2 == 0
@@ -549,17 +549,26 @@ class ReportPDF(FPDF):
                     if not value:
                         value = "N/A"
 
-                    # Smart text truncation based on column width
-                    max_chars = max(8, column_widths[i] // 3)
+                    # FIXED: Better text truncation based on actual column width
+                    # Calculate max characters based on font size and column width
+                    max_chars = max(6, int(column_widths[i] / 4))  # Rough estimate
                     if len(value) > max_chars:
-                        value = value[:max_chars-3] + "..."
+                        value = value[:max_chars-2] + ".."
 
                     value = self.clean_text(value)
                     is_last = i == len(headers) - 1
 
+                    # FIXED: Use multi_cell for better text wrapping
+                    current_x = self.get_x()
+                    current_y = self.get_y()
+                    
+                    # Set position and draw cell
+                    self.set_xy(current_x, current_y)
+                    
+                    # Draw border manually and add text
                     self.cell(
                         column_widths[i],
-                        7,
+                        8,  # Fixed row height
                         value,
                         border=1,
                         new_x=XPos.RIGHT if not is_last else XPos.LMARGIN,
@@ -592,7 +601,7 @@ class ReportPDF(FPDF):
                 "–": "-", "—": "-", "…": "...",
                 "®": "(R)", "™": "(TM)", "©": "(C)",
                 "€": "EUR", "£": "GBP", "¥": "JPY",
-                "°": " degrees", "±": "+/-", "×": "x"
+                "°": " deg", "±": "+/-", "×": "x"
             }
 
             for old, new in replacements.items():
