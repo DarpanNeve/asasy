@@ -80,20 +80,24 @@ async def generate_report_json(idea: str, plan: Plan) -> tuple[dict, dict]:
             min_words = 50
             max_words = 150
             content_depth = "concise overview with essential data"
+            num_tables = 5
         elif plan.name == "Intermediate":
             min_words = 100
             max_words = 250
             content_depth = "detailed analysis with comprehensive data"
+            num_tables = 5
         elif plan.name == "Advanced":
             min_words = 150
             max_words = 350
             content_depth = "comprehensive analysis with investment-grade data"
+            num_tables = 7
         else:  # Comprehensive
             min_words = 200
             max_words = 500
             content_depth = "in-depth professional analysis with institutional-grade data"
+            num_tables = 9
         
-        # Add comprehensive tables for all plans (5 standard tables)
+        # Add comprehensive tables for all plans
         table_sections = {
             "market_data_table": "[{\"metric\": \"string\", \"value\": \"string\", \"growth_rate\": \"string\", \"source\": \"string\", \"year\": \"string\"}]",
             "competitor_analysis_table": "[{\"company\": \"string\", \"market_share\": \"string\", \"revenue\": \"string\", \"key_features\": \"string\", \"rating\": \"string\", \"strengths\": \"string\"}]",
@@ -102,14 +106,14 @@ async def generate_report_json(idea: str, plan: Plan) -> tuple[dict, dict]:
             "technology_comparison_table": "[{\"feature\": \"string\", \"current_solution\": \"string\", \"proposed_solution\": \"string\", \"improvement\": \"string\", \"priority\": \"string\", \"impact\": \"string\"}]"
         }
         
-        # Add advanced tables for higher tier plans (7 total for Advanced)
+        # Add advanced tables for higher tier plans
         if plan.name in ["Advanced", "Comprehensive"]:
             table_sections.update({
                 "ip_landscape_table": "[{\"patent_id\": \"string\", \"assignee\": \"string\", \"jurisdiction\": \"string\", \"status\": \"string\", \"relevance\": \"string\", \"expiry_date\": \"string\"}]",
                 "regulatory_timeline_table": "[{\"jurisdiction\": \"string\", \"requirement\": \"string\", \"timeline\": \"string\", \"cost\": \"string\", \"complexity\": \"string\", \"approval_rate\": \"string\"}]"
             })
         
-        # Add premium tables for Comprehensive plan (9 total)
+        # Add premium tables for Comprehensive plan
         if plan.name == "Comprehensive":
             table_sections.update({
                 "funding_sources_table": "[{\"source_type\": \"string\", \"amount_range\": \"string\", \"timeline\": \"string\", \"requirements\": \"string\", \"success_rate\": \"string\", \"contact_info\": \"string\"}]",
@@ -128,7 +132,7 @@ You must output STRICTLY ONE JSON DOCUMENT with these exact keys:
 **Required Text Sections:**
 {json.dumps(required_sections, indent=2)}
 
-**Required Table Sections (MUST include {len(table_sections)} tables):**
+**Required Table Sections (MUST include {num_tables} tables with EXACTLY 6-8 entries each):**
 {json.dumps(table_sections, indent=2)}
 
 **ENHANCED CONTENT LENGTH REQUIREMENTS:**
@@ -136,8 +140,15 @@ You must output STRICTLY ONE JSON DOCUMENT with these exact keys:
 - Include specific quantitative data, metrics, statistics, and financial figures
 - Use professional, analytical tone appropriate for {plan.name} plan level
 - Provide actionable insights and concrete recommendations with supporting data
-- Each table: 6-8 realistic entries with specific, credible, industry-standard data
+- Each table: EXACTLY 6-8 realistic entries with specific, credible, industry-standard data
 - All values must be strings for JSON compatibility
+
+**MANDATORY TABLE REQUIREMENTS:**
+- Each table MUST have exactly 6-8 rows of data
+- Each row must be a complete JSON object with all required fields
+- Use realistic company names, market data, financial figures, and technical specifications
+- Include specific numbers, percentages, dates, and quantified metrics
+- All table data must be relevant to the technology idea provided
 
 **COMPREHENSIVE DATA QUALITY STANDARDS:**
 - Market data: Include realistic market sizes (e.g., "$2.5B market growing at 12% CAGR"), TAM/SAM/SOM figures
@@ -147,27 +158,6 @@ You must output STRICTLY ONE JSON DOCUMENT with these exact keys:
 - IP data: Patent numbers, filing dates, jurisdictions, legal status, expiry dates
 - Regulatory data: Specific approval timelines, cost estimates, success rates by jurisdiction
 - Timeline data: Specific phases, duration estimates, cost breakdowns, risk assessments
-
-**PROFESSIONAL TABLE REQUIREMENTS:**
-- Market Data Table: Include metrics like market size, growth rates, adoption rates, pricing trends
-- Competitor Analysis: Real or realistic company names, market positions, revenue data, key differentiators
-- Development Timeline: Specific phases (R&D, Prototype, Testing, Regulatory, Launch), realistic timelines and costs
-- Financial Projections: 5-year projections with revenue, costs, profit margins, ROI calculations
-- Technology Comparison: Feature-by-feature comparison with quantified improvements and impact assessments
-
-**ENHANCED PROFESSIONAL FORMATTING:**
-- Write in third person, analytical style suitable for business presentations
-- Use industry-standard terminology and frameworks (TRL, TAM/SAM/SOM, SWOT, etc.)
-- Include specific dates, percentages, dollar amounts, and quantified metrics
-- Reference credible but hypothetical data sources and industry reports
-- Maintain consistency across all sections and tables
-- Ensure all financial figures are realistic and properly scaled
-
-**PLAN-SPECIFIC REQUIREMENTS:**
-- {plan.name} Plan: Target {plan.name.lower()} use cases with appropriate depth and sophistication
-- Content suitable for: {plan.description}
-- Analysis depth: {content_depth}
-- Professional standards appropriate for {plan.name} plan stakeholders
 
 OUTPUT ONLY THE JSON - NO ADDITIONAL TEXT, MARKDOWN, OR FORMATTING.
 """
@@ -179,7 +169,7 @@ Generate a comprehensive {plan.report_type} following the exact JSON structure s
 
 **CRITICAL REQUIREMENTS:**
 1. Ensure ALL sections meet the {min_words}-{max_words} word requirement
-2. Include ALL {len(table_sections)} required tables with 6-8 realistic entries each
+2. Include ALL {num_tables} required tables with EXACTLY 6-8 realistic entries each
 3. Include specific, quantitative data appropriate for {plan.name} plan level analysis
 4. Use realistic market data, financial projections, and competitive intelligence
 5. Maintain professional tone suitable for {plan.name} plan stakeholders
@@ -263,8 +253,8 @@ Focus on creating realistic, professional content that would be suitable for act
                         logger.warning(f"Section '{key}' has only {word_count} words, minimum is {min_words}")
                 elif isinstance(value, list):
                     logger.info(f"Table '{key}' entries: {len(value)}")
-                    if len(value) < 5:
-                        logger.warning(f"Table '{key}' has only {len(value)} entries, recommended minimum is 6")
+                    if len(value) < 6:
+                        logger.warning(f"Table '{key}' has only {len(value)} entries, minimum is 6")
             
             return parsed_content, usage_info
             
@@ -380,32 +370,45 @@ class ReportPDF(FPDF):
 
     def add_data_table(self, title, data, column_widths=None):
         try:
+            logger.info(f"Adding table: {title}")
+            logger.info(f"Table data type: {type(data)}")
+            logger.info(f"Table data length: {len(data) if isinstance(data, list) else 'N/A'}")
+            
             if not data or not isinstance(data, list) or len(data) == 0:
-                logger.info(f"No valid data for table: {title}")
+                logger.warning(f"No valid data for table: {title}")
+                # Add a placeholder message
+                self.set_font("Helvetica", "B", 12)
+                self.cell(0, 10, f"{title} - No data available", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="L")
+                self.ln(5)
                 return
 
-            if self.get_y() > 200:  # More conservative page break for tables
+            # Check if we need a new page
+            if self.get_y() > 200:
                 self.add_page()
 
-            # Table title with enhanced formatting
+            # Table title
             self.set_font("Helvetica", "B", 12)
             self.set_text_color(0, 0, 0)
             title = self.clean_text(title)
             self.cell(0, 10, title, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="L")
             self.ln(5)
 
-            # Ensure we have valid data structure
+            # Validate data structure
             if not isinstance(data[0], dict):
                 logger.warning(f"Invalid table data structure for {title}")
+                self.set_font("Helvetica", "", 10)
+                self.cell(0, 8, "Invalid table data format", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="L")
+                self.ln(5)
                 return
 
             headers = list(data[0].keys())
             num_cols = len(headers)
+            logger.info(f"Table headers: {headers}")
+            logger.info(f"Number of columns: {num_cols}")
 
-            # Enhanced column width calculation
+            # Calculate column widths
+            available_width = 170  # A4 width minus margins
             if column_widths is None:
-                available_width = 170
-                # Adjust column widths based on content
                 if num_cols <= 3:
                     column_widths = [available_width // num_cols] * num_cols
                 elif num_cols <= 5:
@@ -413,12 +416,15 @@ class ReportPDF(FPDF):
                 else:
                     column_widths = [max(20, available_width // num_cols)] * num_cols
 
+            # Ensure total width doesn't exceed available space
             total_width = sum(column_widths)
-            if total_width > 170:
-                factor = 170 / total_width
+            if total_width > available_width:
+                factor = available_width / total_width
                 column_widths = [int(w * factor) for w in column_widths]
 
-            # Enhanced table headers
+            logger.info(f"Column widths: {column_widths}")
+
+            # Draw table headers
             self.set_font("Helvetica", "B", 9)
             self.set_fill_color(220, 220, 220)
             self.set_text_color(0, 0, 0)
@@ -440,13 +446,18 @@ class ReportPDF(FPDF):
                     fill=True,
                 )
 
-            # Enhanced data rows with alternating colors
+            # Draw data rows
             self.set_font("Helvetica", "", 8)
             
             for row_idx, row in enumerate(data):
-                if self.get_y() > 260:  # Check for page break
+                # Check for page break
+                if self.get_y() > 260:
                     self.add_page()
                     # Re-add headers on new page
+                    self.set_font("Helvetica", "B", 12)
+                    self.cell(0, 10, title, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="L")
+                    self.ln(5)
+                    
                     self.set_font("Helvetica", "B", 9)
                     self.set_fill_color(220, 220, 220)
                     for i, header in enumerate(headers):
@@ -479,7 +490,7 @@ class ReportPDF(FPDF):
                         value = "N/A"
 
                     # Smart text truncation based on column width
-                    max_chars = max(10, column_widths[i] // 3)
+                    max_chars = max(8, column_widths[i] // 3)
                     if len(value) > max_chars:
                         value = value[:max_chars-3] + "..."
 
@@ -498,9 +509,15 @@ class ReportPDF(FPDF):
                     )
 
             self.ln(8)  # Extra space after table
-            logger.info(f"Added enhanced data table: {title} with {len(data)} rows")
+            logger.info(f"Successfully added table: {title} with {len(data)} rows")
+            
         except Exception as e:
             logger.error(f"Error adding data table {title}: {e}")
+            logger.error(f"Traceback: {traceback.format_exc()}")
+            # Add error message to PDF
+            self.set_font("Helvetica", "", 10)
+            self.cell(0, 8, f"Error rendering table: {title}", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="L")
+            self.ln(5)
 
     def clean_text(self, text):
         """Enhanced text cleaning for better PDF compatibility"""
@@ -555,7 +572,8 @@ def create_pdf(report: dict, output_path: str, plan: Plan):
         # Plan features summary
         pdf.set_font("Helvetica", "", 10)
         pdf.set_text_color(100, 100, 100)
-        features_text = f"Features: {len(plan.sections)} sections, {len([k for k in report.keys() if 'table' in k])} data tables"
+        table_count = len([k for k in report.keys() if 'table' in k])
+        features_text = f"Features: {len(plan.sections)} sections, {table_count} data tables"
         pdf.multi_cell(0, 6, features_text, align="C")
         pdf.ln(10)
 
@@ -643,9 +661,16 @@ def create_pdf(report: dict, output_path: str, plan: Plan):
         # Add all tables with enhanced formatting
         for table_title, table_key in table_mapping.items():
             table_data = report.get(table_key, [])
+            logger.info(f"Processing table {table_title}: {table_key}")
+            logger.info(f"Table data exists: {table_key in report}")
+            logger.info(f"Table data type: {type(table_data)}")
+            logger.info(f"Table data length: {len(table_data) if isinstance(table_data, list) else 'N/A'}")
+            
             if table_data and isinstance(table_data, list) and len(table_data) > 0:
-                logger.info(f"Adding enhanced table: {table_title}")
+                logger.info(f"Adding table: {table_title}")
                 pdf.add_data_table(table_title, table_data)
+            else:
+                logger.warning(f"Skipping table {table_title} - no valid data")
 
         # Save PDF
         pdf.output(output_path)

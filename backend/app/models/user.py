@@ -48,9 +48,10 @@ class User(Document):
     is_active: bool = True
     is_verified: bool = False
     
-    # Subscription & Usage
+    # Subscription & Usage - FIXED: Reset reports_generated when subscription changes
     reports_generated: int = 0
     current_subscription_id: Optional[str] = None
+    last_subscription_reset: Optional[datetime] = None  # Track when reports were last reset
     
     # Verification
     email_verification_code: Optional[str] = None
@@ -107,13 +108,21 @@ class User(Document):
             if plan:
                 return plan
         
-        # Return free/starter plan as default
+        # Return free/basic plan as default
         from app.models.plan import Plan
-        starter_plan = await Plan.find_one({"name": "Starter", "is_active": True})
-        if not starter_plan:
-            # Fallback if no Starter plan exists
-            starter_plan = await Plan.find_one({"price_inr": 0, "is_active": True})
-        return starter_plan
+        free_plan = await Plan.find_one({"price_inr": 0, "is_active": True})
+        if not free_plan:
+            # Fallback to Basic plan if no free plan exists
+            free_plan = await Plan.find_one({"name": "Basic", "is_active": True})
+        return free_plan
+    
+    async def reset_reports_for_new_subscription(self, subscription_id: str):
+        """Reset report count when user gets a new subscription"""
+        self.reports_generated = 0
+        self.current_subscription_id = subscription_id
+        self.last_subscription_reset = datetime.utcnow()
+        self.updated_at = datetime.utcnow()
+        await self.save()
     
     async def can_generate_report(self) -> bool:
         """Check if user can generate a report based on their plan"""
@@ -122,9 +131,18 @@ class User(Document):
         if not current_plan:
             return False
         
-        # If unlimited reports
+        # If unlimited reports (None means unlimited)
         if current_plan.reports_limit is None:
             return True
+        
+        # Check if user has a new subscription and needs report reset
+        subscription = await self.get_current_subscription()
+        if subscription and self.current_subscription_id == str(subscription.id):
+            # Check if this is a new subscription period
+            if (not self.last_subscription_reset or 
+                self.last_subscription_reset < subscription.created_at):
+                # Reset reports for new subscription
+                await self.reset_reports_for_new_subscription(str(subscription.id))
         
         # Check if within limit
         return self.reports_generated < current_plan.reports_limit
@@ -138,6 +156,15 @@ class User(Document):
         
         if current_plan.reports_limit is None:
             return -1  # Unlimited
+        
+        # Check if user has a new subscription and needs report reset
+        subscription = await self.get_current_subscription()
+        if subscription and self.current_subscription_id == str(subscription.id):
+            # Check if this is a new subscription period
+            if (not self.last_subscription_reset or 
+                self.last_subscription_reset < subscription.created_at):
+                # Reset reports for new subscription
+                await self.reset_reports_for_new_subscription(str(subscription.id))
         
         remaining = current_plan.reports_limit - self.reports_generated
         return max(0, remaining)

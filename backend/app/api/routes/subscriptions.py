@@ -156,10 +156,8 @@ async def verify_payment(
         
         await subscription.insert()
         
-        # Update user's current subscription
-        current_user.current_subscription_id = str(subscription.id)
-        current_user.updated_at = datetime.utcnow()
-        await current_user.save()
+        # FIXED: Reset user's report count for new subscription
+        await current_user.reset_reports_for_new_subscription(str(subscription.id))
         
         return {"message": "Subscription activated successfully"}
         
