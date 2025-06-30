@@ -23,13 +23,13 @@ async def generate_report_json(idea: str, plan: Plan) -> tuple[dict, dict]:
     logger.info(f"OpenAI API Key configured: {'Yes' if settings.OPENAI_API_KEY else 'No'}")
     
     try:
-        # Use the plan's prompt template if available, otherwise use default
-        if hasattr(plan, 'prompt_template') and plan.prompt_template:
-            system_prompt = plan.prompt_template
-            logger.info(f"Using plan-specific prompt template for {plan.name}")
-        else:
-            # Fallback to comprehensive system prompt
-            system_prompt = """
+        # Check if plan has a prompt template
+        if not hasattr(plan, 'prompt_template') or not plan.prompt_template:
+            logger.error(f"No prompt template found for plan: {plan.name}")
+            raise ValueError(f"No prompt template configured for plan: {plan.name}")
+        
+        # Create enhanced system prompt by combining base structure with plan-specific template
+        base_structure = """
 You are a world-class business & technology research analyst. When given a single "idea" for a patent-grade system, you must OUTPUT STRICTLY ONE JSON DOCUMENT (no extra text) with these exact keys:
 
 1. patent_info: {title, application_no, grant_no, filing_date, jurisdiction, assignee, status}  
@@ -60,9 +60,13 @@ You are a world-class business & technology research analyst. When given a singl
 • Ensure all values are strings for JSON compatibility
 • Make data relevant to the technology idea provided
 
-Aim to make every section as comprehensive and statistically rigorous as possible.
+**Plan-Specific Requirements:**
 """
-            logger.info("Using default comprehensive prompt template")
+        
+        # Combine base structure with plan-specific template
+        system_prompt = base_structure + plan.prompt_template
+        
+        logger.info(f"Using enhanced prompt template for {plan.name}")
 
         user_prompt = f"""
 Idea: ```{idea}```
@@ -136,7 +140,8 @@ Generate the report JSON as specified above. Ensure every section is richly deta
             
             missing_keys = [key for key in required_keys if key not in parsed_content]
             if missing_keys:
-                logger.warning(f"Missing required keys: {missing_keys}")
+                logger.error(f"Missing required keys: {missing_keys}")
+                raise ValueError(f"OpenAI response missing required keys: {missing_keys}")
             
             # Log content lengths
             for key, value in parsed_content.items():
@@ -158,211 +163,8 @@ Generate the report JSON as specified above. Ensure every section is richly deta
         logger.error(f"Error in generate_report_json: {e}")
         logger.error(f"Traceback: {traceback.format_exc()}")
         
-        # Return fallback report with error info
-        fallback_report = get_fallback_report(plan)
-        usage_info = {"error": str(e), "model": "fallback"}
-        
-        return fallback_report, usage_info
-
-def get_fallback_report(plan: Plan) -> dict:
-    """Return a dynamic fallback report structure based on plan configuration"""
-    logger.warning(f"Using dynamic fallback report for plan: {plan.name}")
-    
-    try:
-        # Generate dynamic content based on plan attributes
-        plan_level = _get_plan_complexity_level(plan)
-        sections_count = len(plan.sections) if plan.sections else 7
-        
-        # Base patent info using plan data
-        patent_info = {
-            "title": f"{plan.report_type} Report",
-            "application_no": "Assessment Phase",
-            "grant_no": "N/A",
-            "filing_date": "Assessment Stage",
-            "jurisdiction": _get_jurisdiction_scope(plan),
-            "assignee": "Assessment Phase",
-            "status": f"{plan_level} Assessment"
-        }
-        
-        # Generate content based on plan sophistication
-        executive_summary = _generate_executive_summary(plan, plan_level)
-        technology_overview = _generate_technology_overview(plan, plan_level)
-        development_plan = _generate_development_plan(plan, plan_level)
-        market_assessment = _generate_market_assessment(plan, plan_level)
-        commercialization_strategies = _generate_commercialization_strategies(plan, plan_level)
-        financial_viability = _generate_financial_viability(plan, plan_level)
-        final_thoughts = _generate_final_thoughts(plan, plan_level)
-        
-        # Generate tables based on plan report formats
-        tables = _generate_fallback_tables(plan)
-        
-        return {
-            "patent_info": patent_info,
-            "executive_summary": executive_summary,
-            "technology_overview": technology_overview,
-            "development_plan": development_plan,
-            "market_assessment": market_assessment,
-            "commercialization_strategies": commercialization_strategies,
-            "financial_viability": financial_viability,
-            "final_thoughts": final_thoughts,
-            **tables
-        }
-        
-    except Exception as e:
-        logger.error(f"Error creating dynamic fallback report: {e}")
-        return _get_minimal_fallback_report()
-
-def _get_plan_complexity_level(plan: Plan) -> str:
-    """Determine complexity level based on plan attributes"""
-    if plan.price_inr == 0:
-        return "Basic"
-    elif plan.price_inr <= 2000:
-        return "Intermediate"
-    elif plan.price_inr <= 5000:
-        return "Advanced" 
-    else:
-        return "Comprehensive"
-
-def _get_jurisdiction_scope(plan: Plan) -> str:
-    """Determine jurisdiction scope based on plan level"""
-    if plan.price_inr == 0:
-        return "Local/Regional"
-    elif plan.price_inr <= 2000:
-        return "National"
-    elif plan.price_inr <= 5000:
-        return "International"
-    else:
-        return "Global"
-
-def _generate_executive_summary(plan: Plan, level: str) -> str:
-    """Generate executive summary based on plan level"""
-    base_text = f"This {level.lower()} technology assessment provides "
-    
-    if level == "Basic":
-        return f"{base_text}an overview of the technology concept with preliminary analysis of its potential. The assessment covers fundamental aspects including technical feasibility, basic market opportunity, and initial commercialization considerations. This evaluation serves as a starting point for further detailed analysis and strategic planning."
-    
-    elif level == "Intermediate":
-        return f"{base_text}a comprehensive evaluation of the technology with detailed market analysis and commercialization pathways. The assessment includes technical feasibility validation, competitive landscape analysis, market opportunity quantification, and strategic recommendations for development and market entry. This evaluation provides stakeholders with actionable insights for investment and development decisions."
-    
-    elif level == "Advanced":
-        return f"{base_text}an in-depth strategic analysis with detailed business case development and comprehensive market intelligence. The assessment encompasses technical due diligence, competitive positioning analysis, financial projections, regulatory compliance pathways, and detailed commercialization strategies. This evaluation supports executive decision-making and investor presentations with institutional-grade analysis."
-    
-    else:  # Comprehensive
-        return f"{base_text}a complete strategic framework for technology commercialization with investment-grade analysis and global market intelligence. The assessment delivers comprehensive technical validation, detailed competitive analysis, multi-scenario financial modeling, regulatory strategy development, and complete go-to-market planning. This evaluation provides the foundation for board-level decisions, investor due diligence, and successful technology transfer execution."
-
-def _generate_technology_overview(plan: Plan, level: str) -> str:
-    """Generate technology overview based on plan sophistication"""
-    if level == "Basic":
-        return "The proposed technology represents an innovative approach to addressing current market challenges. Technical analysis indicates feasibility within established engineering parameters. The solution builds upon proven methodologies while introducing novel elements that provide competitive differentiation. Implementation would follow standard development practices with manageable technical complexity."
-    
-    elif level == "Intermediate":
-        return "The technology demonstrates strong technical foundation with clear implementation pathways and scalable architecture. Detailed technical evaluation reveals moderate complexity requiring specialized expertise but achievable within reasonable timelines. The solution incorporates advanced methodologies while maintaining practical implementation considerations. Technical risk assessment indicates manageable challenges with established mitigation strategies."
-    
-    elif level == "Advanced":
-        return "Comprehensive technical analysis reveals sophisticated solution architecture with advanced implementation requirements. The technology leverages cutting-edge methodologies and innovative approaches that establish significant competitive advantages. Technical feasibility assessment confirms achievable development pathway with appropriate resource allocation and expert team assembly. Risk mitigation strategies address technical challenges through proven development methodologies."
-    
-    else:  # Comprehensive
-        return "The technology represents a paradigm-shifting innovation with comprehensive technical validation and institutional-grade feasibility assessment. Advanced technical architecture analysis confirms scalable implementation with global deployment capabilities. The solution incorporates breakthrough methodologies that establish sustained competitive moats and market leadership positions. Technical due diligence validates implementation pathway with detailed resource requirements and risk mitigation frameworks."
-
-def _generate_development_plan(plan: Plan, level: str) -> str:
-    """Generate development plan based on plan complexity"""
-    base_timeline = "12-18 months" if level == "Basic" else "18-24 months" if level == "Intermediate" else "24-36 months" if level == "Advanced" else "36-48 months"
-    
-    return f"Structured development approach recommended with {base_timeline} timeline for initial deployment. The development strategy incorporates phased milestones, risk mitigation protocols, and quality assurance frameworks. Resource allocation includes technical team assembly, infrastructure development, and validation protocols. Implementation pathway ensures systematic progress with regular stakeholder communication and strategic checkpoint reviews."
-
-def _generate_market_assessment(plan: Plan, level: str) -> str:
-    """Generate market assessment based on plan scope"""
-    if level == "Basic":
-        scope = "local and regional markets"
-        depth = "preliminary market research"
-    elif level == "Intermediate":
-        scope = "national and international markets"
-        depth = "comprehensive market analysis"
-    elif level == "Advanced":
-        scope = "global markets with regional specialization"
-        depth = "detailed market intelligence and competitive analysis"
-    else:
-        scope = "global markets with multi-regional deployment strategy"
-        depth = "institutional-grade market research with predictive analytics"
-    
-    return f"Market analysis reveals significant opportunity in {scope} with growing demand trends supporting commercial viability. {depth.title()} indicates favorable market conditions with identifiable target segments and clear value propositions. Competitive landscape assessment reveals differentiation opportunities and strategic positioning advantages for successful market entry and growth."
-
-def _generate_commercialization_strategies(plan: Plan, level: str) -> str:
-    """Generate commercialization strategies based on plan features"""
-    if level == "Basic":
-        strategies = "direct sales and basic licensing models"
-    elif level == "Intermediate":
-        strategies = "licensing, direct commercialization, and strategic partnerships"
-    elif level == "Advanced":
-        strategies = "comprehensive licensing portfolio, direct market entry, strategic alliances, and joint venture opportunities"
-    else:
-        strategies = "global licensing strategy, multi-channel commercialization, strategic partnerships, joint ventures, and acquisition pathways"
-    
-    return f"Multiple viable commercialization pathways identified including {strategies}. Each pathway offers distinct advantages based on resource availability, market timing, and strategic objectives. Commercialization strategy selection depends on risk tolerance, capital requirements, and desired market penetration speed. Implementation roadmap provides clear pathways for sustainable revenue generation and market leadership establishment."
-
-def _generate_financial_viability(plan: Plan, level: str) -> str:
-    """Generate financial viability assessment based on plan depth"""
-    roi_timeline = "2-3 years" if level == "Basic" else "3-5 years" if level == "Intermediate" else "5-7 years" if level == "Advanced" else "7-10 years"
-    
-    return f"Financial analysis demonstrates strong ROI potential with {roi_timeline} payback timeline and scalable revenue model. Multiple revenue streams identified with diversified income sources supporting long-term sustainability. Investment requirements appear reasonable relative to projected returns and market opportunity size. Financial projections indicate positive cash flow generation with acceptable risk-return profiles for stakeholder investment."
-
-def _generate_final_thoughts(plan: Plan, level: str) -> str:
-    """Generate final recommendations based on plan comprehensiveness"""
-    if level == "Basic":
-        recommendation = "proceed with further detailed analysis"
-        confidence = "preliminary indicators suggest viability"
-    elif level == "Intermediate":
-        recommendation = "advance to development phase with strategic planning"
-        confidence = "comprehensive analysis supports commercial potential"
-    elif level == "Advanced":
-        recommendation = "execute full commercialization strategy"
-        confidence = "detailed evaluation confirms strong commercial viability"
-    else:
-        recommendation = "implement comprehensive commercialization program"
-        confidence = "institutional-grade analysis validates exceptional commercial opportunity"
-    
-    return f"Strong recommendation to {recommendation} based on comprehensive assessment results. {confidence.title()} with favorable market conditions and technical feasibility confirmation. Risk factors appear manageable with proper planning and execution. Strategic timing appears optimal for market entry and commercial success achievement."
-
-def _generate_fallback_tables(plan: Plan) -> dict:
-    """Generate table data based on plan report formats"""
-    tables = {}
-    
-    # Only include tables for plans that support them
-    if len(plan.report_formats) > 1:  # Intermediate and above
-        tables["market_data_table"] = []
-        tables["competitor_analysis_table"] = []
-        tables["development_timeline_table"] = []
-        
-    if len(plan.report_formats) > 2:  # Advanced and above
-        tables["financial_projections_table"] = []
-        tables["technology_comparison_table"] = []
-    else:
-        # Basic plans get empty tables
-        tables["market_data_table"] = []
-        tables["competitor_analysis_table"] = []
-        tables["development_timeline_table"] = []
-        tables["financial_projections_table"] = []
-        tables["technology_comparison_table"] = []
-    
-    return tables
-
-def _get_minimal_fallback_report() -> dict:
-    """Minimal fallback when all else fails"""
-    return {
-        "patent_info": {"title": "Technology Assessment Failed"},
-        "executive_summary": "Report generation encountered an error. Please try again with a more detailed technology description.",
-        "technology_overview": "Unable to generate technology overview at this time.",
-        "development_plan": "Development planning requires successful technology analysis.",
-        "market_assessment": "Market assessment unavailable due to generation error.",
-        "commercialization_strategies": "Commercialization analysis requires complete technology evaluation.",
-        "financial_viability": "Financial analysis unavailable due to system error.",
-        "final_thoughts": "Please retry report generation with enhanced technology description for optimal results.",
-        "market_data_table": [],
-        "competitor_analysis_table": [],
-        "development_timeline_table": [],
-        "financial_projections_table": [],
-        "technology_comparison_table": []
-    }
+        # Re-raise the exception instead of returning fallback
+        raise
 
 class ReportPDF(FPDF):
     def __init__(self, plan_name: str):

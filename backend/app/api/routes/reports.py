@@ -5,6 +5,7 @@ from datetime import datetime
 import os
 import asyncio
 import logging
+import traceback
 
 from app.core.security import get_current_user
 from app.models.user import User
@@ -30,6 +31,13 @@ async def generate_report_background(report_id: str, idea: str, plan_id: str, us
             return
 
         logger.info(f"Found report and plan - Report: {report.title}, Plan: {plan.name}")
+
+        # Check if plan has prompt template
+        if not hasattr(plan, 'prompt_template') or not plan.prompt_template:
+            logger.error(f"No prompt template found for plan: {plan.name}")
+            report.mark_failed(f"No prompt template configured for plan: {plan.name}")
+            await report.save()
+            return
 
         # Update status to processing
         report.status = ReportStatus.PROCESSING
@@ -92,9 +100,20 @@ async def generate_report_background(report_id: str, idea: str, plan_id: str, us
         try:
             report = await ReportLog.get(report_id)
             if report:
-                report.mark_failed(str(e))
+                error_message = str(e)
+                # Provide more specific error messages
+                if "prompt template" in error_message.lower():
+                    error_message = f"Plan configuration error: {error_message}"
+                elif "openai" in error_message.lower():
+                    error_message = f"AI service error: {error_message}"
+                elif "json" in error_message.lower():
+                    error_message = f"Report format error: {error_message}"
+                else:
+                    error_message = f"Report generation failed: {error_message}"
+                
+                report.mark_failed(error_message)
                 await report.save()
-                logger.info(f"Report marked as failed with error: {str(e)}")
+                logger.info(f"Report marked as failed with error: {error_message}")
         except Exception as save_error:
             logger.error(f"Failed to save error status: {save_error}")
 
@@ -119,6 +138,14 @@ async def generate_report(
         )
 
     logger.info(f"User plan: {user_plan.name}")
+
+    # Check if plan has prompt template
+    if not hasattr(user_plan, 'prompt_template') or not user_plan.prompt_template:
+        logger.error(f"No prompt template found for plan: {user_plan.name}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Plan configuration error: No prompt template configured for {user_plan.name} plan. Please contact support."
+        )
 
     # Check if user can generate reports
     if not await current_user.can_generate_report():

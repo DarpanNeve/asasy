@@ -37,7 +37,7 @@ class Plan(Document):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     
-    # Prompt template for AI generation
+    # Enhanced prompt template for AI generation
     prompt_template: str = Field(default="", description="AI prompt template for this plan")
     
     class Settings:
@@ -58,7 +58,7 @@ class Plan(Document):
         """Calculate monthly price for comparison"""
         return (self.price_inr / 100) / (self.duration_days / 30)
 
-# Updated plans data with AI prompts
+# Enhanced plans data with comprehensive AI prompts
 DEFAULT_PLANS = [
     {
         "name": "Starter",
@@ -88,22 +88,28 @@ DEFAULT_PLANS = [
         "sort_order": 1,
         "highlight_text": "Get Started Free",
         "badge_text": "Free",
-        "prompt_template": """You are an expert technology analyst. Generate a basic technology assessment report in JSON format.
+        "prompt_template": """
+Aim to make every section as comprehensive and statistically rigorous as possible while maintaining a basic assessment level.
 
-Required sections: Executive Summary, Problem/Opportunity Statement, Technology Overview, Key Benefits, Applications, IP Snapshot, Next Steps.
+**Analysis Depth**: Basic level with foundational insights
+**Target Audience**: Researchers, students, early-stage inventors
+**Focus Areas**: 
+- High-level technology overview with basic feasibility assessment
+- Preliminary market opportunity identification
+- Basic IP landscape overview
+- Initial commercialization pathways
 
-Return ONLY valid JSON with these exact keys:
-{
-  "executive_summary": "Brief overview of the technology and its potential",
-  "problem_opportunity": "Problem this technology solves and market opportunity",
-  "technology_overview": "Technical description and how it works",
-  "key_benefits": "Main advantages and value propositions",
-  "applications": "Potential use cases and target markets",
-  "ip_snapshot": "Basic IP landscape overview",
-  "next_steps": "Recommended actions for development"
-}
+**Specific Requirements**:
+- Provide foundational analysis suitable for initial technology evaluation
+- Include basic market size estimates and growth projections
+- Identify primary application areas and target markets
+- Assess basic technical feasibility and development requirements
+- Outline preliminary IP considerations and protection strategies
+- Suggest initial next steps for further development
 
-Keep each section concise (2-3 paragraphs max). Focus on high-level insights."""
+**Tone**: Educational and accessible, suitable for those new to technology commercialization
+**Data Requirements**: Include basic market statistics, fundamental technical metrics, and preliminary financial estimates
+"""
     },
     {
         "name": "Explorer",
@@ -143,29 +149,31 @@ Keep each section concise (2-3 paragraphs max). Focus on high-level insights."""
         "sort_order": 2,
         "highlight_text": "Most Popular",
         "badge_text": "Best Value",
-        "prompt_template": """You are an expert technology analyst. Generate an intermediate technology assessment report in JSON format.
+        "prompt_template": """
+Aim to make every section as comprehensive and statistically rigorous as possible with intermediate-level depth and analysis.
 
-Required sections: Executive Summary, Problem/Opportunity Statement, Technology Overview, Key Benefits, Applications, IP Snapshot, Next Steps, Problem & Solution Fit, Technical Feasibility, IP Summary, Market Signals, Early Competitors, Regulatory/Compliance Overview, Risk Summary.
+**Analysis Depth**: Intermediate level with detailed market and technical analysis
+**Target Audience**: Entrepreneurs, small businesses, university tech transfer offices
+**Focus Areas**:
+- Comprehensive technology analysis with detailed feasibility assessment
+- Market opportunity quantification with competitive landscape analysis
+- IP strategy development with freedom-to-operate considerations
+- Multiple commercialization pathway evaluation
+- Risk assessment and mitigation strategies
 
-Return ONLY valid JSON with these exact keys:
-{
-  "executive_summary": "Comprehensive overview with market context",
-  "problem_opportunity": "Detailed problem analysis and market sizing",
-  "technology_overview": "Technical architecture and implementation details",
-  "key_benefits": "Quantified benefits and competitive advantages",
-  "applications": "Detailed use cases with market segments",
-  "ip_snapshot": "Patent landscape and freedom to operate",
-  "next_steps": "Detailed development roadmap",
-  "problem_solution": "Problem-solution fit analysis",
-  "technical_feasibility": "Technical challenges and development timeline",
-  "ip_summary": "IP strategy and protection recommendations",
-  "market_signals": "Market trends and adoption indicators",
-  "early_competitors": "Competitive landscape analysis",
-  "regulatory_compliance": "Regulatory requirements and compliance pathway",
-  "summary_recommendation": "Risk assessment and go/no-go recommendation"
-}
+**Specific Requirements**:
+- Conduct thorough market analysis with TAM/SAM/SOM calculations
+- Provide detailed technical feasibility assessment including TRL evaluation
+- Analyze competitive landscape with SWOT analysis
+- Develop comprehensive IP strategy including patent landscape analysis
+- Evaluate multiple business models and commercialization approaches
+- Include regulatory compliance requirements and approval pathways
+- Assess financial viability with preliminary ROI projections
+- Identify key risks and provide mitigation strategies
 
-Provide detailed analysis with specific insights and actionable recommendations."""
+**Tone**: Professional and analytical, suitable for business development and investment evaluation
+**Data Requirements**: Include detailed market research, competitive intelligence, technical benchmarks, and financial projections with supporting rationale
+"""
     },
     {
         "name": "Professional",
@@ -217,31 +225,34 @@ Provide detailed analysis with specific insights and actionable recommendations.
         "sort_order": 3,
         "highlight_text": "Professional Grade",
         "badge_text": "Advanced",
-        "prompt_template": """You are a senior technology commercialization expert. Generate a comprehensive professional technology assessment report in JSON format.
+        "prompt_template": """
+Aim to make every section as comprehensive and statistically rigorous as possible with professional-grade depth suitable for investment decisions.
 
-Required sections: All previous sections plus Detailed Business Case, Technology Description, Market & Competition, TRL & Technical Challenges, Detailed IP & Legal Status, Regulatory Pathways, Commercialization Options, Preliminary Financial Estimates, Summary & Go-to-Market Plan.
+**Analysis Depth**: Advanced professional level with investment-grade analysis
+**Target Audience**: Corporations, investors, established tech transfer offices, consulting firms
+**Focus Areas**:
+- Investment-grade technology due diligence with comprehensive risk assessment
+- Detailed market analysis with multi-scenario financial modeling
+- Complete IP strategy with global patent landscape analysis
+- Comprehensive commercialization strategy with partnership opportunities
+- Regulatory compliance roadmap with approval timeline estimates
+- Detailed financial projections with sensitivity analysis
 
-Return ONLY valid JSON with these exact keys:
-{
-  "executive_summary": "Executive-level strategic overview",
-  "problem_opportunity": "Market problem with TAM/SAM analysis",
-  "technology_overview": "Detailed technical specifications",
-  "key_benefits": "Quantified value proposition with ROI",
-  "applications": "Market segmentation and prioritization",
-  "ip_snapshot": "Comprehensive IP landscape",
-  "next_steps": "Strategic development roadmap",
-  "detailed_business_case": "Business model and revenue projections",
-  "technology_description": "Technical architecture and scalability",
-  "market_competition": "Competitive positioning and SWOT analysis",
-  "trl_technical_challenges": "Technology readiness level assessment",
-  "detailed_ip_legal": "IP strategy and legal considerations",
-  "regulatory_pathways": "Regulatory approval strategy",
-  "commercialization_options": "Go-to-market strategies and partnerships",
-  "financial_estimates": "Financial projections and funding requirements",
-  "conclusion_recommendations": "Strategic recommendations and next steps"
-}
+**Specific Requirements**:
+- Provide investment-grade due diligence suitable for board presentations
+- Conduct comprehensive market research with detailed competitive intelligence
+- Perform thorough technical assessment including scalability analysis
+- Develop complete IP strategy with global patent landscape mapping
+- Create detailed business case with multiple revenue model scenarios
+- Include comprehensive regulatory analysis with approval timeline estimates
+- Provide detailed financial projections with NPV, IRR, and payback analysis
+- Assess strategic partnerships and licensing opportunities
+- Include detailed risk analysis with quantified impact assessments
+- Develop comprehensive go-to-market strategy with implementation timeline
 
-Provide investment-grade analysis with detailed financial and strategic insights."""
+**Tone**: Executive-level professional suitable for C-suite and investor presentations
+**Data Requirements**: Include institutional-grade market research, detailed financial models, comprehensive competitive analysis, and strategic recommendations with quantified business impact
+"""
     },
     {
         "name": "Enterprise",
@@ -304,31 +315,35 @@ Provide investment-grade analysis with detailed financial and strategic insights
         "sort_order": 4,
         "highlight_text": "Enterprise Solution",
         "badge_text": "Complete",
-        "prompt_template": """You are a senior IP commercialization expert and RTTP professional. Generate a comprehensive enterprise-grade IP commercialization report in JSON format.
+        "prompt_template": """
+Aim to make every section as comprehensive and statistically rigorous as possible with enterprise-grade depth suitable for institutional decision-making.
 
-Required sections: All previous sections plus In-depth IP Claims Analysis, Global Freedom-to-Operate Report, Market Analysis, Business Models, 5-Year ROI & Revenue Projections, Funding Strategy, Licensing & Exit Strategy, Team & Strategic Partners Required, Implementation Roadmap, Appendices.
+**Analysis Depth**: Comprehensive enterprise level with institutional-grade analysis
+**Target Audience**: Large corporations, institutional investors, government agencies, major research institutions
+**Focus Areas**:
+- Complete IP commercialization strategy with global market analysis
+- Institutional-grade financial modeling with multi-year projections
+- Comprehensive regulatory strategy with international compliance requirements
+- Strategic partnership and licensing framework development
+- Complete technology transfer and commercialization roadmap
+- Enterprise-level risk management and mitigation strategies
 
-Return ONLY valid JSON with these exact keys:
-{
-  "executive_summary": "C-suite executive summary with investment thesis",
-  "problem_opportunity": "Market analysis with global opportunity sizing",
-  "technology_overview": "Comprehensive technical due diligence",
-  "key_benefits": "Quantified competitive advantages and moats",
-  "applications": "Global market segmentation and entry strategy",
-  "ip_snapshot": "Patent portfolio analysis and IP valuation",
-  "next_steps": "Strategic implementation roadmap",
-  "ip_claims_analysis": "Detailed patent claims and prior art analysis",
-  "global_fto_report": "Freedom-to-operate analysis across key markets",
-  "market_analysis": "Comprehensive market research and sizing",
-  "business_models": "Revenue model optimization and pricing strategy",
-  "roi_projections": "5-year financial projections and sensitivity analysis",
-  "funding_strategy": "Capital requirements and funding pathway",
-  "licensing_strategy": "IP licensing and exit strategy options",
-  "team_partners": "Required team composition and strategic partnerships",
-  "implementation_roadmap": "Detailed execution timeline and milestones",
-  "conclusion_recommendations": "Investment recommendation with risk mitigation"
-}
+**Specific Requirements**:
+- Provide institutional-grade analysis suitable for board and investor presentations
+- Conduct comprehensive global market analysis with regional opportunity assessment
+- Perform complete technical due diligence including scalability and manufacturing analysis
+- Develop comprehensive global IP strategy with patent portfolio optimization
+- Create detailed 5-year financial projections with scenario planning and sensitivity analysis
+- Include complete regulatory compliance strategy for multiple jurisdictions
+- Provide comprehensive competitive intelligence with strategic positioning analysis
+- Develop detailed licensing and partnership strategies with valuation frameworks
+- Include complete funding strategy with capital requirements and investor targeting
+- Create comprehensive implementation roadmap with milestone tracking and KPIs
+- Assess strategic acquisition and exit opportunities with valuation analysis
+- Provide detailed team and organizational requirements for successful execution
 
-Provide institutional-grade analysis suitable for board presentations and investor due diligence."""
+**Tone**: Institutional-grade professional suitable for executive committees, boards of directors, and institutional investors
+**Data Requirements**: Include comprehensive market intelligence, detailed financial models with supporting assumptions, complete competitive landscape analysis, regulatory compliance frameworks, and strategic recommendations with quantified business impact and implementation timelines
+"""
     }
 ]
