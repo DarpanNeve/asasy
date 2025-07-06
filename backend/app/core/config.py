@@ -55,10 +55,7 @@ class Settings(BaseSettings):
     
     # CORS
     ALLOWED_ORIGINS: List[str] = [
-        "http://localhost:3000",
-        "http://localhost:3001", 
-        "https://localhost:3000",
-        "https://localhost:3001"
+        "*"
     ]
     ALLOWED_HOSTS: List[str] = ["localhost", "127.0.0.1"]
     
