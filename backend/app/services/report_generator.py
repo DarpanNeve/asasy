@@ -239,16 +239,16 @@ Focus on creating realistic, professional content that would be suitable for act
         
         logger.info("Making OpenAI API call...")
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4o-search-preview-2025-03-11",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
             ],
-            response_format={"type": "json_object"},
-            max_tokens=4000,
-            temperature=0.7,
+            # response_format={"type": "json_object"},
+            max_tokens=16000,
+            # temperature=0.3,
         )
-        
+        print(response)
         generation_time = time.time() - start_time
         logger.info(f"OpenAI API call completed in {generation_time:.2f} seconds")
         
@@ -266,7 +266,7 @@ Focus on creating realistic, professional content that would be suitable for act
         
         # Extract usage information
         usage_info = {
-            "model": "gpt-4o-mini",
+            "model": "gpt-4.1",
             "usage": {
                 "prompt_tokens": response.usage.prompt_tokens,
                 "completion_tokens": response.usage.completion_tokens,

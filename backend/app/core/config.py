@@ -28,11 +28,11 @@ class Settings(BaseSettings):
     # MSG91 Email Service
     MSG91_API_KEY: Optional[str] = None
     MSG91_TEMPLATE_ID: Optional[str] = None
-    MSG91_WELCOME_TEMPLATE_ID: Optional[str] = None
-    MSG91_REPORT_TEMPLATE_ID: Optional[str] = None
     MSG91_FROM_EMAIL: Optional[str] = None
     MSG91_DOMAIN: Optional[str] = None
-    
+
+    MSG91_WELCOME_TEMPLATE_ID: Optional[str] = None
+    MSG91_REPORT_TEMPLATE_ID: Optional[str] = None
     # Razorpay
     RAZORPAY_KEY_ID: str
     RAZORPAY_KEY_SECRET: str

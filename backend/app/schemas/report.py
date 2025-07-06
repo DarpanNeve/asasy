@@ -6,7 +6,7 @@ from app.models.report import ReportStatus, ReportType
 
 class ReportCreate(BaseModel):
     idea: str = Field(
-        ..., min_length=50, max_length=5000, description="Technology idea or concept"
+        ..., min_length=50, max_length=100000, description="Technology idea or concept"
     )
 
 

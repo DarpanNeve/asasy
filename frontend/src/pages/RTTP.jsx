@@ -154,7 +154,7 @@ export default function RTTP() {
               <Award className="h-10 w-10 text-primary-600" />
             </div>
             <h1 className="text-4xl md:text-6xl font-bold text-neutral-900 mb-6">
-              Work with Certified
+              Work with
               <span className="text-gradient block">RTTP Experts</span>
             </h1>
             <p className="text-xl text-neutral-600 mb-8 max-w-3xl mx-auto">

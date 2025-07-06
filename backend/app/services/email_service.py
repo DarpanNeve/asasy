@@ -27,66 +27,23 @@ async def send_msg91_email(email: str, otp: str, name: str) -> bool:
             "Content-Type": "application/json",
             "Authkey": settings.MSG91_API_KEY
         }
-        
-        # Create email content
-        email_subject = "Verify your Asasy account"
-        email_body = f"""
-        <html>
-          <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="text-align: center; margin-bottom: 30px;">
-              <h1 style="color: #2563eb; margin-bottom: 10px;">Welcome to Asasy!</h1>
-            </div>
-            
-            <div style="background-color: #f8fafc; padding: 30px; border-radius: 10px; margin-bottom: 30px;">
-              <h2 style="color: #1e293b; margin-bottom: 20px;">Hi {name},</h2>
-              <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
-                Thank you for signing up for Asasy! To complete your registration, please verify your email address using the verification code below:
-              </p>
-              
-              <div style="text-align: center; margin: 30px 0;">
-                <div style="background-color: #2563eb; color: white; font-size: 32px; font-weight: bold; padding: 20px; border-radius: 8px; letter-spacing: 4px; display: inline-block;">
-                  {otp}
-                </div>
-              </div>
-              
-              <p style="color: #475569; font-size: 14px; margin-bottom: 20px;">
-                This verification code will expire in 10 minutes for security reasons.
-              </p>
-              
-              <p style="color: #475569; font-size: 14px;">
-                If you didn't create an account with Asasy, please ignore this email.
-              </p>
-            </div>
-            
-            <div style="text-align: center; color: #64748b; font-size: 12px;">
-              <p>Best regards,<br>The Asasy Team</p>
-              <p style="margin-top: 20px;">
-                This is an automated message. Please do not reply to this email.
-              </p>
-            </div>
-          </body>
-        </html>
-        """
-        
+
         payload = {
-            "to": [
-                {
-                    "email": email,
-                    "name": name
-                }
-            ],
+            "to": [{
+                "email": email,
+                "name": name
+            }],
             "from": {
-                "email": settings.MSG91_FROM_EMAIL or "noreply@asasy.com",
-                "name": "Asasy"
+                "email": settings.MSG91_FROM_EMAIL,
+                "name": "Darpan Neve"
             },
-            "domain": settings.MSG91_DOMAIN or "asasy.com",
+            "domain": settings.MSG91_DOMAIN,
             "template_id": settings.MSG91_TEMPLATE_ID,
-            "subject": email_subject,
-            "body": email_body,
             "variables": {
-                "name": name,
+                "company_name": "Assesme",
                 "otp": otp
-            }
+            },
+            "mail_type_id": 1
         }
         
         async with httpx.AsyncClient() as client:
