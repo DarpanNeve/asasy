@@ -12,6 +12,7 @@ import ProfileCompletion from './pages/ProfileCompletion'
 import Profile from './pages/Profile'
 import Subscription from './pages/Subscription'
 import Reports from './pages/Reports'
+import Pricing from './pages/Pricing'
 import Home from './pages/Home'
 import RTTP from './pages/RTTP'
 import Admin from './pages/Admin'
@@ -42,6 +43,7 @@ function App() {
                   <Route path="/signup" element={<Signup />} />
                   <Route path="/profile-completion" element={<ProfileCompletion />} />
                   <Route path="/rttp" element={<RTTP />} />
+                  <Route path="/pricing" element={<Pricing />} />
                   <Route path="/admin" element={<Admin />} />
                   
                   {/* Protected routes */}
@@ -67,7 +69,15 @@ function App() {
                       </Layout>
                     </ProtectedRoute>
                   } />
+                  <Route path="/Pricing" element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <Pricing />
+                      </Layout>
+                    </ProtectedRoute>
+                  } />
                 </Routes>
+                
                 <Toaster
                   position="top-right"
                   toastOptions={{

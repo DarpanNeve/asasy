@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Zap, Crown, Rocket, FileText, ChevronDown, ChevronUp } from 'lucide-react';
-
+import { Zap, Crown, Rocket, FileText, ChevronDown, ChevronUp, Diamond } from 'lucide-react';
 
 const TokenPricingPackages = () => {
   const [hoveredPackage, setHoveredPackage] = useState(null);
@@ -34,6 +33,15 @@ const TokenPricingPackages = () => {
       icon: Rocket,
       color: 'from-emerald-500 to-emerald-600',
       hoverColor: 'from-emerald-600 to-emerald-700'
+    },
+    {
+      id: 'Enterprise',
+      name: 'Enterprise',
+      price: 'Customized',
+    
+      icon: Diamond,
+      color: 'from-orange-500 to-orange-600',
+      hoverColor: 'from-orange-600 to-orange-700'
     }
   ];
 
@@ -43,25 +51,23 @@ const TokenPricingPackages = () => {
       name: 'Basic Report',
       tokens: '2,500',
       description: 'Essential analysis and insights',
-     features: [
-  'Executive Summary (1–2 line value proposition)',
-  'Problem/Opportunity Statement',
-  'Technology Overview (core idea, brief features)',
-  'Key Benefits (USP)',
-  'Applications (primary markets/use cases)',
-  'IP Snapshot (status & country)',
-  'Next Steps (e.g., pilot studies, further R&D)',
-  'Expanded Executive Summary (go/no-go recommendation)',
-  'Problem & Solution Fit (with background justification)',
-  'Technical Feasibility (prototype status, TRL stage)',
-  'IP Summary (landscape & freedom-to-operate overview)',
-  'Market Signals (interest letters, pilot test data)',
-  'Early Competitors (known tech or patent citations)',
-  'Regulatory/Compliance Overview',
-  'Risk Summary and Key Questions'
-]
-
-,
+      features: [
+        'Executive Summary (1–2 line value proposition)',
+        'Problem/Opportunity Statement',
+        'Technology Overview (core idea, brief features)',
+        'Key Benefits (USP)',
+        'Applications (primary markets/use cases)',
+        'IP Snapshot (status & country)',
+        'Next Steps (e.g., pilot studies, further R&D)',
+        'Expanded Executive Summary (go/no-go recommendation)',
+        'Problem & Solution Fit (with background justification)',
+        'Technical Feasibility (prototype status, TRL stage)',
+        'IP Summary (landscape & freedom-to-operate overview)',
+        'Market Signals (interest letters, pilot test data)',
+        'Early Competitors (known tech or patent citations)',
+        'Regulatory/Compliance Overview',
+        'Risk Summary and Key Questions'
+      ],
       color: 'bg-blue-50 border-blue-200'
     },
     {
@@ -70,33 +76,31 @@ const TokenPricingPackages = () => {
       tokens: '7,500',
       description: 'Comprehensive analysis with detailed insights',
       features: [
-  'Executive Summary (1–2 line value proposition)',
-  'Problem/Opportunity Statement',
-  'Technology Overview (core idea, brief features)',
-  'Key Benefits (USP)',
-  'Applications (primary markets/use cases)',
-  'IP Snapshot (status & country)',
-  'Next Steps (e.g., pilot studies, further R&D)',
-  'Expanded Executive Summary (go/no-go recommendation)',
-  'Problem & Solution Fit (with background justification)',
-  'Technical Feasibility (prototype status, TRL stage)',
-  'IP Summary (landscape & freedom-to-operate overview)',
-  'Market Signals (interest letters, pilot test data)',
-  'Early Competitors (known tech or patent citations)',
-  'Regulatory/Compliance Overview',
-  'Risk Summary and Key Questions',
-  'Detailed Business Case (narrative for VCs)',
-  'Technology Description (core claims, development stage, TRL framework)',
-  'Market & Competition (segmentation, SWOT analysis, barriers to entry)',
-  'TRL & Technical Challenges (scale-up readiness)',
-  'Detailed IP & Legal Status (global patent families, claims, FTO risks)',
-  'Regulatory Pathways (e.g., CE, FDA, BIS, AIS)',
-  'Commercialization Options (spin-off, licensing, JVs)',
-  'Preliminary Financial Estimates (cost vs ROI model)',
-  'Summary & Go-to-Market Plan'
-]
-
-,
+        'Executive Summary (1–2 line value proposition)',
+        'Problem/Opportunity Statement',
+        'Technology Overview (core idea, brief features)',
+        'Key Benefits (USP)',
+        'Applications (primary markets/use cases)',
+        'IP Snapshot (status & country)',
+        'Next Steps (e.g., pilot studies, further R&D)',
+        'Expanded Executive Summary (go/no-go recommendation)',
+        'Problem & Solution Fit (with background justification)',
+        'Technical Feasibility (prototype status, TRL stage)',
+        'IP Summary (landscape & freedom-to-operate overview)',
+        'Market Signals (interest letters, pilot test data)',
+        'Early Competitors (known tech or patent citations)',
+        'Regulatory/Compliance Overview',
+        'Risk Summary and Key Questions',
+        'Detailed Business Case (narrative for VCs)',
+        'Technology Description (core claims, development stage, TRL framework)',
+        'Market & Competition (segmentation, SWOT analysis, barriers to entry)',
+        'TRL & Technical Challenges (scale-up readiness)',
+        'Detailed IP & Legal Status (global patent families, claims, FTO risks)',
+        'Regulatory Pathways (e.g., CE, FDA, BIS, AIS)',
+        'Commercialization Options (spin-off, licensing, JVs)',
+        'Preliminary Financial Estimates (cost vs ROI model)',
+        'Summary & Go-to-Market Plan'
+      ],
       color: 'bg-purple-50 border-purple-200'
     },
     {
@@ -104,43 +108,42 @@ const TokenPricingPackages = () => {
       name: 'Comprehensive Report',
       tokens: '9,000',
       description: 'Premium analysis with AI-driven insights',
-    features: [
-  'Executive Summary (1–2 line value proposition)',
-  'Problem/Opportunity Statement',
-  'Technology Overview (core idea, brief features)',
-  'Key Benefits (USP)',
-  'Applications (primary markets/use cases)',
-  'IP Snapshot (status & country)',
-  'Next Steps (e.g., pilot studies, further R&D)',
-  'Expanded Executive Summary (go/no-go recommendation)',
-  'Problem & Solution Fit (with background justification)',
-  'Technical Feasibility (prototype status, TRL stage)',
-  'IP Summary (landscape & freedom-to-operate overview)',
-  'Market Signals (interest letters, pilot test data)',
-  'Early Competitors (known tech or patent citations)',
-  'Regulatory/Compliance Overview',
-  'Risk Summary and Key Questions',
-  'Detailed Business Case (narrative for VCs)',
-  'Technology Description (core claims, development stage, TRL framework)',
-  'Market & Competition (segmentation, SWOT analysis, barriers to entry)',
-  'TRL & Technical Challenges (scale-up readiness)',
-  'Detailed IP & Legal Status (global patent families, claims, FTO risks)',
-  'Regulatory Pathways (e.g., CE, FDA, BIS, AIS)',
-  'Commercialisation Options (spin-off, licensing, JVs)',
-  'Preliminary Financial Estimates (cost vs ROI model)',
-  'Summary & Go-to-Market Plan',
-  'In-depth IP Claims Analysis (protection scope, robustness)',
-  'Global Freedom-to-Operate Report (US, EU, India, China)',
-  'Market Analysis (size, trends, addressable market, adoption barriers)',
-  'Business Models (licensing, SaaS, product, hybrid)',
-  '5-Year ROI & Revenue Projections (unit cost, pricing, TAM/SAM/SOM)',
-  'Funding Strategy (grants, accelerators, VC, PE, SBIR)',
-  'Licensing & Exit Strategy (terms, IP deal structures)',
-  'Team & Strategic Partners Required (talent, advisors)',
-  'Implementation Roadmap (milestones, MVP, pilot scaling)',
-  'Appendices (patent tables, market research data, technical drawings)'
-]
-,
+      features: [
+        'Executive Summary (1–2 line value proposition)',
+        'Problem/Opportunity Statement',
+        'Technology Overview (core idea, brief features)',
+        'Key Benefits (USP)',
+        'Applications (primary markets/use cases)',
+        'IP Snapshot (status & country)',
+        'Next Steps (e.g., pilot studies, further R&D)',
+        'Expanded Executive Summary (go/no-go recommendation)',
+        'Problem & Solution Fit (with background justification)',
+        'Technical Feasibility (prototype status, TRL stage)',
+        'IP Summary (landscape & freedom-to-operate overview)',
+        'Market Signals (interest letters, pilot test data)',
+        'Early Competitors (known tech or patent citations)',
+        'Regulatory/Compliance Overview',
+        'Risk Summary and Key Questions',
+        'Detailed Business Case (narrative for VCs)',
+        'Technology Description (core claims, development stage, TRL framework)',
+        'Market & Competition (segmentation, SWOT analysis, barriers to entry)',
+        'TRL & Technical Challenges (scale-up readiness)',
+        'Detailed IP & Legal Status (global patent families, claims, FTO risks)',
+        'Regulatory Pathways (e.g., CE, FDA, BIS, AIS)',
+        'Commercialisation Options (spin-off, licensing, JVs)',
+        'Preliminary Financial Estimates (cost vs ROI model)',
+        'Summary & Go-to-Market Plan',
+        'In-depth IP Claims Analysis (protection scope, robustness)',
+        'Global Freedom-to-Operate Report (US, EU, India, China)',
+        'Market Analysis (size, trends, addressable market, adoption barriers)',
+        'Business Models (licensing, SaaS, product, hybrid)',
+        '5-Year ROI & Revenue Projections (unit cost, pricing, TAM/SAM/SOM)',
+        'Funding Strategy (grants, accelerators, VC, PE, SBIR)',
+        'Licensing & Exit Strategy (terms, IP deal structures)',
+        'Team & Strategic Partners Required (talent, advisors)',
+        'Implementation Roadmap (milestones, MVP, pilot scaling)',
+        'Appendices (patent tables, market research data, technical drawings)'
+      ],
       color: 'bg-emerald-50 border-emerald-200'
     }
   ];
@@ -150,11 +153,8 @@ const TokenPricingPackages = () => {
   };
 
   return (
-    
     <div className="py-16 px-4 bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="max-w-7xl mx-auto">
-
-        
         {/* Token Packages Section */}
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -164,10 +164,9 @@ const TokenPricingPackages = () => {
             Choose the perfect package for your needs. Purchase tokens to generate reports.
           </p>
         </div>
-        
 
-        {/* Packages Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto mb-20">
+        {/* Packages Grid - Updated to show 4 columns */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto mb-20">
           {packages.map((pkg) => {
             const IconComponent = pkg.icon;
             const isHovered = hoveredPackage === pkg.id;
@@ -177,14 +176,14 @@ const TokenPricingPackages = () => {
                 key={pkg.id}
                 className={`relative transform transition-all duration-300 ${
                   isHovered ? 'scale-105' : 'scale-100'
-                } ${pkg.popular ? 'md:-translate-y-4' : ''}`}
+                } ${pkg.popular ? 'lg:-translate-y-4' : ''}`}
                 onMouseEnter={() => setHoveredPackage(pkg.id)}
                 onMouseLeave={() => setHoveredPackage(null)}
               >
                 {/* Popular Badge */}
                 {pkg.popular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-                    <span className="bg-gradient-to-r from-orange-400 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+                    <span className="bg-gradient-to-r from-orange-400 to-pink-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
                       Most Popular
                     </span>
                   </div>
@@ -199,34 +198,34 @@ const TokenPricingPackages = () => {
                   <div className={`h-2 bg-gradient-to-r ${isHovered ? pkg.hoverColor : pkg.color}`} />
                   
                   {/* Content */}
-                  <div className="p-8 text-center">
+                  <div className="p-6 text-center">
                     {/* Icon */}
-                    <div className="flex items-center justify-center mb-6">
+                    <div className="flex items-center justify-center mb-4">
                       <div className={`p-3 rounded-full bg-gradient-to-r ${pkg.color} shadow-lg`}>
-                        <IconComponent className="w-8 h-8 text-white" />
+                        <IconComponent className="w-6 h-6 text-white" />
                       </div>
                     </div>
                     
                     {/* Name */}
-                    <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">
                       {pkg.name}
                     </h3>
                     
                     {/* Price */}
-                    <div className="text-4xl font-bold text-gray-900 mb-2">
+                    <div className="text-3xl font-bold text-gray-900 mb-2">
                       {pkg.price}
                     </div>
                     
                     {/* Tokens */}
-                    <div className="text-lg text-gray-600 mb-8">
+                    <div className="text-sm text-gray-600 mb-6">
                       {pkg.tokens} Tokens
                     </div>
 
                     {/* CTA Button */}
                     <button
-                      className={`w-full py-3 px-6 rounded-xl font-semibold text-white transition-all duration-300 transform ${
+                      className={`w-full py-2 px-4 rounded-xl font-semibold text-white transition-all duration-300 transform ${
                         isHovered ? 'scale-105' : 'scale-100'
-                      } bg-gradient-to-r ${pkg.color} hover:${pkg.hoverColor} shadow-lg hover:shadow-xl`}
+                      } bg-gradient-to-r ${pkg.color} hover:${pkg.hoverColor} shadow-lg hover:shadow-xl text-sm`}
                     >
                       Purchase Package
                     </button>
@@ -324,7 +323,6 @@ const TokenPricingPackages = () => {
             </div>
           </div>
         </div>
-
 
         {/* Bottom Note */}
         <div className="text-center mt-12">

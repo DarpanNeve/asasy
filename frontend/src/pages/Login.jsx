@@ -388,46 +388,7 @@ export default function Login() {
       </div>
 
       {/* Right side - Hero */}
-      <div className="hidden lg:block relative w-0 flex-1">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-600 to-secondary-600">
-          <div className="absolute inset-0 bg-black opacity-20" />
-          <div className="relative h-full flex items-center justify-center p-12">
-            <div className="text-center text-white">
-              <h1 className="text-4xl font-bold mb-6">Welcome to Asasy</h1>
-              <p className="text-xl opacity-90 mb-8">
-                Generate comprehensive technology assessment reports with
-                AI-powered insights and RTTP expert guidance
-              </p>
-              <div className="grid grid-cols-1 gap-4 max-w-md mx-auto">
-                <div className="bg-white bg-opacity-10 rounded-lg p-4 backdrop-blur-sm">
-                  <h3 className="font-semibold mb-2 text-white">
-                    AI-Powered Analysis
-                  </h3>
-                  <p className="text-sm opacity-90 text-white">
-                    Get detailed technology assessments in minutes
-                  </p>
-                </div>
-                <div className="bg-white bg-opacity-10 rounded-lg p-4 backdrop-blur-sm">
-                  <h3 className="font-semibold mb-2 text-white">
-                    Professional Reports
-                  </h3>
-                  <p className="text-sm opacity-90 text-white">
-                    Export publication-ready PDF reports
-                  </p>
-                </div>
-                <div className="bg-white bg-opacity-10 rounded-lg p-4 backdrop-blur-sm">
-                  <h3 className="font-semibold mb-2 text-white">
-                    RTTP Certified
-                  </h3>
-                  <p className="text-sm opacity-90 text-white">
-                    Expert guidance from certified professionals
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      
     </div>
   );
 }

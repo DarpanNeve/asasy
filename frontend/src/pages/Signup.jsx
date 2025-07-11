@@ -280,44 +280,7 @@ export default function Signup() {
   return (
     <div className="min-h-screen flex">
       {/* Left side - Hero */}
-      <div className="hidden lg:block relative w-0 flex-1">
-        <div className="absolute inset-0 bg-gradient-to-br from-secondary-600 to-primary-600">
-          <div className="absolute inset-0 bg-black opacity-20" />
-          <div className="relative h-full flex items-center justify-center p-12">
-            <div className="text-center text-white">
-              <h1 className="text-4xl font-bold mb-6">Join Asasy Today</h1>
-              <p className="text-xl opacity-90 mb-8">
-                Start generating professional technology assessment reports in
-                minutes
-              </p>
-              <div className="grid grid-cols-1 gap-4 max-w-md mx-auto">
-                <div className="bg-white bg-opacity-10 rounded-lg p-4 backdrop-blur-sm">
-                  <h3 className="font-semibold mb-2 text-white">Free Trial</h3>
-                  <p className="text-sm opacity-90 text-white">
-                    Get 3 free reports to try our service
-                  </p>
-                </div>
-                <div className="bg-white bg-opacity-10 rounded-lg p-4 backdrop-blur-sm">
-                  <h3 className="font-semibold mb-2 text-white">
-                    No Setup Required
-                  </h3>
-                  <p className="text-sm opacity-90 text-white">
-                    Start generating reports immediately
-                  </p>
-                </div>
-                <div className="bg-white bg-opacity-10 rounded-lg p-4 backdrop-blur-sm">
-                  <h3 className="font-semibold mb-2 text-white">
-                    RTTP Certified
-                  </h3>
-                  <p className="text-sm opacity-90 text-white">
-                    Expert guidance from certified professionals
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    
 
       {/* Right side - Form */}
       <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24">

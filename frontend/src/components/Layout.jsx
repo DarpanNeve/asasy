@@ -123,7 +123,7 @@ export default function Layout({ children }) {
         <div className="flex h-16 shrink-0 items-center">
           <div className="flex items-center gap-x-2">
             <BarChart3 className="h-8 w-8 text-primary-600" />
-            <span className="text-xl font-bold text-gradient">Asasy</span>
+            <span className="text-xl font-bold text-gradient">Assesme</span>
           </div>
         </div>
         <nav className="flex flex-1 flex-col">
