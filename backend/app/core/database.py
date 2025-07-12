@@ -4,7 +4,6 @@ import logging
 
 from app.core.config import settings
 from app.models.user import User
-from app.models.plan import Plan
 from app.models.report import ReportLog
 from app.models.contact import ContactSubmission
 from app.models.token import TokenPackage, TokenTransaction, UserTokenBalance
@@ -30,7 +29,6 @@ async def init_database():
             database=db.client[settings.DATABASE_NAME],
             document_models=[
                 User,
-                Plan,
                 ReportLog,
                 ContactSubmission,
                 TokenPackage,

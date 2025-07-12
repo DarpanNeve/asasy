@@ -3,9 +3,9 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 import secrets
 import traceback
 
-from app.models.user import User, Subscription
-from app.models.plan import Plan
+from app.models.user import User
 from app.models.report import ReportLog
+from app.models.token import TokenTransaction, UserTokenBalance
 
 router = APIRouter()
 security = HTTPBasic()
@@ -36,21 +36,17 @@ async def get_all_users(credentials: HTTPBasicCredentials = Depends(verify_admin
         
         result = []
         for user in users:
-            # Get current plan
-            current_plan = await user.get_current_plan()
-            plan_name = current_plan.name if current_plan else "Free"
-            
-            # Get subscription info
-            subscription = await user.get_current_subscription()
-            subscription_status = subscription.status if subscription else "none"
+            # Get token balance
+            token_balance = await user.get_token_balance()
             
             result.append({
                 "id": str(user.id),
                 "name": user.name,
                 "email": user.email,
                 "phone": user.phone or "Not provided",
-                "plan_name": plan_name,
-                "subscription_status": subscription_status,
+                "available_tokens": token_balance.available_tokens,
+                "total_tokens": token_balance.total_tokens,
+                "used_tokens": token_balance.used_tokens,
                 "reports_generated": user.reports_generated,
                 "created_at": user.created_at.isoformat(),
                 "last_login": user.last_login.isoformat() if user.last_login else None
@@ -86,7 +82,8 @@ async def get_user_reports(user_id: str, credentials: HTTPBasicCredentials = Dep
                 "id": str(report.id),
                 "title": report.title,
                 "status": report.status,
-                "plan_name": report.plan_name,
+                "complexity": report.complexity,
+                "tokens_used": report.tokens_used,
                 "file_url": f"/reports/{report.id}/download" if report.status == "completed" else None,
                 "created_at": report.created_at.isoformat(),
                 "token_usage": token_usage
@@ -97,24 +94,23 @@ async def get_user_reports(user_id: str, credentials: HTTPBasicCredentials = Dep
         traceback.print_exc()
         raise
 
-@router.get("/users/{user_id}/subscriptions")
-async def get_user_subscriptions(user_id: str, credentials: HTTPBasicCredentials = Depends(verify_admin_credentials)):
+@router.get("/users/{user_id}/transactions")
+async def get_user_token_transactions(user_id: str, credentials: HTTPBasicCredentials = Depends(verify_admin_credentials)):
     try:
-        subscriptions = await Subscription.find({"user_id": user_id}).sort([("created_at", -1)]).to_list()
+        transactions = await TokenTransaction.find({"user_id": user_id}).sort([("created_at", -1)]).to_list()
         
         result = []
-        for subscription in subscriptions:
-            plan = await Plan.get(subscription.plan_id)
-            
+        for transaction in transactions:
             result.append({
-                "id": str(subscription.id),
-                "plan_name": plan.name if plan else "Unknown",
-                "status": subscription.status,
-                "amount_paid": subscription.amount_paid,
-                "razorpay_payment_id": subscription.razorpay_payment_id,
-                "razorpay_order_id": subscription.razorpay_order_id,
-                "active_until": subscription.active_until.isoformat(),
-                "created_at": subscription.created_at.isoformat()
+                "id": str(transaction.id),
+                "package_name": transaction.package_name,
+                "tokens_purchased": transaction.tokens_purchased,
+                "status": transaction.status,
+                "amount_paid": transaction.amount_paid,
+                "razorpay_payment_id": transaction.razorpay_payment_id,
+                "razorpay_order_id": transaction.razorpay_order_id,
+                "created_at": transaction.created_at.isoformat(),
+                "completed_at": transaction.completed_at.isoformat() if transaction.completed_at else None
             })
         
         return result
@@ -125,24 +121,24 @@ async def get_user_subscriptions(user_id: str, credentials: HTTPBasicCredentials
 @router.get("/transactions")
 async def get_all_transactions(credentials: HTTPBasicCredentials = Depends(verify_admin_credentials)):
     try:
-        subscriptions = await Subscription.find({"status": {"$in": ["active", "cancelled", "expired"]}}).sort([("created_at", -1)]).to_list()
+        transactions = await TokenTransaction.find({"status": {"$in": ["completed", "failed"]}}).sort([("created_at", -1)]).to_list()
         
         result = []
-        for subscription in subscriptions:
-            user = await User.get(subscription.user_id)
-            plan = await Plan.get(subscription.plan_id)
+        for transaction in transactions:
+            user = await User.get(transaction.user_id)
             
             result.append({
-                "id": str(subscription.id),
+                "id": str(transaction.id),
                 "user_name": user.name if user else "Unknown",
                 "user_email": user.email if user else "Unknown",
-                "plan_name": plan.name if plan else "Unknown",
-                "amount_paid": subscription.amount_paid,
-                "status": subscription.status,
-                "razorpay_payment_id": subscription.razorpay_payment_id,
-                "razorpay_order_id": subscription.razorpay_order_id,
-                "active_until": subscription.active_until.isoformat(),
-                "created_at": subscription.created_at.isoformat()
+                "package_name": transaction.package_name,
+                "tokens_purchased": transaction.tokens_purchased,
+                "amount_paid": transaction.amount_paid,
+                "status": transaction.status,
+                "razorpay_payment_id": transaction.razorpay_payment_id,
+                "razorpay_order_id": transaction.razorpay_order_id,
+                "created_at": transaction.created_at.isoformat(),
+                "completed_at": transaction.completed_at.isoformat() if transaction.completed_at else None
             })
         
         return result
@@ -155,17 +151,17 @@ async def get_admin_stats(credentials: HTTPBasicCredentials = Depends(verify_adm
     try:
         total_users = await User.find_all().count()
         total_reports = await ReportLog.find_all().count()
-        active_subscriptions = await Subscription.find({"status": "active"}).count()
+        completed_transactions = await TokenTransaction.find({"status": "completed"}).count()
         total_revenue = 0
         
         # Calculate total revenue
-        paid_subscriptions = await Subscription.find({"amount_paid": {"$exists": True, "$ne": None}}).to_list()
-        total_revenue = sum(sub.amount_paid for sub in paid_subscriptions if sub.amount_paid)
+        completed_transactions_list = await TokenTransaction.find({"amount_paid": {"$exists": True, "$ne": None}}).to_list()
+        total_revenue = sum(trans.amount_paid for trans in completed_transactions_list if trans.amount_paid)
         
         return {
             "total_users": total_users,
             "total_reports": total_reports,
-            "active_subscriptions": active_subscriptions,
+            "completed_transactions": completed_transactions,
             "total_revenue": total_revenue,
             "total_revenue_inr": total_revenue / 100  # Convert paise to rupees
         }

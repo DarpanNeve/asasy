@@ -15,7 +15,6 @@ class UserResponse(BaseModel):
     company: Optional[str] = None
     job_title: Optional[str] = None
     reports_generated: int
-    current_subscription_id: Optional[str] = None
     created_at: datetime
     last_login: Optional[datetime] = None
     
@@ -31,8 +30,7 @@ class UserUpdate(BaseModel):
 class UserStats(BaseModel):
     reports_generated: int
     total_reports: int
-    reports_remaining: int  # -1 for unlimited
-    current_plan: str
-    active_subscription: Optional[Dict[str, Any]] = None
+    available_tokens: int
+    total_tokens: int
+    used_tokens: int
     last_report_date: Optional[datetime] = None
-    subscription_expiry: Optional[datetime] = None
