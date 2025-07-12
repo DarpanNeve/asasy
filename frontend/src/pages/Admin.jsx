@@ -458,8 +458,8 @@ export default function Admin() {
                 <Activity className="h-6 w-6 text-warning-600" />
               </div>
               <div>
-                <h3 className="text-sm font-medium text-neutral-600">Active Subscriptions</h3>
-                <p className="text-2xl font-bold text-neutral-900">{stats.active_subscriptions || 0}</p>
+                <h3 className="text-sm font-medium text-neutral-600">Token Transactions</h3>
+                <p className="text-2xl font-bold text-neutral-900">{stats.completed_transactions || 0}</p>
               </div>
             </div>
           </div>
@@ -471,7 +471,7 @@ export default function Admin() {
               </div>
               <div>
                 <h3 className="text-sm font-medium text-neutral-600">Total Revenue</h3>
-                <p className="text-2xl font-bold text-neutral-900">₹{stats.total_revenue_inr?.toFixed(2) || '0.00'}</p>
+                <p className="text-2xl font-bold text-neutral-900">₹{stats.total_revenue_inr?.toLocaleString() || '0'}</p>
               </div>
             </div>
           </div>
@@ -501,7 +501,7 @@ export default function Admin() {
                 }`}
               >
                 <CreditCard className="h-5 w-5 inline mr-2" />
-                Transactions ({transactions.length})
+                Token Purchases ({transactions.length})
               </button>
               <button
                 onClick={() => setActiveTab('contacts')}
