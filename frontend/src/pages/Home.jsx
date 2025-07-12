@@ -32,12 +32,8 @@ export default function Home() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [isGenerating, setIsGenerating] = useState(false);
-  const [plans, setPlans] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [activeLogoIndex, setActiveLogoIndex] = useState(0);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
-  const logosRef = useRef(null);
-  const testimonialsRef = useRef(null);
 
   const {
     register,
@@ -47,8 +43,6 @@ export default function Home() {
   } = useForm();
 
   useEffect(() => {
-    fetchPlans();
-
     // Auto rotate logos and testimonials
     const logoInterval = setInterval(() => {
       setActiveLogoIndex((prev) => (prev + 1) % logos.length);
@@ -63,18 +57,6 @@ export default function Home() {
       clearInterval(testimonialInterval);
     };
   }, []);
-
-  const fetchPlans = async () => {
-    try {
-      const response = await api.get("/plans");
-      setPlans(response.data);
-    } catch (error) {
-      console.error("Failed to fetch plans:", error);
-      toast.error("Failed to load subscription plans");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const features = [
     {
