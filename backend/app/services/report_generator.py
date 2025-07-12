@@ -4,7 +4,7 @@ import openai
 from fpdf import FPDF
 from fpdf.enums import XPos, YPos
 from app.core.config import settings
-from app.models.plan import Plan
+from app.models.report import ReportComplexity
 import asyncio
 import logging
 import time
@@ -15,20 +15,82 @@ logger = logging.getLogger(__name__)
 # Configure OpenAI
 openai.api_key = settings.OPENAI_API_KEY
 
-async def generate_report_json(idea: str, plan: Plan) -> tuple[dict, dict]:
-    """Generate report content using OpenAI API with plan-specific structure and comprehensive tables"""
+async def generate_report_json(idea: str, complexity: ReportComplexity) -> tuple[dict, dict]:
+    """Generate report content using OpenAI API with complexity-specific structure and comprehensive tables"""
     
-    logger.info(f"Starting report generation for plan: {plan.name}")
-    logger.info(f"Plan sections: {plan.sections}")
-    logger.info(f"Plan report type: {plan.report_type}")
+    logger.info(f"Starting report generation for complexity: {complexity}")
     
     try:
-        # Check if plan has a prompt template
-        if not hasattr(plan, 'prompt_template') or not plan.prompt_template:
-            logger.error(f"No prompt template found for plan: {plan.name}")
-            raise ValueError(f"No prompt template configured for plan: {plan.name}")
+        # Define sections based on complexity
+        if complexity == ReportComplexity.BASIC:
+            sections = [
+                "Executive Summary",
+                "Problem/Opportunity Statement",
+                "Technology Overview",
+                "Key Benefits",
+                "Applications",
+                "IP Snapshot",
+                "Next Steps"
+            ]
+            min_words = 50
+            max_words = 150
+            num_tables = 5
+            report_type = "Basic Technology Assessment"
+        elif complexity == ReportComplexity.ADVANCED:
+            sections = [
+                "Executive Summary",
+                "Problem/Opportunity Statement",
+                "Technology Overview",
+                "Key Benefits",
+                "Applications",
+                "IP Snapshot",
+                "Next Steps",
+                "Expanded Executive Summary",
+                "Problem & Solution Fit",
+                "Technical Feasibility",
+                "IP Summary",
+                "Market Signals",
+                "Early Competitors",
+                "Regulatory/Compliance Overview",
+                "Risk Summary and Key Questions"
+            ]
+            min_words = 100
+            max_words = 250
+            num_tables = 7
+            report_type = "Advanced Technology Assessment"
+        else:  # COMPREHENSIVE
+            sections = [
+                "Executive Summary",
+                "Problem/Opportunity Statement",
+                "Technology Overview",
+                "Key Benefits",
+                "Applications",
+                "IP Snapshot",
+                "Next Steps",
+                "Expanded Executive Summary",
+                "Problem & Solution Fit",
+                "Technical Feasibility",
+                "IP Summary",
+                "Market Signals",
+                "Early Competitors",
+                "Regulatory/Compliance Overview",
+                "Risk Summary and Key Questions",
+                "Detailed Business Case",
+                "Technology Description",
+                "Market & Competition",
+                "TRL & Technical Challenges",
+                "Detailed IP & Legal Status",
+                "Regulatory Pathways",
+                "Commercialization Options",
+                "Preliminary Financial Estimates",
+                "Summary & Go-to-Market Plan"
+            ]
+            min_words = 200
+            max_words = 500
+            num_tables = 9
+            report_type = "Comprehensive Technology Assessment"
         
-        # Create plan-specific JSON structure based on plan sections
+        # Create JSON structure based on sections
         required_sections = {}
         
         # Map plan sections to JSON keys
@@ -70,31 +132,17 @@ async def generate_report_json(idea: str, plan: Plan) -> tuple[dict, dict]:
         }
         
         # Build required sections based on plan
-        for section in plan.sections:
+        for section in sections:
             if section in section_mapping:
                 required_sections[section_mapping[section]] = "string"
         
-        # Define content length requirements based on plan
-        if plan.name == "Basic":
-            min_words = 50
-            max_words = 150
+        # Define content depth based on complexity
+        if complexity == ReportComplexity.BASIC:
             content_depth = "concise overview with essential data"
-            num_tables = 5
-        elif plan.name == "Intermediate":
-            min_words = 100
-            max_words = 250
+        elif complexity == ReportComplexity.ADVANCED:
             content_depth = "detailed analysis with comprehensive data"
-            num_tables = 5
-        elif plan.name == "Advanced":
-            min_words = 150
-            max_words = 350
-            content_depth = "comprehensive analysis with investment-grade data"
-            num_tables = 7
-        else:  # Comprehensive
-            min_words = 200
-            max_words = 500
+        else:
             content_depth = "in-depth professional analysis with institutional-grade data"
-            num_tables = 9
         
         # FIXED: Define table structure with SHORT, CONCISE text
         table_sections = {
@@ -141,7 +189,7 @@ async def generate_report_json(idea: str, plan: Plan) -> tuple[dict, dict]:
         }
         
         # Add advanced tables for higher tier plans
-        if plan.name in ["Advanced", "Comprehensive"]:
+        if complexity in [ReportComplexity.ADVANCED, ReportComplexity.COMPREHENSIVE]:
             table_sections.update({
                 "ip_landscape_table": [
                     {"patent": "US10123456", "owner": "TechCorp", "status": "Active", "relevance": "High", "expires": "2041"},
@@ -162,7 +210,7 @@ async def generate_report_json(idea: str, plan: Plan) -> tuple[dict, dict]:
             })
         
         # Add premium tables for Comprehensive plan
-        if plan.name == "Comprehensive":
+        if complexity == ReportComplexity.COMPREHENSIVE:
             table_sections.update({
                 "funding_sources_table": [
                     {"source": "VC", "range": "$5M-50M", "timeline": "6-12 mo", "success": "15%", "requirements": "Traction"},
@@ -184,9 +232,7 @@ async def generate_report_json(idea: str, plan: Plan) -> tuple[dict, dict]:
 
         # Create comprehensive system prompt with enhanced table requirements
         system_prompt = f"""
-You are a world-class technology commercialization expert and RTTP (Registered Technology Transfer Professional) generating a {plan.report_type}.
-
-{plan.prompt_template}
+You are a world-class technology commercialization expert and RTTP (Registered Technology Transfer Professional) generating a {report_type}.
 
 **CRITICAL OUTPUT REQUIREMENTS:**
 You must output STRICTLY ONE JSON DOCUMENT with these exact keys:
@@ -216,7 +262,7 @@ OUTPUT ONLY THE JSON - NO ADDITIONAL TEXT, MARKDOWN, OR FORMATTING.
         user_prompt = f"""
 Technology Idea: {idea}
 
-Generate a comprehensive {plan.report_type} following the exact JSON structure specified. 
+Generate a comprehensive {report_type} following the exact JSON structure specified. 
 
 **CRITICAL REQUIREMENTS:**
 1. Ensure ALL sections meet the {min_words}-{max_words} word requirement
@@ -224,7 +270,7 @@ Generate a comprehensive {plan.report_type} following the exact JSON structure s
 3. Use the EXACT table structure provided in the system prompt
 4. All table data must be relevant to the technology idea: {idea}
 5. Keep table text SHORT and CONCISE (max 15 characters per cell)
-6. Include specific, quantitative data appropriate for {plan.name} plan level analysis
+6. Include specific, quantitative data appropriate for {complexity} complexity level analysis
 
 Focus on creating realistic, professional content that would be suitable for actual business use.
 """
@@ -287,14 +333,14 @@ Focus on creating realistic, professional content that would be suitable for act
             
             # Validate that we have the required sections for this plan
             missing_sections = []
-            for section in plan.sections:
+            for section in sections:
                 if section in section_mapping:
                     json_key = section_mapping[section]
                     if json_key not in parsed_content:
                         missing_sections.append(section)
             
             if missing_sections:
-                logger.warning(f"Missing sections for {plan.name} plan: {missing_sections}")
+                logger.warning(f"Missing sections for {complexity} complexity: {missing_sections}")
             
             # Log content lengths and validate tables
             for key, value in parsed_content.items():
@@ -324,20 +370,21 @@ Focus on creating realistic, professional content that would be suitable for act
         raise
 
 class ReportPDF(FPDF):
-    def __init__(self, plan: Plan):
+    def __init__(self, complexity: ReportComplexity):
         super().__init__(format="A4")
         self.set_auto_page_break(auto=True, margin=20)
         self.set_margins(20, 20, 20)
-        self.plan = plan
+        self.complexity = complexity
 
     def header(self):
         try:
             self.set_font("Helvetica", "B", 10)
             self.set_text_color(128, 128, 128)
+            report_type = f"{self.complexity.title()} Technology Assessment"
             self.cell(
                 0,
                 10,
-                f"{self.plan.report_type} - {self.plan.name} Plan",
+                f"{report_type}",
                 new_x=XPos.LMARGIN,
                 new_y=YPos.NEXT,
                 align="C",
@@ -618,23 +665,85 @@ class ReportPDF(FPDF):
             logger.error(f"Error cleaning text: {e}")
             return str(text)
 
-def create_pdf(report: dict, output_path: str, plan: Plan):
+def create_pdf(report: dict, output_path: str, complexity: ReportComplexity):
     """Create enhanced PDF from report data with comprehensive tables"""
-    logger.info(f"Starting PDF creation for plan: {plan.name}")
-    logger.info(f"Plan sections: {plan.sections}")
+    logger.info(f"Starting PDF creation for complexity: {complexity}")
     logger.info(f"Report keys: {list(report.keys())}")
     
     try:
-        pdf = ReportPDF(plan)
+        pdf = ReportPDF(complexity)
         pdf.add_page()
 
+        # Get report type based on complexity
+        if complexity == ReportComplexity.BASIC:
+            report_type = "Basic Technology Assessment"
+            report_pages = "3-4 pages"
+            sections = [
+                "Executive Summary",
+                "Problem/Opportunity Statement",
+                "Technology Overview",
+                "Key Benefits",
+                "Applications",
+                "IP Snapshot",
+                "Next Steps"
+            ]
+        elif complexity == ReportComplexity.ADVANCED:
+            report_type = "Advanced Technology Assessment"
+            report_pages = "6-8 pages"
+            sections = [
+                "Executive Summary",
+                "Problem/Opportunity Statement",
+                "Technology Overview",
+                "Key Benefits",
+                "Applications",
+                "IP Snapshot",
+                "Next Steps",
+                "Expanded Executive Summary",
+                "Problem & Solution Fit",
+                "Technical Feasibility",
+                "IP Summary",
+                "Market Signals",
+                "Early Competitors",
+                "Regulatory/Compliance Overview",
+                "Risk Summary and Key Questions"
+            ]
+        else:  # COMPREHENSIVE
+            report_type = "Comprehensive Technology Assessment"
+            report_pages = "10-15 pages"
+            sections = [
+                "Executive Summary",
+                "Problem/Opportunity Statement",
+                "Technology Overview",
+                "Key Benefits",
+                "Applications",
+                "IP Snapshot",
+                "Next Steps",
+                "Expanded Executive Summary",
+                "Problem & Solution Fit",
+                "Technical Feasibility",
+                "IP Summary",
+                "Market Signals",
+                "Early Competitors",
+                "Regulatory/Compliance Overview",
+                "Risk Summary and Key Questions",
+                "Detailed Business Case",
+                "Technology Description",
+                "Market & Competition",
+                "TRL & Technical Challenges",
+                "Detailed IP & Legal Status",
+                "Regulatory Pathways",
+                "Commercialization Options",
+                "Preliminary Financial Estimates",
+                "Summary & Go-to-Market Plan"
+            ]
+
         # Enhanced title page
-        pdf.add_title(f"{plan.report_type.upper()}")
+        pdf.add_title(f"{report_type.upper()}")
         
         # Enhanced subtitle with plan details
         pdf.set_font("Helvetica", "B", 12)
         pdf.set_text_color(0, 0, 0)
-        subtitle = f"{plan.name} Plan - {plan.report_pages}"
+        subtitle = f"{complexity.title()} Complexity - {report_pages}"
         subtitle = pdf.clean_text(subtitle)
         pdf.multi_cell(0, 8, subtitle, align="C")
         pdf.ln(5)
@@ -643,7 +752,7 @@ def create_pdf(report: dict, output_path: str, plan: Plan):
         pdf.set_font("Helvetica", "", 10)
         pdf.set_text_color(100, 100, 100)
         table_count = len([k for k in report.keys() if 'table' in k])
-        features_text = f"Features: {len(plan.sections)} sections, {table_count} data tables"
+        features_text = f"Features: {len(sections)} sections, {table_count} data tables"
         pdf.multi_cell(0, 6, features_text, align="C")
         pdf.ln(10)
 
@@ -695,7 +804,7 @@ def create_pdf(report: dict, output_path: str, plan: Plan):
 
         # Add sections based on plan configuration
         section_num = 1
-        for section_title in plan.sections:
+        for section_title in sections:
             if section_title in section_mapping:
                 content_key = section_mapping[section_title]
                 content = report.get(content_key, "")
@@ -715,14 +824,14 @@ def create_pdf(report: dict, output_path: str, plan: Plan):
         }
         
         # Add advanced tables for higher tier plans
-        if plan.name in ["Advanced", "Comprehensive"]:
+        if complexity in [ReportComplexity.ADVANCED, ReportComplexity.COMPREHENSIVE]:
             table_mapping.update({
                 "IP Landscape Analysis": "ip_landscape_table",
                 "Regulatory Timeline": "regulatory_timeline_table"
             })
         
         # Add premium tables for Comprehensive plan
-        if plan.name == "Comprehensive":
+        if complexity == ReportComplexity.COMPREHENSIVE:
             table_mapping.update({
                 "Funding Sources & Opportunities": "funding_sources_table",
                 "Licensing Terms & Strategies": "licensing_terms_table"
@@ -745,7 +854,7 @@ def create_pdf(report: dict, output_path: str, plan: Plan):
 
         # Save PDF
         pdf.output(output_path)
-        logger.info(f"Enhanced PDF generated successfully at: {output_path}")
+        logger.info(f"PDF generated successfully at: {output_path}")
         
         # Verify file was created and has substantial content
         if os.path.exists(output_path):
@@ -754,26 +863,23 @@ def create_pdf(report: dict, output_path: str, plan: Plan):
             if file_size == 0:
                 logger.error("PDF file is empty!")
                 raise ValueError("Generated PDF file is empty")
-            elif file_size < 10000:  # Less than 10KB might indicate insufficient content
-                logger.warning(f"PDF file size ({file_size} bytes) seems small for {plan.name} plan")
+            elif file_size < 10000:
+                logger.warning(f"PDF file size ({file_size} bytes) seems small for {complexity} complexity")
         else:
             logger.error("PDF file was not created!")
             raise ValueError("PDF file was not created")
 
     except Exception as e:
-        logger.error(f"Error creating enhanced PDF: {e}")
+        logger.error(f"Error creating PDF: {e}")
         logger.error(f"Traceback: {traceback.format_exc()}")
         raise
 
-async def generate_technology_report(idea: str, output_path: str, plan: Plan) -> dict:
-    """Main function to generate a comprehensive technology assessment report with enhanced tables"""
+async def generate_technology_report(idea: str, output_path: str, complexity: ReportComplexity) -> dict:
+    """Main function to generate a technology assessment report"""
     logger.info("="*50)
-    logger.info("STARTING ENHANCED TECHNOLOGY REPORT GENERATION")
+    logger.info("STARTING TECHNOLOGY REPORT GENERATION")
     logger.info("="*50)
-    logger.info(f"Plan: {plan.name}")
-    logger.info(f"Report Type: {plan.report_type}")
-    logger.info(f"Sections: {len(plan.sections)}")
-    logger.info(f"Expected Tables: 5+ comprehensive data tables")
+    logger.info(f"Complexity: {complexity}")
     logger.info(f"Idea: {idea[:100]}...")
     logger.info(f"Output path: {output_path}")
     
@@ -782,13 +888,13 @@ async def generate_technology_report(idea: str, output_path: str, plan: Plan) ->
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         logger.info(f"Output directory ensured: {os.path.dirname(output_path)}")
 
-        logger.info("Step 1: Generating comprehensive report content with tables...")
-        report_json, usage_info = await generate_report_json(idea, plan)
+        logger.info("Step 1: Generating report content...")
+        report_json, usage_info = await generate_report_json(idea, complexity)
         
-        logger.info("Step 2: Creating enhanced PDF with comprehensive tables...")
-        create_pdf(report_json, output_path, plan)
+        logger.info("Step 2: Creating PDF...")
+        create_pdf(report_json, output_path, complexity)
 
-        logger.info("Step 3: Enhanced report generation completed successfully!")
+        logger.info("Step 3: Report generation completed successfully!")
         logger.info("="*50)
         
         # Return the report data with usage info

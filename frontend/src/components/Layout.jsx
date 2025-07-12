@@ -16,7 +16,7 @@ import toast from "react-hot-toast";
 
 const navigation = [
   { name: "Reports", href: "/reports", icon: FileText },
-  { name: "Subscription", href: "/subscription", icon: CreditCard },
+  { name: "Pricing", href: "/pricing", icon: CreditCard },
   { name: "Profile", href: "/profile", icon: User },
 ];
 

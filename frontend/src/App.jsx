@@ -61,7 +61,7 @@ function App() {
                     }
                   />
                   <Route
-                    path="/subscription"
+                    path="/pricing"
                     element={
                       <ProtectedRoute>
                         <Layout>
@@ -76,16 +76,6 @@ function App() {
                       <ProtectedRoute>
                         <Layout>
                           <Reports />
-                        </Layout>
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/Pricing"
-                    element={
-                      <ProtectedRoute>
-                        <Layout>
-                          <Pricing />
                         </Layout>
                       </ProtectedRoute>
                     }

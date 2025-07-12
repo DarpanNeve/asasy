@@ -8,10 +8,10 @@ const appReducer = (state, action) => {
   switch (action.type) {
     case 'SET_LOADING':
       return { ...state, loading: action.payload }
-    case 'SET_SUBSCRIPTION':
-      return { ...state, subscription: action.payload }
-    case 'SET_PLANS':
-      return { ...state, plans: action.payload }
+    case 'SET_TOKEN_BALANCE':
+      return { ...state, tokenBalance: action.payload }
+    case 'SET_TOKEN_PACKAGES':
+      return { ...state, tokenPackages: action.payload }
     case 'SET_REPORTS':
       return { ...state, reports: action.payload }
     case 'ADD_REPORT':
@@ -34,8 +34,8 @@ const appReducer = (state, action) => {
 
 const initialState = {
   loading: false,
-  subscription: null,
-  plans: [],
+  tokenBalance: null,
+  tokenPackages: [],
   reports: [],
   error: null
 }
@@ -53,31 +53,31 @@ export const AppProvider = ({ children }) => {
 
   // Fetch initial data
   useEffect(() => {
-    fetchPlans()
-    fetchSubscription()
+    fetchTokenPackages()
+    fetchTokenBalance()
   }, [])
 
-  const fetchPlans = async () => {
+  const fetchTokenPackages = async () => {
     try {
-      const response = await api.get('/plans')
-      dispatch({ type: 'SET_PLANS', payload: response.data })
+      const response = await api.get('/tokens/packages')
+      dispatch({ type: 'SET_TOKEN_PACKAGES', payload: response.data })
     } catch (error) {
-      console.error('Failed to fetch plans:', error)
+      console.error('Failed to fetch token packages:', error)
     }
   }
 
-  const fetchSubscription = async () => {
+  const fetchTokenBalance = async () => {
     try {
-      const response = await api.get('/subscriptions/current')
-      dispatch({ type: 'SET_SUBSCRIPTION', payload: response.data })
+      const response = await api.get('/tokens/balance')
+      dispatch({ type: 'SET_TOKEN_BALANCE', payload: response.data })
     } catch (error) {
-      // User might not have a subscription
-      dispatch({ type: 'SET_SUBSCRIPTION', payload: null })
+      // User might not have tokens yet
+      dispatch({ type: 'SET_TOKEN_BALANCE', payload: null })
     }
   }
 
-  const updateSubscription = (subscription) => {
-    dispatch({ type: 'SET_SUBSCRIPTION', payload: subscription })
+  const updateTokenBalance = (balance) => {
+    dispatch({ type: 'SET_TOKEN_BALANCE', payload: balance })
   }
 
   const addReport = (report) => {
@@ -98,9 +98,9 @@ export const AppProvider = ({ children }) => {
 
   const value = {
     ...state,
-    fetchPlans,
-    fetchSubscription,
-    updateSubscription,
+    fetchTokenPackages,
+    fetchTokenBalance,
+    updateTokenBalance,
     addReport,
     updateReport,
     setError,

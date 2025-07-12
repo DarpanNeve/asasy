@@ -131,18 +131,18 @@ export const userAPI = {
   getStats: () => api.get("/users/me/stats"),
 };
 
-export const subscriptionAPI = {
-  getPlans: () => api.get("/plans"),
+export const tokenAPI = {
+  getPackages: () => api.get("/tokens/packages"),
 
-  createOrder: (planId) =>
-    api.post("/subscriptions/create-order", { plan_id: planId }),
+  getBalance: () => api.get("/tokens/balance"),
+
+  createOrder: (packageId) =>
+    api.post("/tokens/purchase/create-order", { package_id: packageId }),
 
   verifyPayment: (paymentData) =>
-    api.post("/subscriptions/verify-payment", paymentData),
+    api.post("/tokens/purchase/verify-payment", paymentData),
 
-  getCurrentSubscription: () => api.get("/subscriptions/current"),
-
-  cancelSubscription: () => api.delete("/subscriptions/cancel"),
+  getTransactions: () => api.get("/tokens/transactions"),
 };
 
 export const reportAPI = {
