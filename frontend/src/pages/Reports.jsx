@@ -20,7 +20,7 @@ import {
 import { api } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
 import toast from "react-hot-toast";
-import TokenPricingPackages from './Pricing';
+import TokenPricingSection from '../components/TokenPricingSection';
 
 export default function Reports() {
   const { user } = useAuth();
@@ -312,9 +312,14 @@ export default function Reports() {
                   <X className="h-6 w-6" />
                 </button>
               </div>
-              <TokenPricingPackages 
+              <TokenPricingSection 
                 compact={true} 
                 showReportTypes={false}
+                showHeader={false}
+                onTokenPurchase={() => {
+                  setShowTokenPurchase(false);
+                  fetchUserBalance();
+                }}
               />
             </div>
           </div>
