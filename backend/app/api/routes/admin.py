@@ -121,7 +121,7 @@ async def get_user_token_transactions(user_id: str, credentials: HTTPBasicCreden
 @router.get("/transactions")
 async def get_all_transactions(credentials: HTTPBasicCredentials = Depends(verify_admin_credentials)):
     try:
-        transactions = await TokenTransaction.find({"status": {"$in": ["completed", "failed"]}}).sort([("created_at", -1)]).to_list()
+        transactions = await TokenTransaction.find({}).sort([("created_at", -1)]).to_list()
         
         result = []
         for transaction in transactions:
@@ -155,7 +155,10 @@ async def get_admin_stats(credentials: HTTPBasicCredentials = Depends(verify_adm
         total_revenue = 0
         
         # Calculate total revenue
-        completed_transactions_list = await TokenTransaction.find({"amount_paid": {"$exists": True, "$ne": None}}).to_list()
+        completed_transactions_list = await TokenTransaction.find({
+            "status": "completed",
+            "amount_paid": {"$exists": True, "$ne": None}
+        }).to_list()
         total_revenue = sum(trans.amount_paid for trans in completed_transactions_list if trans.amount_paid)
         
         return {

@@ -14,7 +14,7 @@ class TokenTransactionStatus(str, Enum):
     PENDING = "pending"
     COMPLETED = "completed"
     FAILED = "failed"
-    REFUNDED = "refunded"
+    CANCELLED = "cancelled"
 
 class TokenPackage(Document):
     name: str = Field(..., description="Package name")
