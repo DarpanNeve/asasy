@@ -20,6 +20,7 @@ import {
 import { api } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
 import toast from "react-hot-toast";
+import TokenPricingPackages from './Pricing';
 
 export default function Reports() {
   const { user } = useAuth();
@@ -27,6 +28,7 @@ export default function Reports() {
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [showGenerateForm, setShowGenerateForm] = useState(false);
+  const [showTokenPurchase, setShowTokenPurchase] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedReport, setSelectedReport] = useState(null);
@@ -107,7 +109,8 @@ export default function Reports() {
     const requiredTokens = tokenRequirements[data.complexity];
     
     if (userBalance && userBalance.available_tokens < requiredTokens) {
-      toast.error(`Insufficient tokens. Required: ${requiredTokens}, Available: ${userBalance.available_tokens}`);
+      toast.error(`Insufficient tokens. Required: ${requiredTokens}, Available: ${userBalance.available_tokens}. Please purchase more tokens.`);
+      setShowTokenPurchase(true);
       return;
     }
     setGenerating(true);
@@ -282,7 +285,41 @@ export default function Reports() {
           <Plus className="h-5 w-5 mr-2" />
           Generate Report
         </button>
+        {userBalance && userBalance.available_tokens < 2500 && (
+          <button
+            onClick={() => setShowTokenPurchase(true)}
+            className="btn-outline mt-4 sm:mt-0 sm:ml-2"
+          >
+            <CreditCard className="h-5 w-5 mr-2" />
+            Buy Tokens
+          </button>
+        )}
       </div>
+
+      {/* Token Purchase Modal */}
+      {showTokenPurchase && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-neutral-900">
+                  Purchase Tokens
+                </h2>
+                <button
+                  onClick={() => setShowTokenPurchase(false)}
+                  className="text-neutral-400 hover:text-neutral-600"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+              <TokenPricingPackages 
+                compact={true} 
+                showReportTypes={false}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Generate Report Modal */}
       {showGenerateForm && (

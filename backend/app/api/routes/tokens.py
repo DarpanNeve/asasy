@@ -45,6 +45,9 @@ async def get_token_packages():
             tokens=package.tokens,
             price_inr=package.price_inr,
             price_rupees=package.price_rupees,
+            price_usd=package.price_usd,
+            price_with_gst=package.price_with_gst,
+            gst_amount=package.gst_amount,
             description=package.description
         )
         for package in packages
@@ -83,14 +86,18 @@ async def create_token_purchase_order(
         receipt = f"token_{str(current_user.id)[:8]}_{str(package.id)[:8]}_{int(time.time())}"
         
         order_data_razorpay = {
-            "amount": package.price_inr,
+            "amount": int(package.price_with_gst * 100),  # Convert to paise with GST
             "currency": "INR",
             "receipt": receipt,
             "notes": {
                 "user_id": str(current_user.id),
                 "package_id": str(package.id),
                 "package_name": package.name,
-                "tokens": str(package.tokens)
+                "tokens": str(package.tokens),
+                "base_price_usd": str(package.price_usd),
+                "base_price_inr": str(package.price_rupees),
+                "gst_amount": str(package.gst_amount),
+                "total_with_gst": str(package.price_with_gst)
             }
         }
         

@@ -10,6 +10,9 @@ class TokenPackageResponse(BaseModel):
     tokens: int
     price_inr: int
     price_rupees: float
+    price_usd: float
+    price_with_gst: float
+    gst_amount: float
     description: str
 
 class TokenPurchaseCreate(BaseModel):

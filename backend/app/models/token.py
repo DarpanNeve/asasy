@@ -21,6 +21,7 @@ class TokenPackage(Document):
     package_type: TokenPackageType = Field(..., description="Package type")
     tokens: int = Field(..., description="Number of tokens in package")
     price_inr: int = Field(..., description="Price in INR (paise)")
+    price_usd: float = Field(..., description="Price in USD")
     description: str = Field(..., description="Package description")
     is_active: bool = True
     sort_order: int = 0
@@ -41,6 +42,17 @@ class TokenPackage(Document):
     def price_rupees(self) -> float:
         """Convert price from paise to rupees"""
         return self.price_inr / 100
+    
+    @property
+    def price_with_gst(self) -> float:
+        """Calculate price with 18% GST in INR"""
+        base_price_inr = self.price_rupees
+        return base_price_inr * 1.18
+    
+    @property
+    def gst_amount(self) -> float:
+        """Calculate GST amount in INR"""
+        return self.price_rupees * 0.18
 
 class TokenTransaction(Document):
     user_id: str = Field(..., description="User ID")
@@ -112,6 +124,7 @@ DEFAULT_TOKEN_PACKAGES = [
         "package_type": TokenPackageType.STARTER,
         "tokens": 8000,
         "price_inr": 250000,  # ₹2,500
+        "price_usd": 30.0,
         "description": "Perfect for getting started with AI reports",
         "sort_order": 1
     },
@@ -120,6 +133,7 @@ DEFAULT_TOKEN_PACKAGES = [
         "package_type": TokenPackageType.PRO,
         "tokens": 24000,
         "price_inr": 750000,  # ₹7,500
+        "price_usd": 90.0,
         "description": "Best value for regular users",
         "sort_order": 2
     },
@@ -128,6 +142,7 @@ DEFAULT_TOKEN_PACKAGES = [
         "package_type": TokenPackageType.MAX,
         "tokens": 29000,
         "price_inr": 900000,  # ₹9,000
+        "price_usd": 108.0,
         "description": "Maximum tokens for power users",
         "sort_order": 3
     }
