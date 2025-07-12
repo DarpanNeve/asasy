@@ -13,6 +13,8 @@ import {
   Globe,
   Clock
 } from 'lucide-react';
+import { useLocation } from '../hooks/useLocation';
+import { formatCurrency } from '../utils/currencyUtils';
 import { api } from '../services/api';
 import toast from 'react-hot-toast';
 
@@ -24,13 +26,17 @@ const CheckoutPage = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState('review'); // 'review' or 'processing'
+  const location = useLocation();
 
   if (!isOpen || !packageData) return null;
 
-  const basePrice = packageData.price_usd;
-  const basePriceINR = packageData.price_rupees;
-  const gstAmount = packageData.gst_amount;
-  const totalWithGST = packageData.price_with_gst;
+  // Get pricing based on user's location
+  const pricing = packageData.country_pricing || {};
+  const isIndia = location.isIndia;
+  const currency = pricing.currency || (isIndia ? 'INR' : 'USD');
+  const basePrice = pricing.base_price || packageData.price_usd;
+  const gstAmount = pricing.gst_amount || 0;
+  const totalAmount = pricing.total_price || basePrice;
 
   const handleConfirmPurchase = async () => {
     setLoading(true);
@@ -40,6 +46,10 @@ const CheckoutPage = ({
       // Create order with GST included
       const orderResponse = await api.post('/tokens/purchase/create-order', {
         package_id: packageData.id
+      }, {
+        params: {
+          country_code: location.countryCode
+        }
       });
 
       const { order_id, amount, currency } = orderResponse.data;
@@ -150,7 +160,9 @@ const CheckoutPage = ({
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-3xl font-bold text-blue-600">${basePrice}</div>
+                    <div className="text-3xl font-bold text-blue-600">
+                      {formatCurrency(basePrice, currency, location.countryCode)}
+                    </div>
                     <div className="text-sm text-gray-600">{packageData.tokens.toLocaleString()} Tokens</div>
                   </div>
                 </div>
@@ -182,30 +194,30 @@ const CheckoutPage = ({
                 <div className="space-y-3">
                   <div className="flex justify-between items-center py-2">
                     <span className="text-gray-600 flex items-center">
-                      <DollarSign className="w-4 h-4 mr-2" />
-                      Base Price (USD)
+                      {currency === 'INR' ? <IndianRupee className="w-4 h-4 mr-2" /> : <DollarSign className="w-4 h-4 mr-2" />}
+                      Base Price ({currency})
                     </span>
-                    <span className="font-medium text-lg">${basePrice}</span>
+                    <span className="font-medium text-lg">
+                      {formatCurrency(basePrice, currency, location.countryCode)}
+                    </span>
                   </div>
                   
-                  <div className="flex justify-between items-center py-2">
-                    <span className="text-gray-600 flex items-center">
-                      <IndianRupee className="w-4 h-4 mr-2" />
-                      Base Price (INR)
-                    </span>
-                    <span className="font-medium">₹{basePriceINR.toLocaleString()}</span>
-                  </div>
-                  
-                  <div className="flex justify-between items-center py-2">
-                    <span className="text-gray-600">GST (18%)</span>
-                    <span className="font-medium">₹{gstAmount.toLocaleString()}</span>
-                  </div>
+                  {isIndia && gstAmount > 0 && (
+                    <div className="flex justify-between items-center py-2">
+                      <span className="text-gray-600">GST (18%)</span>
+                      <span className="font-medium">
+                        {formatCurrency(gstAmount, currency, location.countryCode)}
+                      </span>
+                    </div>
+                  )}
                   
                   <hr className="border-gray-300 my-3" />
                   
                   <div className="flex justify-between items-center py-3 bg-white rounded-lg px-4">
                     <span className="text-lg font-bold text-gray-900">Total Amount</span>
-                    <span className="text-2xl font-bold text-blue-600">₹{totalWithGST.toLocaleString()}</span>
+                    <span className="text-2xl font-bold text-blue-600">
+                      {formatCurrency(totalAmount, currency, location.countryCode)}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -233,7 +245,8 @@ const CheckoutPage = ({
                   </h5>
                   <ul className="text-xs text-blue-700 space-y-1">
                     <li>• Tokens are valid for 90 days from purchase date</li>
-                    <li>• GST invoice will be provided for Indian customers</li>
+                    {isIndia && <li>• GST invoice will be provided for Indian customers</li>}
+                    {!isIndia && <li>• Invoice will be provided in USD</li>}
                     <li>• Refunds are subject to our terms and conditions</li>
                     <li>• Tokens are non-transferable between accounts</li>
                   </ul>
@@ -262,7 +275,7 @@ const CheckoutPage = ({
                   ) : (
                     <>
                       <CreditCard className="w-5 h-5 mr-2 inline" />
-                      Pay ₹{totalWithGST.toLocaleString()}
+                      Pay {formatCurrency(totalAmount, currency, location.countryCode)}
                     </>
                   )}
                 </button>

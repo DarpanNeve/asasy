@@ -14,6 +14,7 @@ class TokenPackageResponse(BaseModel):
     price_with_gst: float
     gst_amount: float
     description: str
+    country_pricing: Optional[Dict[str, Any]] = None
 
 class TokenPurchaseCreate(BaseModel):
     package_id: str

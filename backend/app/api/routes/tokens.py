@@ -68,6 +68,7 @@ async def get_user_token_balance(current_user: User = Depends(get_current_user))
 @router.post("/purchase/create-order", response_model=TokenOrderResponse)
 async def create_token_purchase_order(
     order_data: TokenPurchaseCreate,
+    country_code: Optional[str] = None,
     current_user: User = Depends(get_current_user)
 ):
     """Create a Razorpay order for token purchase"""
@@ -81,23 +82,43 @@ async def create_token_purchase_order(
                 detail="Token package not found"
             )
         
+        # Default to US if no country code provided
+        if not country_code:
+            country_code = "US"
+        
+        # Get pricing based on country
+        pricing = package.get_price_for_country(country_code)
+        is_india = country_code == "IN"
+        
         # Generate receipt ID
         import time
         receipt = f"token_{str(current_user.id)[:8]}_{str(package.id)[:8]}_{int(time.time())}"
         
+        # Calculate amount in smallest currency unit
+        if is_india:
+            # For India: amount in paise (INR * 100)
+            amount = int(pricing["total_price"] * 100)
+            currency = "INR"
+        else:
+            # For other countries: amount in cents (USD * 100)
+            amount = int(pricing["total_price"] * 100)
+            currency = "USD"
+        
         order_data_razorpay = {
-            "amount": int(package.price_with_gst * 100),  # Convert to paise with GST
-            "currency": "INR",
+            "amount": amount,
+            "currency": currency,
             "receipt": receipt,
             "notes": {
                 "user_id": str(current_user.id),
                 "package_id": str(package.id),
                 "package_name": package.name,
                 "tokens": str(package.tokens),
-                "base_price_usd": str(package.price_usd),
-                "base_price_inr": str(package.price_rupees),
-                "gst_amount": str(package.gst_amount),
-                "total_with_gst": str(package.price_with_gst)
+                "country_code": country_code,
+                "currency": currency,
+                "base_price": str(pricing["base_price"]),
+                "gst_amount": str(pricing["gst_amount"]),
+                "total_price": str(pricing["total_price"]),
+                "is_india": str(is_india)
             }
         }
         
@@ -111,7 +132,7 @@ async def create_token_purchase_order(
                 "id": str(package.id),
                 "name": package.name,
                 "tokens": package.tokens,
-                "price_rupees": package.price_rupees
+                "pricing": pricing
             }
         )
     except Exception as e:

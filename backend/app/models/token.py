@@ -43,6 +43,35 @@ class TokenPackage(Document):
         """Convert price from paise to rupees"""
         return self.price_inr / 100
     
+    def get_price_for_country(self, country_code: str) -> dict:
+        """Get price in appropriate currency based on country"""
+        is_india = country_code == 'IN'
+        
+        if is_india:
+            base_price = self.price_rupees
+            gst_amount = base_price * 0.18
+            total_price = base_price + gst_amount
+            
+            return {
+                "currency": "INR",
+                "base_price": base_price,
+                "gst_amount": gst_amount,
+                "total_price": total_price,
+                "display_price": f"₹{base_price:,.0f}",
+                "total_display": f"₹{total_price:,.0f}",
+                "is_india": True
+            }
+        else:
+            return {
+                "currency": "USD",
+                "base_price": self.price_usd,
+                "gst_amount": 0,
+                "total_price": self.price_usd,
+                "display_price": f"${self.price_usd:.2f}",
+                "total_display": f"${self.price_usd:.2f}",
+                "is_india": False
+            }
+    
     @property
     def price_with_gst(self) -> float:
         """Calculate price with 18% GST in INR"""
