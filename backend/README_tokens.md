@@ -15,7 +15,6 @@ This will add:
 - **Starter Pack**: 8,000 tokens for ₹2,500
 - **Pro Pack**: 24,000 tokens for ₹7,500 (Most Popular)
 - **Max Pack**: 29,000 tokens for ₹9,000
-- **Enterprise**: 50,000 tokens for ₹15,000
 
 ## Interactive Management
 
@@ -67,6 +66,10 @@ Each token package has:
 - **description**: Package description
 - **is_active**: Whether package is available for purchase
 - **sort_order**: Display order
+
+## Enterprise Solutions
+
+For enterprise customers requiring custom token packages or bulk pricing, users are directed to contact support directly rather than having a predefined enterprise package.
 
 ## Token Usage
 

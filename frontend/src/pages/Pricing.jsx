@@ -83,10 +83,6 @@ const TokenPricingPackages = () => {
       return;
     }
 
-    if (packageData.package_type === 'enterprise') {
-      toast.info('Please contact us for enterprise pricing');
-      return;
-    }
 
     setPurchaseLoading(packageData.id);
     
@@ -280,7 +276,7 @@ const TokenPricingPackages = () => {
         </div>
 
         {/* Packages Grid - Updated to show 4 columns */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto mb-20">
           {tokenPackages.map((pkg) => {
             const IconComponent = pkg.icon;
             const isHovered = hoveredPackage === pkg.id;
@@ -328,7 +324,7 @@ const TokenPricingPackages = () => {
                     
                     {/* Price */}
                     <div className="text-3xl font-bold text-gray-900 mb-2">
-                      {pkg.package_type === 'enterprise' ? 'Custom' : `₹${pkg.price_rupees}`}
+                      ₹{pkg.price_rupees}
                     </div>
                     
                     {/* Tokens */}
@@ -351,8 +347,6 @@ const TokenPricingPackages = () => {
                         </div>
                       ) : !user ? (
                         'Login to Purchase'
-                      ) : pkg.package_type === 'enterprise' ? (
-                        'Contact Us'
                       ) : (
                         <>
                           <ShoppingCart className="w-4 h-4 mr-2 inline" />
@@ -459,6 +453,7 @@ const TokenPricingPackages = () => {
         <div className="text-center mt-12">
           <p className="text-gray-600 max-w-2xl mx-auto">
             Need help choosing the right package? Our tokens are valid for 90 days from purchase. 
+            For enterprise solutions, 
             <span className="text-blue-600 font-semibold cursor-pointer hover:text-blue-700 ml-1">Contact support</span> for assistance.
           </p>
         </div>

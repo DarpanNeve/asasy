@@ -40,14 +40,6 @@ async def quick_add():
             "price_inr": 900000,  # ₹9,000
             "description": "Maximum tokens for power users",
             "sort_order": 3
-        },
-        {
-            "name": "Enterprise",
-            "package_type": TokenPackageType.ENTERPRISE,
-            "tokens": 50000,
-            "price_inr": 1500000,  # ₹15,000
-            "description": "Custom solution for enterprises",
-            "sort_order": 4
         }
     ]
     
