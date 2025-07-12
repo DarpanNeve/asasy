@@ -43,11 +43,7 @@ async def get_token_packages():
             name=package.name,
             package_type=package.package_type,
             tokens=package.tokens,
-            price_inr=package.price_inr,
-            price_rupees=package.price_rupees,
             price_usd=package.price_usd,
-            price_with_gst=package.price_with_gst,
-            gst_amount=package.gst_amount,
             description=package.description
         )
         for package in packages
@@ -68,7 +64,6 @@ async def get_user_token_balance(current_user: User = Depends(get_current_user))
 @router.post("/purchase/create-order", response_model=TokenOrderResponse)
 async def create_token_purchase_order(
     order_data: TokenPurchaseCreate,
-    country_code: Optional[str] = None,
     current_user: User = Depends(get_current_user)
 ):
     """Create a Razorpay order for token purchase"""
@@ -82,27 +77,16 @@ async def create_token_purchase_order(
                 detail="Token package not found"
             )
         
-        # Default to US if no country code provided
-        if not country_code:
-            country_code = "US"
-        
-        # Get pricing based on country
-        pricing = package.get_price_for_country(country_code)
-        is_india = country_code == "IN"
+        # Get pricing details
+        pricing = package.get_pricing_details()
         
         # Generate receipt ID
         import time
         receipt = f"token_{str(current_user.id)[:8]}_{str(package.id)[:8]}_{int(time.time())}"
         
-        # Calculate amount in smallest currency unit
-        if is_india:
-            # For India: amount in paise (INR * 100)
-            amount = int(pricing["total_price"] * 100)
-            currency = "INR"
-        else:
-            # For other countries: amount in cents (USD * 100)
-            amount = int(pricing["total_price"] * 100)
-            currency = "USD"
+        # Calculate amount in cents (USD * 100)
+        amount = int(pricing["total_price"] * 100)
+        currency = "USD"
         
         order_data_razorpay = {
             "amount": amount,
@@ -113,12 +97,10 @@ async def create_token_purchase_order(
                 "package_id": str(package.id),
                 "package_name": package.name,
                 "tokens": str(package.tokens),
-                "country_code": country_code,
                 "currency": currency,
                 "base_price": str(pricing["base_price"]),
                 "gst_amount": str(pricing["gst_amount"]),
-                "total_price": str(pricing["total_price"]),
-                "is_india": str(is_india)
+                "total_price": str(pricing["total_price"])
             }
         }
         

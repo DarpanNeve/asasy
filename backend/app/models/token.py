@@ -20,7 +20,6 @@ class TokenPackage(Document):
     name: str = Field(..., description="Package name")
     package_type: TokenPackageType = Field(..., description="Package type")
     tokens: int = Field(..., description="Number of tokens in package")
-    price_inr: int = Field(..., description="Price in INR (paise)")
     price_usd: float = Field(..., description="Price in USD")
     description: str = Field(..., description="Package description")
     is_active: bool = True
@@ -38,54 +37,20 @@ class TokenPackage(Document):
             "sort_order",
         ]
     
-    @property
-    def price_rupees(self) -> float:
-        """Convert price from paise to rupees"""
-        return self.price_inr / 100
-    
-    def get_price_for_country(self, country_code: str) -> dict:
-        """Get price in appropriate currency based on country"""
-        is_india = country_code == 'IN'
+    def get_pricing_details(self) -> dict:
+        """Get pricing details with GST calculation"""
+        base_price = self.price_usd
+        gst_amount = base_price * 0.18  # 18% GST
+        total_price = base_price + gst_amount
         
-        if is_india:
-            base_price = self.price_rupees
-            gst_amount = base_price * 0.18  # 18% GST
-            total_price = base_price + gst_amount
-            
-            return {
-                "currency": "INR",
-                "base_price": base_price,
-                "gst_amount": gst_amount,
-                "total_price": total_price,
-                "display_price": f"₹{base_price:,.0f}",
-                "total_display": f"₹{total_price:,.0f}",
-                "is_india": True
-            }
-        else:
-            base_price = self.price_usd
-            gst_amount = base_price * 0.18  # 18% GST for all countries
-            total_price = base_price + gst_amount
-            
-            return {
-                "currency": "USD",
-                "base_price": base_price,
-                "gst_amount": gst_amount,
-                "total_price": total_price,
-                "display_price": f"${base_price:.2f}",
-                "total_display": f"${total_price:.2f}",
-                "is_india": False
-            }
-    
-    @property
-    def price_with_gst(self) -> float:
-        """Calculate price with 18% GST in INR"""
-        base_price_inr = self.price_rupees
-        return base_price_inr * 1.18
-    
-    @property
-    def gst_amount(self) -> float:
-        """Calculate GST amount in INR"""
-        return self.price_rupees * 0.18
+        return {
+            "currency": "USD",
+            "base_price": base_price,
+            "gst_amount": gst_amount,
+            "total_price": total_price,
+            "display_price": f"${base_price:.2f}",
+            "total_display": f"${total_price:.2f}"
+        }
 
 class TokenTransaction(Document):
     user_id: str = Field(..., description="User ID")
@@ -156,7 +121,6 @@ DEFAULT_TOKEN_PACKAGES = [
         "name": "Starter Pack",
         "package_type": TokenPackageType.STARTER,
         "tokens": 8000,
-        "price_inr": 250000,  # ₹2,500
         "price_usd": 30.0,
         "description": "Perfect for getting started with AI reports",
         "sort_order": 1
@@ -165,7 +129,6 @@ DEFAULT_TOKEN_PACKAGES = [
         "name": "Pro Pack",
         "package_type": TokenPackageType.PRO,
         "tokens": 24000,
-        "price_inr": 750000,  # ₹7,500
         "price_usd": 90.0,
         "description": "Best value for regular users",
         "sort_order": 2
@@ -174,7 +137,6 @@ DEFAULT_TOKEN_PACKAGES = [
         "name": "Max Pack",
         "package_type": TokenPackageType.MAX,
         "tokens": 29000,
-        "price_inr": 900000,  # ₹9,000
         "price_usd": 108.0,
         "description": "Maximum tokens for power users",
         "sort_order": 3

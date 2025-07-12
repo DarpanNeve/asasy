@@ -54,7 +54,7 @@ const TokenPricingCard = ({
           
           {/* Price */}
           <div className={`${compact ? 'text-2xl' : 'text-3xl'} font-bold text-gray-900 mb-2`}>
-            {pkg.displayPrice || 'Custom'}
+            {typeof pkg.price_usd === 'string' ? pkg.price_usd : `$${pkg.price_usd.toFixed(2)}`}
           </div>
           
           {/* Tokens */}

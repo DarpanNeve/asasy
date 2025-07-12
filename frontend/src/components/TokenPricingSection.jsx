@@ -114,13 +114,6 @@ const TokenPricingSection = ({
       return;
     }
 
-    // Add location data to package for checkout
-    const packageWithLocation = {
-      ...packageData,
-      location: location,
-      countryCode: location.countryCode
-    };
-    
     setSelectedPackage(packageData);
     setShowCheckout(true);
   };

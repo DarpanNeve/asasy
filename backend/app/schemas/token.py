@@ -8,13 +8,8 @@ class TokenPackageResponse(BaseModel):
     name: str
     package_type: TokenPackageType
     tokens: int
-    price_inr: int
-    price_rupees: float
     price_usd: float
-    price_with_gst: float
-    gst_amount: float
     description: str
-    country_pricing: Optional[Dict[str, Any]] = None
 
 class TokenPurchaseCreate(BaseModel):
     package_id: str

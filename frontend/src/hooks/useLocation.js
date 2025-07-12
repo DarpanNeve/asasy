@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
-import { detectUserLocation } from '../utils/currencyUtils';
 
 export const useLocation = () => {
   const [location, setLocation] = useState({
     country: 'Loading...',
     countryCode: 'US',
     currency: 'USD',
-    isIndia: false,
     loading: true,
     error: null
   });
@@ -14,9 +12,14 @@ export const useLocation = () => {
   useEffect(() => {
     const getLocation = async () => {
       try {
-        const locationData = await detectUserLocation();
+        // Try to get location from IP geolocation API
+        const response = await fetch('https://ipapi.co/json/');
+        const data = await response.json();
+        
         setLocation({
-          ...locationData,
+          country: data.country_name || 'Unknown',
+          countryCode: data.country_code || 'US',
+          currency: 'USD', // Always USD now
           loading: false,
           error: null
         });
@@ -26,7 +29,6 @@ export const useLocation = () => {
           country: 'Unknown',
           countryCode: 'US',
           currency: 'USD',
-          isIndia: false,
           loading: false,
           error: 'Failed to detect location'
         });

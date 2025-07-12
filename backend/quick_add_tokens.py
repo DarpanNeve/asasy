@@ -18,7 +18,6 @@ async def quick_add():
     # Default packages
     packages = [
         {
-            "name": "Starter Pack",
             "package_type": TokenPackageType.STARTER,
             "tokens": 8000,
             "price_inr": 250000,  # ₹2,500
@@ -27,7 +26,6 @@ async def quick_add():
         },
         {
             "name": "Pro Pack",
-            "package_type": TokenPackageType.PRO,
             "tokens": 24000,
             "price_inr": 750000,  # ₹7,500
             "description": "Best value for regular users",
@@ -36,7 +34,6 @@ async def quick_add():
         {
             "name": "Max Pack",
             "package_type": TokenPackageType.MAX,
-            "tokens": 29000,
             "price_inr": 900000,  # ₹9,000
             "description": "Maximum tokens for power users",
             "sort_order": 3
@@ -55,7 +52,7 @@ async def quick_add():
         # Create package
         package = TokenPackage(**pkg_data)
         await package.insert()
-        print(f"✅ Added {package.name}: {package.tokens:,} tokens for ₹{package.price_rupees:,.2f}")
+        print(f"✅ Added {package.name}: {package.tokens:,} tokens for ${package.price_usd:.2f}")
     
     print("\n🎉 Done! Token packages added successfully.")
 
