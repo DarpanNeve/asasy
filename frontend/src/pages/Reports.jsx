@@ -35,6 +35,7 @@ export default function Reports() {
   const [pdfUrl, setPdfUrl] = useState(null);
   const [pdfLoading, setPdfLoading] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [userBalance, setUserBalance] = useState(null);
   const [pagination, setPagination] = useState({
     page: 1,
     pages: 1,
@@ -50,7 +51,19 @@ export default function Reports() {
 
   useEffect(() => {
     fetchReports();
-  }, [pagination.page, statusFilter]);
+    if (user) {
+      fetchUserBalance();
+    }
+  }, [pagination.page, statusFilter, user]);
+
+  const fetchUserBalance = async () => {
+    try {
+      const response = await api.get('/tokens/balance');
+      setUserBalance(response.data);
+    } catch (error) {
+      console.error('Failed to fetch user balance:', error);
+    }
+  };
 
   const fetchReports = async () => {
     try {
@@ -84,10 +97,24 @@ export default function Reports() {
       return;
     }
 
+    // Check token requirements
+    const tokenRequirements = {
+      basic: 2500,
+      advanced: 7500,
+      comprehensive: 9000
+    };
+
+    const requiredTokens = tokenRequirements[data.complexity];
+    
+    if (userBalance && userBalance.available_tokens < requiredTokens) {
+      toast.error(`Insufficient tokens. Required: ${requiredTokens}, Available: ${userBalance.available_tokens}`);
+      return;
+    }
     setGenerating(true);
     try {
       const response = await api.post("/reports/generate", {
         idea: data.idea,
+        complexity: data.complexity,
       });
 
       toast.success(
@@ -96,6 +123,7 @@ export default function Reports() {
       setShowGenerateForm(false);
       reset();
       fetchReports();
+      fetchUserBalance(); // Refresh balance after report generation
     } catch (error) {
       toast.error(error.response?.data?.detail || "Failed to generate report");
     } finally {
@@ -202,6 +230,18 @@ export default function Reports() {
     }
   };
 
+  const getComplexityColor = (complexity) => {
+    switch (complexity) {
+      case "basic":
+        return "bg-blue-100 text-blue-800";
+      case "advanced":
+        return "bg-purple-100 text-purple-800";
+      case "comprehensive":
+        return "bg-emerald-100 text-emerald-800";
+      default:
+        return "bg-neutral-100 text-neutral-800";
+    }
+  };
   const filteredReports = reports.filter(
     (report) =>
       report.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -225,6 +265,15 @@ export default function Reports() {
           <p className="mt-2 text-neutral-600">
             Generate and manage your technology assessment reports.
           </p>
+          {userBalance && (
+            <div className="mt-2 flex items-center text-sm text-neutral-600">
+              <Zap className="w-4 h-4 mr-1 text-blue-600" />
+              <span>Available Tokens: </span>
+              <span className="font-semibold text-blue-600 ml-1">
+                {userBalance.available_tokens.toLocaleString()}
+              </span>
+            </div>
+          )}
         </div>
         <button
           onClick={() => setShowGenerateForm(true)}
@@ -257,6 +306,33 @@ export default function Reports() {
                 onSubmit={handleSubmit(handleGenerateReport)}
                 className="space-y-6"
               >
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    Report Complexity
+                  </label>
+                  <select
+                    {...register("complexity", {
+                      required: "Please select report complexity",
+                    })}
+                    className={`input ${errors.complexity ? "input-error" : ""}`}
+                  >
+                    <option value="">Select complexity level</option>
+                    <option value="basic">Basic (2,500 tokens) - Essential analysis</option>
+                    <option value="advanced">Advanced (7,500 tokens) - Comprehensive analysis</option>
+                    <option value="comprehensive">Comprehensive (9,000 tokens) - Premium analysis</option>
+                  </select>
+                  {errors.complexity && (
+                    <p className="mt-1 text-sm text-error-600">
+                      {errors.complexity.message}
+                    </p>
+                  )}
+                  {userBalance && (
+                    <p className="mt-1 text-sm text-neutral-500">
+                      Available tokens: {userBalance.available_tokens.toLocaleString()}
+                    </p>
+                  )}
+                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-2">
                     Technology Idea or Concept
@@ -439,7 +515,7 @@ export default function Reports() {
               <div className="space-y-6">
                 {/* Report Metadata */}
                 <div className="bg-neutral-50 rounded-lg p-4">
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
                     <div>
                       <span className="font-medium text-neutral-900">
                         Status:
@@ -457,11 +533,17 @@ export default function Reports() {
                     </div>
                     <div>
                       <span className="font-medium text-neutral-900">
-                        Plan:
+                        Complexity:
                       </span>
-                      <p className="text-neutral-600 mt-1">
-                        {selectedReport.plan_name}
-                      </p>
+                      <div className="mt-1">
+                        <span
+                          className={`px-2 py-1 text-xs font-medium rounded-full ${getComplexityColor(
+                            selectedReport.complexity
+                          )}`}
+                        >
+                          {selectedReport.complexity}
+                        </span>
+                      </div>
                     </div>
                     <div>
                       <span className="font-medium text-neutral-900">
@@ -475,10 +557,18 @@ export default function Reports() {
                     </div>
                     <div>
                       <span className="font-medium text-neutral-900">
+                        Tokens Used:
+                      </span>
+                      <p className="text-neutral-600 mt-1">
+                        {selectedReport.tokens_used || 0}
+                      </p>
+                    </div>
+                    <div>
+                      <span className="font-medium text-neutral-900">
                         Type:
                       </span>
                       <p className="text-neutral-600 mt-1">
-                        {selectedReport.report_type}
+                        Technology Assessment
                       </p>
                     </div>
                   </div>
@@ -689,10 +779,18 @@ export default function Reports() {
                           {report.status}
                         </span>
                       </div>
-                      {report.plan_name && (
+                          className={`text-xs px-2 py-1 rounded whitespace-nowrap ${getComplexityColor(
+                            report.complexity
+                          )}`}
                         <span className="text-xs bg-primary-100 text-primary-800 px-2 py-1 rounded whitespace-nowrap">
-                          {report.plan_name}
+                          {report.complexity}
                         </span>
+                      )}
+                      {report.tokens_used && (
+                        <div className="flex items-center text-xs text-neutral-500">
+                          <Zap className="w-3 h-3 mr-1" />
+                          {report.tokens_used} tokens
+                        </div>
                       )}
                     </div>
                   </div>

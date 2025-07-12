@@ -1,12 +1,15 @@
 from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime
-from app.models.report import ReportStatus, ReportType
+from app.models.report import ReportStatus, ReportType, ReportComplexity
 
 
 class ReportCreate(BaseModel):
     idea: str = Field(
         ..., min_length=50, max_length=100000, description="Technology idea or concept"
+    )
+    complexity: ReportComplexity = Field(
+        ReportComplexity.BASIC, description="Report complexity level"
     )
 
 
@@ -17,8 +20,8 @@ class ReportResponse(BaseModel):
     created_at: datetime
     idea: Optional[str] = None
     pdf_url: Optional[str] = None
-    plan_name: Optional[str] = None
-    plan_type: Optional[str] = None
+    complexity: Optional[ReportComplexity] = None
+    tokens_used: Optional[int] = None
     message: Optional[str] = None
 
 

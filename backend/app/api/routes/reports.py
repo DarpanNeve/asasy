@@ -9,8 +9,7 @@ import traceback
 
 from app.core.security import get_current_user
 from app.models.user import User
-from app.models.plan import Plan
-from app.models.report import ReportLog, ReportStatus, ReportType
+from app.models.report import ReportLog, ReportStatus, ReportType, ReportComplexity, REPORT_TOKEN_REQUIREMENTS
 from app.services.report_generator import generate_technology_report
 from app.services.email_service import send_report_ready_email
 from app.core.config import settings
@@ -19,25 +18,17 @@ from app.schemas.report import ReportCreate, ReportResponse, ReportListResponse
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
-async def generate_report_background(report_id: str, idea: str, plan_id: str, user_email: str, user_name: str):
+async def generate_report_background(report_id: str, idea: str, complexity: ReportComplexity, user_email: str, user_name: str):
     """Background task to generate report with comprehensive logging"""
     logger.info(f"Starting background report generation for report_id: {report_id}")
     
     try:
         report = await ReportLog.get(report_id)
-        plan = await Plan.get(plan_id)
-        if not report or not plan:
-            logger.error(f"Report or plan not found - report_id: {report_id}, plan_id: {plan_id}")
+        if not report:
+            logger.error(f"Report not found - report_id: {report_id}")
             return
 
-        logger.info(f"Found report and plan - Report: {report.title}, Plan: {plan.name}")
-
-        # Check if plan has prompt template
-        if not hasattr(plan, 'prompt_template') or not plan.prompt_template:
-            logger.error(f"No prompt template found for plan: {plan.name}")
-            report.mark_failed(f"No prompt template configured for plan: {plan.name}")
-            await report.save()
-            return
+        logger.info(f"Found report - Report: {report.title}, Complexity: {complexity}")
 
         # Update status to processing
         report.status = ReportStatus.PROCESSING
@@ -50,7 +41,7 @@ async def generate_report_background(report_id: str, idea: str, plan_id: str, us
         logger.info(f"Output path: {output_path}")
 
         logger.info("Calling generate_technology_report...")
-        report_data = await generate_technology_report(idea, output_path, plan)
+        report_data = await generate_technology_report(idea, output_path, complexity)
         logger.info("Report generation completed successfully")
 
         # Verify file was created
@@ -101,10 +92,7 @@ async def generate_report_background(report_id: str, idea: str, plan_id: str, us
             report = await ReportLog.get(report_id)
             if report:
                 error_message = str(e)
-                # Provide more specific error messages
-                if "prompt template" in error_message.lower():
-                    error_message = f"Plan configuration error: {error_message}"
-                elif "openai" in error_message.lower():
+                if "openai" in error_message.lower():
                     error_message = f"AI service error: {error_message}"
                 elif "json" in error_message.lower():
                     error_message = f"Report format error: {error_message}"
@@ -126,33 +114,25 @@ async def generate_report(
     """Generate a new technology assessment report with enhanced logging"""
     logger.info(f"Report generation request from user: {current_user.email}")
     logger.info(f"Idea length: {len(report_data.idea)} characters")
+    logger.info(f"Report complexity: {report_data.complexity}")
 
-    # Get user's current plan
-    user_plan = await current_user.get_current_plan()
+    # Get token requirements for the complexity level
+    tokens_required = REPORT_TOKEN_REQUIREMENTS.get(report_data.complexity, 2500)
     
-    if not user_plan:
-        logger.error(f"No plan found for user: {current_user.email}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="No plan found. Please contact support."
-        )
-
-    logger.info(f"User plan: {user_plan.name}")
-
-    # Check if plan has prompt template
-    if not hasattr(user_plan, 'prompt_template') or not user_plan.prompt_template:
-        logger.error(f"No prompt template found for plan: {user_plan.name}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Plan configuration error: No prompt template configured for {user_plan.name} plan. Please contact support."
-        )
-
-    # Check if user can generate reports
-    if not await current_user.can_generate_report():
-        logger.warning(f"User {current_user.email} has reached report limit")
+    # Check if user has enough tokens
+    if not await current_user.can_generate_report(tokens_required):
+        balance = await current_user.get_token_balance()
+        logger.warning(f"User {current_user.email} has insufficient tokens. Required: {tokens_required}, Available: {balance.available_tokens}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="You have reached your report generation limit. Please upgrade your subscription.",
+            detail=f"Insufficient tokens. Required: {tokens_required}, Available: {balance.available_tokens}. Please purchase more tokens.",
+        )
+
+    # Use tokens
+    if not await current_user.use_tokens(tokens_required):
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to deduct tokens. Please try again."
         )
 
     # Create report log
@@ -161,9 +141,10 @@ async def generate_report(
         title=f"Technology Assessment: {report_data.idea[:50]}...",
         idea=report_data.idea,
         report_type=ReportType.TECHNOLOGY_ASSESSMENT,
+        complexity=report_data.complexity,
         status=ReportStatus.PENDING,
-        plan_id=str(user_plan.id),
-        plan_name=user_plan.name,
+        tokens_used=tokens_required,
+        tokens_estimated=tokens_required,
     )
 
     await report.insert()
@@ -181,7 +162,7 @@ async def generate_report(
         generate_report_background, 
         str(report.id), 
         report_data.idea, 
-        str(user_plan.id),
+        report_data.complexity,
         current_user.email,
         current_user.name
     )
@@ -191,9 +172,9 @@ async def generate_report(
         title=report.title,
         status=report.status,
         created_at=report.created_at,
-        plan_name=user_plan.name,
-        plan_type=user_plan.report_type,
-        message=f"Report generation started using {user_plan.name} plan. You will be notified when complete.",
+        complexity=report_data.complexity,
+        tokens_used=tokens_required,
+        message=f"Report generation started using {tokens_required} tokens. You will be notified when complete.",
     )
 
 @router.get("", response_model=ReportListResponse)
@@ -235,8 +216,8 @@ async def get_reports(
                 created_at=report.created_at,
                 idea=report.idea,
                 pdf_url=report.pdf_url,
-                plan_name=getattr(report, 'plan_name', 'Unknown'),
-                plan_type=getattr(report, 'plan_type', 'Unknown'),
+                complexity=getattr(report, 'complexity', ReportComplexity.BASIC),
+                tokens_used=getattr(report, 'tokens_used', 0),
             )
             for report in reports
         ],

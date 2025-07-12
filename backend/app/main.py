@@ -9,7 +9,7 @@ from app.core.config import settings
 from app.core.database import init_database
 from app.core.security import setup_security_middleware
 from app.core.rate_limiter import setup_rate_limiting
-from app.api.routes import auth, users, plans, subscriptions, reports, webhooks, admin, contact
+from app.api.routes import auth, users, plans, tokens, reports, webhooks, admin, contact
 from app.core.exceptions import setup_exception_handlers
 
 # Configure logging
@@ -81,9 +81,7 @@ async def health_check():
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(users.router, prefix="/users", tags=["Users"])
 app.include_router(plans.router, prefix="/plans", tags=["Plans"])
-app.include_router(
-    subscriptions.router, prefix="/subscriptions", tags=["Subscriptions"]
-)
+app.include_router(tokens.router, prefix="/tokens", tags=["Tokens"])
 app.include_router(reports.router, prefix="/reports", tags=["Reports"])
 app.include_router(webhooks.router, prefix="/webhooks", tags=["Webhooks"])
 app.include_router(admin.router, prefix="/admin", tags=["Admin"])

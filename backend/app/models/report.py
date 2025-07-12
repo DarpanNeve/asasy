@@ -16,18 +16,22 @@ class ReportStatus(str, Enum):
     COMPLETED = "completed"
     FAILED = "failed"
 
+class ReportComplexity(str, Enum):
+    BASIC = "basic"
+    ADVANCED = "advanced"
+    COMPREHENSIVE = "comprehensive"
 class ReportLog(Document):
     user_id: Indexed(str) = Field(..., description="User who generated the report")
     
     # Report details
     report_type: ReportType = ReportType.TECHNOLOGY_ASSESSMENT
+    complexity: ReportComplexity = ReportComplexity.BASIC
     title: str = Field(..., description="Report title")
     idea: str = Field(..., description="Original idea/input for the report")
     
-    # Plan information
-    plan_id: str = Field(..., description="Plan used for this report")
-    plan_name: str = Field(..., description="Plan name for display")
-    plan_type: Optional[str] = Field(None, description="Type of analysis performed")
+    # Token information
+    tokens_used: int = Field(..., description="Tokens consumed for this report")
+    tokens_estimated: Optional[int] = Field(None, description="Estimated tokens before generation")
     
     # Generation status
     status: ReportStatus = ReportStatus.PENDING
@@ -65,6 +69,7 @@ class ReportLog(Document):
             "user_id",
             "status",
             "report_type",
+            "complexity",
             "plan_id",
             "created_at",
             [("user_id", 1), ("created_at", -1)],
@@ -97,3 +102,9 @@ class ReportLog(Document):
             "pdf_path",
             "metadata"
         })
+# Token requirements for different report types
+REPORT_TOKEN_REQUIREMENTS = {
+    ReportComplexity.BASIC: 2500,
+    ReportComplexity.ADVANCED: 7500,
+    ReportComplexity.COMPREHENSIVE: 9000
+}

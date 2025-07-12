@@ -1,49 +1,152 @@
 import React, { useState } from 'react';
-import { Zap, Crown, Rocket, FileText, ChevronDown, ChevronUp, Diamond } from 'lucide-react';
+import { Zap, Crown, Rocket, FileText, ChevronDown, ChevronUp, Diamond, ShoppingCart } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import { api } from '../services/api';
+import toast from 'react-hot-toast';
 
 const TokenPricingPackages = () => {
   const [hoveredPackage, setHoveredPackage] = useState(null);
   const [expandedReport, setExpandedReport] = useState(null);
+  const [tokenPackages, setTokenPackages] = useState([]);
+  const [userBalance, setUserBalance] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [purchaseLoading, setPurchaseLoading] = useState(null);
+  const { user } = useAuth();
 
-  const packages = [
-    {
-      id: 'starter',
-      name: 'Starter Pack',
-      price: '₹2,500',
-      tokens: '8,000',
-      icon: Zap,
-      color: 'from-blue-500 to-blue-600',
-      hoverColor: 'from-blue-600 to-blue-700'
-    },
-    {
-      id: 'pro',
-      name: 'Pro Pack',
-      price: '₹7,500',
-      tokens: '24,000',
-      icon: Crown,
-      color: 'from-purple-500 to-purple-600',
-      hoverColor: 'from-purple-600 to-purple-700',
-      popular: true
-    },
-    {
-      id: 'max',
-      name: 'Max Pack',
-      price: '₹9,000',
-      tokens: '29,000',
-      icon: Rocket,
-      color: 'from-emerald-500 to-emerald-600',
-      hoverColor: 'from-emerald-600 to-emerald-700'
-    },
-    {
-      id: 'Enterprise',
-      name: 'Enterprise',
-      price: 'Customized',
-    
-      icon: Diamond,
-      color: 'from-orange-500 to-orange-600',
-      hoverColor: 'from-orange-600 to-orange-700'
+  // Fetch token packages and user balance on component mount
+  React.useEffect(() => {
+    fetchTokenPackages();
+    if (user) {
+      fetchUserBalance();
     }
-  ];
+  }, [user]);
+
+  const fetchTokenPackages = async () => {
+    try {
+      const response = await api.get('/tokens/packages');
+      const packages = response.data.map(pkg => ({
+        ...pkg,
+        icon: getIconForPackage(pkg.package_type),
+        color: getColorForPackage(pkg.package_type),
+        hoverColor: getHoverColorForPackage(pkg.package_type),
+        popular: pkg.package_type === 'pro'
+      }));
+      setTokenPackages(packages);
+    } catch (error) {
+      console.error('Failed to fetch token packages:', error);
+      toast.error('Failed to load token packages');
+    }
+  };
+
+  const fetchUserBalance = async () => {
+    try {
+      const response = await api.get('/tokens/balance');
+      setUserBalance(response.data);
+    } catch (error) {
+      console.error('Failed to fetch user balance:', error);
+    }
+  };
+
+  const getIconForPackage = (type) => {
+    switch (type) {
+      case 'starter': return Zap;
+      case 'pro': return Crown;
+      case 'max': return Rocket;
+      case 'enterprise': return Diamond;
+      default: return Zap;
+    }
+  };
+
+  const getColorForPackage = (type) => {
+    switch (type) {
+      case 'starter': return 'from-blue-500 to-blue-600';
+      case 'pro': return 'from-purple-500 to-purple-600';
+      case 'max': return 'from-emerald-500 to-emerald-600';
+      case 'enterprise': return 'from-orange-500 to-orange-600';
+      default: return 'from-blue-500 to-blue-600';
+    }
+  };
+
+  const getHoverColorForPackage = (type) => {
+    switch (type) {
+      case 'starter': return 'from-blue-600 to-blue-700';
+      case 'pro': return 'from-purple-600 to-purple-700';
+      case 'max': return 'from-emerald-600 to-emerald-700';
+      case 'enterprise': return 'from-orange-600 to-orange-700';
+      default: return 'from-blue-600 to-blue-700';
+    }
+  };
+
+  const handlePurchase = async (packageData) => {
+    if (!user) {
+      toast.error('Please login to purchase tokens');
+      return;
+    }
+
+    if (packageData.package_type === 'enterprise') {
+      toast.info('Please contact us for enterprise pricing');
+      return;
+    }
+
+    setPurchaseLoading(packageData.id);
+    
+    try {
+      // Create order
+      const orderResponse = await api.post('/tokens/purchase/create-order', {
+        package_id: packageData.id
+      });
+
+      const { order_id, amount, currency } = orderResponse.data;
+
+      // Initialize Razorpay
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: amount,
+        currency: currency,
+        name: 'Asasy',
+        description: `Purchase ${packageData.name}`,
+        order_id: order_id,
+        handler: async function (response) {
+          try {
+            // Verify payment
+            await api.post('/tokens/purchase/verify-payment', {
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature
+            });
+
+            toast.success(`Successfully purchased ${packageData.tokens} tokens!`);
+            fetchUserBalance(); // Refresh balance
+          } catch (error) {
+            console.error('Payment verification failed:', error);
+            toast.error('Payment verification failed. Please contact support.');
+          }
+        },
+        prefill: {
+          name: user.name,
+          email: user.email,
+          contact: user.phone
+        },
+        theme: {
+          color: '#3B82F6'
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+
+      rzp.on('payment.failed', function (response) {
+        console.error('Payment failed:', response.error);
+        toast.error('Payment failed. Please try again.');
+      });
+
+    } catch (error) {
+      console.error('Purchase failed:', error);
+      toast.error('Failed to initiate purchase. Please try again.');
+    } finally {
+      setPurchaseLoading(null);
+    }
+  };
 
   const reportTypes = [
     {
@@ -155,6 +258,17 @@ const TokenPricingPackages = () => {
   return (
     <div className="py-16 px-4 bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="max-w-7xl mx-auto">
+        {/* User Token Balance */}
+        {user && userBalance && (
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center px-6 py-3 bg-white rounded-full shadow-lg border border-gray-200">
+              <Zap className="w-5 h-5 text-blue-600 mr-2" />
+              <span className="text-gray-700 mr-2">Available Tokens:</span>
+              <span className="font-bold text-blue-600 text-lg">{userBalance.available_tokens.toLocaleString()}</span>
+            </div>
+          </div>
+        )}
+
         {/* Token Packages Section */}
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -167,9 +281,10 @@ const TokenPricingPackages = () => {
 
         {/* Packages Grid - Updated to show 4 columns */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto mb-20">
-          {packages.map((pkg) => {
+          {tokenPackages.map((pkg) => {
             const IconComponent = pkg.icon;
             const isHovered = hoveredPackage === pkg.id;
+            const isPurchasing = purchaseLoading === pkg.id;
             
             return (
               <div
@@ -213,21 +328,37 @@ const TokenPricingPackages = () => {
                     
                     {/* Price */}
                     <div className="text-3xl font-bold text-gray-900 mb-2">
-                      {pkg.price}
+                      {pkg.package_type === 'enterprise' ? 'Custom' : `₹${pkg.price_rupees}`}
                     </div>
                     
                     {/* Tokens */}
                     <div className="text-sm text-gray-600 mb-6">
-                      {pkg.tokens} Tokens
+                      {pkg.tokens.toLocaleString()} Tokens
                     </div>
 
                     {/* CTA Button */}
                     <button
+                      onClick={() => handlePurchase(pkg)}
+                      disabled={isPurchasing || !user}
                       className={`w-full py-2 px-4 rounded-xl font-semibold text-white transition-all duration-300 transform ${
-                        isHovered ? 'scale-105' : 'scale-100'
-                      } bg-gradient-to-r ${pkg.color} hover:${pkg.hoverColor} shadow-lg hover:shadow-xl text-sm`}
+                        isHovered && !isPurchasing ? 'scale-105' : 'scale-100'
+                      } bg-gradient-to-r ${pkg.color} hover:${pkg.hoverColor} shadow-lg hover:shadow-xl text-sm disabled:opacity-50 disabled:cursor-not-allowed`}
                     >
-                      Purchase Package
+                      {isPurchasing ? (
+                        <div className="flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Processing...
+                        </div>
+                      ) : !user ? (
+                        'Login to Purchase'
+                      ) : pkg.package_type === 'enterprise' ? (
+                        'Contact Us'
+                      ) : (
+                        <>
+                          <ShoppingCart className="w-4 h-4 mr-2 inline" />
+                          Purchase Package
+                        </>
+                      )}
                     </button>
                   </div>
                 </div>
