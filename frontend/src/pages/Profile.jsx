@@ -1,83 +1,92 @@
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { User, Mail, Shield, Calendar, Edit3, Save, X, Lock } from 'lucide-react'
-import { useAuth } from '../contexts/AuthContext'
-import { api } from '../services/api'
-import toast from 'react-hot-toast'
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import {
+  User,
+  Mail,
+  Shield,
+  Calendar,
+  Edit3,
+  Save,
+  X,
+  Lock,
+} from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
+import { api } from "../services/api";
+import toast from "react-hot-toast";
 
 export default function Profile() {
-  const { user, updateProfile } = useAuth()
-  const [isEditing, setIsEditing] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [showPasswordForm, setShowPasswordForm] = useState(false)
-  const [passwordLoading, setPasswordLoading] = useState(false)
+  const { user, updateProfile } = useAuth();
+  const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset
+    reset,
   } = useForm({
     defaultValues: {
-      name: user?.name || '',
-      phone: user?.phone || ''
-    }
-  })
+      name: user?.name || "",
+      phone: user?.phone || "",
+    },
+  });
 
   const {
     register: registerPassword,
     handleSubmit: handlePasswordSubmit,
     formState: { errors: passwordErrors },
     reset: resetPassword,
-    watch
-  } = useForm()
+    watch,
+  } = useForm();
 
-  const newPassword = watch('newPassword')
+  const newPassword = watch("newPassword");
 
   const onSubmit = async (data) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      await updateProfile(data)
-      toast.success('Profile updated successfully!')
-      setIsEditing(false)
+      await updateProfile(data);
+      toast.success("Profile updated successfully!");
+      setIsEditing(false);
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Failed to update profile')
+      toast.error(error.response?.data?.detail || "Failed to update profile");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const onPasswordSubmit = async (data) => {
-    setPasswordLoading(true)
+    setPasswordLoading(true);
     try {
-      await api.post('/auth/change-password', {
+      await api.post("/auth/change-password", {
         current_password: data.currentPassword,
-        new_password: data.newPassword
-      })
-      toast.success('Password changed successfully!')
-      setShowPasswordForm(false)
-      resetPassword()
+        new_password: data.newPassword,
+      });
+      toast.success("Password changed successfully!");
+      setShowPasswordForm(false);
+      resetPassword();
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Failed to change password')
+      toast.error(error.response?.data?.detail || "Failed to change password");
     } finally {
-      setPasswordLoading(false)
+      setPasswordLoading(false);
     }
-  }
+  };
 
   const handleCancel = () => {
     reset({
-      name: user?.name || '',
-      phone: user?.phone || ''
-    })
-    setIsEditing(false)
-  }
+      name: user?.name || "",
+      phone: user?.phone || "",
+    });
+    setIsEditing(false);
+  };
 
   if (!user) {
     return (
       <div className="flex items-center justify-center min-h-96">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
       </div>
-    )
+    );
   }
 
   return (
@@ -85,7 +94,9 @@ export default function Profile() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-neutral-900">Profile Settings</h1>
+          <h1 className="text-3xl font-bold text-neutral-900">
+            Profile Settings
+          </h1>
           <p className="mt-2 text-neutral-600">
             Manage your account information and preferences.
           </p>
@@ -106,7 +117,9 @@ export default function Profile() {
         <div className="lg:col-span-2">
           <div className="card">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-neutral-900">Personal Information</h2>
+              <h2 className="text-xl font-semibold text-neutral-900">
+                Personal Information
+              </h2>
               {isEditing && (
                 <div className="flex space-x-2">
                   <button
@@ -142,19 +155,21 @@ export default function Profile() {
                   {isEditing ? (
                     <div>
                       <input
-                        {...register('name', {
-                          required: 'Name is required',
+                        {...register("name", {
+                          required: "Name is required",
                           minLength: {
                             value: 2,
-                            message: 'Name must be at least 2 characters'
-                          }
+                            message: "Name must be at least 2 characters",
+                          },
                         })}
                         type="text"
-                        className={`input ${errors.name ? 'input-error' : ''}`}
+                        className={`input ${errors.name ? "input-error" : ""}`}
                         placeholder="Enter your full name"
                       />
                       {errors.name && (
-                        <p className="mt-1 text-sm text-error-600">{errors.name.message}</p>
+                        <p className="mt-1 text-sm text-error-600">
+                          {errors.name.message}
+                        </p>
                       )}
                     </div>
                   ) : (
@@ -173,7 +188,10 @@ export default function Profile() {
                     <Mail className="h-5 w-5 text-neutral-400 mr-3" />
                     <span className="text-neutral-900">{user.email}</span>
                     {user.is_verified && (
-                      <Shield className="h-4 w-4 text-success-500 ml-2" title="Verified" />
+                      <Shield
+                        className="h-4 w-4 text-success-500 ml-2"
+                        title="Verified"
+                      />
                     )}
                   </div>
                   <p className="mt-1 text-xs text-neutral-500">
@@ -187,24 +205,28 @@ export default function Profile() {
                   </label>
                   {isEditing ? (
                     <input
-                      {...register('phone', {
-                        required: 'Phone number is required',
+                      {...register("phone", {
+                        required: "Phone number is required",
                         pattern: {
                           value: /^[+]?[\d\s\-\(\)]{10,}$/,
-                          message: 'Please enter a valid phone number'
-                        }
+                          message: "Please enter a valid phone number",
+                        },
                       })}
                       type="tel"
-                      className={`input ${errors.phone ? 'input-error' : ''}`}
+                      className={`input ${errors.phone ? "input-error" : ""}`}
                       placeholder="Enter your phone number"
                     />
                   ) : (
                     <div className="flex items-center p-3 bg-neutral-50 rounded-lg">
-                      <span className="text-neutral-900">{user.phone || 'Not provided'}</span>
+                      <span className="text-neutral-900">
+                        {user.phone || "Not provided"}
+                      </span>
                     </div>
                   )}
                   {errors.phone && (
-                    <p className="mt-1 text-sm text-error-600">{errors.phone.message}</p>
+                    <p className="mt-1 text-sm text-error-600">
+                      {errors.phone.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -214,16 +236,20 @@ export default function Profile() {
           {/* Password Change Section */}
           <div className="card mt-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-neutral-900">Security</h2>
+              <h2 className="text-xl font-semibold text-neutral-900">
+                Security
+              </h2>
             </div>
-            
+
             {!showPasswordForm ? (
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium text-neutral-900">Password</p>
-                  <p className="text-sm text-neutral-600">Change your account password</p>
+                  <p className="text-sm text-neutral-600">
+                    Change your account password
+                  </p>
                 </div>
-                <button 
+                <button
                   onClick={() => setShowPasswordForm(true)}
                   className="btn-outline btn-sm"
                 >
@@ -232,17 +258,22 @@ export default function Profile() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={handlePasswordSubmit(onPasswordSubmit)} className="space-y-4">
+              <form
+                onSubmit={handlePasswordSubmit(onPasswordSubmit)}
+                className="space-y-4"
+              >
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-2">
                     Current Password
                   </label>
                   <input
-                    {...registerPassword('currentPassword', {
-                      required: 'Current password is required'
+                    {...registerPassword("currentPassword", {
+                      required: "Current password is required",
                     })}
                     type="password"
-                    className={`input ${passwordErrors.currentPassword ? 'input-error' : ''}`}
+                    className={`input ${
+                      passwordErrors.currentPassword ? "input-error" : ""
+                    }`}
                     placeholder="Enter current password"
                   />
                   {passwordErrors.currentPassword && (
@@ -257,15 +288,17 @@ export default function Profile() {
                     New Password
                   </label>
                   <input
-                    {...registerPassword('newPassword', {
-                      required: 'New password is required',
+                    {...registerPassword("newPassword", {
+                      required: "New password is required",
                       minLength: {
                         value: 8,
-                        message: 'Password must be at least 8 characters'
-                      }
+                        message: "Password must be at least 8 characters",
+                      },
                     })}
                     type="password"
-                    className={`input ${passwordErrors.newPassword ? 'input-error' : ''}`}
+                    className={`input ${
+                      passwordErrors.newPassword ? "input-error" : ""
+                    }`}
                     placeholder="Enter new password"
                   />
                   {passwordErrors.newPassword && (
@@ -280,12 +313,15 @@ export default function Profile() {
                     Confirm New Password
                   </label>
                   <input
-                    {...registerPassword('confirmPassword', {
-                      required: 'Please confirm your password',
-                      validate: value => value === newPassword || 'Passwords do not match'
+                    {...registerPassword("confirmPassword", {
+                      required: "Please confirm your password",
+                      validate: (value) =>
+                        value === newPassword || "Passwords do not match",
                     })}
                     type="password"
-                    className={`input ${passwordErrors.confirmPassword ? 'input-error' : ''}`}
+                    className={`input ${
+                      passwordErrors.confirmPassword ? "input-error" : ""
+                    }`}
                     placeholder="Confirm new password"
                   />
                   {passwordErrors.confirmPassword && (
@@ -299,8 +335,8 @@ export default function Profile() {
                   <button
                     type="button"
                     onClick={() => {
-                      setShowPasswordForm(false)
-                      resetPassword()
+                      setShowPasswordForm(false);
+                      resetPassword();
                     }}
                     className="btn-outline"
                     disabled={passwordLoading}
@@ -318,7 +354,7 @@ export default function Profile() {
                         Updating...
                       </div>
                     ) : (
-                      'Update Password'
+                      "Update Password"
                     )}
                   </button>
                 </div>
@@ -330,20 +366,26 @@ export default function Profile() {
         {/* Account Stats */}
         <div className="space-y-6">
           <div className="card">
-            <h3 className="text-lg font-semibold text-neutral-900 mb-4">Account Statistics</h3>
+            <h3 className="text-lg font-semibold text-neutral-900 mb-4">
+              Account Statistics
+            </h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-neutral-600">Reports Generated</span>
-                <span className="font-semibold text-neutral-900">{user.reports_generated}</span>
+                <span className="font-semibold text-neutral-900">
+                  {user.reports_generated}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-neutral-600">Account Status</span>
-                <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                  user.is_verified 
-                    ? 'bg-success-100 text-success-800'
-                    : 'bg-warning-100 text-warning-800'
-                }`}>
-                  {user.is_verified ? 'Verified' : 'Pending'}
+                <span
+                  className={`px-2 py-1 text-xs font-medium rounded-full ${
+                    user.is_verified
+                      ? "bg-success-100 text-success-800"
+                      : "bg-warning-100 text-warning-800"
+                  }`}
+                >
+                  {user.is_verified ? "Verified" : "Pending"}
                 </span>
               </div>
               <div className="flex items-center justify-between">
@@ -365,5 +407,5 @@ export default function Profile() {
         </div>
       </div>
     </div>
-  )
+  );
 }

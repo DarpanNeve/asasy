@@ -1,22 +1,21 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { QueryClient, QueryClientProvider } from 'react-query'
-import { Toaster } from 'react-hot-toast'
-import { AuthProvider } from './contexts/AuthContext'
-import { AppProvider } from './contexts/AppContext'
-import ProtectedRoute from './components/ProtectedRoute'
-import ErrorBoundary from './components/ErrorBoundary'
-import Layout from './components/Layout'
-import Login from './pages/Login'
-import Signup from './pages/Signup'
-import ProfileCompletion from './pages/ProfileCompletion'
-import Profile from './pages/Profile'
-import Subscription from './pages/Subscription'
-import Reports from './pages/Reports'
-import Pricing from './pages/Pricing'
-import Home from './pages/Home'
-import RTTP from './pages/RTTP'
-import Admin from './pages/Admin'
-import './index.css'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { Toaster } from "react-hot-toast";
+import { AuthProvider } from "./contexts/AuthContext";
+import { AppProvider } from "./contexts/AppContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import ErrorBoundary from "./components/ErrorBoundary";
+import Layout from "./components/Layout";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import ProfileCompletion from "./pages/ProfileCompletion";
+import Profile from "./pages/Profile";
+import Reports from "./pages/Reports";
+import Pricing from "./pages/Pricing";
+import Home from "./pages/Home";
+import RTTP from "./pages/RTTP";
+import Admin from "./pages/Admin";
+import "./index.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,7 +25,7 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
     },
   },
-})
+});
 
 function App() {
   return (
@@ -41,47 +40,62 @@ function App() {
                   <Route path="/" element={<Home />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
-                  <Route path="/profile-completion" element={<ProfileCompletion />} />
+                  <Route
+                    path="/profile-completion"
+                    element={<ProfileCompletion />}
+                  />
                   <Route path="/rttp" element={<RTTP />} />
                   <Route path="/pricing" element={<Pricing />} />
                   <Route path="/admin" element={<Admin />} />
-                  
+
                   {/* Protected routes */}
-                
-                  <Route path="/profile" element={
-                    <ProtectedRoute>
-                      <Layout>
-                        <Profile />
-                      </Layout>
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/subscription" element={
-                    <ProtectedRoute>
-                      <Layout>
-                        <Subscription />
-                      </Layout>
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/reports" element={
-                    <ProtectedRoute>
-                      <Layout>
-                        <Reports />
-                      </Layout>
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/Pricing" element={
-                    <ProtectedRoute>
-                      <Layout>
-                        <Pricing />
-                      </Layout>
-                    </ProtectedRoute>
-                  } />
+
+                  <Route
+                    path="/profile"
+                    element={
+                      <ProtectedRoute>
+                        <Layout>
+                          <Profile />
+                        </Layout>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/subscription"
+                    element={
+                      <ProtectedRoute>
+                        <Layout>
+                          <Pricing />
+                        </Layout>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/reports"
+                    element={
+                      <ProtectedRoute>
+                        <Layout>
+                          <Reports />
+                        </Layout>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/Pricing"
+                    element={
+                      <ProtectedRoute>
+                        <Layout>
+                          <Pricing />
+                        </Layout>
+                      </ProtectedRoute>
+                    }
+                  />
                 </Routes>
-                
+
                 <Toaster
                   position="top-right"
                   toastOptions={{
-                    className: 'bg-white shadow-lg border',
+                    className: "bg-white shadow-lg border",
                     duration: 4000,
                   }}
                 />
@@ -91,7 +105,7 @@ function App() {
         </AuthProvider>
       </QueryClientProvider>
     </ErrorBoundary>
-  )
+  );
 }
 
-export default App
+export default App;
