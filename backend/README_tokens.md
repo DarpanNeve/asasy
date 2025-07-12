@@ -31,13 +31,13 @@ This provides an interactive menu to:
 3. Update existing packages
 4. Delete packages
 
-## Advanced Setup
+## Manual Setup (Advanced)
 
-For more control over the setup process:
+For more control over the setup process with prompts:
 
 ```bash
 cd backend
-python add_token_packages.py
+python add_default_token_packages.py
 ```
 
 This script:
@@ -45,6 +45,12 @@ This script:
 - Asks if you want to clear them
 - Adds default packages
 - Provides detailed logging
+
+## Scripts Overview
+
+1. **`quick_add_tokens.py`** - Fast, no-prompt addition of default packages
+2. **`add_default_token_packages.py`** - Interactive addition with user prompts
+3. **`manage_tokens.py`** - Full CRUD management interface
 
 ## Environment Setup
 
@@ -93,7 +99,8 @@ async def check():
     await init_database()
     packages = await TokenPackage.find_all().to_list()
     for pkg in packages:
-        print(f'{pkg.name}: {pkg.tokens:,} tokens for ₹{pkg.price_rupees:,.2f}')
+        pricing = pkg.get_pricing_details()
+        print(f'{pkg.name}: {pkg.tokens:,} tokens for ${pricing[\"total_price\"]:.2f}')
 
 asyncio.run(check())
 "
