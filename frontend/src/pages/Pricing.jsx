@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Zap, Crown, Rocket, FileText, ChevronDown, ChevronUp, Diamond, ShoppingCart } from 'lucide-react';
+import { Zap, Crown, Rocket, FileText, ChevronDown, ChevronUp, Diamond, ShoppingCart, Mail } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../services/api';
 import toast from 'react-hot-toast';
@@ -24,13 +24,29 @@ const TokenPricingPackages = () => {
   const fetchTokenPackages = async () => {
     try {
       const response = await api.get('/tokens/packages');
-      const packages = response.data.map(pkg => ({
+      let packages = response.data.map(pkg => ({
         ...pkg,
         icon: getIconForPackage(pkg.package_type),
         color: getColorForPackage(pkg.package_type),
         hoverColor: getHoverColorForPackage(pkg.package_type),
         popular: pkg.package_type === 'pro'
       }));
+      
+      // Add Enterprise plan as display-only option
+      packages.push({
+        id: 'enterprise-display',
+        name: 'Enterprise',
+        package_type: 'enterprise',
+        tokens: 100000,
+        price_rupees: 'Custom',
+        description: 'Custom solutions for large organizations',
+        icon: Diamond,
+        color: 'from-orange-500 to-orange-600',
+        hoverColor: 'from-orange-600 to-orange-700',
+        popular: false,
+        isContactOnly: true
+      });
+      
       setTokenPackages(packages);
     } catch (error) {
       console.error('Failed to fetch token packages:', error);
@@ -53,6 +69,7 @@ const TokenPricingPackages = () => {
       case 'pro': return Crown;
       case 'max': return Rocket;
       case 'enterprise': return Diamond;
+      case 'enterprise': return Diamond;
       default: return Zap;
     }
   };
@@ -62,6 +79,7 @@ const TokenPricingPackages = () => {
       case 'starter': return 'from-blue-500 to-blue-600';
       case 'pro': return 'from-purple-500 to-purple-600';
       case 'max': return 'from-emerald-500 to-emerald-600';
+      case 'enterprise': return 'from-orange-500 to-orange-600';
       case 'enterprise': return 'from-orange-500 to-orange-600';
       default: return 'from-blue-500 to-blue-600';
     }
@@ -73,11 +91,18 @@ const TokenPricingPackages = () => {
       case 'pro': return 'from-purple-600 to-purple-700';
       case 'max': return 'from-emerald-600 to-emerald-700';
       case 'enterprise': return 'from-orange-600 to-orange-700';
+      case 'enterprise': return 'from-orange-600 to-orange-700';
       default: return 'from-blue-600 to-blue-700';
     }
   };
 
   const handlePurchase = async (packageData) => {
+    if (packageData.isContactOnly) {
+      // Handle contact us for enterprise
+      window.open('mailto:support@asasy.com?subject=Enterprise Token Package Inquiry&body=Hi, I am interested in enterprise token packages. Please contact me with custom pricing and solutions.', '_blank');
+      return;
+    }
+    
     if (!user) {
       toast.error('Please login to purchase tokens');
       return;
@@ -276,11 +301,12 @@ const TokenPricingPackages = () => {
         </div>
 
         {/* Packages Grid - Updated to show 4 columns */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto mb-20">
           {tokenPackages.map((pkg) => {
             const IconComponent = pkg.icon;
             const isHovered = hoveredPackage === pkg.id;
             const isPurchasing = purchaseLoading === pkg.id;
+            const isEnterprise = pkg.isContactOnly;
             
             return (
               <div
@@ -324,18 +350,18 @@ const TokenPricingPackages = () => {
                     
                     {/* Price */}
                     <div className="text-3xl font-bold text-gray-900 mb-2">
-                      ₹{pkg.price_rupees}
+                      {typeof pkg.price_rupees === 'string' ? pkg.price_rupees : `₹${pkg.price_rupees}`}
                     </div>
                     
                     {/* Tokens */}
                     <div className="text-sm text-gray-600 mb-6">
-                      {pkg.tokens.toLocaleString()} Tokens
+                      {isEnterprise ? 'Custom Tokens' : `${pkg.tokens.toLocaleString()} Tokens`}
                     </div>
 
                     {/* CTA Button */}
                     <button
                       onClick={() => handlePurchase(pkg)}
-                      disabled={isPurchasing || !user}
+                      disabled={isPurchasing || (!user && !isEnterprise)}
                       className={`w-full py-2 px-4 rounded-xl font-semibold text-white transition-all duration-300 transform ${
                         isHovered && !isPurchasing ? 'scale-105' : 'scale-100'
                       } bg-gradient-to-r ${pkg.color} hover:${pkg.hoverColor} shadow-lg hover:shadow-xl text-sm disabled:opacity-50 disabled:cursor-not-allowed`}
@@ -345,6 +371,11 @@ const TokenPricingPackages = () => {
                           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                           Processing...
                         </div>
+                      ) : isEnterprise ? (
+                        <>
+                          <Mail className="w-4 h-4 mr-2 inline" />
+                          Contact Us
+                        </>
                       ) : !user ? (
                         'Login to Purchase'
                       ) : (
@@ -453,8 +484,7 @@ const TokenPricingPackages = () => {
         <div className="text-center mt-12">
           <p className="text-gray-600 max-w-2xl mx-auto">
             Need help choosing the right package? Our tokens are valid for 90 days from purchase. 
-            For enterprise solutions, 
-            <span className="text-blue-600 font-semibold cursor-pointer hover:text-blue-700 ml-1">Contact support</span> for assistance.
+            For enterprise solutions with custom pricing and bulk discounts, please contact our sales team.
           </p>
         </div>
       </div>
