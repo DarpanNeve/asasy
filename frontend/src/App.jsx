@@ -16,6 +16,7 @@ import Home from "./pages/Home";
 import RTTP from "./pages/RTTP";
 import Admin from "./pages/Admin";
 import "./index.css";
+import TokenPricingSection from "./components/TokenPricingSection";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -45,7 +46,18 @@ function App() {
                     element={<ProfileCompletion />}
                   />
                   <Route path="/rttp" element={<RTTP />} />
-                  <Route path="/pricing" element={<Pricing />} />
+                  <Route
+                    path="/pricing"
+                    element={
+                      <div className="min-h-screen">
+                        <TokenPricingSection
+                          compact={false}
+                          showReportTypes={true}
+                          showHeader={true}
+                        />
+                      </div>
+                    }
+                  />
                   <Route path="/admin" element={<Admin />} />
 
                   {/* Protected routes */}
@@ -61,7 +73,7 @@ function App() {
                     }
                   />
                   <Route
-                    path="/pricing"
+                    path="/login-pricing"
                     element={
                       <ProtectedRoute>
                         <Layout>
