@@ -16,6 +16,7 @@ import {
   ExternalLink,
   Maximize2,
   Minimize2,
+  CreditCard,
 } from "lucide-react";
 import { api } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
