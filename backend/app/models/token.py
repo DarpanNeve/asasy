@@ -49,7 +49,7 @@ class TokenPackage(Document):
         
         if is_india:
             base_price = self.price_rupees
-            gst_amount = base_price * 0.18
+            gst_amount = base_price * 0.18  # 18% GST
             total_price = base_price + gst_amount
             
             return {
@@ -62,13 +62,17 @@ class TokenPackage(Document):
                 "is_india": True
             }
         else:
+            base_price = self.price_usd
+            gst_amount = base_price * 0.18  # 18% GST for all countries
+            total_price = base_price + gst_amount
+            
             return {
                 "currency": "USD",
-                "base_price": self.price_usd,
-                "gst_amount": 0,
-                "total_price": self.price_usd,
-                "display_price": f"${self.price_usd:.2f}",
-                "total_display": f"${self.price_usd:.2f}",
+                "base_price": base_price,
+                "gst_amount": gst_amount,
+                "total_price": total_price,
+                "display_price": f"${base_price:.2f}",
+                "total_display": f"${total_price:.2f}",
                 "is_india": False
             }
     

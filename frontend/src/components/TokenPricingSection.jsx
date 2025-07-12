@@ -349,7 +349,7 @@ const TokenPricingSection = ({
         {!compact && (
           <div className="text-center mt-12">
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Need help choosing the right package? Our tokens are valid for 90 days from purchase. 
+              Need help choosing the right package? Our tokens are valid for 90 days from purchase. All prices include 18% GST.
               For enterprise solutions with custom pricing and bulk discounts, please contact our sales team.
             </p>
           </div>

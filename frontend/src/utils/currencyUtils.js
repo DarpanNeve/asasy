@@ -61,11 +61,10 @@ export const getPaymentCurrency = (isIndia) => {
 };
 
 export const calculateGST = (amount, isIndia) => {
-  if (!isIndia) return 0;
-  return amount * 0.18; // 18% GST for India
+  return amount * 0.18; // 18% GST for all countries
 };
 
-export const calculateTotal = (baseAmount, isIndia) => {
-  const gst = calculateGST(baseAmount, isIndia);
+export const calculateTotal = (baseAmount) => {
+  const gst = calculateGST(baseAmount);
   return baseAmount + gst;
 };

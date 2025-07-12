@@ -202,7 +202,7 @@ const CheckoutPage = ({
                     </span>
                   </div>
                   
-                  {isIndia && gstAmount > 0 && (
+                  {gstAmount > 0 && (
                     <div className="flex justify-between items-center py-2">
                       <span className="text-gray-600">GST (18%)</span>
                       <span className="font-medium">
@@ -245,8 +245,8 @@ const CheckoutPage = ({
                   </h5>
                   <ul className="text-xs text-blue-700 space-y-1">
                     <li>• Tokens are valid for 90 days from purchase date</li>
-                    {isIndia && <li>• GST invoice will be provided for Indian customers</li>}
-                    {!isIndia && <li>• Invoice will be provided in USD</li>}
+                    <li>• GST invoice will be provided (18% GST included)</li>
+                    <li>• Invoice will be provided in {currency}</li>
                     <li>• Refunds are subject to our terms and conditions</li>
                     <li>• Tokens are non-transferable between accounts</li>
                   </ul>

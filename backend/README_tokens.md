@@ -12,9 +12,9 @@ python quick_add_tokens.py
 ```
 
 This will add:
-- **Starter Pack**: 8,000 tokens for ₹2,500
-- **Pro Pack**: 24,000 tokens for ₹7,500 (Most Popular)
-- **Max Pack**: 29,000 tokens for ₹9,000
+- **Starter Pack**: 8,000 tokens for $30 (+ 18% GST)
+- **Pro Pack**: 24,000 tokens for $90 (+ 18% GST) (Most Popular)
+- **Max Pack**: 29,000 tokens for $108 (+ 18% GST)
 
 ## Interactive Management
 
