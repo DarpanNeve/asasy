@@ -177,7 +177,7 @@ async def verify_email_otp(request: Request, verification: EmailVerification):
         user.updated_at = datetime.utcnow()
 
         await user.save()
-
+        await user.get_token_balance()
         # Send welcome email
         try:
             await send_welcome_email(user.email, user.name)
