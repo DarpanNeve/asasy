@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { Eye, EyeOff, Mail, Lock, User, BarChart3, Phone } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, BarChart3, Phone, Loader2 } from "lucide-react"; // Added Loader2 for consistency
 import { useAuth } from "../contexts/AuthContext";
 import toast from "react-hot-toast";
 
@@ -41,7 +41,7 @@ export default function Signup() {
             callback: handleGoogleResponse,
             use_fedcm_for_prompt: false, // Disable FedCM
           });
-          
+
           // Also initialize OAuth2 for popup method
           window.gapi?.load('auth2', () => {
             window.gapi.auth2.init({
@@ -65,7 +65,7 @@ export default function Signup() {
         gsiScript.onload = initializeGoogleSignIn;
         document.head.appendChild(gsiScript);
       }
-      
+
       // Load Google API Platform Library (for popup method)
       if (!document.querySelector('script[src*="apis.google.com/js/platform.js"]')) {
         const gapiScript = document.createElement('script');
@@ -87,20 +87,20 @@ export default function Signup() {
     setGoogleLoading(true);
     try {
       const result = await googleLogin(response.credential);
-      
+
       // Check if profile completion is needed
       if (result.profile_incomplete) {
         toast.error("Please complete your profile");
-        navigate("/profile-completion", { 
-          state: { 
-            user: result.user 
+        navigate("/profile-completion", {
+          state: {
+            user: result.user
           },
-          replace: true 
+          replace: true
         });
         return;
       }
-      
-      toast.success("Welcome to Asasy!");
+
+      toast.success("Welcome to Assesme!");
       navigate("/dashboard");
     } catch (error) {
       console.error("Google login error:", error);
@@ -112,7 +112,7 @@ export default function Signup() {
 
   const handleGoogleLogin = () => {
     setGoogleLoading(true);
-    
+
     try {
       // Try popup method first (more reliable than FedCM)
       if (window.gapi && window.gapi.auth2) {
@@ -129,7 +129,7 @@ export default function Signup() {
           return;
         }
       }
-      
+
       // Fallback to GSI prompt
       if (window.google && window.google.accounts) {
         try {
@@ -196,13 +196,18 @@ export default function Signup() {
 
   if (showOtpForm) {
     return (
-      <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
+      <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-400 to-purple-600"> {/* Added gradient background */}
+        <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-xl"> {/* Added bg, padding, rounded, shadow */}
           <div>
-            <div className="flex items-center justify-center gap-x-2 mb-8">
-              <BarChart3 className="h-8 w-8 text-primary-600" />
-              <span className="text-2xl font-bold text-gradient">Asasy</span>
-            </div>
+            <Link to="/" className="flex items-center justify-center group mb-8"> {/* Centered logo */}
+              <div className="relative flex items-center h-16">
+                <img
+                  src="/logoas.png"
+                  alt="Logo"
+                  className="h-18 w-auto object-contain"
+                />
+              </div>
+            </Link>
             <h2 className="text-center text-3xl font-bold tracking-tight text-neutral-900">
               Verify your email
             </h2>
@@ -232,8 +237,8 @@ export default function Signup() {
                   })}
                   type="text"
                   maxLength={6}
-                  className={`input text-center text-lg tracking-wider ${
-                    otpErrors.otp ? "input-error" : ""
+                  className={`block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm text-center text-lg tracking-wider ${ // Added full styling
+                    otpErrors.otp ? "border-error-600" : ""
                   }`}
                   placeholder="000000"
                 />
@@ -249,11 +254,11 @@ export default function Signup() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full btn-primary"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" // Added full styling
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center">
-                    <div className="spinner mr-2" />
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" /> {/* Used Loader2 */}
                     Verifying...
                   </div>
                 ) : (
@@ -266,7 +271,7 @@ export default function Signup() {
               <button
                 type="button"
                 onClick={() => setShowOtpForm(false)}
-                className="text-sm text-primary-600 hover:text-primary-500"
+                className="text-sm text-primary-600 hover:text-primary-500 transition-colors"
               >
                 Back to signup
               </button>
@@ -278,18 +283,33 @@ export default function Signup() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex flex-col md:flex-row bg-white"> {/* Changed to flex-col md:flex-row for responsiveness */}
       {/* Left side - Hero */}
-    
+      <div className="hidden md:flex flex-1 items-center justify-center bg-gradient-to-br from-blue-400 to-purple-600 p-8">
+        <div className="text-center text-white">
+          <h2 className="text-4xl font-extrabold mb-4 drop-shadow-lg">
+            Start Your Innovation Journey Today
+          </h2>
+          <p className="text-lg opacity-90 max-w-md mx-auto">
+            Sign up to get AI-powered technology assessment reports and connect with industry experts.
+          </p>
+          <BarChart3 className="w-32 h-32 mx-auto mt-8 opacity-75" />
+        </div>
+      </div>
 
       {/* Right side - Form */}
       <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24">
         <div className="mx-auto w-full max-w-sm lg:w-96">
           <div>
-            <div className="flex items-center gap-x-2 mb-8 lg:hidden">
-              <BarChart3 className="h-8 w-8 text-primary-600" />
-              <span className="text-2xl font-bold text-gradient">Asasy</span>
-            </div>
+            <Link to="/" className="flex items-center group">
+              <div className="relative flex items-center h-16">
+                <img
+                  src="/logoas.png"
+                  alt="Logo"
+                  className="mr-7 mb-4 h-18 w-auto object-contain"
+                />
+              </div>
+            </Link>
             <h2 className="text-3xl font-bold tracking-tight text-neutral-900">
               Create your account
             </h2>
@@ -310,11 +330,11 @@ export default function Signup() {
                 type="button"
                 onClick={handleGoogleLogin}
                 disabled={googleLoading}
-                className="w-full btn-outline disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" // Full styling
               >
                 {googleLoading ? (
                   <div className="flex items-center justify-center">
-                    <div className="spinner mr-2" />
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" /> {/* Used Loader2 */}
                     Connecting...
                   </div>
                 ) : (
@@ -362,7 +382,7 @@ export default function Signup() {
                 >
                   Full name *
                 </label>
-                <div className="mt-1 relative">
+                <div className="mt-1 relative rounded-md shadow-sm"> {/* Added styling */}
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <User className="h-5 w-5 text-neutral-400" />
                   </div>
@@ -376,8 +396,8 @@ export default function Signup() {
                     })}
                     type="text"
                     autoComplete="name"
-                    className={`pl-10 input ${
-                      errors.name ? "input-error" : ""
+                    className={`block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${ // Added full styling
+                      errors.name ? "border-error-600" : ""
                     }`}
                     placeholder="Enter your full name"
                   />
@@ -396,7 +416,7 @@ export default function Signup() {
                 >
                   Email address *
                 </label>
-                <div className="mt-1 relative">
+                <div className="mt-1 relative rounded-md shadow-sm"> {/* Added styling */}
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Mail className="h-5 w-5 text-neutral-400" />
                   </div>
@@ -410,8 +430,8 @@ export default function Signup() {
                     })}
                     type="email"
                     autoComplete="email"
-                    className={`pl-10 input ${
-                      errors.email ? "input-error" : ""
+                    className={`block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${ // Added full styling
+                      errors.email ? "border-error-600" : ""
                     }`}
                     placeholder="Enter your email"
                   />
@@ -430,7 +450,7 @@ export default function Signup() {
                 >
                   Phone number *
                 </label>
-                <div className="mt-1 relative">
+                <div className="mt-1 relative rounded-md shadow-sm"> {/* Added styling */}
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Phone className="h-5 w-5 text-neutral-400" />
                   </div>
@@ -444,8 +464,8 @@ export default function Signup() {
                     })}
                     type="tel"
                     autoComplete="tel"
-                    className={`pl-10 input ${
-                      errors.phone ? "input-error" : ""
+                    className={`block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${ // Added full styling
+                      errors.phone ? "border-error-600" : ""
                     }`}
                     placeholder="Enter your phone number"
                   />
@@ -464,7 +484,7 @@ export default function Signup() {
                 >
                   Password *
                 </label>
-                <div className="mt-1 relative">
+                <div className="mt-1 relative rounded-md shadow-sm"> {/* Added styling */}
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Lock className="h-5 w-5 text-neutral-400" />
                   </div>
@@ -483,8 +503,8 @@ export default function Signup() {
                     })}
                     type={showPassword ? "text" : "password"}
                     autoComplete="new-password"
-                    className={`pl-10 pr-10 input ${
-                      errors.password ? "input-error" : ""
+                    className={`block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${ // Added full styling
+                      errors.password ? "border-error-600" : ""
                     }`}
                     placeholder="Create a password"
                   />
@@ -514,7 +534,7 @@ export default function Signup() {
                 >
                   Confirm password *
                 </label>
-                <div className="mt-1 relative">
+                <div className="mt-1 relative rounded-md shadow-sm"> {/* Added styling */}
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Lock className="h-5 w-5 text-neutral-400" />
                   </div>
@@ -526,8 +546,8 @@ export default function Signup() {
                     })}
                     type={showConfirmPassword ? "text" : "password"}
                     autoComplete="new-password"
-                    className={`pl-10 pr-10 input ${
-                      errors.confirmPassword ? "input-error" : ""
+                    className={`block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${ // Added full styling
+                      errors.confirmPassword ? "border-error-600" : ""
                     }`}
                     placeholder="Confirm your password"
                   />
@@ -591,11 +611,11 @@ export default function Signup() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full btn-primary"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" // Full styling
                 >
                   {isLoading ? (
                     <div className="flex items-center justify-center">
-                      <div className="spinner mr-2" />
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" /> {/* Used Loader2 */}
                       Creating account...
                     </div>
                   ) : (

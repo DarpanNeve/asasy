@@ -197,15 +197,21 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex flex-col md:flex-row bg-white">
       {/* Left side - Form */}
       <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24">
         <div className="mx-auto w-full max-w-sm lg:w-96">
           <div>
-            <div className="flex items-center gap-x-2 mb-8">
-              <BarChart3 className="h-8 w-8 text-primary-600" />
-              <span className="text-2xl font-bold text-gradient">Asasy</span>
-            </div>
+            <Link to="/" className="flex items-center group">
+              <div className="relative flex items-center h-16">
+                <img
+                  src="/logoas.png"
+                  alt="Logo"
+                  className="mr-7 mb-4 h-18 w-auto object-contain"
+                />
+              </div>
+            </Link>
+
             <h2
               className="text-3xl font-bold tracking-tight"
               style={{ color: "#000" }}
@@ -232,7 +238,7 @@ export default function Login() {
                 >
                   Email address
                 </label>
-                <div className="mt-1 relative">
+                <div className="mt-1 relative rounded-md shadow-sm">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Mail className="h-5 w-5 text-neutral-400" />
                   </div>
@@ -246,8 +252,8 @@ export default function Login() {
                     })}
                     type="email"
                     autoComplete="email"
-                    className={`pl-10 input ${
-                      errors.email ? "input-error" : ""
+                    className={`block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${
+                      errors.email ? "border-error-600" : ""
                     }`}
                     placeholder="Enter your email"
                   />
@@ -266,7 +272,7 @@ export default function Login() {
                 >
                   Password
                 </label>
-                <div className="mt-1 relative">
+                <div className="mt-1 relative rounded-md shadow-sm">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Lock className="h-5 w-5 text-neutral-400" />
                   </div>
@@ -280,8 +286,8 @@ export default function Login() {
                     })}
                     type={showPassword ? "text" : "password"}
                     autoComplete="current-password"
-                    className={`pl-10 pr-10 input ${
-                      errors.password ? "input-error" : ""
+                    className={`block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${
+                      errors.password ? "border-error-600" : ""
                     }`}
                     placeholder="Enter your password"
                   />
@@ -334,7 +340,7 @@ export default function Login() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? (
                     <div className="flex items-center justify-center">
@@ -363,7 +369,7 @@ export default function Login() {
                   type="button"
                   onClick={handleGoogleLogin}
                   disabled={googleLoading}
-                  className="w-full btn-outline disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {googleLoading ? (
                     <div className="flex items-center justify-center">
@@ -400,7 +406,18 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Right side - Hero */}
+      {/* Right side - Hero with background */}
+      <div className="hidden md:flex flex-1 items-center justify-center bg-gradient-to-br from-blue-400 to-purple-600 p-8">
+        <div className="text-center text-white">
+          <h2 className="text-4xl font-extrabold mb-4 drop-shadow-lg">
+            Unlock Your Technology's Potential
+          </h2>
+          <p className="text-lg opacity-90 max-w-md mx-auto">
+            Get AI-powered insights and connect with experts to accelerate your innovation journey.
+          </p>
+          <BarChart3 className="w-32 h-32 mx-auto mt-8 opacity-75" />
+        </div>
+      </div>
     </div>
   );
 }

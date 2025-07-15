@@ -734,7 +734,7 @@ export default function Home() {
       </section>
 
       {/* Logo Carousel */}
-      <section className="py-0 bg-gradient-to-b from-white to-slate-50 relative overflow-hidden">
+      <section className="py-0 pb-20 bg-gradient-to-b from-white to-slate-50 relative overflow-hidden">
         {/* Subtle Background Pattern */}
         <div className="absolute inset-0 opacity-[0.02]">
           <div
@@ -919,27 +919,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Stats Section */}
-          <motion.div
-            className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-          >
-            {[
-              { number: "10,000+", label: "Active Innovators", icon: "👥" },
-              { number: "50+", label: "Fortune 500 Companies", icon: "🏢" },
-              { number: "25+", label: "Countries Worldwide", icon: "🌍" },
-            ].map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-2xl mb-2">{stat.icon}</div>
-                <div className="text-2xl md:text-3xl font-bold text-slate-800 mb-1">
-                  {stat.number}
-                </div>
-                <div className="text-sm text-slate-600">{stat.label}</div>
-              </div>
-            ))}
-          </motion.div>
+        
         </div>
       </section>
 
@@ -1042,20 +1022,26 @@ export default function Home() {
 
 
 
-      {/* RTTP Section */}
-      <section className="py-20 bg-gradient-to-r from-primary-600 to-secondary-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+         {/* RTTP Section */}
+      <section className="py-20 bg-gradient-to-br from-blue-700 to-indigo-800 relative overflow-hidden">
+        {/* Background decorative elements */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(168,85,247,0.1)_0%,transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(59,130,246,0.1)_0%,transparent_50%)]" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <motion.div
-            className="max-w-3xl mx-auto"
+            className="max-w-3xl mx-auto bg-white/10 backdrop-blur-sm rounded-3xl p-8 md:p-12 shadow-2xl border border-white/20"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
           >
-            <BookOpen className="h-16 w-16 text-white mx-auto mb-6" />
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm mb-6 shadow-lg">
+              <BookOpen className="h-10 w-10 text-white" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">
               Work with RTTP Experts
             </h2>
-            <p className="text-xl text-primary-100 mb-8">
+            <p className="text-xl text-blue-100 mb-10 leading-relaxed">
               Access Registered Technology Transfer Professionals (RTTPs) –
               experts in IP licensing, tech transfer, and commercialisation. Get
               expert guidance to maximize your innovation's potential.
@@ -1063,16 +1049,18 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 to="/rttp"
-                className="btn bg-white text-primary-600 hover:bg-neutral-50 text-lg px-8 py-3 shadow-lg hover:shadow-xl transition-shadow"
+                className="inline-flex items-center justify-center px-8 py-4 bg-white text-blue-700 font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
               >
                 Learn About RTTP
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <ArrowRight className="ml-3 h-5 w-5" />
               </Link>
-            
+              {/* Secondary button for RTTPs to join */}
+              
             </div>
           </motion.div>
         </div>
       </section>
+
 
       {/* Testimonials Section */}
       <section className="py-20 bg-white">
