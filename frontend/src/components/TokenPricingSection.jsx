@@ -11,6 +11,8 @@ import {
   ChevronDown,
   ChevronUp,
   Link,
+  Check,
+  X,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { api } from "../services/api";
@@ -33,6 +35,7 @@ const TokenPricingSection = ({
   const [purchaseLoading, setPurchaseLoading] = useState(null);
   const [showCheckout, setShowCheckout] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null);
+  const [showComparisonChart, setShowComparisonChart] = useState(false);
   const { user } = useAuth();
 
   // Fetch token packages and user balance on component mount
@@ -169,13 +172,21 @@ const TokenPricingSection = ({
       tokens: "2,500",
       description: "Essential analysis and insights",
       features: [
-        "Executive Summary",
-        "Problem/Opportunity Statement",
-        "Technology Overview",
-        "Key Benefits",
-        "Applications",
-        "IP Snapshot",
-        "Next Steps",
+         "Executive Summary (1–2 line value proposition)",
+      "Problem/Opportunity Statement",
+      "Technology Overview (core idea, brief features)",
+      "Key Benefits (USP)",
+      "Applications (primary markets/use cases)",
+      "IP Snapshot (status & country)",
+      "Next Steps (e.g., pilot studies, further R&D)",
+      "Expanded Executive Summary (go/no-go recommendation)",
+      "Problem & Solution Fit (with background justification)",
+      "Technical Feasibility (prototype status, TRL stage)",
+      "IP Summary (landscape & freedom-to-operate overview)",
+      "Market Signals (interest letters, pilot test data)",
+      "Early Competitors (known tech or patent citations)",
+      "Regulatory/Compliance Overview",
+      "Risk Summary and Key Questions"
       ],
       color: "bg-blue-50 border-blue-200",
     },
@@ -185,20 +196,30 @@ const TokenPricingSection = ({
       tokens: "7,500",
       description: "Comprehensive analysis with detailed insights",
       features: [
-        "Executive Summary",
-        "Problem/Opportunity Statement",
-        "Technology Overview",
-        "Key Benefits",
-        "Applications",
-        "IP Snapshot",
-        "Next Steps",
-        "Expanded Executive Summary",
-        "Technical Feasibility Analysis",
-        "Market Signals & Competition",
-        "Regulatory Overview",
-        "Risk Assessment",
-        "Business Case Development",
-        "Go-to-Market Strategy",
+        "Executive Summary (1–2 line value proposition)",
+      "Problem/Opportunity Statement",
+      "Technology Overview (core idea, brief features)",
+      "Key Benefits (USP)",
+      "Applications (primary markets/use cases)",
+      "IP Snapshot (status & country)",
+      "Next Steps (e.g., pilot studies, further R&D)",
+      "Expanded Executive Summary (go/no-go recommendation)",
+      "Problem & Solution Fit (with background justification)",
+      "Technical Feasibility (prototype status, TRL stage)",
+      "IP Summary (landscape & freedom-to-operate overview)",
+      "Market Signals (interest letters, pilot test data)",
+      "Early Competitors (known tech or patent citations)",
+      "Regulatory/Compliance Overview",
+      "Risk Summary and Key Questions",
+      "Detailed Business Case (narrative for VCs)",
+      "Technology Description (core claims, development stage, TRL framework)",
+      "Market & Competition (segmentation, SWOT analysis, barriers to entry)",
+      "TRL & Technical Challenges (scale-up readiness)",
+      "Detailed IP & Legal Status (global patent families, claims, FTO risks)",
+      "Regulatory Pathways (e.g., CE, FDA, BIS, AIS)",
+      "Commercialization Options (spin-off, licensing, JVs)",
+      "Preliminary Financial Estimates (cost vs ROI model)",
+      "Summary & Go-to-Market Plan"
       ],
       color: "bg-purple-50 border-purple-200",
     },
@@ -208,30 +229,124 @@ const TokenPricingSection = ({
       tokens: "9,000",
       description: "Premium analysis with AI-driven insights",
       features: [
-        "Executive Summary",
-        "Problem/Opportunity Statement",
-        "Technology Overview",
-        "Key Benefits",
-        "Applications",
-        "IP Snapshot",
-        "Next Steps",
-        "Expanded Executive Summary",
-        "Technical Feasibility Analysis",
-        "Market Signals & Competition",
-        "Regulatory Overview",
-        "Risk Assessment",
-        "Business Case Development",
-        "Go-to-Market Strategy",
-        "In-depth IP Claims Analysis",
-        "Global Freedom-to-Operate Report",
-        "Detailed Market Analysis",
-        "5-Year Financial Projections",
-        "Funding Strategy",
-        "Licensing & Exit Strategy",
-        "Implementation Roadmap",
-        "Professional Appendices",
+       "Executive Summary (1–2 line value proposition)",
+      "Problem/Opportunity Statement",
+      "Technology Overview (core idea, brief features)",
+      "Key Benefits (USP)",
+      "Applications (primary markets/use cases)",
+      "IP Snapshot (status & country)",
+      "Next Steps (e.g., pilot studies, further R&D)",
+      "Expanded Executive Summary (go/no-go recommendation)",
+      "Problem & Solution Fit (with background justification)",
+      "Technical Feasibility (prototype status, TRL stage)",
+      "IP Summary (landscape & freedom-to-operate overview)",
+      "Market Signals (interest letters, pilot test data)",
+      "Early Competitors (known tech or patent citations)",
+      "Regulatory/Compliance Overview",
+      "Risk Summary and Key Questions",
+      "Detailed Business Case (narrative for VCs)",
+      "Technology Description (core claims, development stage, TRL framework)",
+      "Market & Competition (segmentation, SWOT analysis, barriers to entry)",
+      "TRL & Technical Challenges (scale-up readiness)",
+      "Detailed IP & Legal Status (global patent families, claims, FTO risks)",
+      "Regulatory Pathways (e.g., CE, FDA, BIS, AIS)",
+      "Commercialisation Options (spin-off, licensing, JVs)",
+      "Preliminary Financial Estimates (cost vs ROI model)",
+      "Summary & Go-to-Market Plan",
+      "In-depth IP Claims Analysis (protection scope, robustness)",
+      "Global Freedom-to-Operate Report (US, EU, India, China)",
+      "Market Analysis (size, trends, addressable market, adoption barriers)",
+      "Business Models (licensing, SaaS, product, hybrid)",
+      "5-Year ROI & Revenue Projections (unit cost, pricing, TAM/SAM/SOM)",
+      "Funding Strategy (grants, accelerators, VC, PE, SBIR)",
+      "Licensing & Exit Strategy (terms, IP deal structures)",
+      "Team & Strategic Partners Required (talent, advisors)",
+      "Implementation Roadmap (milestones, MVP, pilot scaling)",
+      "Appendices (patent tables, market research data, technical drawings)"
       ],
       color: "bg-emerald-50 border-emerald-200",
+    },
+  ];
+
+  // Comparison chart data
+  const comparisonFeatures = [
+    { 
+      feature: "Executive Summary", 
+      basic: { included: true, note: "(Expanded)" }, 
+      advanced: { included: true, note: "(Detailed VC-ready)" }, 
+      comprehensive: { included: true, note: "(Investor-grade)" } 
+    },
+    { 
+      feature: "Problem Statement", 
+      basic: { included: true, note: "(In-depth)" }, 
+      advanced: { included: true, note: "" }, 
+      comprehensive: { included: true, note: "" } 
+    },
+    { 
+      feature: "Technical Overview", 
+      basic: { included: true, note: "" }, 
+      advanced: { included: true, note: "" }, 
+      comprehensive: { included: true, note: "" } 
+    },
+    { 
+      feature: "TRL Analysis", 
+      basic: { included: true, note: "(Initial)" }, 
+      advanced: { included: true, note: "(With data)" }, 
+      comprehensive: { included: true, note: "(Detailed roadmap)" } 
+    },
+    { 
+      feature: "IP Snapshot", 
+      basic: { included: true, note: "" }, 
+      advanced: { included: true, note: "" }, 
+      comprehensive: { included: true, note: "(Full claim analysis)" } 
+    },
+    { 
+      feature: "Market Signals", 
+      basic: { included: true, note: "" }, 
+      advanced: { included: true, note: "(Segmentation)" }, 
+      comprehensive: { included: true, note: "(Global trends + forecasts)" } 
+    },
+    { 
+      feature: "Competitor Analysis", 
+      basic: { included: true, note: "" }, 
+      advanced: { included: true, note: "(SWOT, landscape)" }, 
+      comprehensive: { included: true, note: "(With market share data)" } 
+    },
+    { 
+      feature: "Commercialization Paths", 
+      basic: { included: false, note: "" }, 
+      advanced: { included: true, note: "" }, 
+      comprehensive: { included: true, note: "(With financial modeling)" } 
+    },
+    { 
+      feature: "ROI Forecast", 
+      basic: { included: false, note: "" }, 
+      advanced: { included: true, note: "(Preliminary)" }, 
+      comprehensive: { included: true, note: "(5-year plan + funding)" } 
+    },
+    { 
+      feature: "Legal & Regulatory", 
+      basic: { included: true, note: "(Basic)" }, 
+      advanced: { included: true, note: "" }, 
+      comprehensive: { included: true, note: "(By jurisdiction)" } 
+    },
+    { 
+      feature: "PDF Output", 
+      basic: { included: true, note: "" }, 
+      advanced: { included: true, note: "" }, 
+      comprehensive: { included: true, note: "" } 
+    },
+    { 
+      feature: "AI Auto-Generated", 
+      basic: { included: true, note: "" }, 
+      advanced: { included: true, note: "" }, 
+      comprehensive: { included: true, note: "" } 
+    },
+    { 
+      feature: "Use Cases", 
+      basic: { included: true, note: "Institutional Feasibility" }, 
+      advanced: { included: true, note: "Incubators, Angel/Seed" }, 
+      comprehensive: { included: true, note: "VC Decks, Govt Grants" } 
     },
   ];
 
@@ -319,120 +434,241 @@ const TokenPricingSection = ({
                 <h2 className="text-4xl font-bold text-gray-900 mb-4">
                   Report Requirements
                 </h2>
-                <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
                   Different report types require different amounts of tokens.
-                  Click to see what each report includes.
+                  Compare features or view detailed breakdown.
                 </p>
+                
+                {/* Toggle Buttons */}
+                <div className="flex justify-center gap-4 mb-8">
+                  <button
+                    onClick={() => setShowComparisonChart(false)}
+                    className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                      !showComparisonChart
+                        ? "bg-blue-600 text-white shadow-lg"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  >
+                    <FileText className="w-5 h-5 inline mr-2" />
+                    Detailed View
+                  </button>
+                  <button
+                    onClick={() => setShowComparisonChart(true)}
+                    className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                      showComparisonChart
+                        ? "bg-blue-600 text-white shadow-lg"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  >
+                    <BarChart3 className="w-5 h-5 inline mr-2" />
+                    Compare Features
+                  </button>
+                </div>
               </div>
 
-              {/* Report Types Table */}
-              <div className="max-w-4xl mx-auto">
-                <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="bg-gray-50 border-b border-gray-200">
-                          <th className="text-left py-4 px-6 text-gray-900 font-semibold">
-                            Report Type
-                          </th>
-                          <th className="text-center py-4 px-6 text-gray-900 font-semibold">
-                            Tokens Required
-                          </th>
-                          <th className="text-center py-4 px-6 text-gray-900 font-semibold">
-                            Details
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {reportTypes.map((report, index) => (
-                          <React.Fragment key={report.id}>
+              {/* Comparison Chart */}
+              {showComparisonChart ? (
+                <div className="max-w-6xl mx-auto mb-12">
+                  <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+                            <th className="text-left py-6 px-6 text-gray-900 font-bold text-lg min-w-[200px]">
+                              Feature
+                            </th>
+                            <th className="text-center py-6 px-6 text-blue-600 font-bold text-lg min-w-[160px]">
+                              <div className="flex flex-col items-center">
+                                <span>Basic</span>
+                                <span className="text-sm font-normal text-gray-600 mt-1">2,500 tokens</span>
+                              </div>
+                            </th>
+                            <th className="text-center py-6 px-6 text-purple-600 font-bold text-lg min-w-[160px]">
+                              <div className="flex flex-col items-center">
+                                <span>Advanced</span>
+                                <span className="text-sm font-normal text-gray-600 mt-1">7,500 tokens</span>
+                              </div>
+                            </th>
+                            <th className="text-center py-6 px-6 text-emerald-600 font-bold text-lg min-w-[160px]">
+                              <div className="flex flex-col items-center">
+                                <span>Comprehensive</span>
+                                <span className="text-sm font-normal text-gray-600 mt-1">9,000 tokens</span>
+                              </div>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {comparisonFeatures.map((item, index) => (
                             <tr
+                              key={index}
                               className={`border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200 ${
                                 index % 2 === 0 ? "bg-white" : "bg-gray-25"
                               }`}
                             >
-                              <td className="py-4 px-6">
-                                <div className="flex items-center">
-                                  <FileText className="w-5 h-5 text-gray-500 mr-3" />
-                                  <div>
-                                    <div className="font-semibold text-gray-900">
-                                      {report.name}
-                                    </div>
-                                    <div className="text-sm text-gray-600">
-                                      {report.description}
-                                    </div>
-                                  </div>
+                              <td className="py-4 px-6 font-semibold text-gray-900">
+                                {item.feature}
+                              </td>
+                              <td className="py-4 px-6 text-center">
+                                <div className="flex flex-col items-center">
+                                  {item.basic.included ? (
+                                    <Check className="w-6 h-6 text-green-600 mb-1" />
+                                  ) : (
+                                    <X className="w-6 h-6 text-red-400 mb-1" />
+                                  )}
+                                  {item.basic.note && (
+                                    <span className="text-xs text-gray-600 text-center max-w-[120px]">
+                                      {item.basic.note}
+                                    </span>
+                                  )}
                                 </div>
                               </td>
                               <td className="py-4 px-6 text-center">
-                                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                  {report.tokens} Tokens
-                                </span>
+                                <div className="flex flex-col items-center">
+                                  {item.advanced.included ? (
+                                    <Check className="w-6 h-6 text-green-600 mb-1" />
+                                  ) : (
+                                    <X className="w-6 h-6 text-red-400 mb-1" />
+                                  )}
+                                  {item.advanced.note && (
+                                    <span className="text-xs text-gray-600 text-center max-w-[120px]">
+                                      {item.advanced.note}
+                                    </span>
+                                  )}
+                                </div>
                               </td>
                               <td className="py-4 px-6 text-center">
-                                <button
-                                  onClick={() => toggleReport(report.id)}
-                                  className="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200"
-                                >
-                                  {expandedReport === report.id ? (
-                                    <>
-                                      Hide Details
-                                      <ChevronUp className="w-4 h-4 ml-1" />
-                                    </>
+                                <div className="flex flex-col items-center">
+                                  {item.comprehensive.included ? (
+                                    <Check className="w-6 h-6 text-green-600 mb-1" />
                                   ) : (
-                                    <>
-                                      Show Details
-                                      <ChevronDown className="w-4 h-4 ml-1" />
-                                    </>
+                                    <X className="w-6 h-6 text-red-400 mb-1" />
                                   )}
-                                </button>
+                                  {item.comprehensive.note && (
+                                    <span className="text-xs text-gray-600 text-center max-w-[120px]">
+                                      {item.comprehensive.note}
+                                    </span>
+                                  )}
+                                </div>
                               </td>
                             </tr>
-                            {expandedReport === report.id && (
-                              <tr>
-                                <td
-                                  colSpan="3"
-                                  className={`py-0 ${report.color}`}
-                                >
-                                  <div className="p-6 m-4 rounded-xl">
-                                    <h4 className="font-semibold text-gray-900 mb-3">
-                                      {report.name} includes:
-                                    </h4>
-                                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                      {report.features.map((feature, idx) => (
-                                        <li
-                                          key={idx}
-                                          className="flex items-center text-gray-700"
-                                        >
-                                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-3 flex-shrink-0"></div>
-                                          {feature}
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  </div>
-                                </td>
-                              </tr>
-                            )}
-                          </React.Fragment>
-                        ))}
-                      </tbody>
-                    </table>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                /* Original Detailed Report Types Table */
+                <div className="max-w-4xl mx-auto">
+                  <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="bg-gray-50 border-b border-gray-200">
+                            <th className="text-left py-4 px-6 text-gray-900 font-semibold">
+                              Report Type
+                            </th>
+                            <th className="text-center py-4 px-6 text-gray-900 font-semibold">
+                              Tokens Required
+                            </th>
+                            <th className="text-center py-4 px-6 text-gray-900 font-semibold">
+                              Details
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {reportTypes.map((report, index) => (
+                            <React.Fragment key={report.id}>
+                              <tr
+                                className={`border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200 ${
+                                  index % 2 === 0 ? "bg-white" : "bg-gray-25"
+                                }`}
+                              >
+                                <td className="py-4 px-6">
+                                  <div className="flex items-center">
+                                    <FileText className="w-5 h-5 text-gray-500 mr-3" />
+                                    <div>
+                                      <div className="font-semibold text-gray-900">
+                                        {report.name}
+                                      </div>
+                                      <div className="text-sm text-gray-600">
+                                        {report.description}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td className="py-4 px-6 text-center">
+                                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                    {report.tokens} Tokens
+                                  </span>
+                                </td>
+                                <td className="py-4 px-6 text-center">
+                                  <button
+                                    onClick={() => toggleReport(report.id)}
+                                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200"
+                                  >
+                                    {expandedReport === report.id ? (
+                                      <>
+                                        Hide Details
+                                        <ChevronUp className="w-4 h-4 ml-1" />
+                                      </>
+                                    ) : (
+                                      <>
+                                        Show Details
+                                        <ChevronDown className="w-4 h-4 ml-1" />
+                                      </>
+                                    )}
+                                  </button>
+                                </td>
+                              </tr>
+                              {expandedReport === report.id && (
+                                <tr>
+                                  <td
+                                    colSpan="3"
+                                    className={`py-0 ${report.color}`}
+                                  >
+                                    <div className="p-6 m-4 rounded-xl">
+                                      <h4 className="font-semibold text-gray-900 mb-3">
+                                        {report.name} includes:
+                                      </h4>
+                                      <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                        {report.features.map((feature, idx) => (
+                                          <li
+                                            key={idx}
+                                            className="flex items-center text-gray-700"
+                                          >
+                                            <div className="w-2 h-2 bg-blue-500 rounded-full mr-3 flex-shrink-0"></div>
+                                            {feature}
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  </td>
+                                </tr>
+                              )}
+                            </React.Fragment>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
             </>
           )}
 
           {/* Bottom Note */}
           {!compact && (
-            <div className="text-center mt-12">
-              <p className="text-gray-600 max-w-2xl mx-auto">
-                Would you need any help choosing the right package? Our tokens
-                are valid for 90 days from purchase. For enterprise solutions
-                with custom pricing and bulk discounts, don't hesitate to get in
-                touch with our sales team.
-              </p>
-            </div>
+         <div className="text-center mt-12">
+  <div className="bg-white border border-gray-200 rounded-2xl shadow-md p-6 max-w-2xl mx-auto">
+    <p className="text-gray-600">
+      Would you need any help choosing the right package? For enterprise solutions
+      with custom pricing and bulk discounts, don't hesitate to get in
+      touch with our sales team.
+    </p>
+  </div>
+</div>
+
           )}
         </div>
 

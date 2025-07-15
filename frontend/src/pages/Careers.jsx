@@ -56,7 +56,6 @@ export default function Careers() {
         "Currently enrolled student",
         "Interest in technology transfer",
         "Basic research skills",
-        "Commitment to 3+ months"
       ],
       formUrl: "https://forms.gle/internship-program-form"
     },
@@ -135,18 +134,8 @@ export default function Careers() {
               Join a team that's passionate about turning research into real-world impact.
             </p>
             <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-neutral-500">
-              <div className="flex items-center">
-                <Users className="w-4 h-4 mr-2 text-blue-600" />
-                Remote-First Culture
-              </div>
-              <div className="flex items-center">
-                <Globe className="w-4 h-4 mr-2 text-green-600" />
-                Global Team
-              </div>
-              <div className="flex items-center">
-                <Zap className="w-4 h-4 mr-2 text-purple-600" />
-                Innovation Focused
-              </div>
+           
+             
             </div>
           </div>
         </div>
@@ -274,27 +263,7 @@ export default function Careers() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Ready to Make an Impact?
-          </h2>
-          <p className="text-xl text-blue-100 mb-8 leading-relaxed">
-            Join us in transforming how innovations reach the world. Your expertise can help 
-            researchers and entrepreneurs turn their ideas into reality.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => handleApply("https://forms.gle/general-inquiry-form")}
-              className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-3 rounded-full font-semibold transition-colors flex items-center justify-center"
-            >
-              Get in Touch
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </button>
-          </div>
-        </div>
-      </section>
+      
 
       <Footer />
     </div>

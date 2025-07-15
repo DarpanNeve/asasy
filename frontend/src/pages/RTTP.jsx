@@ -303,7 +303,7 @@ export default function RTTP() {
             {/* Enhanced CTA buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <button
-                onClick={() => window.open("https://forms.gle/rttp-expert-form", "_blank")}
+                onClick={() => window.open("https://forms.gle/1AHvijC9uidoGeig8", "_blank")}
                 className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-lg px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center"
               >
                 <User className="mr-2 h-5 w-5 group-hover:animate-pulse" />
@@ -333,20 +333,7 @@ export default function RTTP() {
             </div>
 
             {/* Trust indicators */}
-            <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-neutral-500">
-              <div className="flex items-center">
-                <Users className="w-4 h-4 mr-2 text-blue-600" />
-                500+ Global RTTPs
-              </div>
-              <div className="flex items-center">
-                <Star className="w-4 h-4 mr-2 text-yellow-500" />
-                4.9/5 Rating
-              </div>
-              <div className="flex items-center">
-                <Globe className="w-4 h-4 mr-2 text-green-600" />
-                50+ Countries
-              </div>
-            </div>
+          
           </div>
         </div>
       </section>

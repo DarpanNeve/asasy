@@ -11,21 +11,26 @@ export default function Header() {
     <nav className="bg-white/90 backdrop-blur-md shadow-sm border-b border-neutral-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <Link to="/" className="flex items-center group">
-            <div className="relative">
-              <BarChart3 className="h-8 w-8 text-blue-600 group-hover:text-blue-700 transition-colors" />
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full animate-pulse"></div>
-            </div>
-            <span className="ml-2 text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Asasy
-            </span>
-          </Link>
+         <Link to="/" className="flex items-center group">
+  <div className="relative flex items-center h-16">
+    <img 
+      src="/logoas.png" 
+      alt="Logo" 
+      className="h-17 w-auto object-contain"
+    />
+  </div>
+</Link>
+
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             <Link to="/" className="text-neutral-600 hover:text-neutral-900 transition-colors">
               Home
             </Link>
+            <Link to="/about" className="text-neutral-600 hover:text-neutral-900 transition-colors">
+              About Us
+            </Link>
+            
             <Link to="/careers" className="text-neutral-600 hover:text-neutral-900 transition-colors">
               Careers
             </Link>
@@ -41,6 +46,10 @@ export default function Header() {
             <Link to="/rttp" className="text-neutral-600 hover:text-neutral-900 transition-colors">
               RTTP Experts
             </Link>
+            <Link to="/contact" className="text-neutral-600 hover:text-neutral-900 transition-colors">
+              Contact Us
+            </Link>
+            
             {user ? (
               <Link to="/reports" className="btn-primary">
                 Dashboard

@@ -5,107 +5,91 @@ export default function RefundPolicy() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      
+
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="prose prose-lg max-w-none">
-          <h1 className="text-4xl font-bold text-gray-900 mb-8">Refund Policy</h1>
-          <p className="text-gray-600 mb-8">Last updated: {new Date().toLocaleDateString()}</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-8">Refund & Cancellation Policy</h1>
+          <p className="text-gray-600 mb-2">At Assesme, we value your trust and strive to ensure every transaction with Assesme is meaningful and secure. However, as Assesme is a digital platform delivering instant AI-generated content and intellectual services, our refund and cancellation policy is carefully structured as follows:</p>
+          <p className="text-gray-600 mb-8">Last Updated: July 16, 2025</p>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">1. General Refund Policy</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">1. No Refund for Consumed Tokens</h2>
             <p className="text-gray-700 mb-4">
-              Due to the digital nature of our services and the immediate delivery of AI-generated reports, 
-              refunds are generally not available once tokens have been used to generate reports.
+              Once **tokens are used to generate a report**, the associated report is considered **delivered and non-refundable**, regardless of user satisfaction or error, unless the issue is on our system's end (e.g., broken link, incomplete output).
             </p>
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">2. Eligible Refund Scenarios</h2>
-            <p className="text-gray-700 mb-4">Refunds may be considered in the following cases:</p>
-            <ul className="list-disc pl-6 text-gray-700 space-y-2">
-              <li>Technical failure preventing report generation</li>
-              <li>Duplicate charges due to payment processing errors</li>
-              <li>Unused tokens within 7 days of purchase (subject to conditions)</li>
-              <li>Service unavailability for extended periods</li>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">2. Token Validity</h2>
+            <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
+              <li>Purchased tokens are **valid for 12 months** from the date of purchase.</li>
+              <li>**Expired tokens will not be refunded or reinstated** unless approved under exceptional circumstances.</li>
             </ul>
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">3. Non-Refundable Items</h2>
-            <ul className="list-disc pl-6 text-gray-700 space-y-2">
-              <li>Tokens used to generate completed reports</li>
-              <li>Expired tokens (after 90-day validity period)</li>
-              <li>Promotional or discounted token purchases</li>
-              <li>RTTP consultation fees</li>
-            </ul>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">4. Refund Process</h2>
-            <p className="text-gray-700 mb-4">To request a refund:</p>
-            <ol className="list-decimal pl-6 text-gray-700 space-y-2">
-              <li>Contact our support team within 7 days of purchase</li>
-              <li>Provide your transaction ID and reason for refund</li>
-              <li>Our team will review your request within 3-5 business days</li>
-              <li>If approved, refunds will be processed within 7-10 business days</li>
-            </ol>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">5. Refund Methods</h2>
-            <ul className="list-disc pl-6 text-gray-700 space-y-2">
-              <li>Refunds will be processed to the original payment method</li>
-              <li>Credit card refunds may take 5-10 business days to appear</li>
-              <li>Bank transfer refunds may take 3-7 business days</li>
-              <li>Processing fees may be deducted from refund amount</li>
-            </ul>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">6. Partial Refunds</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">3. Refund for Unused Token Packages</h2>
             <p className="text-gray-700 mb-4">
-              In certain cases, partial refunds may be offered based on:
+              If a user wishes to **cancel their token package before using any tokens**:
+            </p>
+            <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
+              <li>A refund request must be submitted within **7 days of purchase**.</li>
+              <li>A **10% processing fee** will be deducted from the total amount paid.</li>
+              <li>Refunds will be issued to the **original payment method within 7–10 business days** after approval.</li>
+            </ul>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">4. Cancellation by Assesme</h2>
+            <p className="text-gray-700 mb-4">
+              Assesme reserves the right to:
+            </p>
+            <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
+              <li>**Suspend or terminate user accounts** due to violation of platform terms</li>
+              <li>**Revoke or restrict access** if the system is being misused or manipulated</li>
+            </ul>
+            <p className="text-gray-700 mb-4">In such cases:</p>
+            <ul className="list-disc pl-6 text-gray-700 space-y-2">
+              <li>**Unused tokens may be refunded** based on an internal review</li>
+              <li>Generated reports will remain accessible unless removed due to a breach</li>
+            </ul>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">5. System Errors or Failures</h2>
+            <p className="text-gray-700 mb-4">
+              If a report is **not delivered due to system malfunction**:
             </p>
             <ul className="list-disc pl-6 text-gray-700 space-y-2">
-              <li>Number of tokens used vs. purchased</li>
-              <li>Time elapsed since purchase</li>
-              <li>Nature of the issue or complaint</li>
-              <li>Service usage history</li>
+              <li>Users are entitled to a **full token refund** for that transaction</li>
+              <li>Alternatively, users may **regenerate the report at no additional cost**</li>
             </ul>
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">7. Dispute Resolution</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">6. RTTP & Expert Service Access</h2>
             <p className="text-gray-700 mb-4">
-              If you're not satisfied with our refund decision, you may:
+              If you opt for human expert review, RTTP consultancy, or add-on services:
             </p>
             <ul className="list-disc pl-6 text-gray-700 space-y-2">
-              <li>Request escalation to our management team</li>
-              <li>Provide additional documentation supporting your case</li>
-              <li>Seek resolution through your payment provider</li>
+              <li>These services are **non-refundable once delivered**</li>
+              <li>**Cancellations for booked consultations must be requested at least 24 hours in advance**</li>
             </ul>
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">8. Contact for Refunds</h2>
-            <p className="text-gray-700 mb-4">
-              To request a refund or ask questions about this policy:
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Contact for Refund/Cancellation Requests</h2>
+            <p className="text-gray-700">
+              To request a cancellation or refund, please email our support team with full details at:
             </p>
             <div className="mt-4 p-4 bg-gray-50 rounded-lg">
               <p className="text-gray-700">
-                Email: refunds@asasy.com<br />
-                Subject: Refund Request - [Your Transaction ID]<br />
-                Phone: +1 (555) 123-4567
+                📧 <a href="mailto:support@assesme.com" className="text-blue-600 hover:underline">support@assesme.com</a><br />
+                📞 <a href="tel:+918743078668" className="text-blue-600 hover:underline">‪+91-87430-78668‬</a><br />
+                📍 Vastav Intellect IP Solutions LLP – Innovation & Technology Division<br />
+                🌐 <a href="https://www.assesme.com" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">www.assesme.com</a>
               </p>
             </div>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">9. Policy Updates</h2>
-            <p className="text-gray-700">
-              This refund policy may be updated from time to time. Users will be notified of 
-              significant changes via email and website notifications.
-            </p>
           </section>
         </div>
       </div>

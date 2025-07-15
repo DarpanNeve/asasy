@@ -429,7 +429,7 @@ export default function Home() {
                           value="advance"
                           className="peer hidden"
                         />
-                        <div className="rounded-lg border border-neutral-300 peer-checked:border-secondary-600 peer-checked:bg-secondary-50 px-4 py-3 text-sm text-center hover:shadow-sm transition">
+                        <div className="rounded-lg border border-neutral-300  peer-checked:border-primary-600 peer-checked:bg-secondary-50 px-4 py-3 text-sm text-center hover:shadow-sm transition">
                           Advance
                         </div>
                       </label>
@@ -442,7 +442,7 @@ export default function Home() {
                           value="comprehensive"
                           className="peer hidden"
                         />
-                        <div className="rounded-lg border border-neutral-300 peer-checked:border-accent-600 peer-checked:bg-accent-50 px-4 py-3 text-sm text-center hover:shadow-sm transition">
+                        <div className="rounded-lg border border-neutral-300  peer-checked:border-primary-600 peer-checked:bg-accent-50 px-4 py-3 text-sm text-center hover:shadow-sm transition">
                           Comprehensive
                         </div>
                       </label>
@@ -734,7 +734,7 @@ export default function Home() {
       </section>
 
       {/* Logo Carousel */}
-      <section className="py-20 bg-gradient-to-b from-white to-slate-50 relative overflow-hidden">
+      <section className="py-0 bg-gradient-to-b from-white to-slate-50 relative overflow-hidden">
         {/* Subtle Background Pattern */}
         <div className="absolute inset-0 opacity-[0.02]">
           <div
@@ -1040,16 +1040,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Token Packages Heading */}
-      <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold text-gray-900 mb-4">
-          Token Packages
-        </h2>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Choose the perfect package for your needs. Purchase tokens to generate
-          reports.
-        </p>
-      </div>
+
 
       {/* RTTP Section */}
       <section className="py-20 bg-gradient-to-r from-primary-600 to-secondary-600">
@@ -1077,12 +1068,7 @@ export default function Home() {
                 Learn About RTTP
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
-              <Link
-                to={user ? "/reports" : "/signup"}
-                className="btn border-2 border-white text-white hover:bg-white hover:text-primary-600 text-lg px-8 py-3 hover:shadow-xl transition-all"
-              >
-                {user ? "Get Expert Help" : "Start Your Journey"}
-              </Link>
+            
             </div>
           </motion.div>
         </div>

@@ -15,13 +15,15 @@ import Pricing from "./pages/Pricing";
 import Home from "./pages/Home";
 import RTTP from "./pages/RTTP";
 import Admin from "./pages/Admin";
+import Contact from "./pages/Contact";
+import PressReleases from "./pages/PressReleases";  
 import Privacy from "./pages/Privacy";
+import About from "./pages/About";
 import Terms from "./pages/Terms";
 import PricingPolicy from "./pages/PricingPolicy";
 import RefundPolicy from "./pages/RefundPolicy";
 import Careers from "./pages/Careers";
 import Blog from "./pages/Blog";
-import PressReleases from "./pages/PressReleases";
 import BlogPost from "./pages/BlogPost";
 import "./index.css";
 import TokenPricingSection from "./components/TokenPricingSection";
@@ -56,6 +58,8 @@ function App() {
                     element={<ProfileCompletion />}
                   />
                   <Route path="/rttp" element={<RTTP />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/about" element={<About />} />
                   <Route
                     path="/pricing"
                     element={
