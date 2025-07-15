@@ -25,7 +25,6 @@ export default function Layout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-
   const handleLogout = async () => {
     try {
       await logout();
@@ -122,8 +121,10 @@ export default function Layout({ children }) {
       <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-neutral-200 bg-white px-6 pb-4">
         <div className="flex h-16 shrink-0 items-center">
           <div className="flex items-center gap-x-2">
-            <BarChart3 className="h-8 w-8 text-primary-600" />
-            <span className="text-xl font-bold text-gradient">Assesme</span>
+            <button onClick={() => navigate("/", { replace: true })}>
+              <BarChart3 className="h-8 w-8 text-primary-600" />
+              <span className="text-xl font-bold text-gradient">Assesme</span>
+            </button>
           </div>
         </div>
         <nav className="flex flex-1 flex-col">
