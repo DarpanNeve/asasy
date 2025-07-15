@@ -20,6 +20,11 @@ import {
   DollarSign,
   TrendingUp,
   Activity,
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { api } from "../services/api";
 import toast from "react-hot-toast";
@@ -38,12 +43,25 @@ export default function Admin() {
     username: "",
     password: "",
   });
-  const [activeTab, setActiveTab] = useState("users");
+  const [activeTab, setActiveTab] = useState("dashboard");
   const [contactSubmissions, setContactSubmissions] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [stats, setStats] = useState({});
   const [contactSearchTerm, setContactSearchTerm] = useState("");
   const [contactDateFilter, setContactDateFilter] = useState("");
+  const [blogPosts, setBlogPosts] = useState([]);
+  const [pressReleases, setPressReleases] = useState([]);
+  const [showBlogForm, setShowBlogForm] = useState(false);
+  const [editingPost, setEditingPost] = useState(null);
+  const [blogFormData, setBlogFormData] = useState({
+    title: "",
+    description: "",
+    content: "",
+    image_url: "",
+    post_type: "blog",
+    author_name: "Admin",
+    featured: false,
+  });
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -53,26 +71,28 @@ export default function Admin() {
     try {
       const basicAuth = btoa(`${credentials.username}:${credentials.password}`);
 
-      const response = await fetch("/api/admin/users", {
+      // First try to login
+      const loginResponse = await fetch("/api/admin/login", {
+        method: "POST",
         headers: {
           Authorization: `Basic ${basicAuth}`,
           "Content-Type": "application/json",
         },
       });
 
-      if (response.ok) {
-        const usersData = await response.json();
-        setUsers(usersData);
+      if (loginResponse.ok) {
         setIsAuthenticated(true);
         toast.success("Admin login successful");
-
         sessionStorage.setItem("adminAuth", basicAuth);
 
-        // Fetch additional data
+        // Fetch initial data
         await Promise.all([
+          fetchUsers(basicAuth),
           fetchContactSubmissions(basicAuth),
           fetchTransactions(basicAuth),
           fetchStats(basicAuth),
+          fetchBlogPosts(basicAuth),
+          fetchPressReleases(basicAuth),
         ]);
       } else {
         toast.error("Invalid admin credentials");
@@ -82,6 +102,24 @@ export default function Admin() {
       toast.error("Login failed");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchUsers = async (auth) => {
+    try {
+      const response = await fetch("/api/admin/users", {
+        headers: {
+          Authorization: `Basic ${auth}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const usersData = await response.json();
+        setUsers(usersData);
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
     }
   };
 
@@ -136,6 +174,208 @@ export default function Admin() {
       }
     } catch (error) {
       console.error("Error fetching stats:", error);
+    }
+  };
+
+  const fetchBlogPosts = async (auth) => {
+    try {
+      const response = await fetch("/api/blog/admin/posts?post_type=blog", {
+        headers: {
+          Authorization: `Basic ${auth}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setBlogPosts(data.posts);
+      }
+    } catch (error) {
+      console.error("Error fetching blog posts:", error);
+    }
+  };
+
+  const fetchPressReleases = async (auth) => {
+    try {
+      const response = await fetch(
+        "/api/blog/admin/posts?post_type=press_release",
+        {
+          headers: {
+            Authorization: `Basic ${auth}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setPressReleases(data.posts);
+      }
+    } catch (error) {
+      console.error("Error fetching press releases:", error);
+    }
+  };
+
+  const handleBlogSubmit = async (e) => {
+    e.preventDefault();
+    const basicAuth = sessionStorage.getItem("adminAuth");
+
+    try {
+      const url = editingPost
+        ? `/api/blog/admin/posts/${editingPost.id}`
+        : "/api/blog/admin/posts";
+
+      const method = editingPost ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          Authorization: `Basic ${basicAuth}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(blogFormData),
+      });
+
+      if (response.ok) {
+        toast.success(
+          `${editingPost ? "Updated" : "Created"} ${
+            blogFormData.post_type
+          } successfully`
+        );
+        setShowBlogForm(false);
+        setEditingPost(null);
+        setBlogFormData({
+          title: "",
+          description: "",
+          content: "",
+          image_url: "",
+          post_type: "blog",
+          author_name: "Admin",
+          featured: false,
+        });
+
+        // Refresh the appropriate list
+        if (blogFormData.post_type === "blog") {
+          await fetchBlogPosts(basicAuth);
+        } else {
+          await fetchPressReleases(basicAuth);
+        }
+      } else {
+        toast.error(
+          `Failed to ${editingPost ? "update" : "create"} ${
+            blogFormData.post_type
+          }`
+        );
+      }
+    } catch (error) {
+      console.error("Error saving post:", error);
+      toast.error("Failed to save post");
+    }
+  };
+
+  const handleEditPost = (post) => {
+    setEditingPost(post);
+    setBlogFormData({
+      title: post.title,
+      description: post.description,
+      content: post.content || "",
+      image_url: post.image_url || "",
+      post_type: post.post_type,
+      author_name: post.author_name,
+      featured: post.featured,
+    });
+    setShowBlogForm(true);
+  };
+
+  const handleDeletePost = async (postId, postType) => {
+    if (!confirm("Are you sure you want to delete this post?")) return;
+
+    const basicAuth = sessionStorage.getItem("adminAuth");
+
+    try {
+      const response = await fetch(`/api/blog/admin/posts/${postId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Basic ${basicAuth}`,
+        },
+      });
+
+      if (response.ok) {
+        toast.success("Post deleted successfully");
+
+        // Refresh the appropriate list
+        if (postType === "blog") {
+          await fetchBlogPosts(basicAuth);
+        } else {
+          await fetchPressReleases(basicAuth);
+        }
+      } else {
+        toast.error("Failed to delete post");
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      toast.error("Failed to delete post");
+    }
+  };
+
+  const handlePublishPost = async (postId, postType) => {
+    const basicAuth = sessionStorage.getItem("adminAuth");
+
+    try {
+      const response = await fetch(`/api/blog/admin/posts/${postId}/publish`, {
+        method: "POST",
+        headers: {
+          Authorization: `Basic ${basicAuth}`,
+        },
+      });
+
+      if (response.ok) {
+        toast.success("Post published successfully");
+
+        // Refresh the appropriate list
+        if (postType === "blog") {
+          await fetchBlogPosts(basicAuth);
+        } else {
+          await fetchPressReleases(basicAuth);
+        }
+      } else {
+        toast.error("Failed to publish post");
+      }
+    } catch (error) {
+      console.error("Error publishing post:", error);
+      toast.error("Failed to publish post");
+    }
+  };
+
+  const handleUnpublishPost = async (postId, postType) => {
+    const basicAuth = sessionStorage.getItem("adminAuth");
+
+    try {
+      const response = await fetch(
+        `/api/blog/admin/posts/${postId}/unpublish`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Basic ${basicAuth}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        toast.success("Post unpublished successfully");
+
+        // Refresh the appropriate list
+        if (postType === "blog") {
+          await fetchBlogPosts(basicAuth);
+        } else {
+          await fetchPressReleases(basicAuth);
+        }
+      } else {
+        toast.error("Failed to unpublish post");
+      }
+    } catch (error) {
+      console.error("Error unpublishing post:", error);
+      toast.error("Failed to unpublish post");
     }
   };
 
@@ -458,6 +698,8 @@ export default function Admin() {
                   setUserSubscriptions([]);
                   setContactSubmissions([]);
                   setTransactions([]);
+                  setBlogPosts([]);
+                  setPressReleases([]);
                 }}
                 className="btn-outline btn-sm"
               >
@@ -469,77 +711,21 @@ export default function Admin() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="card">
-            <div className="flex items-center">
-              <div className="p-3 bg-primary-100 rounded-lg mr-4">
-                <Users className="h-6 w-6 text-primary-600" />
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-neutral-600">
-                  Total Users
-                </h3>
-                <p className="text-2xl font-bold text-neutral-900">
-                  {stats.total_users || 0}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="flex items-center">
-              <div className="p-3 bg-success-100 rounded-lg mr-4">
-                <FileText className="h-6 w-6 text-success-600" />
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-neutral-600">
-                  Total Reports
-                </h3>
-                <p className="text-2xl font-bold text-neutral-900">
-                  {stats.total_reports || 0}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="flex items-center">
-              <div className="p-3 bg-warning-100 rounded-lg mr-4">
-                <Activity className="h-6 w-6 text-warning-600" />
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-neutral-600">
-                  Token Transactions
-                </h3>
-                <p className="text-2xl font-bold text-neutral-900">
-                  {stats.completed_transactions || 0}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="flex items-center">
-              <div className="p-3 bg-secondary-100 rounded-lg mr-4">
-                <DollarSign className="h-6 w-6 text-secondary-600" />
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-neutral-600">
-                  Total Revenue
-                </h3>
-                <p className="text-2xl font-bold text-neutral-900">
-                  ₹{stats.total_revenue_inr?.toLocaleString() || "0"}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Tab Navigation */}
         <div className="mb-8">
           <div className="border-b border-neutral-200">
             <nav className="-mb-px flex space-x-8">
+              <button
+                onClick={() => setActiveTab("dashboard")}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === "dashboard"
+                    ? "border-primary-500 text-primary-600"
+                    : "border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300"
+                }`}
+              >
+                <BarChart3 className="h-5 w-5 inline mr-2" />
+                Dashboard
+              </button>
               <button
                 onClick={() => setActiveTab("users")}
                 className={`py-2 px-1 border-b-2 font-medium text-sm ${
@@ -573,9 +759,151 @@ export default function Admin() {
                 <MessageSquare className="h-5 w-5 inline mr-2" />
                 Contact Submissions ({contactSubmissions.length})
               </button>
+              <button
+                onClick={() => setActiveTab("blog")}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === "blog"
+                    ? "border-primary-500 text-primary-600"
+                    : "border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300"
+                }`}
+              >
+                <FileText className="h-5 w-5 inline mr-2" />
+                Blog Posts ({blogPosts.length})
+              </button>
+              <button
+                onClick={() => setActiveTab("press")}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === "press"
+                    ? "border-primary-500 text-primary-600"
+                    : "border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300"
+                }`}
+              >
+                <FileText className="h-5 w-5 inline mr-2" />
+                Press Releases ({pressReleases.length})
+              </button>
             </nav>
           </div>
         </div>
+
+        {activeTab === "dashboard" && (
+          <>
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+              <div className="card">
+                <div className="flex items-center">
+                  <div className="p-3 bg-primary-100 rounded-lg mr-4">
+                    <Users className="h-6 w-6 text-primary-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-neutral-600">
+                      Total Users
+                    </h3>
+                    <p className="text-2xl font-bold text-neutral-900">
+                      {stats.total_users || 0}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="card">
+                <div className="flex items-center">
+                  <div className="p-3 bg-success-100 rounded-lg mr-4">
+                    <FileText className="h-6 w-6 text-success-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-neutral-600">
+                      Total Reports
+                    </h3>
+                    <p className="text-2xl font-bold text-neutral-900">
+                      {stats.total_reports || 0}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="card">
+                <div className="flex items-center">
+                  <div className="p-3 bg-warning-100 rounded-lg mr-4">
+                    <Activity className="h-6 w-6 text-warning-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-neutral-600">
+                      Token Transactions
+                    </h3>
+                    <p className="text-2xl font-bold text-neutral-900">
+                      {stats.completed_transactions || 0}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="card">
+                <div className="flex items-center">
+                  <div className="p-3 bg-secondary-100 rounded-lg mr-4">
+                    <DollarSign className="h-6 w-6 text-secondary-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-neutral-600">
+                      Total Revenue
+                    </h3>
+                    <p className="text-2xl font-bold text-neutral-900">
+                      ₹{stats.total_revenue_inr?.toLocaleString() || "0"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <button
+                onClick={() => setActiveTab("users")}
+                className="card hover:shadow-lg transition-shadow p-6 text-left"
+              >
+                <Users className="h-8 w-8 text-primary-600 mb-2" />
+                <h3 className="font-semibold text-neutral-900">Manage Users</h3>
+                <p className="text-sm text-neutral-600">
+                  View and manage user accounts
+                </p>
+              </button>
+
+              <button
+                onClick={() => setActiveTab("blog")}
+                className="card hover:shadow-lg transition-shadow p-6 text-left"
+              >
+                <FileText className="h-8 w-8 text-success-600 mb-2" />
+                <h3 className="font-semibold text-neutral-900">Blog Posts</h3>
+                <p className="text-sm text-neutral-600">
+                  Create and manage blog content
+                </p>
+              </button>
+
+              <button
+                onClick={() => setActiveTab("press")}
+                className="card hover:shadow-lg transition-shadow p-6 text-left"
+              >
+                <FileText className="h-8 w-8 text-warning-600 mb-2" />
+                <h3 className="font-semibold text-neutral-900">
+                  Press Releases
+                </h3>
+                <p className="text-sm text-neutral-600">
+                  Manage press releases
+                </p>
+              </button>
+
+              <button
+                onClick={() => setActiveTab("transactions")}
+                className="card hover:shadow-lg transition-shadow p-6 text-left"
+              >
+                <CreditCard className="h-8 w-8 text-secondary-600 mb-2" />
+                <h3 className="font-semibold text-neutral-900">Transactions</h3>
+                <p className="text-sm text-neutral-600">
+                  View payment transactions
+                </p>
+              </button>
+            </div>
+          </>
+        )}
 
         {activeTab === "users" && (
           <>
@@ -1028,7 +1356,380 @@ export default function Admin() {
             )}
           </>
         )}
+
+        {activeTab === "blog" && (
+          <>
+            <div className="mb-8">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold text-neutral-900">
+                  Blog Posts
+                </h2>
+                <button
+                  onClick={() => {
+                    setBlogFormData({
+                      title: "",
+                      description: "",
+                      content: "",
+                      image_url: "",
+                      post_type: "blog",
+                      author_name: "Admin",
+                      featured: false,
+                    });
+                    setEditingPost(null);
+                    setShowBlogForm(true);
+                  }}
+                  className="btn-primary flex items-center"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Blog Post
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {blogPosts.map((post) => (
+                <div key={post.id} className="card">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-4 mb-2">
+                        <h3 className="font-semibold text-neutral-900">
+                          {post.title}
+                        </h3>
+                        <span
+                          className={`px-2 py-1 text-xs font-medium rounded-full ${
+                            post.status === "published"
+                              ? "bg-success-100 text-success-800"
+                              : "bg-warning-100 text-warning-800"
+                          }`}
+                        >
+                          {post.status}
+                        </span>
+                        {post.featured && (
+                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-800">
+                            Featured
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-neutral-600 text-sm mb-2">
+                        {post.description}
+                      </p>
+                      <div className="flex items-center space-x-4 text-xs text-neutral-500">
+                        <span>By {post.author_name}</span>
+                        <span>
+                          {new Date(post.created_at).toLocaleDateString()}
+                        </span>
+                        <span>{post.view_count} views</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2 ml-4">
+                      <button
+                        onClick={() => handleEditPost(post)}
+                        className="btn-outline btn-sm"
+                      >
+                        <Edit className="h-4 w-4 mr-1" />
+                        Edit
+                      </button>
+                      {post.status === "published" ? (
+                        <button
+                          onClick={() =>
+                            handleUnpublishPost(post.id, post.post_type)
+                          }
+                          className="btn-outline btn-sm"
+                        >
+                          <EyeOff className="h-4 w-4 mr-1" />
+                          Unpublish
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() =>
+                            handlePublishPost(post.id, post.post_type)
+                          }
+                          className="btn-primary btn-sm"
+                        >
+                          <Eye className="h-4 w-4 mr-1" />
+                          Publish
+                        </button>
+                      )}
+                      <button
+                        onClick={() =>
+                          handleDeletePost(post.id, post.post_type)
+                        }
+                        className="btn-outline btn-sm text-error-600 hover:bg-error-50"
+                      >
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {activeTab === "press" && (
+          <>
+            <div className="mb-8">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold text-neutral-900">
+                  Press Releases
+                </h2>
+                <button
+                  onClick={() => {
+                    setBlogFormData({
+                      title: "",
+                      description: "",
+                      content: "",
+                      image_url: "",
+                      post_type: "press_release",
+                      author_name: "Admin",
+                      featured: false,
+                    });
+                    setEditingPost(null);
+                    setShowBlogForm(true);
+                  }}
+                  className="btn-primary flex items-center"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Press Release
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {pressReleases.map((post) => (
+                <div key={post.id} className="card">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-4 mb-2">
+                        <h3 className="font-semibold text-neutral-900">
+                          {post.title}
+                        </h3>
+                        <span
+                          className={`px-2 py-1 text-xs font-medium rounded-full ${
+                            post.status === "published"
+                              ? "bg-success-100 text-success-800"
+                              : "bg-warning-100 text-warning-800"
+                          }`}
+                        >
+                          {post.status}
+                        </span>
+                        {post.featured && (
+                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-800">
+                            Featured
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-neutral-600 text-sm mb-2">
+                        {post.description}
+                      </p>
+                      <div className="flex items-center space-x-4 text-xs text-neutral-500">
+                        <span>By {post.author_name}</span>
+                        <span>
+                          {new Date(post.created_at).toLocaleDateString()}
+                        </span>
+                        <span>{post.view_count} views</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2 ml-4">
+                      <button
+                        onClick={() => handleEditPost(post)}
+                        className="btn-outline btn-sm"
+                      >
+                        <Edit className="h-4 w-4 mr-1" />
+                        Edit
+                      </button>
+                      {post.status === "published" ? (
+                        <button
+                          onClick={() =>
+                            handleUnpublishPost(post.id, post.post_type)
+                          }
+                          className="btn-outline btn-sm"
+                        >
+                          <EyeOff className="h-4 w-4 mr-1" />
+                          Unpublish
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() =>
+                            handlePublishPost(post.id, post.post_type)
+                          }
+                          className="btn-primary btn-sm"
+                        >
+                          <Eye className="h-4 w-4 mr-1" />
+                          Publish
+                        </button>
+                      )}
+                      <button
+                        onClick={() =>
+                          handleDeletePost(post.id, post.post_type)
+                        }
+                        className="btn-outline btn-sm text-error-600 hover:bg-error-50"
+                      >
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
+
+      {/* Blog/Press Release Form Modal */}
+      {showBlogForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-neutral-900">
+                  {editingPost ? "Edit" : "Create"}{" "}
+                  {blogFormData.post_type === "blog"
+                    ? "Blog Post"
+                    : "Press Release"}
+                </h2>
+                <button
+                  onClick={() => setShowBlogForm(false)}
+                  className="text-neutral-400 hover:text-neutral-600"
+                >
+                  {/* <X className="h-6 w-6" /> */}
+                </button>
+              </div>
+
+              <form onSubmit={handleBlogSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-neutral-700 mb-2">
+                      Title *
+                    </label>
+                    <input
+                      type="text"
+                      value={blogFormData.title}
+                      onChange={(e) =>
+                        setBlogFormData({
+                          ...blogFormData,
+                          title: e.target.value,
+                        })
+                      }
+                      className="input"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-neutral-700 mb-2">
+                      Author Name
+                    </label>
+                    <input
+                      type="text"
+                      value={blogFormData.author_name}
+                      onChange={(e) =>
+                        setBlogFormData({
+                          ...blogFormData,
+                          author_name: e.target.value,
+                        })
+                      }
+                      className="input"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    Description *
+                  </label>
+                  <textarea
+                    value={blogFormData.description}
+                    onChange={(e) =>
+                      setBlogFormData({
+                        ...blogFormData,
+                        description: e.target.value,
+                      })
+                    }
+                    className="input"
+                    rows={3}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    Image URL (optional)
+                  </label>
+                  <input
+                    type="url"
+                    value={blogFormData.image_url}
+                    onChange={(e) =>
+                      setBlogFormData({
+                        ...blogFormData,
+                        image_url: e.target.value,
+                      })
+                    }
+                    className="input"
+                    placeholder="https://example.com/image.jpg"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    Content *
+                  </label>
+                  <textarea
+                    value={blogFormData.content}
+                    onChange={(e) =>
+                      setBlogFormData({
+                        ...blogFormData,
+                        content: e.target.value,
+                      })
+                    }
+                    className="input"
+                    rows={12}
+                    placeholder="Write your content here... You can use HTML tags for formatting."
+                    required
+                  />
+                </div>
+
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="featured"
+                    checked={blogFormData.featured}
+                    onChange={(e) =>
+                      setBlogFormData({
+                        ...blogFormData,
+                        featured: e.target.checked,
+                      })
+                    }
+                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-neutral-300 rounded"
+                  />
+                  <label
+                    htmlFor="featured"
+                    className="ml-2 block text-sm text-neutral-700"
+                  >
+                    Mark as featured
+                  </label>
+                </div>
+
+                <div className="flex justify-end space-x-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowBlogForm(false)}
+                    className="btn-outline"
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" className="btn-primary">
+                    {editingPost ? "Update" : "Create"}{" "}
+                    {blogFormData.post_type === "blog" ? "Post" : "Release"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

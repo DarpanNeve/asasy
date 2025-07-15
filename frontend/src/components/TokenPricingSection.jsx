@@ -529,16 +529,19 @@ const TokenPricingCard = ({
               ) : (
                 <>
                   {pkg.original_price_usd &&
-                    pkg.original_price_usd > pkg.price_usd && (
-                      <div className="text-sm text-gray-500 line-through mb-1">
+                  pkg.original_price_usd > pkg.price_usd ? (
+                    <div className="space-y-1">
+                      <div className="text-lg text-gray-500 line-through">
                         ${pkg.original_price_usd}
                       </div>
-                    )}
-                  <div className="text-blue-600">${pkg.price_usd}</div>
-                  {pkg.discount_percentage && (
-                    <div className="text-xs text-green-600 font-medium mt-1">
-                      {pkg.discount_percentage}% OFF
+                      <div className="text-blue-600">${pkg.price_usd}</div>
+                      <div className="text-xs text-green-600 font-medium">
+                        Save $
+                        {(pkg.original_price_usd - pkg.price_usd).toFixed(0)}
+                      </div>
                     </div>
+                  ) : (
+                    <div className="text-blue-600">${pkg.price_usd}</div>
                   )}
                 </>
               )}

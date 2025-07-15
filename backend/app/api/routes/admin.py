@@ -1,23 +1,25 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi.responses import JSONResponse
 import secrets
 import traceback
+from typing import List
 
+from app.core.config import settings
 from app.models.user import User
 from app.models.report import ReportLog
 from app.models.token import TokenTransaction, UserTokenBalance
+from app.models.contact import ContactSubmission
 
 router = APIRouter()
 security = HTTPBasic()
 
-ADMIN_USERNAME = "admin"
-ADMIN_PASSWORD = "password"
 
 def verify_admin_credentials(credentials: HTTPBasicCredentials = Depends(security)):
     try:
-        is_correct_username = secrets.compare_digest(credentials.username, ADMIN_USERNAME)
-        is_correct_password = secrets.compare_digest(credentials.password, ADMIN_PASSWORD)
-        
+        is_correct_username = secrets.compare_digest(credentials.username, settings.ADMIN_USERNAME)
+        is_correct_password = secrets.compare_digest(credentials.password, settings.ADMIN_PASSWORD)
+
         if not (is_correct_username and is_correct_password):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -29,16 +31,43 @@ def verify_admin_credentials(credentials: HTTPBasicCredentials = Depends(securit
         traceback.print_exc()
         raise
 
+
+@router.post("/login")
+async def admin_login(credentials: HTTPBasicCredentials = Depends(security)):
+    """Admin login endpoint"""
+    try:
+        is_correct_username = secrets.compare_digest(credentials.username, settings.ADMIN_USERNAME)
+        is_correct_password = secrets.compare_digest(credentials.password, settings.ADMIN_PASSWORD)
+
+        if not (is_correct_username and is_correct_password):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid admin credentials",
+                headers={"WWW-Authenticate": "Basic"},
+            )
+
+        return JSONResponse({
+            "message": "Admin login successful",
+            "username": credentials.username
+        })
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid admin credentials"
+        )
+
+
 @router.get("/users")
 async def get_all_users(credentials: HTTPBasicCredentials = Depends(verify_admin_credentials)):
     try:
         users = await User.find_all().to_list()
-        
+
         result = []
         for user in users:
             # Get token balance
             token_balance = await user.get_token_balance()
-            
+
             result.append({
                 "id": str(user.id),
                 "name": user.name,
@@ -51,17 +80,18 @@ async def get_all_users(credentials: HTTPBasicCredentials = Depends(verify_admin
                 "created_at": user.created_at.isoformat(),
                 "last_login": user.last_login.isoformat() if user.last_login else None
             })
-        
+
         return result
     except Exception as e:
         traceback.print_exc()
         raise
 
+
 @router.get("/users/{user_id}/reports")
 async def get_user_reports(user_id: str, credentials: HTTPBasicCredentials = Depends(verify_admin_credentials)):
     try:
         reports = await ReportLog.find({"user_id": user_id}).sort([("created_at", -1)]).to_list()
-        
+
         result = []
         for report in reports:
             token_usage = {
@@ -69,7 +99,7 @@ async def get_user_reports(user_id: str, credentials: HTTPBasicCredentials = Dep
                 "completion": 0,
                 "total": 0
             }
-            
+
             if report.openai_usage and "usage" in report.openai_usage:
                 usage = report.openai_usage["usage"]
                 token_usage = {
@@ -77,7 +107,7 @@ async def get_user_reports(user_id: str, credentials: HTTPBasicCredentials = Dep
                     "completion": usage.get("completion_tokens", 0),
                     "total": usage.get("total_tokens", 0)
                 }
-            
+
             result.append({
                 "id": str(report.id),
                 "title": report.title,
@@ -88,17 +118,19 @@ async def get_user_reports(user_id: str, credentials: HTTPBasicCredentials = Dep
                 "created_at": report.created_at.isoformat(),
                 "token_usage": token_usage
             })
-        
+
         return result
     except Exception as e:
         traceback.print_exc()
         raise
 
+
 @router.get("/users/{user_id}/transactions")
-async def get_user_token_transactions(user_id: str, credentials: HTTPBasicCredentials = Depends(verify_admin_credentials)):
+async def get_user_token_transactions(user_id: str,
+                                      credentials: HTTPBasicCredentials = Depends(verify_admin_credentials)):
     try:
         transactions = await TokenTransaction.find({"user_id": user_id}).sort([("created_at", -1)]).to_list()
-        
+
         result = []
         for transaction in transactions:
             result.append({
@@ -112,21 +144,22 @@ async def get_user_token_transactions(user_id: str, credentials: HTTPBasicCreden
                 "created_at": transaction.created_at.isoformat(),
                 "completed_at": transaction.completed_at.isoformat() if transaction.completed_at else None
             })
-        
+
         return result
     except Exception as e:
         traceback.print_exc()
         raise
 
+
 @router.get("/transactions")
 async def get_all_transactions(credentials: HTTPBasicCredentials = Depends(verify_admin_credentials)):
     try:
         transactions = await TokenTransaction.find({}).sort([("created_at", -1)]).to_list()
-        
+
         result = []
         for transaction in transactions:
             user = await User.get(transaction.user_id)
-            
+
             result.append({
                 "id": str(transaction.id),
                 "user_name": user.name if user else "Unknown",
@@ -140,11 +173,12 @@ async def get_all_transactions(credentials: HTTPBasicCredentials = Depends(verif
                 "created_at": transaction.created_at.isoformat(),
                 "completed_at": transaction.completed_at.isoformat() if transaction.completed_at else None
             })
-        
+
         return result
     except Exception as e:
         traceback.print_exc()
         raise
+
 
 @router.get("/stats")
 async def get_admin_stats(credentials: HTTPBasicCredentials = Depends(verify_admin_credentials)):
@@ -153,14 +187,14 @@ async def get_admin_stats(credentials: HTTPBasicCredentials = Depends(verify_adm
         total_reports = await ReportLog.find_all().count()
         completed_transactions = await TokenTransaction.find({"status": "completed"}).count()
         total_revenue = 0
-        
+
         # Calculate total revenue
         completed_transactions_list = await TokenTransaction.find({
             "status": "completed",
             "amount_paid": {"$exists": True, "$ne": None}
         }).to_list()
         total_revenue = sum(trans.amount_paid for trans in completed_transactions_list if trans.amount_paid)
-        
+
         return {
             "total_users": total_users,
             "total_reports": total_reports,
