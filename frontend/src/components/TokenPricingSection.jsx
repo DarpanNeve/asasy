@@ -452,20 +452,8 @@ const TokenPricingSection = ({
                   </div>
                 </div>
               </div>
-                  <div className="text-right">
-                    {pricing.has_discount && (
-                      <div className="text-lg text-gray-500 line-through">
-                        {formatCurrency(pricing.original_price)}
-                      </div>
-                    )}
-                    <div className="text-3xl font-bold text-blue-600">
-                      {formatCurrency(pricing.base_price)}
-                    </div>
-                    {pricing.has_discount && (
-                      <div className="text-sm text-green-600 font-medium">
-                        {pricing.discount_percentage}% OFF
-                      </div>
-                    )}
+            </>
+          )}
 
           {/* Bottom Note */}
           {!compact && (
@@ -567,25 +555,9 @@ const TokenPricingCard = ({
               compact ? "text-2xl" : "text-3xl"
             } font-bold text-gray-900 mb-2`}
           >
-            <div className="text-center">
-              {typeof pkg.price_usd === "string" ? (
-                pkg.price_usd
-              ) : (
-                <>
-                  {pkg.original_price_usd && pkg.original_price_usd > pkg.price_usd && (
-                    <div className="text-sm text-gray-500 line-through mb-1">
-                      ${pkg.original_price_usd}
-                    </div>
-                  )}
-                  <div className="text-blue-600">${pkg.price_usd}</div>
-                  {pkg.discount_percentage && (
-                    <div className="text-xs text-green-600 font-medium mt-1">
-                      {pkg.discount_percentage}% OFF
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
+            {typeof pkg.price_usd === "string"
+              ? pkg.price_usd
+              : `$${pkg.price_usd}`}
           </div>
 
           {/* Tokens */}
