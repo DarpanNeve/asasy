@@ -202,6 +202,7 @@ class PDFReportGenerator:
     def generate_complete_report(self,topic,output_path,complexity:ReportComplexity) -> Dict[str, Path]:
         """Main method to generate complete report"""
         try:
+            logger.info(f"Starting complete report generation for topic: {topic[:100]}...")
             # Initialize OpenAI client
             client = self.initialize_openai_client()
             if complexity==ReportComplexity.COMPREHENSIVE:
@@ -210,19 +211,29 @@ class PDFReportGenerator:
                 requirement =settings.ADVANCED_REQUIREMENT
             else:
                 requirement =settings.BASIC_REQUIREMENT
+            
+            logger.info(f"Using complexity: {complexity}, requirement length: {len(requirement)}")
             # Generate HTML content
             logger.info("Generating HTML report...")
             html_content = self.generate_html_report(client,topic,requirement)
+            logger.info("HTML report generation completed")
 
             # Save HTML file
+            logger.info("Saving HTML file...")
             html_path = self.save_html_to_file(html_content,output_path)
 
             # Convert to PDF
             logger.info("Converting to PDF...")
             pdf_path = self.convert_html_to_pdf(html_content,output_path)
+            logger.info("PDF conversion completed")
 
             # Generate metadata
+            logger.info("Generating metadata...")
             metadata = self.generate_report_metadata(html_path, pdf_path,topic,requirement,output_path)
+            
+            # Include usage info in metadata
+            if hasattr(self, '_last_usage_info'):
+                metadata['_usage_info'] = self._last_usage_info
 
             logger.info("🎉 Report generation completed successfully!")
             logger.info(f"📄 HTML Report: {html_path}")
@@ -232,6 +243,7 @@ class PDFReportGenerator:
                 "html": html_path,
                 "pdf": pdf_path,
                 "metadata": metadata
+                "_usage_info": getattr(self, '_last_usage_info', None)
             }
 
         except Exception as e:

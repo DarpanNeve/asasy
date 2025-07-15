@@ -42,7 +42,18 @@ async def generate_report_background(report_id: str, idea: str, complexity: Repo
 
         logger.info("Calling generate_technology_report...")
         generator= PDFReportGenerator()
-        report_data = generator.generate_complete_report(idea, output_path, complexity)
+        
+        # Use asyncio to run the synchronous report generation in a thread pool
+        # This prevents blocking the main event loop
+        import asyncio
+        loop = asyncio.get_event_loop()
+        report_data = await loop.run_in_executor(
+            None, 
+            generator.generate_complete_report, 
+            idea, 
+            output_path, 
+            complexity
+        )
         logger.info("Report generation completed successfully")
 
         # Verify file was created
