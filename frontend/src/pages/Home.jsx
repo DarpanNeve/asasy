@@ -27,6 +27,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { api } from "../services/api";
 import { createReportPdf } from "../utils/reportUtils";
 import toast from "react-hot-toast";
+import Footer from "../components/Footer";
 
 export default function Home() {
   const { user } = useAuth();
@@ -1222,101 +1223,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-neutral-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center mb-4">
-                <BarChart3 className="h-8 w-8 text-primary-400" />
-                <span className="ml-2 text-xl font-bold">Asasy</span>
-              </div>
-              <p className="text-neutral-400">
-                AI-powered IP commercialization reports for modern innovators
-                and researchers.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Product</h3>
-              <ul className="space-y-2 text-neutral-400">
-                <li>
-                  <a
-                    href="#features"
-                    className="hover:text-white transition-colors"
-                  >
-                    Features
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#pricing"
-                    className="hover:text-white transition-colors"
-                  >
-                    Pricing
-                  </a>
-                </li>
-                <li>
-                  <Link
-                    to="/signup"
-                    className="hover:text-white transition-colors"
-                  >
-                    Free Trial
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Services</h3>
-              <ul className="space-y-2 text-neutral-400">
-                <li>
-                  <Link
-                    to="/rttp"
-                    className="hover:text-white transition-colors"
-                  >
-                    RTTP Experts
-                  </Link>
-                </li>
-                <li>
-                  <a
-                    href="#journey"
-                    className="hover:text-white transition-colors"
-                  >
-                    IP Journey
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Consulting
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Support</h3>
-              <ul className="space-y-2 text-neutral-400">
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Help Center
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Documentation
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Contact Support
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-neutral-800 mt-8 pt-8 text-center text-neutral-400">
-            <p>&copy; 2024 Asasy. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

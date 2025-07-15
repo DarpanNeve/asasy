@@ -303,6 +303,15 @@ export default function RTTP() {
             {/* Enhanced CTA buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <button
+                onClick={() =>
+                  window.open("https://forms.gle/your-google-form-id", "_blank")
+                }
+                className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-lg px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center"
+              >
+                Join as Expert
+              </button>
+
+              <button
                 onClick={handleDirectBooking}
                 className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-lg px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center"
               >

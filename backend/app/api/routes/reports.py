@@ -36,7 +36,7 @@ async def generate_report_background(report_id: str, idea: str, complexity: Repo
         logger.info(f"Updated report status to PROCESSING")
 
         # Generate report
-        output_path = f"{settings.REPORTS_STORAGE_PATH}/{report_id}.pdf"
+        output_path = f"{settings.REPORTS_STORAGE_PATH}/{report_id}"
         os.makedirs(settings.REPORTS_STORAGE_PATH, exist_ok=True)
         logger.info(f"Output path: {output_path}")
 
@@ -57,11 +57,11 @@ async def generate_report_background(report_id: str, idea: str, complexity: Repo
         logger.info("Report generation completed successfully")
 
         # Verify file was created
-        if not os.path.exists(output_path):
-            logger.error(f"PDF file was not created at {output_path}")
+        if not os.path.exists(f"{output_path}.pdf"):
+            logger.error(f"PDF file was not created at {output_path}.pdf")
             raise ValueError("PDF file was not created")
             
-        file_size = os.path.getsize(output_path)
+        file_size = os.path.getsize(f"{output_path}.pdf")
         logger.info(f"Generated PDF file size: {file_size} bytes")
         
         if file_size == 0:

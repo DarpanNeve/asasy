@@ -21,6 +21,8 @@ import PricingPolicy from "./pages/PricingPolicy";
 import RefundPolicy from "./pages/RefundPolicy";
 import "./index.css";
 import TokenPricingSection from "./components/TokenPricingSection";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -54,11 +56,13 @@ function App() {
                     path="/pricing"
                     element={
                       <div className="min-h-screen">
+                        <Header />
                         <TokenPricingSection
                           compact={false}
                           showReportTypes={true}
                           showHeader={true}
                         />
+                        <Footer />
                       </div>
                     }
                   />

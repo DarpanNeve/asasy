@@ -185,7 +185,13 @@ const TokenPricingSection = ({
       tokens: "7,500",
       description: "Comprehensive analysis with detailed insights",
       features: [
-        "All Basic Report features",
+        "Executive Summary",
+        "Problem/Opportunity Statement",
+        "Technology Overview",
+        "Key Benefits",
+        "Applications",
+        "IP Snapshot",
+        "Next Steps",
         "Expanded Executive Summary",
         "Technical Feasibility Analysis",
         "Market Signals & Competition",
@@ -202,7 +208,20 @@ const TokenPricingSection = ({
       tokens: "9,000",
       description: "Premium analysis with AI-driven insights",
       features: [
-        "All Advanced Report features",
+        "Executive Summary",
+        "Problem/Opportunity Statement",
+        "Technology Overview",
+        "Key Benefits",
+        "Applications",
+        "IP Snapshot",
+        "Next Steps",
+        "Expanded Executive Summary",
+        "Technical Feasibility Analysis",
+        "Market Signals & Competition",
+        "Regulatory Overview",
+        "Risk Assessment",
+        "Business Case Development",
+        "Go-to-Market Strategy",
         "In-depth IP Claims Analysis",
         "Global Freedom-to-Operate Report",
         "Detailed Market Analysis",
@@ -237,57 +256,6 @@ const TokenPricingSection = ({
 
   return (
     <div>
-      {showHeader && (
-        <motion.nav
-          className="bg-white shadow-sm border-b border-neutral-200 fixed w-full z-50"
-          initial={{ y: -100 }}
-          animate={{ y: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-        >
-          <div className="flex justify-between items-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center">
-                <BarChart3 className="h-8 w-8 text-primary-600" />
-                <span className="ml-2 text-xl font-bold text-gradient">
-                  Assesme
-                </span>
-              </div>
-            </div>
-            <div className="hidden md:flex items-center space-x-8">
-              <a
-                href="/#features"
-                className="text-neutral-600 hover:text-neutral-900 transition-colors"
-              >
-                Home
-              </a>
-
-              <a
-                href="/rttp"
-                className="text-neutral-600 hover:text-neutral-900 transition-colors"
-              >
-                RTTP Experts
-              </a>
-              {user ? (
-                <a href="/reports" className="btn-primary">
-                  Dashboard
-                </a>
-              ) : (
-                <>
-                  <a
-                    href="/login"
-                    className="text-neutral-600 hover:text-neutral-900 transition-colors"
-                  >
-                    Sign In
-                  </a>
-                  <a href="/signup" className="btn-primary">
-                    Get Started
-                  </a>
-                </>
-              )}
-            </div>
-          </div>
-        </motion.nav>
-      )}
       <div className={`${getContainerClasses()} px-4 ${className}`}>
         <div className="max-w-7xl mx-auto">
           {/* User Token Balance */}
@@ -459,10 +427,10 @@ const TokenPricingSection = ({
           {!compact && (
             <div className="text-center mt-12">
               <p className="text-gray-600 max-w-2xl mx-auto">
-                Need help choosing the right package? Our tokens are valid for
-                90 days from purchase. All prices include 18% GST. For
-                enterprise solutions with custom pricing and bulk discounts,
-                please contact our sales team.
+                Would you need any help choosing the right package? Our tokens
+                are valid for 90 days from purchase. For enterprise solutions
+                with custom pricing and bulk discounts, don't hesitate to get in
+                touch with our sales team.
               </p>
             </div>
           )}
@@ -560,11 +528,12 @@ const TokenPricingCard = ({
                 pkg.price_usd
               ) : (
                 <>
-                  {pkg.original_price_usd && pkg.original_price_usd > pkg.price_usd && (
-                    <div className="text-sm text-gray-500 line-through mb-1">
-                      ${pkg.original_price_usd}
-                    </div>
-                  )}
+                  {pkg.original_price_usd &&
+                    pkg.original_price_usd > pkg.price_usd && (
+                      <div className="text-sm text-gray-500 line-through mb-1">
+                        ${pkg.original_price_usd}
+                      </div>
+                    )}
                   <div className="text-blue-600">${pkg.price_usd}</div>
                   {pkg.discount_percentage && (
                     <div className="text-xs text-green-600 font-medium mt-1">

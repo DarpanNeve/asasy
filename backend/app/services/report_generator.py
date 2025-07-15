@@ -1,6 +1,5 @@
 import json
 import logging
-import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -69,6 +68,7 @@ class PDFReportGenerator:
 
         user_message = (
             f"Generate a complete HTML5 report on the topic: '{topic.strip()}'.\n"
+            "topic ends here"
             "Charts must be rendered in a visually appealing and structured format within the HTML, incorporating clear titles and well-defined headings to ensure clarity and professional presentation."
             "Add References with links in the End in the Structured format (bullet points)."
             f"The report should address the following requirements in detail:\n"
@@ -128,13 +128,9 @@ class PDFReportGenerator:
         )
 
     @staticmethod
-    def save_html_to_file(html_content: str, output_dir:str, filename: str = None) -> Path:
+    def save_html_to_file(html_content: str, output_dir:str) -> Path:
         """Save HTML content to file with proper naming"""
-        if filename is None:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = f"report_{timestamp}.html"
-
-        html_path = Path(output_dir) / filename
+        html_path = f"{Path(output_dir)}.html"
 
         with open(html_path, 'w', encoding='utf-8') as f:
             f.write(html_content)
@@ -143,13 +139,9 @@ class PDFReportGenerator:
         return html_path
 
     @staticmethod
-    def convert_html_to_pdf(html_content: str, output_dir:str, filename: str = None) -> Path:
-        """Convert HTML to PDF with enhanced settings"""
-        if filename is None:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = f"report_{timestamp}.pdf"
+    def convert_html_to_pdf(html_content: str, output_dir:str) -> Path:
 
-        pdf_path = Path(output_dir) / filename
+        pdf_path = f"{Path(output_dir)}.pdf"
 
         try:
             # Create HTML object with enhanced configuration
@@ -191,12 +183,6 @@ class PDFReportGenerator:
                 "min_word_count": self.min_word_count
             }
         }
-
-        metadata_path = output_dir / "report_metadata.json"
-        with open(metadata_path, 'w', encoding='utf-8') as f:
-            json.dump(metadata, f, indent=2)
-
-        logger.info(f"Metadata saved to: {metadata_path}")
         return metadata
 
     def generate_complete_report(self,topic,output_path,complexity:ReportComplexity) -> Dict[str, Path]:
@@ -242,7 +228,7 @@ class PDFReportGenerator:
             return {
                 "html": html_path,
                 "pdf": pdf_path,
-                "metadata": metadata
+                "metadata": metadata,
                 "_usage_info": getattr(self, '_last_usage_info', None)
             }
 
