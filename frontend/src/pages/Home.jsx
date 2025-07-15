@@ -28,6 +28,7 @@ import { api } from "../services/api";
 import { createReportPdf } from "../utils/reportUtils";
 import toast from "react-hot-toast";
 import Footer from "../components/Footer";
+import Header from "../components/Header";
 
 export default function Home() {
   const { user } = useAuth();
@@ -247,62 +248,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Navigation */}
-      <motion.nav
-        className="bg-white shadow-sm border-b border-neutral-200 fixed w-full z-50"
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <BarChart3 className="h-8 w-8 text-primary-600" />
-              <span className="ml-2 text-xl font-bold text-gradient">
-                Assesme
-              </span>
-            </div>
-            <div className="hidden md:flex items-center space-x-8">
-              <a
-                href="#features"
-                className="text-neutral-600 hover:text-neutral-900 transition-colors"
-              >
-                Features
-              </a>
-
-              <a
-                href="/pricing"
-                className="text-neutral-600 hover:text-neutral-900 transition-colors"
-              >
-                Pricing
-              </a>
-              <Link
-                to="/rttp"
-                className="text-neutral-600 hover:text-neutral-900 transition-colors"
-              >
-                RTTP Experts
-              </Link>
-              {user ? (
-                <Link to="/reports" className="btn-primary">
-                  Dashboard
-                </Link>
-              ) : (
-                <>
-                  <Link
-                    to="/login"
-                    className="text-neutral-600 hover:text-neutral-900 transition-colors"
-                  >
-                    Sign In
-                  </Link>
-                  <Link to="/signup" className="btn-primary">
-                    Get Started
-                  </Link>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </motion.nav>
+      <Header />
 
       {/* Hero Section with Report Generator */}
       <section className="relative min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 pt-20 pb-32 overflow-hidden">
