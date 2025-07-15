@@ -379,7 +379,17 @@ export default function Home() {
                       })}
                       rows={6}
                       className="w-full p-6 pr-16 border-2 border-slate-200 rounded-2xl shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:outline-none resize-none text-lg transition-all duration-300 hover:shadow-md bg-white/80 backdrop-blur-sm"
-                      placeholder="Describe your technology innovation, patent idea, or research concept here... For example: 'AI-powered smart home automation system with voice control and predictive analytics for energy optimization...'"
+                      placeholder="Include the following elements for better analysis:
+
+1. What is the core technology or invention?
+2. What real-world problem does it solve?
+3. What are the main features and how does it work?
+4. Who are the potential users or markets?
+5. Any development status (idea, prototype, tested, patented)?
+6. Mention any unique advantages (speed, cost, sustainability, accuracy, etc.)
+
+Example Format to Follow:
+A wearable biosensor patch that monitors glucose levels in real-time using sweat analysis. Designed for non-invasive diabetes management. Includes AI-based alerts and mobile app integration. Currently at prototype stage, patent filed in India, and tested with 100 users during a 2-month pilot."
                       disabled={isGenerating}
                     />
                     <button
