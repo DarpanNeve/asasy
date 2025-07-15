@@ -555,9 +555,25 @@ const TokenPricingCard = ({
               compact ? "text-2xl" : "text-3xl"
             } font-bold text-gray-900 mb-2`}
           >
-            {typeof pkg.price_usd === "string"
-              ? pkg.price_usd
-              : `$${pkg.price_usd}`}
+            <div className="text-center">
+              {typeof pkg.price_usd === "string" ? (
+                pkg.price_usd
+              ) : (
+                <>
+                  {pkg.original_price_usd && pkg.original_price_usd > pkg.price_usd && (
+                    <div className="text-sm text-gray-500 line-through mb-1">
+                      ${pkg.original_price_usd}
+                    </div>
+                  )}
+                  <div className="text-blue-600">${pkg.price_usd}</div>
+                  {pkg.discount_percentage && (
+                    <div className="text-xs text-green-600 font-medium mt-1">
+                      {pkg.discount_percentage}% OFF
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
           </div>
 
           {/* Tokens */}
