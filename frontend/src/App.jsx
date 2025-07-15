@@ -19,6 +19,10 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import PricingPolicy from "./pages/PricingPolicy";
 import RefundPolicy from "./pages/RefundPolicy";
+import Careers from "./pages/Careers";
+import Blog from "./pages/Blog";
+import PressReleases from "./pages/PressReleases";
+import BlogPost from "./pages/BlogPost";
 import "./index.css";
 import TokenPricingSection from "./components/TokenPricingSection";
 import Header from "./components/Header";
@@ -69,6 +73,11 @@ function App() {
                   <Route path="/admin" element={<Admin />} />
 
                   {/* Legal pages */}
+                  <Route path="/careers" element={<Careers />} />
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/blog/:slug" element={<BlogPost />} />
+                  <Route path="/press-releases" element={<PressReleases />} />
+                  <Route path="/press-releases/:slug" element={<BlogPost />} />
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="/terms" element={<Terms />} />
                   <Route path="/pricing-policy" element={<PricingPolicy />} />

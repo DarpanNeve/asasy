@@ -16,6 +16,7 @@ class ContactSubmission(BaseModel):
     name: str = Field(..., min_length=2, max_length=100)
     email: EmailStr
     phone: str = Field(..., min_length=10, max_length=20)
+    reason: Optional[str] = Field(None, description="Reason for contact")
     message: str = Field(..., min_length=10, max_length=1000)
 
 # In-memory storage for demo purposes
@@ -33,6 +34,7 @@ async def submit_contact_form(request: Request, submission: ContactSubmission):
             "name": submission.name,
             "email": submission.email,
             "phone": submission.phone,
+            "reason": submission.reason,
             "message": submission.message,
             "submitted_at": datetime.utcnow().isoformat(),
             "status": "new"
@@ -90,7 +92,7 @@ async def export_contact_submissions():
         writer = csv.writer(output)
         
         # Write header
-        writer.writerow(['ID', 'Name', 'Email', 'Phone', 'Message', 'Submitted At', 'Status'])
+        writer.writerow(['ID', 'Name', 'Email', 'Phone', 'Reason', 'Message', 'Submitted At', 'Status'])
         
         # Write data
         for submission in contact_submissions:
@@ -99,6 +101,7 @@ async def export_contact_submissions():
                 submission['name'],
                 submission['email'],
                 submission['phone'],
+                submission.get('reason', ''),
                 submission['message'],
                 submission['submitted_at'],
                 submission['status']

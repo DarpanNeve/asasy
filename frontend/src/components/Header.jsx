@@ -26,6 +26,15 @@ export default function Header() {
             <Link to="/" className="text-neutral-600 hover:text-neutral-900 transition-colors">
               Home
             </Link>
+            <Link to="/careers" className="text-neutral-600 hover:text-neutral-900 transition-colors">
+              Careers
+            </Link>
+            <Link to="/blog" className="text-neutral-600 hover:text-neutral-900 transition-colors">
+              Blog
+            </Link>
+            <Link to="/press-releases" className="text-neutral-600 hover:text-neutral-900 transition-colors">
+              Press
+            </Link>
             <Link to="/pricing" className="text-neutral-600 hover:text-neutral-900 transition-colors">
               Pricing
             </Link>
@@ -69,6 +78,27 @@ export default function Header() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Home
+              </Link>
+              <Link
+                to="/careers"
+                className="block px-3 py-2 text-neutral-600 hover:text-neutral-900 transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Careers
+              </Link>
+              <Link
+                to="/blog"
+                className="block px-3 py-2 text-neutral-600 hover:text-neutral-900 transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Blog
+              </Link>
+              <Link
+                to="/press-releases"
+                className="block px-3 py-2 text-neutral-600 hover:text-neutral-900 transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Press
               </Link>
               <Link
                 to="/pricing"

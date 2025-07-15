@@ -98,7 +98,8 @@ class PDFReportGenerator:
                     {"role": "user", "content": user_message}
                 ],
                 temperature=self.temperature,
-                max_tokens=self.max_tokens
+                max_tokens=self.max_tokens,
+                stream=False  # Ensure non-streaming for better error handling
             )
 
             # Log usage statistics
@@ -106,6 +107,15 @@ class PDFReportGenerator:
             logger.info(f"Token usage - Total: {usage.total_tokens}, "
                         f"Prompt: {usage.prompt_tokens}, "
                         f"Completion: {usage.completion_tokens}")
+            
+            # Store usage info for later use
+            self._last_usage_info = {
+                "usage": {
+                    "prompt_tokens": usage.prompt_tokens,
+                    "completion_tokens": usage.completion_tokens,
+                    "total_tokens": usage.total_tokens
+                }
+            }
 
             html_content = response.choices[0].message.content.strip()
 

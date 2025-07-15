@@ -303,12 +303,12 @@ export default function RTTP() {
             {/* Enhanced CTA buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <button
-                onClick={() =>
-                  window.open("https://forms.gle/your-google-form-id", "_blank")
-                }
+                onClick={() => window.open("https://forms.gle/rttp-expert-form", "_blank")}
                 className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-lg px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center"
               >
+                <User className="mr-2 h-5 w-5 group-hover:animate-pulse" />
                 Join as Expert
+                <ExternalLink className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </button>
 
               <button
@@ -321,11 +321,14 @@ export default function RTTP() {
               </button>
 
               <a
-                href="#services"
+                href="https://www.youtube.com/watch?v=your-video-id"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="group border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white text-lg px-8 py-4 rounded-full transition-all duration-300 flex items-center justify-center"
               >
                 <PlayCircle className="mr-2 h-5 w-5 group-hover:animate-pulse" />
                 Learn More
+                <ExternalLink className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </a>
             </div>
 
@@ -594,6 +597,31 @@ export default function RTTP() {
 
           <div className="bg-white rounded-2xl p-8 shadow-xl border border-neutral-100">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  <Target className="inline h-4 w-4 mr-2 text-blue-600" />
+                  Reason for Contact
+                </label>
+                <select
+                  {...register("reason", { required: "Please select a reason" })}
+                  className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                >
+                  <option value="">Select a reason...</option>
+                  <option value="tech_scouting">Tech Scouting</option>
+                  <option value="ip_licensing">IP Licensing</option>
+                  <option value="startup_formation">Startup Formation</option>
+                  <option value="funding_strategy">Funding Strategy</option>
+                  <option value="global_market_access">Global Market Access</option>
+                  <option value="compliance_risks">Compliance and Risks</option>
+                  <option value="other">Other</option>
+                </select>
+                {errors.reason && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.reason.message}
+                  </p>
+                )}
+              </div>
+              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-2">
