@@ -244,7 +244,7 @@ const TokenPricingSection = ({
           animate={{ y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center">
                 <BarChart3 className="h-8 w-8 text-primary-600" />
@@ -252,6 +252,38 @@ const TokenPricingSection = ({
                   Assesme
                 </span>
               </div>
+            </div>
+            <div className="hidden md:flex items-center space-x-8">
+              <a
+                href="/#features"
+                className="text-neutral-600 hover:text-neutral-900 transition-colors"
+              >
+                Home
+              </a>
+
+              <a
+                href="/rttp"
+                className="text-neutral-600 hover:text-neutral-900 transition-colors"
+              >
+                RTTP Experts
+              </a>
+              {user ? (
+                <a href="/reports" className="btn-primary">
+                  Dashboard
+                </a>
+              ) : (
+                <>
+                  <a
+                    href="/login"
+                    className="text-neutral-600 hover:text-neutral-900 transition-colors"
+                  >
+                    Sign In
+                  </a>
+                  <a href="/signup" className="btn-primary">
+                    Get Started
+                  </a>
+                </>
+              )}
             </div>
           </div>
         </motion.nav>

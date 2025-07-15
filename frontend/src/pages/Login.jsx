@@ -13,7 +13,7 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = location.state?.from?.pathname || "/reports";
+  const from = location.state?.from?.pathname || "/";
 
   const {
     register,
@@ -33,14 +33,14 @@ export default function Login() {
             cancel_on_tap_outside: true,
             use_fedcm_for_prompt: false, // Disable FedCM
           });
-          
+
           // Also initialize OAuth2 for popup method
-          window.gapi?.load('auth2', () => {
+          window.gapi?.load("auth2", () => {
             window.gapi.auth2.init({
               client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
             });
           });
-          
+
           console.log("Google Sign-In initialized successfully");
         } catch (error) {
           console.error("Google Sign-In initialization error:", error);
@@ -51,19 +51,23 @@ export default function Login() {
     // Load Google APIs
     const loadGoogleAPIs = () => {
       // Load Google Identity Services
-      if (!document.querySelector('script[src*="accounts.google.com/gsi/client"]')) {
-        const gsiScript = document.createElement('script');
-        gsiScript.src = 'https://accounts.google.com/gsi/client';
+      if (
+        !document.querySelector('script[src*="accounts.google.com/gsi/client"]')
+      ) {
+        const gsiScript = document.createElement("script");
+        gsiScript.src = "https://accounts.google.com/gsi/client";
         gsiScript.async = true;
         gsiScript.defer = true;
         gsiScript.onload = initializeGoogleSignIn;
         document.head.appendChild(gsiScript);
       }
-      
+
       // Load Google API Platform Library (for popup method)
-      if (!document.querySelector('script[src*="apis.google.com/js/platform.js"]')) {
-        const gapiScript = document.createElement('script');
-        gapiScript.src = 'https://apis.google.com/js/platform.js';
+      if (
+        !document.querySelector('script[src*="apis.google.com/js/platform.js"]')
+      ) {
+        const gapiScript = document.createElement("script");
+        gapiScript.src = "https://apis.google.com/js/platform.js";
         gapiScript.async = true;
         gapiScript.defer = true;
         document.head.appendChild(gapiScript);
@@ -81,20 +85,20 @@ export default function Login() {
     setGoogleLoading(true);
     try {
       const result = await googleLogin(response.credential);
-      
+
       // Check if profile completion is needed
       if (result.profile_incomplete) {
         toast.error("Please complete your profile");
-        navigate("/profile-completion", { 
-          state: { 
+        navigate("/profile-completion", {
+          state: {
             user: result.user,
-            from: location 
+            from: location,
           },
-          replace: true 
+          replace: true,
         });
         return;
       }
-      
+
       toast.success("Welcome back!");
       navigate(from, { replace: true });
     } catch (error) {
@@ -123,13 +127,16 @@ export default function Login() {
 
   const handleGoogleLogin = () => {
     setGoogleLoading(true);
-    
+
     try {
       // Try the new Google Identity Services first
       if (window.google && window.google.accounts) {
         try {
           window.google.accounts.id.prompt((notification) => {
-            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+            if (
+              notification.isNotDisplayed() ||
+              notification.isSkippedMoment()
+            ) {
               // Fallback to popup method
               handleGooglePopupLogin();
             }
@@ -139,10 +146,9 @@ export default function Login() {
           console.log("GSI prompt failed, trying popup method:", error);
         }
       }
-      
+
       // Fallback to popup method
       handleGooglePopupLogin();
-      
     } catch (error) {
       console.error("Google login error:", error);
       toast.error("Google Sign-In error. Please try again.");
@@ -155,29 +161,33 @@ export default function Login() {
     if (window.gapi && window.gapi.auth2) {
       const authInstance = window.gapi.auth2.getAuthInstance();
       if (authInstance) {
-        authInstance.signIn().then(async (googleUser) => {
-          const idToken = googleUser.getAuthResponse().id_token;
-          await handleGoogleResponse({ credential: idToken });
-        }).catch((error) => {
-          console.error("Google popup login error:", error);
-          toast.error("Google Sign-In cancelled or failed");
-          setGoogleLoading(false);
-        });
+        authInstance
+          .signIn()
+          .then(async (googleUser) => {
+            const idToken = googleUser.getAuthResponse().id_token;
+            await handleGoogleResponse({ credential: idToken });
+          })
+          .catch((error) => {
+            console.error("Google popup login error:", error);
+            toast.error("Google Sign-In cancelled or failed");
+            setGoogleLoading(false);
+          });
       } else {
         // Direct OAuth2 URL method as last resort
         const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
         const redirectUri = `${window.location.origin}/auth/google/callback`;
-        const scope = 'openid email profile';
-        const responseType = 'code';
-        
-        const authUrl = `https://accounts.google.com/oauth/authorize?` +
+        const scope = "openid email profile";
+        const responseType = "code";
+
+        const authUrl =
+          `https://accounts.google.com/oauth/authorize?` +
           `client_id=${clientId}&` +
           `redirect_uri=${encodeURIComponent(redirectUri)}&` +
           `scope=${encodeURIComponent(scope)}&` +
           `response_type=${responseType}&` +
           `access_type=offline&` +
           `prompt=select_account`;
-        
+
         window.location.href = authUrl;
       }
     } else {
@@ -196,7 +206,10 @@ export default function Login() {
               <BarChart3 className="h-8 w-8 text-primary-600" />
               <span className="text-2xl font-bold text-gradient">Asasy</span>
             </div>
-            <h2 className="text-3xl font-bold tracking-tight" style={{ color: '#000' }}>
+            <h2
+              className="text-3xl font-bold tracking-tight"
+              style={{ color: "#000" }}
+            >
               Welcome back
             </h2>
             <p className="mt-2 text-sm text-neutral-600">
@@ -388,7 +401,6 @@ export default function Login() {
       </div>
 
       {/* Right side - Hero */}
-      
     </div>
   );
 }

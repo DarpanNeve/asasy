@@ -1,19 +1,19 @@
+import logging
+import os
+import traceback
+from datetime import datetime
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from fastapi.responses import FileResponse
-from typing import Optional, List
-from datetime import datetime
-import os
-import asyncio
-import logging
-import traceback
 
-from app.core.security import get_current_user
-from app.models.user import User
-from app.models.report import ReportLog, ReportStatus, ReportType, ReportComplexity, REPORT_TOKEN_REQUIREMENTS
-from app.services.report_generator import generate_technology_report
-from app.services.email_service import send_report_ready_email
 from app.core.config import settings
+from app.core.security import get_current_user
+from app.models.report import ReportLog, ReportStatus, ReportType, ReportComplexity, REPORT_TOKEN_REQUIREMENTS
+from app.models.user import User
 from app.schemas.report import ReportCreate, ReportResponse, ReportListResponse
+from app.services.email_service import send_report_ready_email
+from app.services.report_generator import PDFReportGenerator
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -41,7 +41,7 @@ async def generate_report_background(report_id: str, idea: str, complexity: Repo
         logger.info(f"Output path: {output_path}")
 
         logger.info("Calling generate_technology_report...")
-        report_data = await generate_technology_report(idea, output_path, complexity)
+        report_data = PDFReportGenerator.generate_complete_report(idea, output_path, complexity)
         logger.info("Report generation completed successfully")
 
         # Verify file was created

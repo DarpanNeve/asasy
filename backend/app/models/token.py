@@ -85,7 +85,6 @@ class UserTokenBalance(Document):
     total_tokens: int = Field(default=0, description="Total tokens purchased")
     used_tokens: int = Field(default=0, description="Tokens used")
     available_tokens: int = Field(default=0, description="Available tokens")
-    
     # Timestamps
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)

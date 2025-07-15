@@ -32,13 +32,15 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function RTTP() {
   const [selectedService, setSelectedService] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [calLoaded, setCalLoaded] = useState(false);
   const [calError, setCalError] = useState(false);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
+  const { user } = useAuth();
 
   // Cal.com direct booking URL
   const calDirectURL = "https://cal.com/assesme/15min";
@@ -51,15 +53,15 @@ export default function RTTP() {
         return;
       }
 
-      const script = document.createElement('script');
-      script.src = 'https://app.cal.com/embed/embed.js';
+      const script = document.createElement("script");
+      script.src = "https://app.cal.com/embed/embed.js";
       script.async = true;
       script.onload = () => {
-        console.log('Cal.com script loaded');
+        console.log("Cal.com script loaded");
         initializeCal();
       };
       script.onerror = () => {
-        console.error('Failed to load Cal.com script');
+        console.error("Failed to load Cal.com script");
         setCalError(true);
       };
       document.head.appendChild(script);
@@ -69,12 +71,12 @@ export default function RTTP() {
       if (window.Cal) {
         try {
           window.Cal("init", {
-            origin: "https://app.cal.com"
+            origin: "https://app.cal.com",
           });
           setCalLoaded(true);
-          console.log('Cal.com initialized successfully');
+          console.log("Cal.com initialized successfully");
         } catch (error) {
-          console.error('Cal.com initialization error:', error);
+          console.error("Cal.com initialization error:", error);
           setCalError(true);
         }
       }
@@ -84,7 +86,7 @@ export default function RTTP() {
   }, []);
 
   const handleDirectBooking = () => {
-    window.open(calDirectURL, '_blank');
+    window.open(calDirectURL, "_blank");
   };
 
   const {
@@ -100,76 +102,102 @@ export default function RTTP() {
       description: "Validate your innovation and position it correctly",
       icon: Lightbulb,
       color: "from-yellow-400 to-orange-500",
-      details: "Our RTTP experts help you identify market gaps, validate technical feasibility, and position your innovation for maximum commercial impact.",
-      features: ["Market Gap Analysis", "Technical Feasibility", "Commercial Positioning"]
+      details:
+        "Our RTTP experts help you identify market gaps, validate technical feasibility, and position your innovation for maximum commercial impact.",
+      features: [
+        "Market Gap Analysis",
+        "Technical Feasibility",
+        "Commercial Positioning",
+      ],
     },
     {
       area: "IP Licensing Strategy",
       description: "Help you license to industry, startups, or global players",
       icon: FileText,
       color: "from-blue-400 to-indigo-500",
-      details: "Develop comprehensive licensing strategies, negotiate terms, and connect with potential licensees across industries and geographies.",
-      features: ["Licensing Strategy", "Term Negotiation", "Global Connections"]
+      details:
+        "Develop comprehensive licensing strategies, negotiate terms, and connect with potential licensees across industries and geographies.",
+      features: [
+        "Licensing Strategy",
+        "Term Negotiation",
+        "Global Connections",
+      ],
     },
     {
       area: "Startup Formation",
       description: "Guide business model, cap tables, and investor readiness",
       icon: TrendingUp,
       color: "from-green-400 to-emerald-500",
-      details: "From concept to company - we guide you through business model development, equity structures, and preparing for investment rounds.",
-      features: ["Business Model Design", "Cap Table Structure", "Investor Readiness"]
+      details:
+        "From concept to company - we guide you through business model development, equity structures, and preparing for investment rounds.",
+      features: [
+        "Business Model Design",
+        "Cap Table Structure",
+        "Investor Readiness",
+      ],
     },
     {
       area: "Funding Roadmap",
       description: "Map SBIR/VC/CSR/Angel investments and pitch readiness",
       icon: DollarSign,
       color: "from-purple-400 to-pink-500",
-      details: "Create strategic funding pathways including government grants, venture capital, corporate partnerships, and angel investments.",
-      features: ["Grant Applications", "VC Connections", "Pitch Preparation"]
+      details:
+        "Create strategic funding pathways including government grants, venture capital, corporate partnerships, and angel investments.",
+      features: ["Grant Applications", "VC Connections", "Pitch Preparation"],
     },
     {
       area: "Global Market Access",
       description: "Prepare your tech/IP for international commercialisation",
       icon: Globe,
       color: "from-teal-400 to-cyan-500",
-      details: "Navigate international markets, regulatory requirements, and establish global partnerships for technology transfer.",
-      features: ["Market Entry Strategy", "Regulatory Compliance", "Partnership Development"]
+      details:
+        "Navigate international markets, regulatory requirements, and establish global partnerships for technology transfer.",
+      features: [
+        "Market Entry Strategy",
+        "Regulatory Compliance",
+        "Partnership Development",
+      ],
     },
     {
       area: "Compliance & Risk",
       description: "Ensure regulatory and legal due diligence is done right",
       icon: Shield,
       color: "from-red-400 to-rose-500",
-      details: "Comprehensive risk assessment, regulatory compliance guidance, and legal due diligence for technology commercialization.",
-      features: ["Risk Assessment", "Legal Due Diligence", "Compliance Guidance"]
+      details:
+        "Comprehensive risk assessment, regulatory compliance guidance, and legal due diligence for technology commercialization.",
+      features: [
+        "Risk Assessment",
+        "Legal Due Diligence",
+        "Compliance Guidance",
+      ],
     },
   ];
 
   const benefits = [
-    { 
+    {
       title: "Builds Trust for Investors",
       description: "Professional validation increases investor confidence",
-      icon: Shield
+      icon: Shield,
     },
-    { 
+    {
       title: "Increases Commercialisation Success Rate",
       description: "Proven methodologies improve your chances of success",
-      icon: TrendingUp
+      icon: TrendingUp,
     },
-    { 
+    {
       title: "Avoids Legal/IP Mistakes",
       description: "Expert guidance prevents costly legal pitfalls",
-      icon: CheckCircle2
+      icon: CheckCircle2,
     },
-    { 
+    {
       title: "Access to Global Network",
       description: "Connect with tech transfer offices worldwide",
-      icon: Globe
+      icon: Globe,
     },
-    { 
+    {
       title: "Academic Institution Support",
       description: "Specialized guidance for research commercialization",
-      icon: BookOpen
+      icon: BookOpen,
     },
   ];
 
@@ -177,21 +205,24 @@ export default function RTTP() {
     {
       name: "Dr. Sarah Chen",
       role: "Research Director, MIT",
-      content: "Working with RTTPs transformed our approach to technology transfer. The expertise and network they provided was invaluable.",
-      rating: 5
+      content:
+        "Working with RTTPs transformed our approach to technology transfer. The expertise and network they provided was invaluable.",
+      rating: 5,
     },
     {
       name: "Michael Rodriguez",
       role: "Founder, BioTech Innovations",
-      content: "The RTTP guidance helped us navigate the complex licensing landscape and secure our first major deal.",
-      rating: 5
+      content:
+        "The RTTP guidance helped us navigate the complex licensing landscape and secure our first major deal.",
+      rating: 5,
     },
     {
       name: "Prof. James Wilson",
       role: "Stanford University",
-      content: "Professional, knowledgeable, and results-driven. Our commercialization success rate improved significantly.",
-      rating: 5
-    }
+      content:
+        "Professional, knowledgeable, and results-driven. Our commercialization success rate improved significantly.",
+      rating: 5,
+    },
   ];
 
   const onSubmit = async (data) => {
@@ -242,12 +273,29 @@ export default function RTTP() {
               </span>
             </Link>
             <div className="flex items-center space-x-6">
-              <Link to="/" className="text-neutral-600 hover:text-neutral-900 transition-colors">
+              <a
+                href="/#features"
+                className="text-neutral-600 hover:text-neutral-900 transition-colors"
+              >
                 Home
-              </Link>
-              <Link to="/signup" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg">
-                Get Started
-              </Link>
+              </a>
+              {user ? (
+                <a href="/reports" className="btn-primary">
+                  Dashboard
+                </a>
+              ) : (
+                <>
+                  <a
+                    href="/login"
+                    className="text-neutral-600 hover:text-neutral-900 transition-colors"
+                  >
+                    Sign In
+                  </a>
+                  <a href="/signup" className="btn-primary">
+                    Get Started
+                  </a>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -261,29 +309,32 @@ export default function RTTP() {
           <div className="absolute top-40 right-20 w-16 h-16 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full opacity-20 animate-pulse delay-300"></div>
           <div className="absolute bottom-20 left-1/4 w-24 h-24 bg-gradient-to-r from-teal-400 to-blue-500 rounded-full opacity-20 animate-pulse delay-700"></div>
         </div>
-        
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="text-center mb-12">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full mb-6 shadow-lg">
               <Award className="h-10 w-10 text-blue-600" />
             </div>
-            
+
             <div className="mb-6">
               <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800 mb-4">
                 <Sparkles className="w-4 h-4 mr-2" />
                 Certified Technology Transfer Experts
               </span>
             </div>
-            
+
             <h1 className="text-4xl md:text-6xl font-bold text-neutral-900 mb-6 leading-tight">
               Work with{" "}
               <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
                 RTTP Experts
               </span>
             </h1>
-            
+
             <p className="text-xl text-neutral-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Access Registered Technology Transfer Professionals (RTTPs) – experts in IP licensing, tech transfer, and commercialisation. Get the guidance you need to transform your innovation into commercial success.
+              Access Registered Technology Transfer Professionals (RTTPs) –
+              experts in IP licensing, tech transfer, and commercialisation. Get
+              the guidance you need to transform your innovation into commercial
+              success.
             </p>
 
             {/* Enhanced CTA buttons */}
@@ -296,7 +347,7 @@ export default function RTTP() {
                 Book Consultation
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </button>
-              
+
               <a
                 href="#services"
                 className="group border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white text-lg px-8 py-4 rounded-full transition-all duration-300 flex items-center justify-center"
@@ -337,27 +388,37 @@ export default function RTTP() {
                 </span>
               </h2>
               <p className="text-lg text-neutral-600 mb-8 leading-relaxed">
-                A Registered Technology Transfer Professional (RTTP) is a certified expert who specializes in moving innovations from research institutions to commercial markets. They bridge the gap between academic research and industry applications.
+                A Registered Technology Transfer Professional (RTTP) is a
+                certified expert who specializes in moving innovations from
+                research institutions to commercial markets. They bridge the gap
+                between academic research and industry applications.
               </p>
-              
+
               <div className="space-y-4">
                 {benefits.map((benefit, index) => {
                   const Icon = benefit.icon;
                   return (
-                    <div key={index} className="group flex items-start p-4 rounded-lg hover:bg-blue-50 transition-colors">
+                    <div
+                      key={index}
+                      className="group flex items-start p-4 rounded-lg hover:bg-blue-50 transition-colors"
+                    >
                       <div className="w-10 h-10 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
                         <Icon className="h-5 w-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-neutral-900 mb-1">{benefit.title}</h3>
-                        <p className="text-neutral-600 text-sm">{benefit.description}</p>
+                        <h3 className="font-semibold text-neutral-900 mb-1">
+                          {benefit.title}
+                        </h3>
+                        <p className="text-neutral-600 text-sm">
+                          {benefit.description}
+                        </p>
                       </div>
                     </div>
                   );
                 })}
               </div>
             </div>
-            
+
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 rounded-2xl transform rotate-6 opacity-10"></div>
               <div className="relative bg-white rounded-2xl p-8 shadow-xl border border-neutral-100">
@@ -366,28 +427,36 @@ export default function RTTP() {
                     <div className="w-16 h-16 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                       <Users className="h-8 w-8 text-blue-600" />
                     </div>
-                    <h3 className="text-3xl font-bold text-neutral-900 mb-2">500+</h3>
+                    <h3 className="text-3xl font-bold text-neutral-900 mb-2">
+                      500+
+                    </h3>
                     <p className="text-neutral-600">Global RTTPs</p>
                   </div>
                   <div className="text-center group">
                     <div className="w-16 h-16 bg-gradient-to-r from-green-100 to-teal-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                       <TrendingUp className="h-8 w-8 text-green-600" />
                     </div>
-                    <h3 className="text-3xl font-bold text-neutral-900 mb-2">85%</h3>
+                    <h3 className="text-3xl font-bold text-neutral-900 mb-2">
+                      85%
+                    </h3>
                     <p className="text-neutral-600">Success Rate</p>
                   </div>
                   <div className="text-center group">
                     <div className="w-16 h-16 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                       <Globe className="h-8 w-8 text-purple-600" />
                     </div>
-                    <h3 className="text-3xl font-bold text-neutral-900 mb-2">50+</h3>
+                    <h3 className="text-3xl font-bold text-neutral-900 mb-2">
+                      50+
+                    </h3>
                     <p className="text-neutral-600">Countries</p>
                   </div>
                   <div className="text-center group">
                     <div className="w-16 h-16 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                       <Building className="h-8 w-8 text-yellow-600" />
                     </div>
-                    <h3 className="text-3xl font-bold text-neutral-900 mb-2">1000+</h3>
+                    <h3 className="text-3xl font-bold text-neutral-900 mb-2">
+                      1000+
+                    </h3>
                     <p className="text-neutral-600">Institutions</p>
                   </div>
                 </div>
@@ -398,7 +467,10 @@ export default function RTTP() {
       </section>
 
       {/* Enhanced Services Section */}
-      <section id="services" className="py-20 bg-gradient-to-br from-neutral-50 to-blue-50">
+      <section
+        id="services"
+        className="py-20 bg-gradient-to-br from-neutral-50 to-blue-50"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-6">
@@ -409,7 +481,8 @@ export default function RTTP() {
               Can Help You
             </h2>
             <p className="text-xl text-neutral-600 max-w-3xl mx-auto leading-relaxed">
-              Our network of certified RTTPs provides comprehensive support across all aspects of technology transfer and commercialization.
+              Our network of certified RTTPs provides comprehensive support
+              across all aspects of technology transfer and commercialization.
             </p>
           </div>
 
@@ -420,40 +493,53 @@ export default function RTTP() {
                 <div
                   key={index}
                   className="group relative bg-white rounded-xl p-6 shadow-sm border border-neutral-200 hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-2"
-                  onClick={() => setSelectedService(selectedService === index ? null : index)}
+                  onClick={() =>
+                    setSelectedService(selectedService === index ? null : index)
+                  }
                 >
                   {/* Gradient background on hover */}
-                  <div className={`absolute inset-0 bg-gradient-to-r ${service.color} opacity-0 group-hover:opacity-5 rounded-xl transition-opacity`}></div>
-                  
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-r ${service.color} opacity-0 group-hover:opacity-5 rounded-xl transition-opacity`}
+                  ></div>
+
                   <div className="relative">
-                    <div className={`w-12 h-12 bg-gradient-to-r ${service.color} rounded-lg flex items-center justify-center mb-4 shadow-lg`}>
+                    <div
+                      className={`w-12 h-12 bg-gradient-to-r ${service.color} rounded-lg flex items-center justify-center mb-4 shadow-lg`}
+                    >
                       <Icon className="h-6 w-6 text-white" />
                     </div>
-                    
+
                     <h3 className="text-xl font-semibold text-neutral-900 mb-2 group-hover:text-blue-600 transition-colors">
                       {service.area}
                     </h3>
-                    
-                    <p className="text-neutral-600 mb-4 leading-relaxed">{service.description}</p>
-                    
+
+                    <p className="text-neutral-600 mb-4 leading-relaxed">
+                      {service.description}
+                    </p>
+
                     {/* Feature list */}
                     <div className="space-y-2 mb-4">
                       {service.features.map((feature, featureIndex) => (
-                        <div key={featureIndex} className="flex items-center text-sm text-neutral-500">
+                        <div
+                          key={featureIndex}
+                          className="flex items-center text-sm text-neutral-500"
+                        >
                           <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
                           {feature}
                         </div>
                       ))}
                     </div>
-                    
+
                     <div className="flex items-center text-blue-600 font-medium group-hover:text-blue-700 transition-colors">
                       <span className="text-sm">Learn more</span>
                       <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                     </div>
-                    
+
                     {selectedService === index && (
                       <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-100 animate-in slide-in-from-top-2">
-                        <p className="text-sm text-neutral-700 leading-relaxed">{service.details}</p>
+                        <p className="text-sm text-neutral-700 leading-relaxed">
+                          {service.details}
+                        </p>
                       </div>
                     )}
                   </div>
@@ -475,26 +561,39 @@ export default function RTTP() {
               </span>
             </h2>
             <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
-              Don't just take our word for it. See what researchers and innovators have to say about working with RTTPs.
+              Don't just take our word for it. See what researchers and
+              innovators have to say about working with RTTPs.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-gradient-to-br from-white to-neutral-50 rounded-xl p-6 shadow-sm border border-neutral-200 hover:shadow-lg transition-shadow">
+              <div
+                key={index}
+                className="bg-gradient-to-br from-white to-neutral-50 rounded-xl p-6 shadow-sm border border-neutral-200 hover:shadow-lg transition-shadow"
+              >
                 <div className="flex items-center mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                    <Star
+                      key={i}
+                      className="w-5 h-5 text-yellow-400 fill-current"
+                    />
                   ))}
                 </div>
-                <p className="text-neutral-700 mb-4 italic leading-relaxed">"{testimonial.content}"</p>
+                <p className="text-neutral-700 mb-4 italic leading-relaxed">
+                  "{testimonial.content}"
+                </p>
                 <div className="flex items-center">
                   <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center mr-3">
                     <User className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-neutral-900">{testimonial.name}</h4>
-                    <p className="text-sm text-neutral-600">{testimonial.role}</p>
+                    <h4 className="font-semibold text-neutral-900">
+                      {testimonial.name}
+                    </h4>
+                    <p className="text-sm text-neutral-600">
+                      {testimonial.role}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -504,7 +603,10 @@ export default function RTTP() {
       </section>
 
       {/* Enhanced Contact Form Section */}
-      <section id="contact" className="py-20 bg-gradient-to-br from-blue-50 to-purple-50">
+      <section
+        id="contact"
+        className="py-20 bg-gradient-to-br from-blue-50 to-purple-50"
+      >
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-6">
@@ -533,7 +635,9 @@ export default function RTTP() {
                     placeholder="Your full name"
                   />
                   {errors.name && (
-                    <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.name.message}
+                    </p>
                   )}
                 </div>
                 <div>
@@ -543,12 +647,16 @@ export default function RTTP() {
                   </label>
                   <input
                     type="tel"
-                    {...register("phone", { required: "Phone number is required" })}
+                    {...register("phone", {
+                      required: "Phone number is required",
+                    })}
                     className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                     placeholder="Your phone number"
                   />
                   {errors.phone && (
-                    <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.phone.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -559,18 +667,20 @@ export default function RTTP() {
                 </label>
                 <input
                   type="email"
-                  {...register("email", { 
+                  {...register("email", {
                     required: "Email is required",
                     pattern: {
                       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "Invalid email address"
-                    }
+                      message: "Invalid email address",
+                    },
                   })}
                   className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   placeholder="your.email@example.com"
                 />
                 {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.email.message}
+                  </p>
                 )}
               </div>
               <div>
@@ -585,7 +695,9 @@ export default function RTTP() {
                   placeholder="Tell us about your project or questions..."
                 />
                 {errors.message && (
-                  <p className="mt-1 text-sm text-red-600">{errors.message.message}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.message.message}
+                  </p>
                 )}
               </div>
               <div className="text-center">
@@ -619,7 +731,8 @@ export default function RTTP() {
                 </span>
               </div>
               <p className="text-neutral-400 leading-relaxed">
-                Empowering innovation through expert technology transfer guidance.
+                Empowering innovation through expert technology transfer
+                guidance.
               </p>
               <div className="flex items-center space-x-4 mt-4">
                 <div className="flex items-center text-sm text-neutral-400">
@@ -633,28 +746,76 @@ export default function RTTP() {
               </div>
             </div>
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-white">Services</h3>
+              <h3 className="text-lg font-semibold mb-4 text-white">
+                Services
+              </h3>
               <ul className="space-y-2 text-neutral-400">
-                <li className="hover:text-white transition-colors cursor-pointer">Tech Scouting</li>
-                <li className="hover:text-white transition-colors cursor-pointer">IP Licensing</li>
-                <li className="hover:text-white transition-colors cursor-pointer">Startup Formation</li>
-                <li className="hover:text-white transition-colors cursor-pointer">Funding Strategy</li>
-                <li className="hover:text-white transition-colors cursor-pointer">Global Market Access</li>
-                <li className="hover:text-white transition-colors cursor-pointer">Compliance & Risk</li>
+                <li className="hover:text-white transition-colors cursor-pointer">
+                  Tech Scouting
+                </li>
+                <li className="hover:text-white transition-colors cursor-pointer">
+                  IP Licensing
+                </li>
+                <li className="hover:text-white transition-colors cursor-pointer">
+                  Startup Formation
+                </li>
+                <li className="hover:text-white transition-colors cursor-pointer">
+                  Funding Strategy
+                </li>
+                <li className="hover:text-white transition-colors cursor-pointer">
+                  Global Market Access
+                </li>
+                <li className="hover:text-white transition-colors cursor-pointer">
+                  Compliance & Risk
+                </li>
               </ul>
             </div>
             <div>
               <h3 className="text-lg font-semibold mb-4 text-white">Company</h3>
               <ul className="space-y-2 text-neutral-400">
-                <li><Link to="/" className="hover:text-white transition-colors">Home</Link></li>
-                <li><Link to="/about" className="hover:text-white transition-colors">About</Link></li>
-                <li><Link to="/services" className="hover:text-white transition-colors">Services</Link></li>
-                <li><Link to="/contact" className="hover:text-white transition-colors">Contact</Link></li>
-                <li><Link to="/careers" className="hover:text-white transition-colors">Careers</Link></li>
+                <li>
+                  <Link to="/" className="hover:text-white transition-colors">
+                    Home
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/about"
+                    className="hover:text-white transition-colors"
+                  >
+                    About
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/services"
+                    className="hover:text-white transition-colors"
+                  >
+                    Services
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/contact"
+                    className="hover:text-white transition-colors"
+                  >
+                    Contact
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/careers"
+                    className="hover:text-white transition-colors"
+                  >
+                    Careers
+                  </Link>
+                </li>
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-white">Book Consultation</h3>
+              <h3 className="text-lg font-semibold mb-4 text-white">
+                Book Consultation
+              </h3>
               <div className="space-y-3">
                 <button
                   onClick={handleDirectBooking}
@@ -673,7 +834,7 @@ export default function RTTP() {
                   Direct Link
                 </a>
               </div>
-              
+
               <div className="mt-6 pt-6 border-t border-neutral-700">
                 <p className="text-sm text-neutral-400 mb-2">Follow us</p>
                 <div className="flex space-x-3">
@@ -690,20 +851,29 @@ export default function RTTP() {
               </div>
             </div>
           </div>
-          
+
           <div className="border-t border-neutral-700 mt-8 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <p className="text-neutral-400 text-sm">
                 &copy; 2024 Asasy. All rights reserved.
               </p>
               <div className="flex items-center space-x-6 mt-4 md:mt-0">
-                <a href="#" className="text-neutral-400 hover:text-white text-sm transition-colors">
+                <a
+                  href="#"
+                  className="text-neutral-400 hover:text-white text-sm transition-colors"
+                >
                   Privacy Policy
                 </a>
-                <a href="#" className="text-neutral-400 hover:text-white text-sm transition-colors">
+                <a
+                  href="#"
+                  className="text-neutral-400 hover:text-white text-sm transition-colors"
+                >
                   Terms of Service
                 </a>
-                <a href="#" className="text-neutral-400 hover:text-white text-sm transition-colors">
+                <a
+                  href="#"
+                  className="text-neutral-400 hover:text-white text-sm transition-colors"
+                >
                   Cookie Policy
                 </a>
               </div>

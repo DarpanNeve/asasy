@@ -16,9 +16,8 @@ emails
 razorpay
 boto3
 openai
-fpdf2
+weasyprint
 Pillow
-PyMuPDF
 slowapi
 python-json-logger
 pytest

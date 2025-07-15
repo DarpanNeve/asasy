@@ -70,7 +70,9 @@ class Settings(BaseSettings):
     # Report generation
     REPORTS_STORAGE_PATH: str = "reports"
     MAX_REPORTS_FREE_USERS: int = 1
-    
+    BASIC_REQUIREMENT:str
+    ADVANCED_REQUIREMENT:str
+    COMPREHENSIVE_REQUIREMENT:str
     class Config:
         env_file = ".env"
         case_sensitive = True
@@ -86,7 +88,10 @@ required_settings = [
     "RAZORPAY_KEY_ID",
     "RAZORPAY_KEY_SECRET",
     "RAZORPAY_WEBHOOK_SECRET",
-    "OPENAI_API_KEY"
+    "OPENAI_API_KEY",
+    "BASIC_REQUIREMENT",
+    "ADVANCED_REQUIREMENT",
+    "COMPREHENSIVE_REQUIREMENT",
 ]
 
 for setting in required_settings:
