@@ -55,7 +55,7 @@ class User(Document):
         if not balance:
             # Create initial balance
             balance = UserTokenBalance(user_id=str(self.id))
-            balance.add_tokens(8000)
+            balance.add_tokens(3000)
             await balance.insert()
         return balance
     
