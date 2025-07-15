@@ -33,7 +33,7 @@ class PDFReportGenerator:
     @staticmethod
     def initialize_openai_client() -> openai.OpenAI:
         """Initialize OpenAI client with proper error handling"""
-        api_key = os.getenv('OPENAI_API_KEY')
+        api_key =settings.OPENAI_API_KEY
         if not api_key:
             raise EnvironmentError("OPENAI_API_KEY not found in environment variables.")
 
@@ -199,7 +199,7 @@ class PDFReportGenerator:
         logger.info(f"Metadata saved to: {metadata_path}")
         return metadata
 
-    async def generate_complete_report(self,topic,output_path,complexity:ReportComplexity) -> Dict[str, Path]:
+    def generate_complete_report(self,topic,output_path,complexity:ReportComplexity) -> Dict[str, Path]:
         """Main method to generate complete report"""
         try:
             # Initialize OpenAI client

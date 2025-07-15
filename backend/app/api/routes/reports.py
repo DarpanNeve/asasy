@@ -41,7 +41,8 @@ async def generate_report_background(report_id: str, idea: str, complexity: Repo
         logger.info(f"Output path: {output_path}")
 
         logger.info("Calling generate_technology_report...")
-        report_data = PDFReportGenerator.generate_complete_report(idea, output_path, complexity)
+        generator= PDFReportGenerator()
+        report_data = generator.generate_complete_report(idea, output_path, complexity)
         logger.info("Report generation completed successfully")
 
         # Verify file was created
