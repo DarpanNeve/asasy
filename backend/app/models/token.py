@@ -21,6 +21,8 @@ class TokenPackage(Document):
     package_type: TokenPackageType = Field(..., description="Package type")
     tokens: int = Field(..., description="Number of tokens in package")
     price_usd: float = Field(..., description="Price in USD")
+    original_price_usd: Optional[float] = Field(None, description="Original price before discount")
+    discount_percentage: Optional[float] = Field(None, description="Discount percentage")
     description: str = Field(..., description="Package description")
     is_active: bool = True
     sort_order: int = 0
@@ -40,16 +42,22 @@ class TokenPackage(Document):
     def get_pricing_details(self) -> dict:
         """Get pricing details with GST calculation"""
         base_price = self.price_usd
+        original_price = self.original_price_usd or base_price
         gst_amount = base_price * 0.18  # 18% GST
         total_price = base_price + gst_amount
+        original_total = original_price + (original_price * 0.18)
         
         return {
             "currency": "USD",
             "base_price": base_price,
+            "original_price": original_price,
+            "discount_percentage": self.discount_percentage,
             "gst_amount": gst_amount,
             "total_price": total_price,
+            "original_total": original_total,
             "display_price": f"${base_price:.2f}",
-            "total_display": f"${total_price:.2f}"
+            "total_display": f"${total_price:.2f}",
+            "has_discount": self.original_price_usd is not None and self.original_price_usd > base_price
         }
 
 class TokenTransaction(Document):
@@ -121,6 +129,8 @@ DEFAULT_TOKEN_PACKAGES = [
         "package_type": TokenPackageType.STARTER,
         "tokens": 8000,
         "price_usd": 30.0,
+        "original_price_usd": 40.0,
+        "discount_percentage": 25.0,
         "description": "Perfect for getting started with AI reports",
         "sort_order": 1
     },
@@ -129,6 +139,8 @@ DEFAULT_TOKEN_PACKAGES = [
         "package_type": TokenPackageType.PRO,
         "tokens": 24000,
         "price_usd": 90.0,
+        "original_price_usd": 120.0,
+        "discount_percentage": 25.0,
         "description": "Best value for regular users",
         "sort_order": 2
     },
@@ -137,6 +149,8 @@ DEFAULT_TOKEN_PACKAGES = [
         "package_type": TokenPackageType.MAX,
         "tokens": 29000,
         "price_usd": 108.0,
+        "original_price_usd": 144.0,
+        "discount_percentage": 25.0,
         "description": "Maximum tokens for power users",
         "sort_order": 3
     }

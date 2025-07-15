@@ -567,6 +567,7 @@ export default function Signup() {
                   <Link
                     to="/terms"
                     className="text-primary-600 hover:text-primary-500"
+                    target="_blank"
                   >
                     Terms of Service
                   </Link>{" "}
@@ -574,6 +575,7 @@ export default function Signup() {
                   <Link
                     to="/privacy"
                     className="text-primary-600 hover:text-primary-500"
+                    target="_blank"
                   >
                     Privacy Policy
                   </Link>

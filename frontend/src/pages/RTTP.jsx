@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import {
   BarChart3,
@@ -32,6 +32,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function RTTP() {
@@ -40,6 +42,7 @@ export default function RTTP() {
   const [calLoaded, setCalLoaded] = useState(false);
   const [calError, setCalError] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
+  const navigate = useNavigate();
   const { user } = useAuth();
 
   // Cal.com direct booking URL
@@ -259,47 +262,7 @@ export default function RTTP() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Enhanced Navigation */}
-      <nav className="bg-white/90 backdrop-blur-md shadow-sm border-b border-neutral-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link to="/" className="flex items-center group">
-              <div className="relative">
-                <BarChart3 className="h-8 w-8 text-blue-600 group-hover:text-blue-700 transition-colors" />
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full animate-pulse"></div>
-              </div>
-              <span className="ml-2 text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Asasy
-              </span>
-            </Link>
-            <div className="flex items-center space-x-6">
-              <a
-                href="/#features"
-                className="text-neutral-600 hover:text-neutral-900 transition-colors"
-              >
-                Home
-              </a>
-              {user ? (
-                <a href="/reports" className="btn-primary">
-                  Dashboard
-                </a>
-              ) : (
-                <>
-                  <a
-                    href="/login"
-                    className="text-neutral-600 hover:text-neutral-900 transition-colors"
-                  >
-                    Sign In
-                  </a>
-                  <a href="/signup" className="btn-primary">
-                    Get Started
-                  </a>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Header />
 
       {/* Enhanced Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">

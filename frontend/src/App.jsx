@@ -15,6 +15,10 @@ import Pricing from "./pages/Pricing";
 import Home from "./pages/Home";
 import RTTP from "./pages/RTTP";
 import Admin from "./pages/Admin";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import PricingPolicy from "./pages/PricingPolicy";
+import RefundPolicy from "./pages/RefundPolicy";
 import "./index.css";
 import TokenPricingSection from "./components/TokenPricingSection";
 
@@ -59,6 +63,12 @@ function App() {
                     }
                   />
                   <Route path="/admin" element={<Admin />} />
+
+                  {/* Legal pages */}
+                  <Route path="/privacy" element={<Privacy />} />
+                  <Route path="/terms" element={<Terms />} />
+                  <Route path="/pricing-policy" element={<PricingPolicy />} />
+                  <Route path="/refund-policy" element={<RefundPolicy />} />
 
                   {/* Protected routes */}
 
