@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { 
-  Users, 
-  FileText, 
-  Download, 
-  Search, 
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Users,
+  FileText,
+  Download,
+  Search,
   BarChart3,
   Calendar,
   Hash,
@@ -19,316 +19,345 @@ import {
   FileSpreadsheet,
   DollarSign,
   TrendingUp,
-  Activity
-} from 'lucide-react'
-import { api } from '../services/api'
-import toast from 'react-hot-toast'
-import * as XLSX from 'xlsx'
+  Activity,
+} from "lucide-react";
+import { api } from "../services/api";
+import toast from "react-hot-toast";
+import * as XLSX from "xlsx";
 
 export default function Admin() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [users, setUsers] = useState([])
-  const [selectedUser, setSelectedUser] = useState(null)
-  const [userReports, setUserReports] = useState([])
-  const [userSubscriptions, setUserSubscriptions] = useState([])
-  const [expandedUsers, setExpandedUsers] = useState(new Set())
-  const [searchTerm, setSearchTerm] = useState('')
-  const [credentials, setCredentials] = useState({ username: '', password: '' })
-  const [activeTab, setActiveTab] = useState('users')
-  const [contactSubmissions, setContactSubmissions] = useState([])
-  const [transactions, setTransactions] = useState([])
-  const [stats, setStats] = useState({})
-  const [contactSearchTerm, setContactSearchTerm] = useState('')
-  const [contactDateFilter, setContactDateFilter] = useState('')
-  const navigate = useNavigate()
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [userReports, setUserReports] = useState([]);
+  const [userSubscriptions, setUserSubscriptions] = useState([]);
+  const [expandedUsers, setExpandedUsers] = useState(new Set());
+  const [searchTerm, setSearchTerm] = useState("");
+  const [credentials, setCredentials] = useState({
+    username: "",
+    password: "",
+  });
+  const [activeTab, setActiveTab] = useState("users");
+  const [contactSubmissions, setContactSubmissions] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  const [stats, setStats] = useState({});
+  const [contactSearchTerm, setContactSearchTerm] = useState("");
+  const [contactDateFilter, setContactDateFilter] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    
+    e.preventDefault();
+    setLoading(true);
+
     try {
-      const basicAuth = btoa(`${credentials.username}:${credentials.password}`)
-      
-      const response = await fetch('/api/admin/users', {
+      const basicAuth = btoa(`${credentials.username}:${credentials.password}`);
+
+      const response = await fetch("/api/admin/users", {
         headers: {
-          'Authorization': `Basic ${basicAuth}`,
-          'Content-Type': 'application/json'
-        }
-      })
+          Authorization: `Basic ${basicAuth}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       if (response.ok) {
-        const usersData = await response.json()
-        setUsers(usersData)
-        setIsAuthenticated(true)
-        toast.success('Admin login successful')
-        
-        sessionStorage.setItem('adminAuth', basicAuth)
-        
+        const usersData = await response.json();
+        setUsers(usersData);
+        setIsAuthenticated(true);
+        toast.success("Admin login successful");
+
+        sessionStorage.setItem("adminAuth", basicAuth);
+
         // Fetch additional data
         await Promise.all([
           fetchContactSubmissions(basicAuth),
           fetchTransactions(basicAuth),
-          fetchStats(basicAuth)
-        ])
+          fetchStats(basicAuth),
+        ]);
       } else {
-        toast.error('Invalid admin credentials')
+        toast.error("Invalid admin credentials");
       }
     } catch (error) {
-      console.error('Admin login error:', error)
-      toast.error('Login failed')
+      console.error("Admin login error:", error);
+      toast.error("Login failed");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const fetchContactSubmissions = async (auth) => {
     try {
-      const response = await fetch('/api/contact/submissions', {
+      const response = await fetch("/api/contact/submissions", {
         headers: {
-          'Authorization': `Basic ${auth}`,
-          'Content-Type': 'application/json'
-        }
-      })
+          Authorization: `Basic ${auth}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       if (response.ok) {
-        const submissions = await response.json()
-        setContactSubmissions(submissions)
+        const submissions = await response.json();
+        setContactSubmissions(submissions);
       }
     } catch (error) {
-      console.error('Error fetching contact submissions:', error)
+      console.error("Error fetching contact submissions:", error);
     }
-  }
+  };
 
   const fetchTransactions = async (auth) => {
     try {
-      const response = await fetch('/api/admin/transactions', {
+      const response = await fetch("/api/admin/transactions", {
         headers: {
-          'Authorization': `Basic ${auth}`,
-          'Content-Type': 'application/json'
-        }
-      })
+          Authorization: `Basic ${auth}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       if (response.ok) {
-        const transactionsData = await response.json()
-        setTransactions(transactionsData)
+        const transactionsData = await response.json();
+        setTransactions(transactionsData);
       }
     } catch (error) {
-      console.error('Error fetching transactions:', error)
+      console.error("Error fetching transactions:", error);
     }
-  }
+  };
 
   const fetchStats = async (auth) => {
     try {
-      const response = await fetch('/api/admin/stats', {
+      const response = await fetch("/api/admin/stats", {
         headers: {
-          'Authorization': `Basic ${auth}`,
-          'Content-Type': 'application/json'
-        }
-      })
+          Authorization: `Basic ${auth}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       if (response.ok) {
-        const statsData = await response.json()
-        setStats(statsData)
+        const statsData = await response.json();
+        setStats(statsData);
       }
     } catch (error) {
-      console.error('Error fetching stats:', error)
+      console.error("Error fetching stats:", error);
     }
-  }
+  };
 
   const fetchUserReports = async (userId) => {
     try {
-      const basicAuth = sessionStorage.getItem('adminAuth')
+      const basicAuth = sessionStorage.getItem("adminAuth");
       const response = await fetch(`/api/admin/users/${userId}/reports`, {
         headers: {
-          'Authorization': `Basic ${basicAuth}`,
-          'Content-Type': 'application/json'
-        }
-      })
+          Authorization: `Basic ${basicAuth}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       if (response.ok) {
-        const reportsData = await response.json()
-        setUserReports(reportsData)
+        const reportsData = await response.json();
+        setUserReports(reportsData);
       } else {
-        toast.error('Failed to fetch user reports')
+        toast.error("Failed to fetch user reports");
       }
     } catch (error) {
-      console.error('Error fetching reports:', error)
-      toast.error('Failed to fetch reports')
+      console.error("Error fetching reports:", error);
+      toast.error("Failed to fetch reports");
     }
-  }
+  };
 
   const fetchUserSubscriptions = async (userId) => {
     try {
-      const basicAuth = sessionStorage.getItem('adminAuth')
+      const basicAuth = sessionStorage.getItem("adminAuth");
       const response = await fetch(`/api/admin/users/${userId}/subscriptions`, {
         headers: {
-          'Authorization': `Basic ${basicAuth}`,
-          'Content-Type': 'application/json'
-        }
-      })
+          Authorization: `Basic ${basicAuth}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       if (response.ok) {
-        const subscriptionsData = await response.json()
-        setUserSubscriptions(subscriptionsData)
+        const subscriptionsData = await response.json();
+        setUserSubscriptions(subscriptionsData);
       } else {
-        toast.error('Failed to fetch user subscriptions')
+        toast.error("Failed to fetch user subscriptions");
       }
     } catch (error) {
-      console.error('Error fetching subscriptions:', error)
-      toast.error('Failed to fetch subscriptions')
+      console.error("Error fetching subscriptions:", error);
+      toast.error("Failed to fetch subscriptions");
     }
-  }
+  };
 
   const toggleUserExpansion = (userId) => {
-    const newExpanded = new Set(expandedUsers)
+    const newExpanded = new Set(expandedUsers);
     if (newExpanded.has(userId)) {
-      newExpanded.delete(userId)
+      newExpanded.delete(userId);
       if (selectedUser === userId) {
-        setSelectedUser(null)
-        setUserReports([])
-        setUserSubscriptions([])
+        setSelectedUser(null);
+        setUserReports([]);
+        setUserSubscriptions([]);
       }
     } else {
-      newExpanded.add(userId)
-      setSelectedUser(userId)
-      fetchUserReports(userId)
-      fetchUserSubscriptions(userId)
+      newExpanded.add(userId);
+      setSelectedUser(userId);
+      fetchUserReports(userId);
+      fetchUserSubscriptions(userId);
     }
-    setExpandedUsers(newExpanded)
-  }
+    setExpandedUsers(newExpanded);
+  };
 
   const handleDownloadReport = async (reportId) => {
     try {
-      const basicAuth = sessionStorage.getItem('adminAuth')
+      const basicAuth = sessionStorage.getItem("adminAuth");
       const response = await fetch(`/api/reports/${reportId}/download`, {
         headers: {
-          'Authorization': `Basic ${basicAuth}`
-        }
-      })
+          Authorization: `Basic ${basicAuth}`,
+        },
+      });
 
       if (response.ok) {
-        const blob = await response.blob()
-        const url = window.URL.createObjectURL(blob)
-        const link = document.createElement('a')
-        link.href = url
-        link.download = `report-${reportId}.pdf`
-        document.body.appendChild(link)
-        link.click()
-        link.remove()
-        window.URL.revokeObjectURL(url)
-        toast.success('Report downloaded')
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `report-${reportId}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+        toast.success("Report downloaded");
       } else {
-        toast.error('Failed to download report')
+        toast.error("Failed to download report");
       }
     } catch (error) {
-      console.error('Download error:', error)
-      toast.error('Download failed')
+      console.error("Download error:", error);
+      toast.error("Download failed");
     }
-  }
+  };
 
   const exportUsersToExcel = async () => {
     try {
-      const exportData = users.map(user => ({
-        'Name': user.name,
-        'Email': user.email,
-        'Phone': user.phone || 'Not provided',
-        'Plan Name': user.plan_name || 'Free',
-        'Subscription Status': user.subscription_status || 'none',
-        'Reports Generated': user.reports_generated || 0,
-        'Registration Date': new Date(user.created_at || Date.now()).toLocaleDateString(),
-        'Last Login': user.last_login ? new Date(user.last_login).toLocaleDateString() : 'Never'
-      }))
+      const exportData = users.map((user) => ({
+        Name: user.name,
+        Email: user.email,
+        Phone: user.phone || "Not provided",
+        "Plan Name": user.plan_name || "Free",
+        "Subscription Status": user.subscription_status || "none",
+        "Reports Generated": user.reports_generated || 0,
+        "Registration Date": new Date(
+          user.created_at || Date.now()
+        ).toLocaleDateString(),
+        "Last Login": user.last_login
+          ? new Date(user.last_login).toLocaleDateString()
+          : "Never",
+      }));
 
-      const worksheet = XLSX.utils.json_to_sheet(exportData)
-      const workbook = XLSX.utils.book_new()
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Users')
-      
-      XLSX.writeFile(workbook, `asasy-users-${new Date().toISOString().split('T')[0]}.xlsx`)
-      toast.success('User list exported successfully')
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
+
+      XLSX.writeFile(
+        workbook,
+        `asasy-users-${new Date().toISOString().split("T")[0]}.xlsx`
+      );
+      toast.success("User list exported successfully");
     } catch (error) {
-      console.error('Export error:', error)
-      toast.error('Failed to export user list')
+      console.error("Export error:", error);
+      toast.error("Failed to export user list");
     }
-  }
+  };
 
   const exportTransactions = async () => {
     try {
-      const exportData = transactions.map(transaction => ({
-        'Transaction ID': transaction.id,
-        'User Name': transaction.user_name,
-        'User Email': transaction.user_email,
-        'Plan Name': transaction.plan_name,
-        'Amount (₹)': transaction.amount_paid ? (transaction.amount_paid / 100).toFixed(2) : '0.00',
-        'Status': transaction.status,
-        'Razorpay Payment ID': transaction.razorpay_payment_id || '',
-        'Razorpay Order ID': transaction.razorpay_order_id || '',
-        'Active Until': new Date(transaction.active_until).toLocaleDateString(),
-        'Created At': new Date(transaction.created_at).toLocaleDateString()
-      }))
+      const exportData = transactions.map((transaction) => ({
+        "Transaction ID": transaction.id,
+        "User Name": transaction.user_name,
+        "User Email": transaction.user_email,
+        "Plan Name": transaction.plan_name,
+        "Amount (₹)": transaction.amount_paid
+          ? (transaction.amount_paid / 100).toFixed(2)
+          : "0.00",
+        Status: transaction.status,
+        "Razorpay Payment ID": transaction.razorpay_payment_id || "",
+        "Razorpay Order ID": transaction.razorpay_order_id || "",
+        "Active Until": new Date(transaction.active_until).toLocaleDateString(),
+        "Created At": new Date(transaction.created_at).toLocaleDateString(),
+      }));
 
-      const worksheet = XLSX.utils.json_to_sheet(exportData)
-      const workbook = XLSX.utils.book_new()
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Transactions')
-      
-      XLSX.writeFile(workbook, `asasy-transactions-${new Date().toISOString().split('T')[0]}.xlsx`)
-      toast.success('Transactions exported successfully')
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Transactions");
+
+      XLSX.writeFile(
+        workbook,
+        `asasy-transactions-${new Date().toISOString().split("T")[0]}.xlsx`
+      );
+      toast.success("Transactions exported successfully");
     } catch (error) {
-      console.error('Export error:', error)
-      toast.error('Failed to export transactions')
+      console.error("Export error:", error);
+      toast.error("Failed to export transactions");
     }
-  }
+  };
 
   const exportContactSubmissions = async () => {
     try {
-      const basicAuth = sessionStorage.getItem('adminAuth')
-      const response = await fetch('/api/contact/export', {
+      const basicAuth = sessionStorage.getItem("adminAuth");
+      const response = await fetch("/api/contact/export", {
         headers: {
-          'Authorization': `Basic ${basicAuth}`
-        }
-      })
-      
+          Authorization: `Basic ${basicAuth}`,
+        },
+      });
+
       if (response.ok) {
-        const blob = await response.blob()
-        const url = window.URL.createObjectURL(blob)
-        const link = document.createElement('a')
-        link.href = url
-        link.download = `contact-submissions-${new Date().toISOString().split('T')[0]}.csv`
-        document.body.appendChild(link)
-        link.click()
-        link.remove()
-        window.URL.revokeObjectURL(url)
-        toast.success('Contact submissions exported successfully')
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `contact-submissions-${
+          new Date().toISOString().split("T")[0]
+        }.csv`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+        toast.success("Contact submissions exported successfully");
       } else {
-        toast.error('Failed to export contact submissions')
+        toast.error("Failed to export contact submissions");
       }
     } catch (error) {
-      console.error('Export error:', error)
-      toast.error('Failed to export contact submissions')
+      console.error("Export error:", error);
+      toast.error("Failed to export contact submissions");
     }
-  }
+  };
 
-  const filteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredUsers = users.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const filteredContactSubmissions = contactSubmissions.filter(submission => {
-    const matchesSearch = !contactSearchTerm || 
-      submission.name.toLowerCase().includes(contactSearchTerm.toLowerCase()) ||
-      submission.email.toLowerCase().includes(contactSearchTerm.toLowerCase()) ||
-      submission.message.toLowerCase().includes(contactSearchTerm.toLowerCase())
-    
-    const matchesDate = !contactDateFilter || 
-      new Date(submission.submitted_at).toDateString() === new Date(contactDateFilter).toDateString()
-    
-    return matchesSearch && matchesDate
-  }).sort((a, b) => new Date(b.submitted_at) - new Date(a.submitted_at))
+  const filteredContactSubmissions = contactSubmissions
+    .filter((submission) => {
+      const matchesSearch =
+        !contactSearchTerm ||
+        submission.name
+          .toLowerCase()
+          .includes(contactSearchTerm.toLowerCase()) ||
+        submission.email
+          .toLowerCase()
+          .includes(contactSearchTerm.toLowerCase()) ||
+        submission.message
+          .toLowerCase()
+          .includes(contactSearchTerm.toLowerCase());
+
+      const matchesDate =
+        !contactDateFilter ||
+        new Date(submission.submitted_at).toDateString() ===
+          new Date(contactDateFilter).toDateString();
+
+      return matchesSearch && matchesDate;
+    })
+    .sort((a, b) => new Date(b.submitted_at) - new Date(a.submitted_at));
 
   const formatTokenUsage = (usage) => {
-    if (!usage || usage.total === 0) return 'No usage data'
-    return `${usage.total} total (${usage.prompt} prompt + ${usage.completion} completion)`
-  }
+    if (!usage || usage.total === 0) return "No usage data";
+    return `${usage.total} total (${usage.prompt} prompt + ${usage.completion} completion)`;
+  };
 
   if (!isAuthenticated) {
     return (
@@ -339,7 +368,9 @@ export default function Admin() {
               <BarChart3 className="h-8 w-8 text-primary-600" />
             </div>
             <h1 className="text-2xl font-bold text-neutral-900">Admin Panel</h1>
-            <p className="text-neutral-600 mt-2">Enter admin credentials to continue</p>
+            <p className="text-neutral-600 mt-2">
+              Enter admin credentials to continue
+            </p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
@@ -350,7 +381,12 @@ export default function Admin() {
               <input
                 type="text"
                 value={credentials.username}
-                onChange={(e) => setCredentials(prev => ({ ...prev, username: e.target.value }))}
+                onChange={(e) =>
+                  setCredentials((prev) => ({
+                    ...prev,
+                    username: e.target.value,
+                  }))
+                }
                 className="input"
                 placeholder="Enter username"
                 required
@@ -364,7 +400,12 @@ export default function Admin() {
               <input
                 type="password"
                 value={credentials.password}
-                onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
+                onChange={(e) =>
+                  setCredentials((prev) => ({
+                    ...prev,
+                    password: e.target.value,
+                  }))
+                }
                 className="input"
                 placeholder="Enter password"
                 required
@@ -382,13 +423,13 @@ export default function Admin() {
                   Authenticating...
                 </div>
               ) : (
-                'Login to Admin Panel'
+                "Login to Admin Panel"
               )}
             </button>
           </form>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -399,7 +440,9 @@ export default function Admin() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <BarChart3 className="h-8 w-8 text-primary-600" />
-              <span className="ml-2 text-xl font-bold text-gradient">Asasy Admin</span>
+              <span className="ml-2 text-xl font-bold text-gradient">
+                Asasy Admin
+              </span>
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-neutral-600">
@@ -407,14 +450,14 @@ export default function Admin() {
               </span>
               <button
                 onClick={() => {
-                  sessionStorage.removeItem('adminAuth')
-                  setIsAuthenticated(false)
-                  setUsers([])
-                  setSelectedUser(null)
-                  setUserReports([])
-                  setUserSubscriptions([])
-                  setContactSubmissions([])
-                  setTransactions([])
+                  sessionStorage.removeItem("adminAuth");
+                  setIsAuthenticated(false);
+                  setUsers([]);
+                  setSelectedUser(null);
+                  setUserReports([]);
+                  setUserSubscriptions([]);
+                  setContactSubmissions([]);
+                  setTransactions([]);
                 }}
                 className="btn-outline btn-sm"
               >
@@ -434,8 +477,12 @@ export default function Admin() {
                 <Users className="h-6 w-6 text-primary-600" />
               </div>
               <div>
-                <h3 className="text-sm font-medium text-neutral-600">Total Users</h3>
-                <p className="text-2xl font-bold text-neutral-900">{stats.total_users || 0}</p>
+                <h3 className="text-sm font-medium text-neutral-600">
+                  Total Users
+                </h3>
+                <p className="text-2xl font-bold text-neutral-900">
+                  {stats.total_users || 0}
+                </p>
               </div>
             </div>
           </div>
@@ -446,8 +493,12 @@ export default function Admin() {
                 <FileText className="h-6 w-6 text-success-600" />
               </div>
               <div>
-                <h3 className="text-sm font-medium text-neutral-600">Total Reports</h3>
-                <p className="text-2xl font-bold text-neutral-900">{stats.total_reports || 0}</p>
+                <h3 className="text-sm font-medium text-neutral-600">
+                  Total Reports
+                </h3>
+                <p className="text-2xl font-bold text-neutral-900">
+                  {stats.total_reports || 0}
+                </p>
               </div>
             </div>
           </div>
@@ -458,8 +509,12 @@ export default function Admin() {
                 <Activity className="h-6 w-6 text-warning-600" />
               </div>
               <div>
-                <h3 className="text-sm font-medium text-neutral-600">Token Transactions</h3>
-                <p className="text-2xl font-bold text-neutral-900">{stats.completed_transactions || 0}</p>
+                <h3 className="text-sm font-medium text-neutral-600">
+                  Token Transactions
+                </h3>
+                <p className="text-2xl font-bold text-neutral-900">
+                  {stats.completed_transactions || 0}
+                </p>
               </div>
             </div>
           </div>
@@ -470,8 +525,12 @@ export default function Admin() {
                 <DollarSign className="h-6 w-6 text-secondary-600" />
               </div>
               <div>
-                <h3 className="text-sm font-medium text-neutral-600">Total Revenue</h3>
-                <p className="text-2xl font-bold text-neutral-900">₹{stats.total_revenue_inr?.toLocaleString() || '0'}</p>
+                <h3 className="text-sm font-medium text-neutral-600">
+                  Total Revenue
+                </h3>
+                <p className="text-2xl font-bold text-neutral-900">
+                  ₹{stats.total_revenue_inr?.toLocaleString() || "0"}
+                </p>
               </div>
             </div>
           </div>
@@ -482,33 +541,33 @@ export default function Admin() {
           <div className="border-b border-neutral-200">
             <nav className="-mb-px flex space-x-8">
               <button
-                onClick={() => setActiveTab('users')}
+                onClick={() => setActiveTab("users")}
                 className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'users'
-                    ? 'border-primary-500 text-primary-600'
-                    : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
+                  activeTab === "users"
+                    ? "border-primary-500 text-primary-600"
+                    : "border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300"
                 }`}
               >
                 <Users className="h-5 w-5 inline mr-2" />
                 Users & Reports
               </button>
               <button
-                onClick={() => setActiveTab('transactions')}
+                onClick={() => setActiveTab("transactions")}
                 className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'transactions'
-                    ? 'border-primary-500 text-primary-600'
-                    : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
+                  activeTab === "transactions"
+                    ? "border-primary-500 text-primary-600"
+                    : "border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300"
                 }`}
               >
                 <CreditCard className="h-5 w-5 inline mr-2" />
                 Token Purchases ({transactions.length})
               </button>
               <button
-                onClick={() => setActiveTab('contacts')}
+                onClick={() => setActiveTab("contacts")}
                 className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'contacts'
-                    ? 'border-primary-500 text-primary-600'
-                    : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
+                  activeTab === "contacts"
+                    ? "border-primary-500 text-primary-600"
+                    : "border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300"
                 }`}
               >
                 <MessageSquare className="h-5 w-5 inline mr-2" />
@@ -518,7 +577,7 @@ export default function Admin() {
           </div>
         </div>
 
-        {activeTab === 'users' && (
+        {activeTab === "users" && (
           <>
             {/* Search and Export */}
             <div className="mb-8">
@@ -550,7 +609,7 @@ export default function Admin() {
               {filteredUsers.map((user) => (
                 <div key={user.id} className="card">
                   {/* User Header */}
-                  <div 
+                  <div
                     className="flex items-center justify-between cursor-pointer"
                     onClick={() => toggleUserExpansion(user.id)}
                   >
@@ -559,7 +618,9 @@ export default function Admin() {
                         <User className="h-6 w-6 text-primary-600" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-neutral-900">{user.name}</h3>
+                        <h3 className="font-semibold text-neutral-900">
+                          {user.name}
+                        </h3>
                         <div className="flex items-center space-x-4 text-sm text-neutral-600">
                           <div className="flex items-center">
                             <Mail className="h-4 w-4 mr-1" />
@@ -582,7 +643,7 @@ export default function Admin() {
                     </div>
                     <div className="flex items-center space-x-2">
                       <span className="text-sm text-neutral-500">
-                        {expandedUsers.has(user.id) ? 'Hide' : 'View'} Details
+                        {expandedUsers.has(user.id) ? "Hide" : "View"} Details
                       </span>
                       {expandedUsers.has(user.id) ? (
                         <ChevronDown className="h-5 w-5 text-neutral-400" />
@@ -602,42 +663,69 @@ export default function Admin() {
                           Subscriptions ({userSubscriptions.length})
                         </h4>
                         {userSubscriptions.length === 0 ? (
-                          <p className="text-neutral-600">No subscriptions found</p>
+                          <p className="text-neutral-600">
+                            No subscriptions found
+                          </p>
                         ) : (
                           <div className="space-y-3">
                             {userSubscriptions.map((subscription) => (
-                              <div key={subscription.id} className="bg-neutral-50 rounded-lg p-4">
+                              <div
+                                key={subscription.id}
+                                className="bg-neutral-50 rounded-lg p-4"
+                              >
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                                   <div>
-                                    <span className="font-medium text-neutral-900">Plan:</span>
-                                    <p className="text-neutral-600">{subscription.plan_name}</p>
+                                    <span className="font-medium text-neutral-900">
+                                      Plan:
+                                    </span>
+                                    <p className="text-neutral-600">
+                                      {subscription.plan_name}
+                                    </p>
                                   </div>
                                   <div>
-                                    <span className="font-medium text-neutral-900">Status:</span>
-                                    <p className={`text-sm font-medium ${
-                                      subscription.status === 'active' ? 'text-success-600' :
-                                      subscription.status === 'cancelled' ? 'text-error-600' :
-                                      'text-warning-600'
-                                    }`}>
+                                    <span className="font-medium text-neutral-900">
+                                      Status:
+                                    </span>
+                                    <p
+                                      className={`text-sm font-medium ${
+                                        subscription.status === "active"
+                                          ? "text-success-600"
+                                          : subscription.status === "cancelled"
+                                          ? "text-error-600"
+                                          : "text-warning-600"
+                                      }`}
+                                    >
                                       {subscription.status}
                                     </p>
                                   </div>
                                   <div>
-                                    <span className="font-medium text-neutral-900">Amount:</span>
+                                    <span className="font-medium text-neutral-900">
+                                      Amount:
+                                    </span>
                                     <p className="text-neutral-600">
-                                      ₹{subscription.amount_paid ? (subscription.amount_paid / 100).toFixed(2) : '0.00'}
+                                      ₹
+                                      {subscription.amount_paid
+                                        ? (
+                                            subscription.amount_paid / 100
+                                          ).toFixed(2)
+                                        : "0.00"}
                                     </p>
                                   </div>
                                   <div>
-                                    <span className="font-medium text-neutral-900">Active Until:</span>
+                                    <span className="font-medium text-neutral-900">
+                                      Active Until:
+                                    </span>
                                     <p className="text-neutral-600">
-                                      {new Date(subscription.active_until).toLocaleDateString()}
+                                      {new Date(
+                                        subscription.active_until
+                                      ).toLocaleDateString()}
                                     </p>
                                   </div>
                                 </div>
                                 {subscription.razorpay_payment_id && (
                                   <div className="mt-2 text-xs text-neutral-500">
-                                    Payment ID: {subscription.razorpay_payment_id}
+                                    Payment ID:{" "}
+                                    {subscription.razorpay_payment_id}
                                   </div>
                                 )}
                               </div>
@@ -653,11 +741,16 @@ export default function Admin() {
                           Reports ({userReports.length})
                         </h4>
                         {userReports.length === 0 ? (
-                          <p className="text-neutral-600">No reports generated yet</p>
+                          <p className="text-neutral-600">
+                            No reports generated yet
+                          </p>
                         ) : (
                           <div className="space-y-4">
                             {userReports.map((report) => (
-                              <div key={report.id} className="bg-neutral-50 rounded-lg p-4">
+                              <div
+                                key={report.id}
+                                className="bg-neutral-50 rounded-lg p-4"
+                              >
                                 <div className="flex items-center justify-between">
                                   <div className="flex-1">
                                     <div className="flex items-center space-x-4 mb-2">
@@ -670,14 +763,16 @@ export default function Admin() {
                                       <div className="flex items-center">
                                         <Calendar className="h-4 w-4 text-neutral-400 mr-1" />
                                         <span className="text-sm text-neutral-600">
-                                          {new Date(report.created_at).toLocaleDateString()}
+                                          {new Date(
+                                            report.created_at
+                                          ).toLocaleDateString()}
                                         </span>
                                       </div>
                                       <span className="text-xs bg-primary-100 text-primary-800 px-2 py-1 rounded">
                                         {report.plan_name}
                                       </span>
                                     </div>
-                                    
+
                                     {/* Token Usage */}
                                     <div className="bg-white rounded p-3 mb-3">
                                       <h5 className="text-sm font-medium text-neutral-900 mb-2">
@@ -685,19 +780,25 @@ export default function Admin() {
                                       </h5>
                                       <div className="grid grid-cols-3 gap-4 text-sm">
                                         <div>
-                                          <span className="text-neutral-600">Prompt:</span>
+                                          <span className="text-neutral-600">
+                                            Prompt:
+                                          </span>
                                           <span className="ml-2 font-medium text-neutral-900">
                                             {report.token_usage.prompt.toLocaleString()}
                                           </span>
                                         </div>
                                         <div>
-                                          <span className="text-neutral-600">Completion:</span>
+                                          <span className="text-neutral-600">
+                                            Completion:
+                                          </span>
                                           <span className="ml-2 font-medium text-neutral-900">
                                             {report.token_usage.completion.toLocaleString()}
                                           </span>
                                         </div>
                                         <div>
-                                          <span className="text-neutral-600">Total:</span>
+                                          <span className="text-neutral-600">
+                                            Total:
+                                          </span>
                                           <span className="ml-2 font-semibold text-primary-600">
                                             {report.token_usage.total.toLocaleString()}
                                           </span>
@@ -705,11 +806,13 @@ export default function Admin() {
                                       </div>
                                     </div>
                                   </div>
-                                  
+
                                   <div className="ml-4">
                                     {report.file_url ? (
                                       <button
-                                        onClick={() => handleDownloadReport(report.id)}
+                                        onClick={() =>
+                                          handleDownloadReport(report.id)
+                                        }
                                         className="btn-outline btn-sm"
                                       >
                                         <Download className="h-4 w-4 mr-1" />
@@ -735,7 +838,7 @@ export default function Admin() {
           </>
         )}
 
-        {activeTab === 'transactions' && (
+        {activeTab === "transactions" && (
           <>
             <div className="mb-8">
               <div className="flex justify-end">
@@ -791,22 +894,31 @@ export default function Admin() {
                           {transaction.plan_name}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900">
-                          ₹{transaction.amount_paid ? (transaction.amount_paid / 100).toFixed(2) : '0.00'}
+                          ₹
+                          {transaction.amount_paid
+                            ? (transaction.amount_paid / 100).toFixed(2)
+                            : "0.00"}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            transaction.status === 'active' ? 'bg-success-100 text-success-800' :
-                            transaction.status === 'cancelled' ? 'bg-error-100 text-error-800' :
-                            'bg-warning-100 text-warning-800'
-                          }`}>
+                          <span
+                            className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                              transaction.status === "active"
+                                ? "bg-success-100 text-success-800"
+                                : transaction.status === "cancelled"
+                                ? "bg-error-100 text-error-800"
+                                : "bg-warning-100 text-warning-800"
+                            }`}
+                          >
                             {transaction.status}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">
-                          {new Date(transaction.created_at).toLocaleDateString()}
+                          {new Date(
+                            transaction.created_at
+                          ).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 font-mono">
-                          {transaction.razorpay_payment_id?.slice(-8) || 'N/A'}
+                          {transaction.razorpay_payment_id?.slice(-8) || "N/A"}
                         </td>
                       </tr>
                     ))}
@@ -817,7 +929,7 @@ export default function Admin() {
           </>
         )}
 
-        {activeTab === 'contacts' && (
+        {activeTab === "contacts" && (
           <>
             {/* Contact Submissions Filters */}
             <div className="mb-8">
@@ -844,7 +956,7 @@ export default function Admin() {
                   />
                   {contactDateFilter && (
                     <button
-                      onClick={() => setContactDateFilter('')}
+                      onClick={() => setContactDateFilter("")}
                       className="btn-outline btn-sm"
                     >
                       Clear
@@ -872,7 +984,9 @@ export default function Admin() {
                           <MessageSquare className="h-5 w-5 text-secondary-600" />
                         </div>
                         <div>
-                          <h3 className="font-semibold text-neutral-900">{submission.name}</h3>
+                          <h3 className="font-semibold text-neutral-900">
+                            {submission.name}
+                          </h3>
                           <div className="flex items-center space-x-4 text-sm text-neutral-600">
                             <span>{submission.email}</span>
                             <span>{submission.phone}</span>
@@ -880,7 +994,9 @@ export default function Admin() {
                         </div>
                       </div>
                       <div className="bg-neutral-50 rounded-lg p-4 mb-3">
-                        <h4 className="font-medium text-neutral-900 mb-2">Message:</h4>
+                        <h4 className="font-medium text-neutral-900 mb-2">
+                          Message:
+                        </h4>
                         <p className="text-neutral-700">{submission.message}</p>
                       </div>
                     </div>
@@ -900,11 +1016,13 @@ export default function Admin() {
             {filteredContactSubmissions.length === 0 && (
               <div className="text-center py-12">
                 <MessageSquare className="h-12 w-12 text-neutral-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-neutral-900 mb-2">No contact submissions found</h3>
+                <h3 className="text-lg font-medium text-neutral-900 mb-2">
+                  No contact submissions found
+                </h3>
                 <p className="text-neutral-600">
-                  {contactSearchTerm || contactDateFilter 
-                    ? 'Try adjusting your search or filter criteria' 
-                    : 'No contact form submissions yet'}
+                  {contactSearchTerm || contactDateFilter
+                    ? "Try adjusting your search or filter criteria"
+                    : "No contact form submissions yet"}
                 </p>
               </div>
             )}
@@ -912,5 +1030,5 @@ export default function Admin() {
         )}
       </div>
     </div>
-  )
+  );
 }
