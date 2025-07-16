@@ -132,11 +132,14 @@ const ContactPage = () => {
                   className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                 >
                   <option value="">Select a reason...</option>
+                  <option value="global_market_access">General query</option>
+                  <option value="global_market_access">Custom pricing </option>
                   <option value="tech_scouting">Tech Scouting</option>
                   <option value="ip_licensing">IP Licensing</option>
                   <option value="startup_formation">Startup Formation</option>
                   <option value="funding_strategy">Funding Strategy</option>
                   <option value="global_market_access">Global Market Access</option>
+                  
                   <option value="compliance_risks">Compliance and Risks</option>
                   <option value="other">Other</option>
                 </select>
