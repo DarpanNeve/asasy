@@ -71,7 +71,7 @@ async def generate_report_background(report_id: str, idea: str, complexity: Repo
         # Update report with completion details
         report.mark_completed(
             pdf_url=f"/reports/{report_id}/download",
-            pdf_path=output_path,
+            pdf_path=f"{output_path}.pdf",
             file_size=file_size,
         )
 

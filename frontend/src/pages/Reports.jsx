@@ -21,7 +21,7 @@ import {
 import { api } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
 import toast from "react-hot-toast";
-import TokenPricingSection from '../components/TokenPricingSection';
+import TokenPricingSection from "../components/TokenPricingSection";
 
 export default function Reports() {
   const { user } = useAuth();
@@ -61,10 +61,10 @@ export default function Reports() {
 
   const fetchUserBalance = async () => {
     try {
-      const response = await api.get('/tokens/balance');
+      const response = await api.get("/tokens/balance");
       setUserBalance(response.data);
     } catch (error) {
-      console.error('Failed to fetch user balance:', error);
+      console.error("Failed to fetch user balance:", error);
     }
   };
 
@@ -104,13 +104,15 @@ export default function Reports() {
     const tokenRequirements = {
       basic: 2500,
       advanced: 7500,
-      comprehensive: 9000
+      comprehensive: 9000,
     };
 
     const requiredTokens = tokenRequirements[data.complexity];
-    
+
     if (userBalance && userBalance.available_tokens < requiredTokens) {
-      toast.error(`Insufficient tokens. Required: ${requiredTokens}, Available: ${userBalance.available_tokens}. Please purchase more tokens.`);
+      toast.error(
+        `Insufficient tokens. Required: ${requiredTokens}, Available: ${userBalance.available_tokens}. Please purchase more tokens.`
+      );
       setShowTokenPurchase(true);
       return;
     }
@@ -313,8 +315,8 @@ export default function Reports() {
                   <X className="h-6 w-6" />
                 </button>
               </div>
-              <TokenPricingSection 
-                compact={true} 
+              <TokenPricingSection
+                compact={true}
                 showReportTypes={false}
                 showHeader={false}
                 onTokenPurchase={() => {
@@ -357,12 +359,20 @@ export default function Reports() {
                     {...register("complexity", {
                       required: "Please select report complexity",
                     })}
-                    className={`input ${errors.complexity ? "input-error" : ""}`}
+                    className={`input ${
+                      errors.complexity ? "input-error" : ""
+                    }`}
                   >
                     <option value="">Select complexity level</option>
-                    <option value="basic">Basic (2,500 tokens) - Essential analysis</option>
-                    <option value="advanced">Advanced (7,500 tokens) - Comprehensive analysis</option>
-                    <option value="comprehensive">Comprehensive (9,000 tokens) - Premium analysis</option>
+                    <option value="basic">
+                      Basic (2,500 tokens) - Essential analysis
+                    </option>
+                    <option value="advanced">
+                      Advanced (7,500 tokens) - Comprehensive analysis
+                    </option>
+                    <option value="comprehensive">
+                      Comprehensive (9,000 tokens) - Premium analysis
+                    </option>
                   </select>
                   {errors.complexity && (
                     <p className="mt-1 text-sm text-error-600">
@@ -371,7 +381,8 @@ export default function Reports() {
                   )}
                   {userBalance && (
                     <p className="mt-1 text-sm text-neutral-500">
-                      Available tokens: {userBalance.available_tokens.toLocaleString()}
+                      Available tokens:{" "}
+                      {userBalance.available_tokens.toLocaleString()}
                     </p>
                   )}
                 </div>
@@ -822,13 +833,16 @@ export default function Reports() {
                           {report.status}
                         </span>
                       </div>
-                          className={`text-xs px-2 py-1 rounded whitespace-nowrap ${getComplexityColor(
-                            report.complexity
-                          )}`}
+                      <div
+                        className={`text-xs px-2 py-1 rounded whitespace-nowrap ${getComplexityColor(
+                          report.complexity
+                        )}`}
+                      >
                         <span className="text-xs bg-primary-100 text-primary-800 px-2 py-1 rounded whitespace-nowrap">
                           {report.complexity}
                         </span>
-                      )}
+                      </div>
+
                       {report.tokens_used && (
                         <div className="flex items-center text-xs text-neutral-500">
                           <Zap className="w-3 h-3 mr-1" />

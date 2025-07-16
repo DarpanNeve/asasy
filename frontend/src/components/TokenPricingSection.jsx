@@ -172,21 +172,21 @@ const TokenPricingSection = ({
       tokens: "2,500",
       description: "Essential analysis and insights",
       features: [
-         "Executive Summary (1–2 line value proposition)",
-      "Problem/Opportunity Statement",
-      "Technology Overview (core idea, brief features)",
-      "Key Benefits (USP)",
-      "Applications (primary markets/use cases)",
-      "IP Snapshot (status & country)",
-      "Next Steps (e.g., pilot studies, further R&D)",
-      "Expanded Executive Summary (go/no-go recommendation)",
-      "Problem & Solution Fit (with background justification)",
-      "Technical Feasibility (prototype status, TRL stage)",
-      "IP Summary (landscape & freedom-to-operate overview)",
-      "Market Signals (interest letters, pilot test data)",
-      "Early Competitors (known tech or patent citations)",
-      "Regulatory/Compliance Overview",
-      "Risk Summary and Key Questions"
+        "Executive Summary (1–2 line value proposition)",
+        "Problem/Opportunity Statement",
+        "Technology Overview (core idea, brief features)",
+        "Key Benefits (USP)",
+        "Applications (primary markets/use cases)",
+        "IP Snapshot (status & country)",
+        "Next Steps (e.g., pilot studies, further R&D)",
+        "Expanded Executive Summary (go/no-go recommendation)",
+        "Problem & Solution Fit (with background justification)",
+        "Technical Feasibility (prototype status, TRL stage)",
+        "IP Summary (landscape & freedom-to-operate overview)",
+        "Market Signals (interest letters, pilot test data)",
+        "Early Competitors (known tech or patent citations)",
+        "Regulatory/Compliance Overview",
+        "Risk Summary and Key Questions",
       ],
       color: "bg-blue-50 border-blue-200",
     },
@@ -197,29 +197,29 @@ const TokenPricingSection = ({
       description: "Comprehensive analysis with detailed insights",
       features: [
         "Executive Summary (1–2 line value proposition)",
-      "Problem/Opportunity Statement",
-      "Technology Overview (core idea, brief features)",
-      "Key Benefits (USP)",
-      "Applications (primary markets/use cases)",
-      "IP Snapshot (status & country)",
-      "Next Steps (e.g., pilot studies, further R&D)",
-      "Expanded Executive Summary (go/no-go recommendation)",
-      "Problem & Solution Fit (with background justification)",
-      "Technical Feasibility (prototype status, TRL stage)",
-      "IP Summary (landscape & freedom-to-operate overview)",
-      "Market Signals (interest letters, pilot test data)",
-      "Early Competitors (known tech or patent citations)",
-      "Regulatory/Compliance Overview",
-      "Risk Summary and Key Questions",
-      "Detailed Business Case (narrative for VCs)",
-      "Technology Description (core claims, development stage, TRL framework)",
-      "Market & Competition (segmentation, SWOT analysis, barriers to entry)",
-      "TRL & Technical Challenges (scale-up readiness)",
-      "Detailed IP & Legal Status (global patent families, claims, FTO risks)",
-      "Regulatory Pathways (e.g., CE, FDA, BIS, AIS)",
-      "Commercialization Options (spin-off, licensing, JVs)",
-      "Preliminary Financial Estimates (cost vs ROI model)",
-      "Summary & Go-to-Market Plan"
+        "Problem/Opportunity Statement",
+        "Technology Overview (core idea, brief features)",
+        "Key Benefits (USP)",
+        "Applications (primary markets/use cases)",
+        "IP Snapshot (status & country)",
+        "Next Steps (e.g., pilot studies, further R&D)",
+        "Expanded Executive Summary (go/no-go recommendation)",
+        "Problem & Solution Fit (with background justification)",
+        "Technical Feasibility (prototype status, TRL stage)",
+        "IP Summary (landscape & freedom-to-operate overview)",
+        "Market Signals (interest letters, pilot test data)",
+        "Early Competitors (known tech or patent citations)",
+        "Regulatory/Compliance Overview",
+        "Risk Summary and Key Questions",
+        "Detailed Business Case (narrative for VCs)",
+        "Technology Description (core claims, development stage, TRL framework)",
+        "Market & Competition (segmentation, SWOT analysis, barriers to entry)",
+        "TRL & Technical Challenges (scale-up readiness)",
+        "Detailed IP & Legal Status (global patent families, claims, FTO risks)",
+        "Regulatory Pathways (e.g., CE, FDA, BIS, AIS)",
+        "Commercialization Options (spin-off, licensing, JVs)",
+        "Preliminary Financial Estimates (cost vs ROI model)",
+        "Summary & Go-to-Market Plan",
       ],
       color: "bg-purple-50 border-purple-200",
     },
@@ -229,40 +229,40 @@ const TokenPricingSection = ({
       tokens: "9,000",
       description: "Premium analysis with AI-driven insights",
       features: [
-       "Executive Summary (1–2 line value proposition)",
-      "Problem/Opportunity Statement",
-      "Technology Overview (core idea, brief features)",
-      "Key Benefits (USP)",
-      "Applications (primary markets/use cases)",
-      "IP Snapshot (status & country)",
-      "Next Steps (e.g., pilot studies, further R&D)",
-      "Expanded Executive Summary (go/no-go recommendation)",
-      "Problem & Solution Fit (with background justification)",
-      "Technical Feasibility (prototype status, TRL stage)",
-      "IP Summary (landscape & freedom-to-operate overview)",
-      "Market Signals (interest letters, pilot test data)",
-      "Early Competitors (known tech or patent citations)",
-      "Regulatory/Compliance Overview",
-      "Risk Summary and Key Questions",
-      "Detailed Business Case (narrative for VCs)",
-      "Technology Description (core claims, development stage, TRL framework)",
-      "Market & Competition (segmentation, SWOT analysis, barriers to entry)",
-      "TRL & Technical Challenges (scale-up readiness)",
-      "Detailed IP & Legal Status (global patent families, claims, FTO risks)",
-      "Regulatory Pathways (e.g., CE, FDA, BIS, AIS)",
-      "Commercialisation Options (spin-off, licensing, JVs)",
-      "Preliminary Financial Estimates (cost vs ROI model)",
-      "Summary & Go-to-Market Plan",
-      "In-depth IP Claims Analysis (protection scope, robustness)",
-      "Global Freedom-to-Operate Report (US, EU, India, China)",
-      "Market Analysis (size, trends, addressable market, adoption barriers)",
-      "Business Models (licensing, SaaS, product, hybrid)",
-      "5-Year ROI & Revenue Projections (unit cost, pricing, TAM/SAM/SOM)",
-      "Funding Strategy (grants, accelerators, VC, PE, SBIR)",
-      "Licensing & Exit Strategy (terms, IP deal structures)",
-      "Team & Strategic Partners Required (talent, advisors)",
-      "Implementation Roadmap (milestones, MVP, pilot scaling)",
-      "Appendices (patent tables, market research data, technical drawings)"
+        "Executive Summary (1–2 line value proposition)",
+        "Problem/Opportunity Statement",
+        "Technology Overview (core idea, brief features)",
+        "Key Benefits (USP)",
+        "Applications (primary markets/use cases)",
+        "IP Snapshot (status & country)",
+        "Next Steps (e.g., pilot studies, further R&D)",
+        "Expanded Executive Summary (go/no-go recommendation)",
+        "Problem & Solution Fit (with background justification)",
+        "Technical Feasibility (prototype status, TRL stage)",
+        "IP Summary (landscape & freedom-to-operate overview)",
+        "Market Signals (interest letters, pilot test data)",
+        "Early Competitors (known tech or patent citations)",
+        "Regulatory/Compliance Overview",
+        "Risk Summary and Key Questions",
+        "Detailed Business Case (narrative for VCs)",
+        "Technology Description (core claims, development stage, TRL framework)",
+        "Market & Competition (segmentation, SWOT analysis, barriers to entry)",
+        "TRL & Technical Challenges (scale-up readiness)",
+        "Detailed IP & Legal Status (global patent families, claims, FTO risks)",
+        "Regulatory Pathways (e.g., CE, FDA, BIS, AIS)",
+        "Commercialisation Options (spin-off, licensing, JVs)",
+        "Preliminary Financial Estimates (cost vs ROI model)",
+        "Summary & Go-to-Market Plan",
+        "In-depth IP Claims Analysis (protection scope, robustness)",
+        "Global Freedom-to-Operate Report (US, EU, India, China)",
+        "Market Analysis (size, trends, addressable market, adoption barriers)",
+        "Business Models (licensing, SaaS, product, hybrid)",
+        "5-Year ROI & Revenue Projections (unit cost, pricing, TAM/SAM/SOM)",
+        "Funding Strategy (grants, accelerators, VC, PE, SBIR)",
+        "Licensing & Exit Strategy (terms, IP deal structures)",
+        "Team & Strategic Partners Required (talent, advisors)",
+        "Implementation Roadmap (milestones, MVP, pilot scaling)",
+        "Appendices (patent tables, market research data, technical drawings)",
       ],
       color: "bg-emerald-50 border-emerald-200",
     },
@@ -270,83 +270,83 @@ const TokenPricingSection = ({
 
   // Comparison chart data
   const comparisonFeatures = [
-    { 
-      feature: "Executive Summary", 
-      basic: { included: true, note: "(Expanded)" }, 
-      advanced: { included: true, note: "(Detailed VC-ready)" }, 
-      comprehensive: { included: true, note: "(Investor-grade)" } 
+    {
+      feature: "Executive Summary",
+      basic: { included: true, note: "(Expanded)" },
+      advanced: { included: true, note: "(Detailed VC-ready)" },
+      comprehensive: { included: true, note: "(Investor-grade)" },
     },
-    { 
-      feature: "Problem Statement", 
-      basic: { included: true, note: "(In-depth)" }, 
-      advanced: { included: true, note: "" }, 
-      comprehensive: { included: true, note: "" } 
+    {
+      feature: "Problem Statement",
+      basic: { included: true, note: "(In-depth)" },
+      advanced: { included: true, note: "" },
+      comprehensive: { included: true, note: "" },
     },
-    { 
-      feature: "Technical Overview", 
-      basic: { included: true, note: "" }, 
-      advanced: { included: true, note: "" }, 
-      comprehensive: { included: true, note: "" } 
+    {
+      feature: "Technical Overview",
+      basic: { included: true, note: "" },
+      advanced: { included: true, note: "" },
+      comprehensive: { included: true, note: "" },
     },
-    { 
-      feature: "TRL Analysis", 
-      basic: { included: true, note: "(Initial)" }, 
-      advanced: { included: true, note: "(With data)" }, 
-      comprehensive: { included: true, note: "(Detailed roadmap)" } 
+    {
+      feature: "TRL Analysis",
+      basic: { included: true, note: "(Initial)" },
+      advanced: { included: true, note: "(With data)" },
+      comprehensive: { included: true, note: "(Detailed roadmap)" },
     },
-    { 
-      feature: "IP Snapshot", 
-      basic: { included: true, note: "" }, 
-      advanced: { included: true, note: "" }, 
-      comprehensive: { included: true, note: "(Full claim analysis)" } 
+    {
+      feature: "IP Snapshot",
+      basic: { included: true, note: "" },
+      advanced: { included: true, note: "" },
+      comprehensive: { included: true, note: "(Full claim analysis)" },
     },
-    { 
-      feature: "Market Signals", 
-      basic: { included: true, note: "" }, 
-      advanced: { included: true, note: "(Segmentation)" }, 
-      comprehensive: { included: true, note: "(Global trends + forecasts)" } 
+    {
+      feature: "Market Signals",
+      basic: { included: true, note: "" },
+      advanced: { included: true, note: "(Segmentation)" },
+      comprehensive: { included: true, note: "(Global trends + forecasts)" },
     },
-    { 
-      feature: "Competitor Analysis", 
-      basic: { included: true, note: "" }, 
-      advanced: { included: true, note: "(SWOT, landscape)" }, 
-      comprehensive: { included: true, note: "(With market share data)" } 
+    {
+      feature: "Competitor Analysis",
+      basic: { included: true, note: "" },
+      advanced: { included: true, note: "(SWOT, landscape)" },
+      comprehensive: { included: true, note: "(With market share data)" },
     },
-    { 
-      feature: "Commercialization Paths", 
-      basic: { included: false, note: "" }, 
-      advanced: { included: true, note: "" }, 
-      comprehensive: { included: true, note: "(With financial modeling)" } 
+    {
+      feature: "Commercialization Paths",
+      basic: { included: false, note: "" },
+      advanced: { included: true, note: "" },
+      comprehensive: { included: true, note: "(With financial modeling)" },
     },
-    { 
-      feature: "ROI Forecast", 
-      basic: { included: false, note: "" }, 
-      advanced: { included: true, note: "(Preliminary)" }, 
-      comprehensive: { included: true, note: "(5-year plan + funding)" } 
+    {
+      feature: "ROI Forecast",
+      basic: { included: false, note: "" },
+      advanced: { included: true, note: "(Preliminary)" },
+      comprehensive: { included: true, note: "(5-year plan + funding)" },
     },
-    { 
-      feature: "Legal & Regulatory", 
-      basic: { included: true, note: "(Basic)" }, 
-      advanced: { included: true, note: "" }, 
-      comprehensive: { included: true, note: "(By jurisdiction)" } 
+    {
+      feature: "Legal & Regulatory",
+      basic: { included: true, note: "(Basic)" },
+      advanced: { included: true, note: "" },
+      comprehensive: { included: true, note: "(By jurisdiction)" },
     },
-    { 
-      feature: "PDF Output", 
-      basic: { included: true, note: "" }, 
-      advanced: { included: true, note: "" }, 
-      comprehensive: { included: true, note: "" } 
+    {
+      feature: "PDF Output",
+      basic: { included: true, note: "" },
+      advanced: { included: true, note: "" },
+      comprehensive: { included: true, note: "" },
     },
-    { 
-      feature: "AI Auto-Generated", 
-      basic: { included: true, note: "" }, 
-      advanced: { included: true, note: "" }, 
-      comprehensive: { included: true, note: "" } 
+    {
+      feature: "AI Auto-Generated",
+      basic: { included: true, note: "" },
+      advanced: { included: true, note: "" },
+      comprehensive: { included: true, note: "" },
     },
-    { 
-      feature: "Use Cases", 
-      basic: { included: true, note: "Institutional Feasibility" }, 
-      advanced: { included: true, note: "Incubators, Angel/Seed" }, 
-      comprehensive: { included: true, note: "VC Decks, Govt Grants" } 
+    {
+      feature: "Use Cases",
+      basic: { included: true, note: "Institutional Feasibility" },
+      advanced: { included: true, note: "Incubators, Angel/Seed" },
+      comprehensive: { included: true, note: "VC Decks, Govt Grants" },
     },
   ];
 
@@ -374,13 +374,22 @@ const TokenPricingSection = ({
       <div className={`${getContainerClasses()} px-4 ${className}`}>
         <div className="max-w-7xl mx-auto">
           {/* User Token Balance */}
-          {user && userBalance && !compact && true && (
+          {user && userBalance && !compact ? (
             <div className="text-center mb-8">
               <div className="inline-flex items-center px-6 py-3 bg-white rounded-full shadow-lg border border-gray-200">
                 <Zap className="w-5 h-5 text-blue-600 mr-2" />
                 <span className="text-gray-700 mr-2">Available Tokens:</span>
                 <span className="font-bold text-blue-600 text-lg">
                   {userBalance.available_tokens.toLocaleString()}
+                </span>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center px-6 py-3 bg-yellow-100 rounded-full shadow border border-yellow-300">
+                <Zap className="w-5 h-5 text-yellow-600 mr-2" />
+                <span className="text-yellow-800">
+                  For free tokens, please sign up
                 </span>
               </div>
             </div>
@@ -438,7 +447,7 @@ const TokenPricingSection = ({
                   Different report types require different amounts of tokens.
                   Compare features or view detailed breakdown.
                 </p>
-                
+
                 {/* Toggle Buttons */}
                 <div className="flex justify-center gap-4 mb-8">
                   <button
@@ -480,19 +489,25 @@ const TokenPricingSection = ({
                             <th className="text-center py-6 px-6 text-blue-600 font-bold text-lg min-w-[160px]">
                               <div className="flex flex-col items-center">
                                 <span>Basic</span>
-                                <span className="text-sm font-normal text-gray-600 mt-1">2,500 tokens</span>
+                                <span className="text-sm font-normal text-gray-600 mt-1">
+                                  2,500 tokens
+                                </span>
                               </div>
                             </th>
                             <th className="text-center py-6 px-6 text-purple-600 font-bold text-lg min-w-[160px]">
                               <div className="flex flex-col items-center">
                                 <span>Advanced</span>
-                                <span className="text-sm font-normal text-gray-600 mt-1">7,500 tokens</span>
+                                <span className="text-sm font-normal text-gray-600 mt-1">
+                                  7,500 tokens
+                                </span>
                               </div>
                             </th>
                             <th className="text-center py-6 px-6 text-emerald-600 font-bold text-lg min-w-[160px]">
                               <div className="flex flex-col items-center">
                                 <span>Comprehensive</span>
-                                <span className="text-sm font-normal text-gray-600 mt-1">9,000 tokens</span>
+                                <span className="text-sm font-normal text-gray-600 mt-1">
+                                  9,000 tokens
+                                </span>
                               </div>
                             </th>
                           </tr>
@@ -659,16 +674,15 @@ const TokenPricingSection = ({
 
           {/* Bottom Note */}
           {!compact && (
-         <div className="text-center mt-12">
-  <div className="bg-white border border-gray-200 rounded-2xl shadow-md p-6 max-w-2xl mx-auto">
-    <p className="text-gray-600">
-      Would you need any help choosing the right package? For enterprise solutions
-      with custom pricing and bulk discounts, don't hesitate to get in
-      touch with our sales team.
-    </p>
-  </div>
-</div>
-
+            <div className="text-center mt-12">
+              <div className="bg-white border border-gray-200 rounded-2xl shadow-md p-6 max-w-2xl mx-auto">
+                <p className="text-gray-600">
+                  Would you need any help choosing the right package? For
+                  enterprise solutions with custom pricing and bulk discounts,
+                  don't hesitate to get in touch with our sales team.
+                </p>
+              </div>
+            </div>
           )}
         </div>
 

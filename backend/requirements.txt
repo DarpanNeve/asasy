@@ -16,6 +16,8 @@ emails
 razorpay
 boto3
 openai
+PyPDF2
+reportlab
 weasyprint
 Pillow
 slowapi

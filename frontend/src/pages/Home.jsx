@@ -727,7 +727,7 @@ A wearable biosensor patch that monitors glucose levels in real-time using sweat
           >
             <div className="inline-flex items-center gap-8 px-8 py-4 bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 shadow-lg">
               {[
-                { icon: "🚀", label: "99% Accuracy Rate" },
+                { icon: "🚀", label: "92% Accuracy Rate" },
                 { icon: "⚡", label: "< 60 Second Analysis" },
                 { icon: "🔒", label: "Enterprise Security" },
               ].map((stat, index) => (

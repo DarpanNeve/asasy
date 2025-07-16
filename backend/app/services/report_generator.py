@@ -4,6 +4,10 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any
+from PyPDF2 import PdfReader, PdfWriter
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+import io
 
 import openai
 from weasyprint import HTML
@@ -149,18 +153,19 @@ class PDFReportGenerator:
         return html_path
 
     @staticmethod
-    def convert_html_to_pdf(html_content: str, output_dir:str) -> Path:
-
-        pdf_path = f"{Path(output_dir)}.pdf"
+    def convert_html_to_pdf(
+            html_content: str,
+            output_dir: str,
+            watermark_image_path: str = "../watermark.png",  # Path to your watermark image
+            opacity: float = 0.1,
+            scale: float = 0.5
+    ) -> Path:
+        pdf_path = Path(output_dir).with_suffix(".pdf")
+        watermarked_pdf_path = Path(output_dir).with_name(f"{pdf_path.stem}_watermarked.pdf")
 
         try:
-            # Create HTML object with enhanced configuration
-            html_doc = HTML(
-                string=html_content,
-                base_url=str(output_dir)
-            )
-
-            # Enhanced PDF generation with optimized settings
+            # Step 1: Generate PDF from HTML
+            html_doc = HTML(string=html_content, base_url=str(output_dir))
             html_doc.write_pdf(
                 str(pdf_path),
                 optimize_images=True,
@@ -169,12 +174,55 @@ class PDFReportGenerator:
                 presentational_hints=True,
                 font_size=12
             )
-
             logger.info(f"PDF successfully generated: {pdf_path}")
-            return pdf_path
+
+            # Step 2: Create watermark PDF in memory with image
+            watermark_stream = io.BytesIO()
+            c = canvas.Canvas(watermark_stream, pagesize=letter)
+
+            # Get image dimensions (optional, but recommended)
+            from PIL import Image
+            img = Image.open(watermark_image_path)
+            img_width, img_height = img.size
+            img_width *= scale
+            img_height *= scale
+
+            # Optional: set transparency (PDF doesn't support true alpha; workaround only)
+            # So here we just draw a very light image
+            c.setFillAlpha(opacity)
+
+            # Draw the image at the center of the page, rotated
+            x = (letter[0] - img_width) / 2
+            y = (letter[1] - img_height) / 2
+            c.saveState()
+            c.translate(x + img_width / 2, y + img_height / 2)
+            c.rotate(45)
+            c.drawImage(watermark_image_path, -img_width / 2, -img_height / 2, width=img_width, height=img_height,
+                        mask='auto')
+            c.restoreState()
+            c.save()
+
+            watermark_stream.seek(0)
+
+            # Step 3: Apply watermark to each page
+            watermark_pdf = PdfReader(watermark_stream)
+            watermark_page = watermark_pdf.pages[0]
+
+            input_pdf = PdfReader(str(pdf_path))
+            output_pdf = PdfWriter()
+
+            for page in input_pdf.pages:
+                page.merge_page(watermark_page)
+                output_pdf.add_page(page)
+
+            with open(watermarked_pdf_path, "wb") as out_file:
+                output_pdf.write(out_file)
+
+            logger.info(f"Watermarked PDF saved: {watermarked_pdf_path}")
+            return watermarked_pdf_path
 
         except Exception as e:
-            logger.error(f"PDF generation failed: {e}")
+            logger.error(f"PDF generation with image watermark failed: {e}")
             raise RuntimeError(f"PDF generation error: {e}")
 
     def generate_report_metadata(self, html_path: Path, pdf_path: Path,topic,requirements,output_dir) -> Dict[str, Any]:

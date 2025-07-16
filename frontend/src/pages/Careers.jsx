@@ -1,15 +1,14 @@
 import { useState } from "react";
-import { 
-  Users, 
-  Briefcase, 
-  GraduationCap, 
+import {
+  Users,
+  Briefcase,
+  GraduationCap,
   Award,
-  ArrowRight,
   ExternalLink,
   CheckCircle,
   Globe,
   Zap,
-  Heart
+  Heart,
 } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -17,11 +16,13 @@ import Footer from "../components/Footer";
 export default function Careers() {
   const [hoveredCard, setHoveredCard] = useState(null);
 
+  // Career options: specify either a formUrl or an email for direct mail
   const careerOptions = [
     {
       id: "rttp",
       title: "Join as RTTP Expert",
-      description: "Share your expertise in technology transfer and help innovators commercialize their research",
+      description:
+        "Share your expertise in technology transfer and help innovators commercialize their research",
       icon: Award,
       color: "from-blue-500 to-indigo-600",
       hoverColor: "from-blue-600 to-indigo-700",
@@ -29,20 +30,20 @@ export default function Careers() {
         "Flexible remote work",
         "Competitive compensation",
         "Global client network",
-        "Professional development"
+        "Professional development",
       ],
       requirements: [
         "RTTP certification or equivalent experience",
         "5+ years in technology transfer",
-        "Strong communication skills",
-        "Industry expertise"
+        "Industry expertise",
       ],
-      formUrl: "https://forms.gle/rttp-expert-form"
+      formUrl: "https://forms.gle/1AHvijC9uidoGeig8",
     },
     {
       id: "intern",
       title: "Internship Program",
-      description: "Gain hands-on experience in technology transfer, AI, and innovation commercialization",
+      description:
+        "Gain hands-on experience in technology transfer, AI, and innovation commercialization",
       icon: GraduationCap,
       color: "from-green-500 to-emerald-600",
       hoverColor: "from-green-600 to-emerald-700",
@@ -50,63 +51,76 @@ export default function Careers() {
         "Mentorship program",
         "Real project experience",
         "Certificate of completion",
-        "Potential full-time offer"
+        "Potential full-time offer",
       ],
       requirements: [
-        "Currently enrolled student",
         "Interest in technology transfer",
         "Basic research skills",
       ],
-      formUrl: "https://forms.gle/internship-program-form"
+      // Use direct email instead of form
+      formUrl:
+        "https://docs.google.com/forms/d/e/1FAIpQLSdsHZJbdn9jTFKQPJ6TjJbdh3NI0hS2aK_QIuFEGE_-K4RPqg/viewform",
     },
     {
       id: "job",
       title: "Full-Time Positions",
-      description: "Join our team and help build the future of technology transfer and AI-powered innovation",
+      description:
+        "Join our team and help build the future of technology transfer and AI-powered innovation",
       icon: Briefcase,
       color: "from-purple-500 to-pink-600",
       hoverColor: "from-purple-600 to-pink-700",
       benefits: [
         "Competitive salary & equity",
-        "Health & wellness benefits",
         "Professional development budget",
-        "Flexible work arrangements"
+        "Flexible work arrangements",
       ],
       requirements: [
         "Relevant degree or experience",
         "Passion for innovation",
         "Team collaboration skills",
-        "Growth mindset"
+        "Growth mindset",
       ],
-      formUrl: "https://forms.gle/full-time-positions-form"
-    }
+      formUrl:
+        "https://docs.google.com/forms/d/e/1FAIpQLSdsHZJbdn9jTFKQPJ6TjJbdh3NI0hS2aK_QIuFEGE_-K4RPqg/viewform",
+    },
   ];
 
   const companyValues = [
     {
       icon: Zap,
       title: "Innovation First",
-      description: "We're at the forefront of technology transfer innovation"
+      description: "We're at the forefront of technology transfer innovation",
     },
     {
       icon: Globe,
       title: "Global Impact",
-      description: "Our work helps innovations reach markets worldwide"
+      description: "Our work helps innovations reach markets worldwide",
     },
     {
       icon: Users,
       title: "Collaborative Culture",
-      description: "We believe in the power of diverse teams working together"
+      description: "We believe in the power of diverse teams working together",
     },
     {
       icon: Heart,
       title: "Purpose Driven",
-      description: "Every day we help turn research into solutions that matter"
-    }
+      description: "Every day we help turn research into solutions that matter",
+    },
   ];
 
-  const handleApply = (formUrl) => {
-    window.open(formUrl, '_blank', 'noopener,noreferrer');
+  // Handler supports both form links and direct email
+  const handleApply = (option) => {
+    if (option.email) {
+      const subject = encodeURIComponent(`Application for ${option.title}`);
+      const body = encodeURIComponent(
+        `Dear team,\n\nI am interested in the ${option.title} position. Please find my resume attached.\n\nThank you.`
+      );
+      const mailtoLink = `mailto:${option.email}?subject=${subject}&body=${body}`;
+      // Use window.open to ensure mail client opens in new window
+      window.open(mailtoLink, "_blank");
+    } else if (option.formUrl) {
+      window.open(option.formUrl, "_blank", "noopener,noreferrer");
+    }
   };
 
   return (
@@ -130,13 +144,10 @@ export default function Careers() {
               </span>
             </h1>
             <p className="text-xl text-neutral-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Help us transform the future of technology transfer and innovation commercialization. 
-              Join a team that's passionate about turning research into real-world impact.
+              Help us transform the future of technology transfer and innovation
+              commercialization. Join a team that's passionate about turning
+              research into real-world impact.
             </p>
-            <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-neutral-500">
-           
-             
-            </div>
           </div>
         </div>
       </section>
@@ -152,7 +163,8 @@ export default function Careers() {
               </span>
             </h2>
             <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
-              Discover how you can contribute to our mission and grow your career with us.
+              Discover how you can contribute to our mission and grow your
+              career with us.
             </p>
           </div>
 
@@ -160,18 +172,22 @@ export default function Careers() {
             {careerOptions.map((option) => {
               const Icon = option.icon;
               const isHovered = hoveredCard === option.id;
-              
+
               return (
                 <div
                   key={option.id}
                   className={`relative bg-white rounded-2xl p-8 shadow-lg border border-neutral-200 transition-all duration-300 transform ${
-                    isHovered ? 'scale-105 shadow-2xl' : 'hover:shadow-xl'
+                    isHovered ? "scale-105 shadow-2xl" : "hover:shadow-xl"
                   }`}
                   onMouseEnter={() => setHoveredCard(option.id)}
                   onMouseLeave={() => setHoveredCard(null)}
                 >
                   {/* Icon */}
-                  <div className={`w-16 h-16 bg-gradient-to-r ${isHovered ? option.hoverColor : option.color} rounded-2xl flex items-center justify-center mb-6 shadow-lg transition-all duration-300`}>
+                  <div
+                    className={`w-16 h-16 bg-gradient-to-r ${
+                      isHovered ? option.hoverColor : option.color
+                    } rounded-2xl flex items-center justify-center mb-6 shadow-lg transition-all duration-300`}
+                  >
                     <Icon className="h-8 w-8 text-white" />
                   </div>
 
@@ -185,10 +201,15 @@ export default function Careers() {
 
                   {/* Benefits */}
                   <div className="mb-6">
-                    <h4 className="font-semibold text-neutral-900 mb-3">Benefits:</h4>
+                    <h4 className="font-semibold text-neutral-900 mb-3">
+                      Benefits:
+                    </h4>
                     <ul className="space-y-2">
                       {option.benefits.map((benefit, index) => (
-                        <li key={index} className="flex items-center text-sm text-neutral-600">
+                        <li
+                          key={index}
+                          className="flex items-center text-sm text-neutral-600"
+                        >
                           <CheckCircle className="w-4 h-4 mr-2 text-green-500 flex-shrink-0" />
                           {benefit}
                         </li>
@@ -198,10 +219,15 @@ export default function Careers() {
 
                   {/* Requirements */}
                   <div className="mb-8">
-                    <h4 className="font-semibold text-neutral-900 mb-3">Requirements:</h4>
+                    <h4 className="font-semibold text-neutral-900 mb-3">
+                      Requirements:
+                    </h4>
                     <ul className="space-y-2">
                       {option.requirements.map((requirement, index) => (
-                        <li key={index} className="flex items-center text-sm text-neutral-600">
+                        <li
+                          key={index}
+                          className="flex items-center text-sm text-neutral-600"
+                        >
                           <div className="w-2 h-2 bg-blue-500 rounded-full mr-3 flex-shrink-0"></div>
                           {requirement}
                         </li>
@@ -211,10 +237,10 @@ export default function Careers() {
 
                   {/* Apply Button */}
                   <button
-                    onClick={() => handleApply(option.formUrl)}
+                    onClick={() => handleApply(option)}
                     className={`w-full py-3 px-6 bg-gradient-to-r ${option.color} hover:${option.hoverColor} text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center group`}
                   >
-                    Apply Now
+                    {option.email ? "Send Email" : "Apply Now"}
                     <ExternalLink className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </div>
@@ -262,8 +288,6 @@ export default function Careers() {
           </div>
         </div>
       </section>
-
-      
 
       <Footer />
     </div>
