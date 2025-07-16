@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { BarChart3, Mail, Phone, MapPin, Twitter, Linkedin, Facebook } from "lucide-react";
+import { BarChart3, Mail, Phone, MapPin, Twitter, Linkedin, Facebook, Instagram } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -22,25 +22,40 @@ export default function Footer() {
             </p>
             <div className="flex space-x-5">
               <a
-                href="#"
+                href="https://x.com/Assesme_AI"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-gray-400 hover:text-blue-400 transition-colors duration-300 transform hover:scale-110"
                 aria-label="Twitter"
               >
                 <Twitter className="h-6 w-6" />
               </a>
               <a
-                href="#"
+                href="https://www.linkedin.com/company/assesme-ai/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-gray-400 hover:text-blue-400 transition-colors duration-300 transform hover:scale-110"
                 aria-label="LinkedIn"
               >
                 <Linkedin className="h-6 w-6" />
               </a>
               <a
-                href="#"
+                href="https://www.facebook.com/people/Assesme-AI/61578640013629/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-gray-400 hover:text-blue-400 transition-colors duration-300 transform hover:scale-110"
                 aria-label="Facebook"
               >
                 <Facebook className="h-6 w-6" />
+              </a>
+              <a
+                href="https://www.instagram.com/assesme_ai?igsh=NDA3NjBibWhsbDZq&utm_source=qr"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-blue-400 transition-colors duration-300 transform hover:scale-110"
+                aria-label="Instagram"
+              >
+                <Instagram className="h-6 w-6" />
               </a>
             </div>
           </div>
@@ -85,7 +100,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center">
                 <Phone className="w-5 h-5 mr-3 text-blue-400" />
-                <a href="tel:+918743078668" className="hover:text-blue-400 transition-colors">+91-87430-78668</a> {/* Updated phone number from previous context */}
+                <a href="tel:+918743078668" className="hover:text-blue-400 transition-colors">+91-9667576014</a> {/* Updated phone number from previous context */}
               </div>
               <div className="flex items-center">
                 <MapPin className="w-5 h-5 mr-3 text-blue-400" />
