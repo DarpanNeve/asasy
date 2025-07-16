@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { BarChart3, Menu, X, Zap, Crown, Rocket, Diamond } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { api } from "../services/api";
@@ -10,6 +10,12 @@ export default function Header() {
   const { user } = useAuth();
   const [userBalance, setUserBalance] = useState(null);
   const [tokenPackages, setTokenPackages] = useState([]);
+  const location = useLocation();
+
+  // Scroll to top when location changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
 
   useEffect(() => {
     fetchTokenPackages();
@@ -17,6 +23,7 @@ export default function Header() {
       fetchUserBalance();
     }
   }, [user]);
+
   const fetchTokenPackages = async () => {
     try {
       const response = await api.get("/tokens/packages");
@@ -49,6 +56,7 @@ export default function Header() {
       toast.error("Failed to load token packages");
     }
   };
+
   const fetchUserBalance = async () => {
     try {
       const response = await api.get("/tokens/balance");
@@ -57,6 +65,7 @@ export default function Header() {
       console.error("Failed to fetch user balance:", error);
     }
   };
+
   const getColorForPackage = (type) => {
     switch (type) {
       case "starter":
@@ -71,6 +80,7 @@ export default function Header() {
         return "from-blue-500 to-blue-600";
     }
   };
+
   const getHoverColorForPackage = (type) => {
     switch (type) {
       case "starter":
@@ -85,6 +95,7 @@ export default function Header() {
         return "from-blue-600 to-blue-700";
     }
   };
+
   const getIconForPackage = (type) => {
     switch (type) {
       case "starter":
@@ -100,12 +111,22 @@ export default function Header() {
     }
   };
 
+  // Handle navigation with scroll to top
+  const handleNavigation = () => {
+    setMobileMenuOpen(false);
+    window.scrollTo(0, 0);
+  };
+
   return (
     <nav className="bg-white/90 backdrop-blur-md shadow-lg border-b border-neutral-100 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center group">
+          <Link
+            to="/"
+            className="flex items-center group"
+            onClick={() => window.scrollTo(0, 0)}
+          >
             <div className="relative flex items-center h-16">
               <img
                 src="/logoas.png"
@@ -120,48 +141,56 @@ export default function Header() {
             <Link
               to="/"
               className="text-neutral-700 hover:text-blue-600 font-medium transition-colors duration-200"
+              onClick={() => window.scrollTo(0, 0)}
             >
               Home
             </Link>
             <Link
               to="/about"
               className="text-neutral-700 hover:text-blue-600 font-medium transition-colors duration-200"
+              onClick={() => window.scrollTo(0, 0)}
             >
               About
             </Link>
             <Link
               to="/pricing"
               className="text-neutral-700 hover:text-blue-600 font-medium transition-colors duration-200"
+              onClick={() => window.scrollTo(0, 0)}
             >
               Pricing
             </Link>
             <Link
               to="/rttp"
               className="text-neutral-700 hover:text-blue-600 font-medium transition-colors duration-200"
+              onClick={() => window.scrollTo(0, 0)}
             >
               RTTP Experts
             </Link>
             <Link
               to="/careers"
               className="text-neutral-700 hover:text-blue-600 font-medium transition-colors duration-200"
+              onClick={() => window.scrollTo(0, 0)}
             >
               Career
             </Link>
             <Link
               to="/blog"
               className="text-neutral-700 hover:text-blue-600 font-medium transition-colors duration-200"
+              onClick={() => window.scrollTo(0, 0)}
             >
               Blog
             </Link>
             <Link
               to="/press-releases"
               className="text-neutral-700 hover:text-blue-600 font-medium transition-colors duration-200"
+              onClick={() => window.scrollTo(0, 0)}
             >
               Press
             </Link>
             <Link
               to="/contact"
               className="text-neutral-700 hover:text-blue-600 font-medium transition-colors duration-200"
+              onClick={() => window.scrollTo(0, 0)}
             >
               Contact
             </Link>
@@ -170,6 +199,7 @@ export default function Header() {
               <Link
                 to="/reports"
                 className="px-5 py-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"
+                onClick={() => window.scrollTo(0, 0)}
               >
                 Dashboard
               </Link>
@@ -178,12 +208,14 @@ export default function Header() {
                 <Link
                   to="/login"
                   className="text-neutral-700 hover:text-blue-600 font-medium transition-colors duration-200"
+                  onClick={() => window.scrollTo(0, 0)}
                 >
                   Sign In
                 </Link>
                 <Link
                   to="/signup"
                   className="px-5 py-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"
+                  onClick={() => window.scrollTo(0, 0)}
                 >
                   Get Started
                 </Link>
@@ -225,56 +257,56 @@ export default function Header() {
               <Link
                 to="/"
                 className="block px-3 py-2 text-neutral-700 hover:bg-blue-50 hover:text-blue-600 rounded-md transition-colors duration-200"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={handleNavigation}
               >
                 Home
               </Link>
               <Link
                 to="/about"
                 className="block px-3 py-2 text-neutral-700 hover:bg-blue-50 hover:text-blue-600 rounded-md transition-colors duration-200"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={handleNavigation}
               >
                 About
               </Link>
               <Link
                 to="/pricing"
                 className="block px-3 py-2 text-neutral-700 hover:bg-blue-50 hover:text-blue-600 rounded-md transition-colors duration-200"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={handleNavigation}
               >
                 Pricing
               </Link>
               <Link
                 to="/rttp"
                 className="block px-3 py-2 text-neutral-700 hover:bg-blue-50 hover:text-blue-600 rounded-md transition-colors duration-200"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={handleNavigation}
               >
                 RTTP Experts
               </Link>
               <Link
                 to="/careers"
                 className="block px-3 py-2 text-neutral-700 hover:bg-blue-50 hover:text-blue-600 rounded-md transition-colors duration-200"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={handleNavigation}
               >
                 Career
               </Link>
               <Link
                 to="/blog"
                 className="block px-3 py-2 text-neutral-700 hover:bg-blue-50 hover:text-blue-600 rounded-md transition-colors duration-200"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={handleNavigation}
               >
                 Blog
               </Link>
               <Link
                 to="/press-releases"
                 className="block px-3 py-2 text-neutral-700 hover:bg-blue-50 hover:text-blue-600 rounded-md transition-colors duration-200"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={handleNavigation}
               >
                 Press
               </Link>
               <Link
                 to="/contact"
                 className="block px-3 py-2 text-neutral-700 hover:bg-blue-50 hover:text-blue-600 rounded-md transition-colors duration-200"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={handleNavigation}
               >
                 Contact
               </Link>
@@ -282,7 +314,7 @@ export default function Header() {
                 <Link
                   to="/reports"
                   className="block px-3 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors duration-200 mt-2"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={handleNavigation}
                 >
                   Dashboard
                 </Link>
@@ -291,14 +323,14 @@ export default function Header() {
                   <Link
                     to="/login"
                     className="block px-3 py-2 text-neutral-700 hover:bg-blue-50 hover:text-blue-600 rounded-md transition-colors duration-200"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={handleNavigation}
                   >
                     Sign In
                   </Link>
                   <Link
                     to="/signup"
                     className="block px-3 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors duration-200 mt-2"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={handleNavigation}
                   >
                     Get Started
                   </Link>
