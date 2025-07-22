@@ -744,8 +744,8 @@ A wearable biosensor patch that monitors glucose levels in real-time using sweat
       </section>
 
       {/* Logo Carousel */}
-      <section className="py-0 pb-20 bg-gradient-to-b from-white to-slate-50 relative overflow-hidden">
-        {/* Subtle Background Pattern */}
+      {/* <section className="py-0 pb-20 bg-gradient-to-b from-white to-slate-50 relative overflow-hidden">
+        Subtle Background Pattern
         <div className="absolute inset-0 opacity-[0.02]">
           <div
             className="absolute inset-0"
@@ -757,7 +757,7 @@ A wearable biosensor patch that monitors glucose levels in real-time using sweat
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Header */}
+
           <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 20 }}
@@ -779,11 +779,8 @@ A wearable biosensor patch that monitors glucose levels in real-time using sweat
             </p>
           </motion.div>
 
-          {/* Logo Carousel Container */}
           <div className="relative">
-            {/* Main Carousel */}
             <div className="relative overflow-hidden rounded-3xl bg-white/60 backdrop-blur-xl border border-white/20 shadow-2xl p-8 md:p-12">
-              {/* Animated Background Gradient */}
               <div className="absolute inset-0 bg-gradient-to-r from-blue-50/30 via-purple-50/30 to-indigo-50/30 animate-gradient-x"></div>
 
               <div className="relative z-10">
@@ -809,7 +806,7 @@ A wearable biosensor patch that monitors glucose levels in real-time using sweat
                       }}
                       onClick={() => setActiveLogoIndex(index)}
                     >
-                      {/* Logo Container */}
+        
                       <div
                         className={`
                   relative w-16 h-16 md:w-20 md:h-20 rounded-2xl 
@@ -824,10 +821,10 @@ A wearable biosensor patch that monitors glucose levels in real-time using sweat
                   backdrop-blur-sm
                 `}
                       >
-                        {/* Shine Effect */}
+
                         <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-                        {/* Logo Initials */}
+
                         <span
                           className={`
                     font-bold text-lg md:text-xl relative z-10
@@ -841,8 +838,6 @@ A wearable biosensor patch that monitors glucose levels in real-time using sweat
                         >
                           {logo.initials}
                         </span>
-
-                        {/* Active Indicator */}
                         {index === activeLogoIndex && (
                           <motion.div
                             className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-white shadow-lg"
@@ -853,7 +848,7 @@ A wearable biosensor patch that monitors glucose levels in real-time using sweat
                         )}
                       </div>
 
-                      {/* Company Name */}
+                      
                       <motion.span
                         className={`
                     mt-3 text-xs md:text-sm font-medium text-center leading-tight
@@ -871,7 +866,7 @@ A wearable biosensor patch that monitors glucose levels in real-time using sweat
                         {logo.name}
                       </motion.span>
 
-                      {/* Hover Description */}
+                      
                       <motion.p
                         className="mt-1 text-xs text-slate-500 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                         initial={{ height: 0 }}
@@ -884,7 +879,7 @@ A wearable biosensor patch that monitors glucose levels in real-time using sweat
                 </div>
               </div>
 
-              {/* Navigation Buttons */}
+           
               <div className="absolute inset-y-0 left-0 flex items-center">
                 <button
                   className="ml-4 p-3 bg-white/80 backdrop-blur-sm hover:bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 border border-white/50 group"
@@ -910,7 +905,7 @@ A wearable biosensor patch that monitors glucose levels in real-time using sweat
               </div>
             </div>
 
-            {/* Progress Indicators */}
+            
             <div className="flex justify-center mt-6 space-x-2">
               {logos.map((_, index) => (
                 <button
@@ -931,11 +926,11 @@ A wearable biosensor patch that monitors glucose levels in real-time using sweat
 
         
         </div>
-      </section>
+      </section> */}
 
-      {/* IP Commercialization Journey */}
+      
       <section className="relative py-24 bg-gradient-to-br from-slate-50 via-white to-blue-50 overflow-hidden">
-        {/* Background decorative elements */}
+        
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1)_0%,transparent_50%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_80%,rgba(168,85,247,0.08)_0%,transparent_50%)]" />
 
@@ -1071,8 +1066,8 @@ A wearable biosensor patch that monitors glucose levels in real-time using sweat
         </div>
       </section>
 
-
-      {/* Testimonials Section */}
+{/* 
+      
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -1151,7 +1146,7 @@ A wearable biosensor patch that monitors glucose levels in real-time using sweat
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       <Footer />
     </div>

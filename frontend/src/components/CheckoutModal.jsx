@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
-import { X, CreditCard, Shield, Calculator, DollarSign, IndianRupee } from 'lucide-react';
+import React, { useState } from "react";
+import {
+  X,
+  CreditCard,
+  Shield,
+  Calculator,
+  DollarSign,
+  IndianRupee,
+} from "lucide-react";
 
-const CheckoutModal = ({ 
-  isOpen, 
-  onClose, 
-  packageData, 
-  onConfirmPurchase, 
-  loading 
+const CheckoutModal = ({
+  isOpen,
+  onClose,
+  packageData,
+  onConfirmPurchase,
+  loading,
 }) => {
   if (!isOpen || !packageData) return null;
 
@@ -34,10 +41,16 @@ const CheckoutModal = ({
           {/* Package Details */}
           <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 mb-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-semibold text-gray-900">{packageData.name}</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                {packageData.name}
+              </h3>
               <div className="text-right">
-                <div className="text-2xl font-bold text-blue-600">${basePrice}</div>
-                <div className="text-sm text-gray-600">{packageData.tokens.toLocaleString()} Tokens</div>
+                <div className="text-2xl font-bold text-blue-600">
+                  ${basePrice}
+                </div>
+                <div className="text-sm text-gray-600">
+                  {packageData.tokens.toLocaleString()} Tokens
+                </div>
               </div>
             </div>
             <p className="text-gray-600 text-sm">{packageData.description}</p>
@@ -49,7 +62,7 @@ const CheckoutModal = ({
               <Calculator className="w-5 h-5 mr-2" />
               Price Breakdown
             </h4>
-            
+
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <span className="text-gray-600 flex items-center">
@@ -58,25 +71,31 @@ const CheckoutModal = ({
                 </span>
                 <span className="font-medium">${basePrice}</span>
               </div>
-              
+
               <div className="flex justify-between items-center">
                 <span className="text-gray-600 flex items-center">
                   <IndianRupee className="w-4 h-4 mr-1" />
                   Base Price (INR)
                 </span>
-                <span className="font-medium">₹{basePriceINR.toLocaleString()}</span>
+                <span className="font-medium">
+                  ₹{basePriceINR.toLocaleString()}
+                </span>
               </div>
-              
+
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">TAX (18%)</span>
-                <span className="font-medium">₹{gstAmount.toLocaleString()}</span>
+                <span className="font-medium">
+                  ₹{gstAmount.toLocaleString()}
+                </span>
               </div>
-              
+
               <hr className="border-gray-300" />
-              
+
               <div className="flex justify-between items-center text-lg font-bold">
                 <span className="text-gray-900">Total Amount</span>
-                <span className="text-blue-600">₹{totalWithGST.toLocaleString()}</span>
+                <span className="text-blue-600">
+                  ₹{totalWithGST.toLocaleString()}
+                </span>
               </div>
             </div>
           </div>
@@ -86,7 +105,9 @@ const CheckoutModal = ({
             <div className="flex items-center">
               <Shield className="w-5 h-5 text-green-600 mr-2" />
               <div>
-                <p className="text-sm font-medium text-green-800">Secure Payment</p>
+                <p className="text-sm font-medium text-green-800">
+                  Secure Payment
+                </p>
                 <p className="text-xs text-green-600">
                   Your payment is processed securely through Razorpay
                 </p>

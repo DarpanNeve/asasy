@@ -17,7 +17,7 @@ class ContactSubmission(BaseModel):
     email: EmailStr
     phone: str = Field(..., min_length=10, max_length=20)
     reason: Optional[str] = Field(None, description="Reason for contact")
-    message: str = Field(..., min_length=10, max_length=1000)
+    message: str = Field(..., min_length=4, max_length=1000)
 
 # In-memory storage for demo purposes
 # In production, you'd want to store this in MongoDB

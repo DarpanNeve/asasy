@@ -13,8 +13,8 @@ class ContactStatus(str, Enum):
 class ContactSubmission(Document):
     name: str = Field(..., min_length=2, max_length=100)
     email: EmailStr
-    phone: str = Field(..., min_length=10, max_length=20)
-    message: str = Field(..., min_length=10, max_length=1000)
+    phone: str = Field(..., min_length=8, max_length=20)
+    message: str = Field(..., min_length=4, max_length=1000)
     status: ContactStatus = ContactStatus.NEW
     
     # Metadata

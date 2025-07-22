@@ -32,3 +32,4 @@ google-auth-oauthlib
 google-api-python-client
 setuptools
 pydantic[email]
+google-search-results

@@ -136,10 +136,7 @@ const TokenPricingSection = ({
   const handlePurchase = async (packageData) => {
     if (packageData.isContactOnly) {
       // Handle contact us for enterprise
-      window.open(
-        "mailto:support@asasy.com?subject=Enterprise Token Package Inquiry&body=Hi, I am interested in enterprise token packages. Please contact me with custom pricing and solutions.",
-        "_blank"
-      );
+      window.location.href = "/contact";
       return;
     }
 

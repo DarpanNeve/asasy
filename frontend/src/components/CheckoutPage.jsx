@@ -232,7 +232,7 @@ const CheckoutPage = ({
                   </h5>
                   <ul className="text-xs text-blue-700 space-y-1">
                     <li>• Tokens are valid for 90 days from purchase date</li>
-                    <li>• GST invoice will be provided (18% GST included)</li>
+                    <li>• GST invoice will be provided (18% TAX included)</li>
                     <li>• All transactions processed in USD</li>
                     <li>• Refunds are subject to our terms and conditions</li>
                     <li>• Tokens are non-transferable between accounts</li>

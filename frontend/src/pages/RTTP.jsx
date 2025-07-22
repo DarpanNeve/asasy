@@ -231,7 +231,7 @@ export default function RTTP() {
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/contact`, {
+      const response = await fetch(`http://localhost:8000/contact`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -303,7 +303,9 @@ export default function RTTP() {
             {/* Enhanced CTA buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <button
-                onClick={() => window.open("https://forms.gle/1AHvijC9uidoGeig8", "_blank")}
+                onClick={() =>
+                  window.open("https://forms.gle/1AHvijC9uidoGeig8", "_blank")
+                }
                 className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-lg px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center"
               >
                 <User className="mr-2 h-5 w-5 group-hover:animate-pulse" />
@@ -333,7 +335,6 @@ export default function RTTP() {
             </div>
 
             {/* Trust indicators */}
-          
           </div>
         </div>
       </section>
@@ -513,7 +514,7 @@ export default function RTTP() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-white">
+      {/* <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-6">
@@ -562,7 +563,7 @@ export default function RTTP() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Enhanced Contact Form Section */}
       <section
@@ -590,7 +591,9 @@ export default function RTTP() {
                   Reason for Contact
                 </label>
                 <select
-                  {...register("reason", { required: "Please select a reason" })}
+                  {...register("reason", {
+                    required: "Please select a reason",
+                  })}
                   className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                 >
                   <option value="">Select a reason...</option>
@@ -598,7 +601,9 @@ export default function RTTP() {
                   <option value="ip_licensing">IP Licensing</option>
                   <option value="startup_formation">Startup Formation</option>
                   <option value="funding_strategy">Funding Strategy</option>
-                  <option value="global_market_access">Global Market Access</option>
+                  <option value="global_market_access">
+                    Global Market Access
+                  </option>
                   <option value="compliance_risks">Compliance and Risks</option>
                   <option value="other">Other</option>
                 </select>
@@ -608,7 +613,7 @@ export default function RTTP() {
                   </p>
                 )}
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-2">
