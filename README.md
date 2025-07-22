@@ -30,6 +30,7 @@ asasy/
 ## 🛠️ Quick Start
 
 ### Prerequisites
+
 - Node.js 18+
 - Python 3.11+
 - Docker & Docker Compose
@@ -39,6 +40,7 @@ asasy/
 ### Local Development
 
 1. **Clone and setup environment**:
+
 ```bash
 git clone <repository>
 cd asasy
@@ -47,6 +49,7 @@ cp frontend/.env.example frontend/.env
 ```
 
 2. **Start services**:
+
 ```bash
 docker-compose up -d  # MongoDB, Redis
 cd backend && pip install -r requirements.txt
@@ -54,22 +57,25 @@ cd ../frontend && npm install
 ```
 
 3. **Run development servers**:
+
 ```bash
 # Terminal 1 - Backend
 cd backend && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
-# Terminal 2 - Frontend  
+# Terminal 2 - Frontend
 cd frontend && npm run dev
 ```
 
 4. **Access application**:
+
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8000
-- API Docs: http://localhost:8000/docs
+- API Docs: import.meta.env.VITE_API_URLdocs
 
 ## 🔧 Environment Variables
 
 ### Backend (.env)
+
 ```env
 # Database
 MONGODB_URL=mongodb://localhost:27017/asasy
@@ -105,6 +111,7 @@ AWS_REGION=us-east-1
 ```
 
 ### Frontend (.env)
+
 ```env
 VITE_API_URL=http://localhost:8000
 VITE_GOOGLE_CLIENT_ID=your-google-client-id
@@ -114,11 +121,13 @@ VITE_RAZORPAY_KEY_ID=your-razorpay-key
 ## 🚀 Deployment
 
 ### Docker Production
+
 ```bash
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
 ### Kubernetes
+
 ```bash
 kubectl apply -f k8s/
 ```
@@ -162,7 +171,7 @@ kubectl apply -f k8s/
 # Backend tests
 cd backend && pytest
 
-# Frontend tests  
+# Frontend tests
 cd frontend && npm test
 
 # E2E tests
@@ -171,7 +180,7 @@ npm run test:e2e
 
 ## 📚 API Documentation
 
-Once running, visit http://localhost:8000/docs for interactive API documentation.
+Once running, visit import.meta.env.VITE_API_URLdocs for interactive API documentation.
 
 ## 🤝 Contributing
 
@@ -184,6 +193,9 @@ Once running, visit http://localhost:8000/docs for interactive API documentation
 ## 📄 License
 
 MIT License - see LICENSE file for details.# asasy
+
 # asasy
+
 # asasy
+
 # asasy
