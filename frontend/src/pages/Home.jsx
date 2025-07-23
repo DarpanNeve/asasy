@@ -34,6 +34,7 @@ export default function Home() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [selectedComplexity, setSelectedComplexity] = useState("basic");
   const [activeLogoIndex, setActiveLogoIndex] = useState(0);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
 
@@ -192,8 +193,8 @@ export default function Home() {
       comprehensive: 9000,
     };
 
-    // Get complexity from form data or default to basic
-    const complexity = data.complexity || "basic";
+    // Use selected complexity from state
+    const complexity = selectedComplexity;
     const requiredTokens = tokenRequirements[complexity];
 
     // Fetch current user balance to check if they have enough tokens
@@ -205,7 +206,7 @@ export default function Home() {
         toast.error(
           `Insufficient tokens. Required: ${requiredTokens}, Available: ${userBalance.available_tokens}. Please purchase more tokens.`
         );
-        navigate("/pricing");
+        navigate("/login-pricing");
         return;
       }
     } catch (error) {
@@ -217,7 +218,7 @@ export default function Home() {
     try {
       const response = await api.post("/reports/generate", {
         idea: data.idea,
-        complexity: complexity,
+        complexity: selectedComplexity,
       });
 
       toast.success(
@@ -232,7 +233,7 @@ export default function Home() {
         toast.error(
           error.response?.data?.detail || "Insufficient tokens. Please purchase more tokens."
         );
-        navigate("/pricing");
+        navigate("/login-pricing");
       } else {
         toast.error(
           error.response?.data?.detail || "Failed to generate report"
@@ -391,33 +392,90 @@ export default function Home() {
                 className="space-y-6"
               >
                 <div className="relative">
-                  <label className="block text-sm font-semibold text-slate-700 mb-3">
-                    Report Complexity
-                  </label>
-                  <select
-                    {...register("complexity", {
-                      required: "Please select report complexity",
-                    })}
-                    className="w-full p-3 border-2 border-slate-200 rounded-xl shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:outline-none text-base transition-all duration-300 hover:shadow-md bg-white/80 backdrop-blur-sm mb-4"
-                    disabled={isGenerating}
-                  >
-                    <option value="">Select complexity level</option>
-                    <option value="basic">
-                      Basic (2,500 tokens) - Essential analysis
-                    </option>
-                    <option value="advanced">
-                      Advanced (7,500 tokens) - Comprehensive analysis
-                    </option>
-                    <option value="comprehensive">
-                      Comprehensive (9,000 tokens) - Premium analysis
-                    </option>
-                  </select>
-                  {errors.complexity && (
-                    <p className="text-red-600 text-sm mb-4 flex items-center gap-1">
-                      <span className="w-1 h-1 bg-red-600 rounded-full"></span>
-                      {errors.complexity.message}
-                    </p>
-                  )}
+                  {/* Report Complexity Selection */}
+                  <div className="mb-6">
+                    <label className="block text-sm font-semibold text-slate-700 mb-4">
+                      Choose Report Complexity
+                    </label>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {[
+                        {
+                          id: "basic",
+                          name: "Basic",
+                          tokens: "2,500",
+                          description: "Essential analysis",
+                          color: "blue",
+                        },
+                        {
+                          id: "advanced", 
+                          name: "Advanced",
+                          tokens: "7,500",
+                          description: "Comprehensive analysis",
+                          color: "purple",
+                        },
+                        {
+                          id: "comprehensive",
+                          name: "Comprehensive", 
+                          tokens: "9,000",
+                          description: "Premium analysis",
+                          color: "emerald",
+                        },
+                      ].map((option) => (
+                        <button
+                          key={option.id}
+                          type="button"
+                          onClick={() => setSelectedComplexity(option.id)}
+                          disabled={isGenerating}
+                          className={`
+                            relative p-4 rounded-xl border-2 transition-all duration-300 text-left
+                            ${
+                              selectedComplexity === option.id
+                                ? `border-${option.color}-500 bg-${option.color}-50 shadow-lg`
+                                : "border-slate-200 bg-white/80 hover:border-slate-300 hover:shadow-md"
+                            }
+                            disabled:opacity-50 disabled:cursor-not-allowed
+                          `}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <h3 className={`font-semibold ${
+                              selectedComplexity === option.id 
+                                ? `text-${option.color}-700` 
+                                : "text-slate-700"
+                            }`}>
+                              {option.name}
+                            </h3>
+                            <div className={`
+                              w-4 h-4 rounded-full border-2 transition-all duration-200
+                              ${
+                                selectedComplexity === option.id
+                                  ? `border-${option.color}-500 bg-${option.color}-500`
+                                  : "border-slate-300"
+                              }
+                            `}>
+                              {selectedComplexity === option.id && (
+                                <div className="w-full h-full rounded-full bg-white scale-50"></div>
+                              )}
+                            </div>
+                          </div>
+                          <p className="text-sm text-slate-600 mb-1">
+                            {option.tokens} tokens
+                          </p>
+                          <p className="text-xs text-slate-500">
+                            {option.description}
+                          </p>
+                          
+                          {selectedComplexity === option.id && (
+                            <motion.div
+                              className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              transition={{ duration: 0.3 }}
+                            />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                   
                   <label className="block text-sm font-semibold text-slate-700 mb-3">
                     Describe Your Technology Innovation
