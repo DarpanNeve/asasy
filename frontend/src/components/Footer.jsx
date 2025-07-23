@@ -1,5 +1,14 @@
 import { Link } from "react-router-dom";
-import { BarChart3, Mail, Phone, MapPin, Twitter, Linkedin, Facebook, Instagram } from "lucide-react";
+import {
+  BarChart3,
+  Mail,
+  Phone,
+  MapPin,
+  Twitter,
+  Linkedin,
+  Facebook,
+  Instagram,
+} from "lucide-react";
 
 export default function Footer() {
   return (
@@ -18,7 +27,8 @@ export default function Footer() {
               </div>
             </Link>
             <p className="text-gray-300 leading-relaxed text-sm mb-6">
-              Empowering innovation through expert technology transfer guidance and AI-powered assessment reports.
+              Empowering innovation through expert technology transfer guidance
+              and AI-powered assessment reports.
             </p>
             <div className="flex space-x-5">
               <a
@@ -64,11 +74,46 @@ export default function Footer() {
           <div>
             <h3 className="text-xl font-semibold mb-6 text-white">Services</h3>
             <ul className="space-y-3 text-gray-300 text-sm">
-              <li><Link to="/pricing" className="hover:text-blue-400 transition-colors">AI Reports</Link></li>
-              <li><Link to="/rttp" className="hover:text-blue-400 transition-colors">RTTP Experts</Link></li>
-              <li><a href="/rttp#contact" className="hover:text-blue-400 transition-colors">Tech Scouting</a></li>
-              <li><a href="/rttp#contact" className="hover:text-blue-400 transition-colors">IP Licensing</a></li>
-              <li><a href="/rttp#contact" className="hover:text-blue-400 transition-colors">Market Analysis</a></li>
+              <li>
+                <Link
+                  to="/pricing"
+                  className="hover:text-blue-400 transition-colors"
+                >
+                  AI Reports
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/rttp"
+                  className="hover:text-blue-400 transition-colors"
+                >
+                  RTTP Experts
+                </Link>
+              </li>
+              <li>
+                <a
+                  href="/rttp#contact"
+                  className="hover:text-blue-400 transition-colors"
+                >
+                  Tech Scouting
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/rttp#contact"
+                  className="hover:text-blue-400 transition-colors"
+                >
+                  IP Licensing
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/rttp#contact"
+                  className="hover:text-blue-400 transition-colors"
+                >
+                  Market Analysis
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -76,31 +121,107 @@ export default function Footer() {
           <div>
             <h3 className="text-xl font-semibold mb-6 text-white">Company</h3>
             <ul className="space-y-3 text-gray-300 text-sm">
-              <li><Link to="/" className="hover:text-blue-400 transition-colors">Home</Link></li>
-              <li><Link to="/pricing" className="hover:text-blue-400 transition-colors">Pricing</Link></li>
-              <li><Link to="/rttp" className="hover:text-blue-400 transition-colors">RTTP Experts</Link></li>
-              <li><Link to="/about" className="hover:text-blue-400 transition-colors">About Us</Link></li> {/* Changed to Link assuming an About Us page */}
-              <li><Link to="/contact" className="hover:text-blue-400 transition-colors">Contact</Link></li> {/* Changed to Link assuming a Contact page */}
+              <li>
+                <Link to="/" className="hover:text-blue-400 transition-colors">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/pricing"
+                  className="hover:text-blue-400 transition-colors"
+                >
+                  Pricing
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/rttp"
+                  className="hover:text-blue-400 transition-colors"
+                >
+                  RTTP Experts
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/about"
+                  className="hover:text-blue-400 transition-colors"
+                >
+                  About Us
+                </Link>
+              </li>{" "}
+              {/* Changed to Link assuming an About Us page */}
+              <li>
+                <Link
+                  to="/contact"
+                  className="hover:text-blue-400 transition-colors"
+                >
+                  Contact
+                </Link>
+              </li>{" "}
+              {/* Changed to Link assuming a Contact page */}
             </ul>
           </div>
 
           {/* Legal & Contact */}
           <div>
-            <h3 className="text-xl font-semibold mb-6 text-white">Legal & Contact</h3>
+            <h3 className="text-xl font-semibold mb-6 text-white">
+              Legal & Contact
+            </h3>
             <ul className="space-y-3 text-gray-300 text-sm mb-6">
-              <li><Link to="/privacy" className="hover:text-blue-400 transition-colors">Privacy Policy</Link></li>
-              <li><Link to="/terms" className="hover:text-blue-400 transition-colors">Terms & Conditions</Link></li>
-              <li><Link to="/pricing-policy" className="hover:text-blue-400 transition-colors">Pricing Policy</Link></li>
-              <li><Link to="/refund-policy" className="hover:text-blue-400 transition-colors">Refund Policy</Link></li> {/* Uncommented this as it was in the previous conversation */}
+              <li>
+                <Link
+                  to="/privacy"
+                  className="hover:text-blue-400 transition-colors"
+                >
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/terms"
+                  className="hover:text-blue-400 transition-colors"
+                >
+                  Terms & Conditions
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/pricing-policy"
+                  className="hover:text-blue-400 transition-colors"
+                >
+                  Pricing Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/refund-policy"
+                  className="hover:text-blue-400 transition-colors"
+                >
+                  Refund Policy
+                </Link>
+              </li>{" "}
+              {/* Uncommented this as it was in the previous conversation */}
             </ul>
             <div className="space-y-3 text-gray-300 text-sm">
               <div className="flex items-center">
                 <Mail className="w-5 h-5 mr-3 text-blue-400" />
-                <a href="mailto:support@assesme.com" className="hover:text-blue-400 transition-colors">support@assesme.com</a>
+                <a
+                  href="mailto:support@assesme.com"
+                  className="hover:text-blue-400 transition-colors"
+                >
+                  support@assesme.com
+                </a>
               </div>
               <div className="flex items-center">
                 <Phone className="w-5 h-5 mr-3 text-blue-400" />
-                <a href="tel:+918743078668" className="hover:text-blue-400 transition-colors">+91-9667576014</a> {/* Updated phone number from previous context */}
+                <a
+                  href="tel:+919667576014"
+                  className="hover:text-blue-400 transition-colors"
+                >
+                  +91-9667576014
+                </a>{" "}
+                {/* Updated phone number from previous context */}
               </div>
               <div className="flex items-center">
                 <MapPin className="w-5 h-5 mr-3 text-blue-400" />
@@ -113,7 +234,8 @@ export default function Footer() {
         {/* Copyright and Bottom Info */}
         <div className="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
           <p className="text-gray-500 text-xs md:text-sm">
-            &copy; {new Date().getFullYear()} Assesme, developed by Vastav Intellect IP Solutions LLP. All rights reserved.
+            &copy; {new Date().getFullYear()} Assesme, developed by Vastav
+            Intellect IP Solutions LLP. All rights reserved.
           </p>
           <div className="flex items-center space-x-6 mt-4 md:mt-0">
             {/* You can add more links or info here if needed */}

@@ -279,7 +279,7 @@ export default function Terms() {
                 <br />
                 Email: support@assesme.com
                 <br />
-                Phone: +91-8743078668
+                Phone: +91-9667576014
                 <br />
                 Website: www.assesme.com
               </p>

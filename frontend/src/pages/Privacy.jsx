@@ -226,7 +226,7 @@ export default function Privacy() {
                 <br />
                 support@assesme.com
                 <br />
-                +91-8743078668
+                +91-9667576014
                 <br />
                 www.assesme.com
               </p>
