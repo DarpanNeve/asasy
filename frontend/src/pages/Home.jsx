@@ -185,28 +185,54 @@ export default function Home() {
       return;
     }
 
+    // Check token requirements based on complexity
+    const tokenRequirements = {
+      basic: 2500,
+      advanced: 7500,
+      comprehensive: 9000,
+    };
+
+    // Get complexity from form data or default to basic
+    const complexity = data.complexity || "basic";
+    const requiredTokens = tokenRequirements[complexity];
+
+    // Fetch current user balance to check if they have enough tokens
+    try {
+      const balanceResponse = await api.get("/tokens/balance");
+      const userBalance = balanceResponse.data;
+
+      if (userBalance.available_tokens < requiredTokens) {
+        toast.error(
+          `Insufficient tokens. Required: ${requiredTokens}, Available: ${userBalance.available_tokens}. Please purchase more tokens.`
+        );
+        navigate("/pricing");
+        return;
+      }
+    } catch (error) {
+      console.error("Failed to fetch user balance:", error);
+      // Continue with generation attempt - let backend handle token validation
+    }
+
     setIsGenerating(true);
     try {
       const response = await api.post("/reports/generate", {
         idea: data.idea,
+        complexity: complexity,
       });
 
-      // Generate PDF using the original function with backend data
-      const reportData = await api.get(`/reports/${response.data.id}`);
-      const pdfData = createReportPdf(reportData.data);
-
-      toast.success("Report generated successfully!");
+      toast.success(
+        `Report generation started using ${requiredTokens} tokens! You will be notified when complete.`
+      );
       reset();
 
-      if (user) {
-        navigate("/reports");
-      }
+      // Navigate to reports page to view the generating report
+      navigate("/reports");
     } catch (error) {
       if (error.response?.status === 403) {
         toast.error(
-          "You've reached your report limit. Please upgrade to continue."
+          error.response?.data?.detail || "Insufficient tokens. Please purchase more tokens."
         );
-        navigate("/subscription");
+        navigate("/pricing");
       } else {
         toast.error(
           error.response?.data?.detail || "Failed to generate report"
@@ -366,6 +392,34 @@ export default function Home() {
               >
                 <div className="relative">
                   <label className="block text-sm font-semibold text-slate-700 mb-3">
+                    Report Complexity
+                  </label>
+                  <select
+                    {...register("complexity", {
+                      required: "Please select report complexity",
+                    })}
+                    className="w-full p-3 border-2 border-slate-200 rounded-xl shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:outline-none text-base transition-all duration-300 hover:shadow-md bg-white/80 backdrop-blur-sm mb-4"
+                    disabled={isGenerating}
+                  >
+                    <option value="">Select complexity level</option>
+                    <option value="basic">
+                      Basic (2,500 tokens) - Essential analysis
+                    </option>
+                    <option value="advanced">
+                      Advanced (7,500 tokens) - Comprehensive analysis
+                    </option>
+                    <option value="comprehensive">
+                      Comprehensive (9,000 tokens) - Premium analysis
+                    </option>
+                  </select>
+                  {errors.complexity && (
+                    <p className="text-red-600 text-sm mb-4 flex items-center gap-1">
+                      <span className="w-1 h-1 bg-red-600 rounded-full"></span>
+                      {errors.complexity.message}
+                    </p>
+                  )}
+                  
+                  <label className="block text-sm font-semibold text-slate-700 mb-3">
                     Describe Your Technology Innovation
                   </label>
                   <div className="relative">
@@ -411,54 +465,6 @@ A wearable biosensor patch that monitors glucose levels in real-time using sweat
                     </p>
                   )}
                 </div>
-                <section className="py-2">
-                  <div className="max-w-md mx-auto">
-                    <h2 className="text-lg font-semibold text-neutral-800 mb-4 text-center">
-                      Select a type of Report
-                    </h2>
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      {/* Basic */}
-                      <label className="flex-1 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="plan"
-                          value="basic"
-                          defaultChecked
-                          className="peer hidden"
-                        />
-                        <div className="rounded-lg border border-neutral-300 peer-checked:border-primary-600 peer-checked:bg-primary-50 px-4 py-3 text-sm text-center hover:shadow-sm transition">
-                          Basic
-                        </div>
-                      </label>
-
-                      {/* Advance */}
-                      <label className="flex-1 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="plan"
-                          value="advance"
-                          className="peer hidden"
-                        />
-                        <div className="rounded-lg border border-neutral-300  peer-checked:border-primary-600 peer-checked:bg-secondary-50 px-4 py-3 text-sm text-center hover:shadow-sm transition">
-                          Advance
-                        </div>
-                      </label>
-
-                      {/* Comprehensive */}
-                      <label className="flex-1 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="plan"
-                          value="comprehensive"
-                          className="peer hidden"
-                        />
-                        <div className="rounded-lg border border-neutral-300  peer-checked:border-primary-600 peer-checked:bg-accent-50 px-4 py-3 text-sm text-center hover:shadow-sm transition">
-                          Comprehensive
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-                </section>
 
                 {/* Generate Button */}
                 <motion.button
