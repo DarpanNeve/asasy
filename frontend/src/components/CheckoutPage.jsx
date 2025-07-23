@@ -192,7 +192,7 @@ const CheckoutPage = ({
                   </div>
                   
                   <div className="flex justify-between items-center py-2">
-                    <span className="text-gray-600">GST (18%)</span>
+                    <span className="text-gray-600">TAX (18%)</span>
                     <span className="font-medium">
                       {formatCurrency(gstAmount)}
                     </span>
