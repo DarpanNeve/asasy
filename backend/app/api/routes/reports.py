@@ -99,10 +99,19 @@ async def generate_report_background(report_id: str, idea: str, complexity: Repo
         logger.error(f"Error in background report generation: {e}")
         logger.error(f"Traceback: {traceback.format_exc()}")
         
-        # Mark as failed
+        # Mark as failed and refund tokens
         try:
             report = await ReportLog.get(report_id)
             if report:
+                # Refund tokens to the user
+                try:
+                    user = await User.get(report.user_id)
+                    if user and report.tokens_used > 0:
+                        await user.add_tokens(report.tokens_used)
+                        logger.info(f"Refunded {report.tokens_used} tokens to user {user.email} for failed report {report.id}")
+                except Exception as refund_error:
+                    logger.error(f"Failed to refund tokens for user {report.user_id} on report {report.id}: {refund_error}")
+
                 error_message = str(e)
                 if "openai" in error_message.lower():
                     error_message = f"AI service error: {error_message}"
