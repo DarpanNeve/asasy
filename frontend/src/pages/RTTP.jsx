@@ -231,7 +231,7 @@ export default function RTTP() {
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     try {
-      const response = await fetch(`http://localhost:8000/contact`, {
+      const response = await fetch(`https://backend.assesme.com/contact`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

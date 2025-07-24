@@ -70,13 +70,16 @@ export default function Admin() {
       const basicAuth = btoa(`${credentials.username}:${credentials.password}`);
 
       // First try to login
-      const loginResponse = await fetch("http://localhost:8000/admin/login", {
-        method: "POST",
-        headers: {
-          Authorization: `Basic ${basicAuth}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const loginResponse = await fetch(
+        "https://backend.assesme.com/admin/login",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Basic ${basicAuth}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (loginResponse.ok) {
         setIsAuthenticated(true);
@@ -105,7 +108,7 @@ export default function Admin() {
 
   const fetchUsers = async (auth) => {
     try {
-      const response = await fetch("http://localhost:8000/admin/users", {
+      const response = await fetch("https://backend.assesme.com/admin/users", {
         headers: {
           Authorization: `Basic ${auth}`,
           "Content-Type": "application/json",
@@ -124,7 +127,7 @@ export default function Admin() {
   const fetchContactSubmissions = async (auth) => {
     try {
       const response = await fetch(
-        "http://localhost:8000/contact/submissions",
+        "https://backend.assesme.com/contact/submissions",
         {
           headers: {
             Authorization: `Basic ${auth}`,
@@ -144,12 +147,15 @@ export default function Admin() {
 
   const fetchTransactions = async (auth) => {
     try {
-      const response = await fetch("http://localhost:8000/admin/transactions", {
-        headers: {
-          Authorization: `Basic ${auth}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        "https://backend.assesme.com/admin/transactions",
+        {
+          headers: {
+            Authorization: `Basic ${auth}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.ok) {
         const transactionsData = await response.json();
@@ -162,7 +168,7 @@ export default function Admin() {
 
   const fetchStats = async (auth) => {
     try {
-      const response = await fetch("http://localhost:8000/admin/stats", {
+      const response = await fetch("https://backend.assesme.com/admin/stats", {
         headers: {
           Authorization: `Basic ${auth}`,
           "Content-Type": "application/json",
@@ -181,7 +187,7 @@ export default function Admin() {
   const fetchBlogPosts = async (auth) => {
     try {
       const response = await fetch(
-        "http://localhost:8000/blog/admin/posts?post_type=blog",
+        "https://backend.assesme.com/blog/admin/posts?post_type=blog",
         {
           headers: {
             Authorization: `Basic ${auth}`,
@@ -202,7 +208,7 @@ export default function Admin() {
   const fetchPressReleases = async (auth) => {
     try {
       const response = await fetch(
-        "http://localhost:8000/blog/admin/posts?post_type=press_release",
+        "https://backend.assesme.com/blog/admin/posts?post_type=press_release",
         {
           headers: {
             Authorization: `Basic ${auth}`,
@@ -226,8 +232,8 @@ export default function Admin() {
 
     try {
       const url = editingPost
-        ? `http://localhost:8000/blog/admin/posts/${editingPost.id}`
-        : "http://localhost:8000/blog/admin/posts";
+        ? `https://backend.assesme.com/blog/admin/posts/${editingPost.id}`
+        : "https://backend.assesme.com/blog/admin/posts";
 
       const method = editingPost ? "PUT" : "POST";
 
@@ -298,7 +304,7 @@ export default function Admin() {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/blog/admin/posts/${postId}`,
+        `https://backend.assesme.com/blog/admin/posts/${postId}`,
         {
           method: "DELETE",
           headers: {
@@ -330,7 +336,7 @@ export default function Admin() {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/blog/admin/posts/${postId}/publish`,
+        `https://backend.assesme.com/blog/admin/posts/${postId}/publish`,
         {
           method: "POST",
           headers: {
@@ -362,7 +368,7 @@ export default function Admin() {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/blog/admin/posts/${postId}/unpublish`,
+        `https://backend.assesme.com/blog/admin/posts/${postId}/unpublish`,
         {
           method: "POST",
           headers: {
@@ -393,7 +399,7 @@ export default function Admin() {
     try {
       const basicAuth = sessionStorage.getItem("adminAuth");
       const response = await fetch(
-        `http://localhost:8000/admin/users/${userId}/reports`,
+        `https://backend.assesme.com/admin/users/${userId}/reports`,
         {
           headers: {
             Authorization: `Basic ${basicAuth}`,
@@ -418,7 +424,7 @@ export default function Admin() {
     try {
       const basicAuth = sessionStorage.getItem("adminAuth");
       const response = await fetch(
-        `http://localhost:8000/admin/users/${userId}/subscriptions`,
+        `https://backend.assesme.com/admin/users/${userId}/subscriptions`,
         {
           headers: {
             Authorization: `Basic ${basicAuth}`,
@@ -461,7 +467,7 @@ export default function Admin() {
     try {
       const basicAuth = sessionStorage.getItem("adminAuth");
       const response = await fetch(
-        `http://localhost:8000/reports/${reportId}/download`,
+        `https://backend.assesme.com/reports/${reportId}/download`,
         {
           headers: {
             Authorization: `Basic ${basicAuth}`,
@@ -556,11 +562,14 @@ export default function Admin() {
   const exportContactSubmissions = async () => {
     try {
       const basicAuth = sessionStorage.getItem("adminAuth");
-      const response = await fetch("http://localhost:8000/contact/export", {
-        headers: {
-          Authorization: `Basic ${basicAuth}`,
-        },
-      });
+      const response = await fetch(
+        "https://backend.assesme.com/contact/export",
+        {
+          headers: {
+            Authorization: `Basic ${basicAuth}`,
+          },
+        }
+      );
 
       if (response.ok) {
         const blob = await response.blob();

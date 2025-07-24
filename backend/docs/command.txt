@@ -3,3 +3,4 @@ gunicorn app.main:app -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --wor
 pkill gunicorn
 
 ssh -i id_rsa root@46.202.166.32
+ uvicorn app.main:app --reload
