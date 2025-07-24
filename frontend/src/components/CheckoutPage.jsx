@@ -13,6 +13,7 @@ import {
   Clock
 } from 'lucide-react';
 import { formatCurrency, getPricingBreakdown } from '../utils/currencyUtils';
+import { formatPriceWithOriginal } from '../utils/currencyUtils';
 import { api } from '../services/api';
 import toast from 'react-hot-toast';
 
@@ -27,9 +28,9 @@ const CheckoutPage = ({
 
   if (!isOpen || !packageData) return null;
 
-  // Get pricing breakdown with GST
-  const pricing = getPricingBreakdown(packageData.price_usd);
-  const { basePrice, gstAmount, totalPrice } = pricing;
+  // Get pricing breakdown with INR conversion
+  const pricing = formatPriceWithOriginal(packageData.price_usd, packageData.original_price_usd);
+  const { basePrice, gstAmount, totalPrice, displayPrice, totalWithGst } = pricing;
 
   const handleConfirmPurchase = async () => {
     setLoading(true);
@@ -150,7 +151,7 @@ const CheckoutPage = ({
                   </div>
                   <div className="text-right">
                     <div className="text-3xl font-bold text-blue-600">
-                      {formatCurrency(basePrice)}
+                      {displayPrice}
                     </div>
                     <div className="text-sm text-gray-600">{packageData.tokens.toLocaleString()} Tokens</div>
                   </div>
@@ -183,18 +184,17 @@ const CheckoutPage = ({
                 <div className="space-y-3">
                   <div className="flex justify-between items-center py-2">
                     <span className="text-gray-600 flex items-center">
-                      <DollarSign className="w-4 h-4 mr-2" />
-                      Base Price (USD)
+                      Base Price (INR)
                     </span>
                     <span className="font-medium text-lg">
-                      {formatCurrency(basePrice)}
+                      {displayPrice}
                     </span>
                   </div>
                   
                   <div className="flex justify-between items-center py-2">
                     <span className="text-gray-600">TAX (18%)</span>
                     <span className="font-medium">
-                      {formatCurrency(gstAmount)}
+                      {formatCurrency(gstAmount, 'INR')}
                     </span>
                   </div>
                   
@@ -203,7 +203,7 @@ const CheckoutPage = ({
                   <div className="flex justify-between items-center py-3 bg-white rounded-lg px-4">
                     <span className="text-lg font-bold text-gray-900">Total Amount</span>
                     <span className="text-2xl font-bold text-blue-600">
-                      {formatCurrency(totalPrice)}
+                      {totalWithGst}
                     </span>
                   </div>
                 </div>
@@ -233,7 +233,7 @@ const CheckoutPage = ({
                   <ul className="text-xs text-blue-700 space-y-1">
                     <li>• Tokens are valid for 90 days from purchase date</li>
                     <li>• GST invoice will be provided (18% TAX included)</li>
-                    <li>• All transactions processed in USD</li>
+                    <li>• All prices displayed in Indian Rupees (INR)</li>
                     <li>• Refunds are subject to our terms and conditions</li>
                     <li>• Tokens are non-transferable between accounts</li>
                   </ul>
@@ -262,7 +262,7 @@ const CheckoutPage = ({
                   ) : (
                     <>
                       <CreditCard className="w-5 h-5 mr-2 inline" />
-                      Pay {formatCurrency(totalPrice)}
+                      Pay {totalWithGst}
                     </>
                   )}
                 </button>

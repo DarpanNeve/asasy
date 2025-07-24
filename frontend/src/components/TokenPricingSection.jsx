@@ -19,6 +19,7 @@ import { api } from "../services/api";
 import toast from "react-hot-toast";
 import CheckoutPage from "./CheckoutPage";
 import { motion, AnimatePresence } from "framer-motion";
+import { formatCurrency, formatPriceWithOriginal, getPricingBreakdown } from "../utils/currencyUtils";
 
 const TokenPricingSection = ({
   compact = false,
@@ -775,21 +776,27 @@ const TokenPricingCard = ({
                 pkg.price_usd
               ) : (
                 <>
-                  {pkg.original_price_usd &&
-                  pkg.original_price_usd > pkg.price_usd ? (
-                    <div className="space-y-1">
-                      <div className="text-lg text-gray-500 line-through">
-                        ${pkg.original_price_usd}
-                      </div>
-                      <div className="text-blue-600">${pkg.price_usd}</div>
-                      <div className="text-xs text-green-600 font-medium">
-                        Save $
-                        {(pkg.original_price_usd - pkg.price_usd).toFixed(0)}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-blue-600">${pkg.price_usd}</div>
-                  )}
+                  {(() => {
+                    const pricing = formatPriceWithOriginal(pkg.price_usd, pkg.original_price_usd);
+                    
+                    if (pricing.hasDiscount) {
+                      return (
+                        <div className="space-y-1">
+                          <div className="text-lg text-gray-500 line-through">
+                            {pricing.originalDisplayPrice}
+                          </div>
+                          <div className="text-blue-600">{pricing.displayPrice}</div>
+                          <div className="text-xs text-green-600 font-medium">
+                            Save {pricing.savingsDisplay}
+                          </div>
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <div className="text-blue-600">{pricing.displayPrice}</div>
+                      );
+                    }
+                  })()}
                 </>
               )}
             </div>
@@ -802,6 +809,11 @@ const TokenPricingCard = ({
             {isEnterprise
               ? "Custom Tokens"
               : `${pkg.tokens.toLocaleString()} Tokens`}
+            {!isEnterprise && typeof pkg.price_usd === "number" && (
+              <div className="text-xs text-gray-500 mt-1">
+                + 18% GST = {formatPriceWithOriginal(pkg.price_usd).totalWithGst}
+              </div>
+            )}
           </div>
 
           {/* CTA Button */}

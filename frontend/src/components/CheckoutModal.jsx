@@ -4,9 +4,9 @@ import {
   CreditCard,
   Shield,
   Calculator,
-  DollarSign,
   IndianRupee,
 } from "lucide-react";
+import { formatCurrency, formatPriceWithOriginal } from "../utils/currencyUtils";
 
 const CheckoutModal = ({
   isOpen,
@@ -17,10 +17,9 @@ const CheckoutModal = ({
 }) => {
   if (!isOpen || !packageData) return null;
 
-  const basePrice = packageData.price_usd;
-  const basePriceINR = packageData.price_rupees;
-  const gstAmount = packageData.gst_amount;
-  const totalWithGST = packageData.price_with_gst;
+  // Get INR pricing breakdown
+  const pricing = formatPriceWithOriginal(packageData.price_usd, packageData.original_price_usd);
+  const { basePrice, gstAmount, totalPrice, displayPrice, totalWithGst } = pricing;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -46,7 +45,7 @@ const CheckoutModal = ({
               </h3>
               <div className="text-right">
                 <div className="text-2xl font-bold text-blue-600">
-                  ${basePrice}
+                  {displayPrice}
                 </div>
                 <div className="text-sm text-gray-600">
                   {packageData.tokens.toLocaleString()} Tokens
@@ -66,26 +65,16 @@ const CheckoutModal = ({
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <span className="text-gray-600 flex items-center">
-                  <DollarSign className="w-4 h-4 mr-1" />
-                  Base Price (USD)
-                </span>
-                <span className="font-medium">${basePrice}</span>
-              </div>
-
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600 flex items-center">
                   <IndianRupee className="w-4 h-4 mr-1" />
                   Base Price (INR)
                 </span>
-                <span className="font-medium">
-                  ₹{basePriceINR.toLocaleString()}
-                </span>
+                <span className="font-medium">{displayPrice}</span>
               </div>
 
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">TAX (18%)</span>
                 <span className="font-medium">
-                  ₹{gstAmount.toLocaleString()}
+                  {formatCurrency(gstAmount, 'INR')}
                 </span>
               </div>
 
@@ -94,7 +83,7 @@ const CheckoutModal = ({
               <div className="flex justify-between items-center text-lg font-bold">
                 <span className="text-gray-900">Total Amount</span>
                 <span className="text-blue-600">
-                  ₹{totalWithGST.toLocaleString()}
+                  {totalWithGst}
                 </span>
               </div>
             </div>
@@ -119,6 +108,7 @@ const CheckoutModal = ({
           <div className="text-xs text-gray-500 mb-6">
             <p className="mb-2">• Tokens are valid for 90 days from purchase</p>
             <p className="mb-2">• GST will be included in your invoice</p>
+            <p className="mb-2">• All prices displayed in Indian Rupees (INR)</p>
             <p>• Refunds are subject to our terms and conditions</p>
           </div>
 
@@ -144,7 +134,7 @@ const CheckoutModal = ({
               ) : (
                 <>
                   <CreditCard className="w-5 h-5 mr-2 inline" />
-                  Pay ₹{totalWithGST.toLocaleString()}
+                  Pay {totalWithGst}
                 </>
               )}
             </button>
