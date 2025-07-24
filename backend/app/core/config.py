@@ -5,7 +5,7 @@ import os
 
 class Settings(BaseSettings):
     # App settings
-    APP_NAME: str = "Asasy"
+    APP_NAME: str = "Assesme"
     ENVIRONMENT: str = "development"
     DEBUG: bool = True
 
