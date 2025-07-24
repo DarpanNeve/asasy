@@ -137,7 +137,7 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-4">
             <Link
               to="/"
               className="text-neutral-700 hover:text-blue-600 font-medium transition-colors duration-200"
@@ -252,8 +252,8 @@ export default function Header() {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden absolute top-16 left-0 w-full bg-white/95 backdrop-blur-md shadow-lg border-t border-neutral-200 py-4 z-40">
-            <div className="px-2 pt-2 pb-3 space-y-2 sm:px-3">
+          <div className="md:hidden absolute top-16 left-0 w-full bg-white/95 backdrop-blur-md shadow-lg border-t border-neutral-200 py-2 z-40">
+            <div className="px-1 pt-2 pb-3 space-y-1 sm:px-3">
               <Link
                 to="/"
                 className="block px-3 py-2 text-neutral-700 hover:bg-blue-50 hover:text-blue-600 rounded-md transition-colors duration-200"

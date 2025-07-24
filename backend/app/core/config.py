@@ -76,7 +76,7 @@ class Settings(BaseSettings):
     # Report generation
     REPORTS_STORAGE_PATH: str = "reports"
     MAX_REPORTS_FREE_USERS: int = 1
-
+    EXCHANGE_RATE_API_KEY:str
     class Config:
         env_file = ".env"
         case_sensitive = True
@@ -94,7 +94,8 @@ required_settings = [
     "RAZORPAY_KEY_SECRET",
     "RAZORPAY_WEBHOOK_SECRET",
     "OPENAI_API_KEY",
-    "SERPAPI_API_KEY"
+    "SERPAPI_API_KEY",
+    "EXCHANGE_RATE_API_KEY"
 ]
 
 for setting in required_settings:
