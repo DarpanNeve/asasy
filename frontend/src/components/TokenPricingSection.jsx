@@ -806,8 +806,14 @@ const TokenPricingCard = ({
 
           {/* CTA Button */}
           <button
-            onClick={() => onPurchase(pkg)}
-            disabled={isPurchasing || (!user && !isEnterprise)}
+            onClick={() => {
+              if (!user && !isEnterprise) {
+                window.location.href = "/login";
+                return;
+              }
+              onPurchase(pkg);
+            }}
+            disabled={isPurchasing}
             className={`w-full py-2 px-4 rounded-xl font-semibold text-white transition-all duration-300 transform ${
               isHovered && !isPurchasing ? "scale-105" : "scale-100"
             } bg-gradient-to-r ${pkg.color} hover:${

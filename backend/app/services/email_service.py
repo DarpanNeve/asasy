@@ -35,7 +35,7 @@ async def send_msg91_email(email: str, otp: str, name: str) -> bool:
             }],
             "from": {
                 "email": settings.MSG91_FROM_EMAIL,
-                "name": "Darpan Neve"
+                "name": "Assesme AI"
             },
             "domain": settings.MSG91_DOMAIN,
             "template_id": settings.MSG91_TEMPLATE_ID,
