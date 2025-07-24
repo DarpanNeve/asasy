@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { 
-  Calendar, 
-  User, 
-  Eye, 
-  ArrowRight, 
+import {
+  Calendar,
+  User,
+  Eye,
+  ArrowRight,
   Search,
   Megaphone,
-  ExternalLink
+  ExternalLink,
 } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -29,7 +29,9 @@ export default function PressReleases() {
   const fetchPressReleases = async () => {
     try {
       setLoading(true);
-      const response = await api.get(`/blog/posts?post_type=press_release&page=${currentPage}&limit=12`);
+      const response = await api.get(
+        `/blog/posts?post_type=press_release&page=${currentPage}&limit=12`
+      );
       setPressReleases(response.data.posts);
       setTotalPages(response.data.pages);
     } catch (error) {
@@ -44,17 +46,22 @@ export default function PressReleases() {
     navigate(`/press-releases/${slug}`);
   };
 
+  const handleExternalLinkClick = (url) => {
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
-  const filteredPressReleases = pressReleases.filter(release =>
-    release.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    release.description.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredPressReleases = pressReleases.filter(
+    (release) =>
+      release.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      release.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading && pressReleases.length === 0) {
@@ -87,10 +94,10 @@ export default function PressReleases() {
               </span>
             </h1>
             <p className="text-xl text-neutral-600 mb-8 max-w-3xl mx-auto">
-              Stay updated with the latest news, announcements, and milestones 
+              Stay updated with the latest news, announcements, and milestones
               from Asasy and the technology transfer industry.
             </p>
-            
+
             {/* Search */}
             <div className="max-w-md mx-auto">
               <div className="relative">
@@ -116,59 +123,93 @@ export default function PressReleases() {
               <div className="text-neutral-400 mb-4">
                 <Megaphone className="h-12 w-12 mx-auto" />
               </div>
-              <h3 className="text-lg font-medium text-neutral-900 mb-2">No press releases found</h3>
+              <h3 className="text-lg font-medium text-neutral-900 mb-2">
+                No press releases found
+              </h3>
               <p className="text-neutral-600">
-                {searchTerm ? "Try adjusting your search terms" : "No press releases available yet"}
+                {searchTerm
+                  ? "Try adjusting your search terms"
+                  : "No press releases available yet"}
               </p>
             </div>
           ) : (
             <>
               <div className="space-y-8">
-                {filteredPressReleases.map((release) => (
-                  <article
-                    key={release.id}
-                    className="group cursor-pointer bg-white rounded-xl shadow-sm border border-neutral-200 hover:shadow-lg transition-all duration-300 p-8"
-                    onClick={() => handlePressReleaseClick(release.slug)}
-                  >
-                    <div className="flex flex-col lg:flex-row lg:items-center lg:space-x-8">
-                      {release.image_url && (
-                        <div className="lg:w-1/3 mb-6 lg:mb-0">
-                          <img
-                            src={release.image_url}
-                            alt={release.title}
-                            className="w-full h-48 lg:h-32 object-cover rounded-lg"
-                          />
-                        </div>
-                      )}
-                      
-                      <div className={`${release.image_url ? 'lg:w-2/3' : 'w-full'}`}>
-                        <div className="flex items-center text-sm text-neutral-500 mb-3">
-                          <Calendar className="h-4 w-4 mr-1" />
-                          {formatDate(release.published_at)}
-                          <span className="mx-2">•</span>
-                          <User className="h-4 w-4 mr-1" />
-                          {release.author_name}
-                          <span className="mx-2">•</span>
-                          <Eye className="h-4 w-4 mr-1" />
-                          {release.view_count} views
-                        </div>
-                        
-                        <h2 className="text-2xl font-bold text-neutral-900 mb-3 group-hover:text-blue-600 transition-colors">
-                          {release.title}
-                        </h2>
-                        
-                        <p className="text-neutral-600 mb-4 line-clamp-2">
-                          {release.description}
-                        </p>
-                        
-                        <div className="flex items-center text-blue-600 font-medium group-hover:text-blue-700">
-                          Read Full Release
-                          <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                {filteredPressReleases.map((release) => {
+                  const isExternal = release.image_url?.startsWith("http");
+
+                  return (
+                    <article
+                      key={release.id}
+                      className="group cursor-pointer bg-white rounded-xl shadow-sm border border-neutral-200 hover:shadow-lg transition-all duration-300 p-8"
+                      onClick={() =>
+                        isExternal
+                          ? handleExternalLinkClick(release.image_url)
+                          : handlePressReleaseClick(release.slug)
+                      }
+                    >
+                      <div className="flex flex-col lg:flex-row lg:items-center lg:space-x-8">
+                        {/* Only show image if URL exists and is NOT external */}
+                        {!isExternal && release.image_url && (
+                          <div className="lg:w-1/3 mb-6 lg:mb-0">
+                            <img
+                              src={release.image_url}
+                              alt={release.title}
+                              className="w-full h-48 lg:h-32 object-cover rounded-lg"
+                            />
+                          </div>
+                        )}
+
+                        {/* Adjust width: full width if no image is shown */}
+                        <div
+                          className={`${
+                            !isExternal && release.image_url
+                              ? "lg:w-2/3"
+                              : "w-full"
+                          }`}
+                        >
+                          <div className="flex items-center text-sm text-neutral-500 mb-3 flex-wrap">
+                            <div className="flex items-center mr-3">
+                              <Calendar className="h-4 w-4 mr-1" />
+                              {formatDate(release.published_at)}
+                            </div>
+                            <span className="hidden sm:inline mx-2">•</span>
+                            <div className="flex items-center mr-3">
+                              <User className="h-4 w-4 mr-1" />
+                              {release.author_name}
+                            </div>
+                            <span className="hidden sm:inline mx-2">•</span>
+                            <div className="flex items-center">
+                              <Eye className="h-4 w-4 mr-1" />
+                              {release.view_count} views
+                            </div>
+                          </div>
+
+                          <h2 className="text-2xl font-bold text-neutral-900 mb-3 group-hover:text-blue-600 transition-colors">
+                            {release.title}
+                          </h2>
+
+                          <p className="text-neutral-600 mb-4 line-clamp-2">
+                            {release.description}
+                          </p>
+
+                          {/* Conditional CTA text and icon */}
+                          {isExternal ? (
+                            <div className="flex items-center text-blue-600 font-medium group-hover:text-blue-700">
+                              View External Link
+                              <ExternalLink className="h-4 w-4 ml-1" />
+                            </div>
+                          ) : (
+                            <div className="flex items-center text-blue-600 font-medium group-hover:text-blue-700">
+                              Read Full Release
+                              <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                            </div>
+                          )}
                         </div>
                       </div>
-                    </div>
-                  </article>
-                ))}
+                    </article>
+                  );
+                })}
               </div>
 
               {/* Pagination */}
@@ -176,13 +217,15 @@ export default function PressReleases() {
                 <div className="flex justify-center mt-12">
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.max(prev - 1, 1))
+                      }
                       disabled={currentPage === 1}
                       className="px-4 py-2 border border-neutral-300 rounded-lg text-neutral-600 hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Previous
                     </button>
-                    
+
                     {[...Array(totalPages)].map((_, index) => {
                       const page = index + 1;
                       return (
@@ -191,17 +234,19 @@ export default function PressReleases() {
                           onClick={() => setCurrentPage(page)}
                           className={`px-4 py-2 border rounded-lg ${
                             currentPage === page
-                              ? 'bg-blue-600 text-white border-blue-600'
-                              : 'border-neutral-300 text-neutral-600 hover:bg-neutral-50'
+                              ? "bg-blue-600 text-white border-blue-600"
+                              : "border-neutral-300 text-neutral-600 hover:bg-neutral-50"
                           }`}
                         >
                           {page}
                         </button>
                       );
                     })}
-                    
+
                     <button
-                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                      }
                       disabled={currentPage === totalPages}
                       className="px-4 py-2 border border-neutral-300 rounded-lg text-neutral-600 hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
