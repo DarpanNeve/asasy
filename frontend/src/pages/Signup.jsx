@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Eye, EyeOff, Mail, Lock, User, BarChart3, Phone, Loader2 } from "lucide-react"; // Added Loader2 for consistency
@@ -14,6 +15,9 @@ export default function Signup() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const { signup, verifyEmail, googleLogin } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location.state?.from?.pathname || "/";
 
   const {
     register,
@@ -39,15 +43,19 @@ export default function Signup() {
           window.google.accounts.id.initialize({
             client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
             callback: handleGoogleResponse,
+            auto_select: false,
+            cancel_on_tap_outside: true,
             use_fedcm_for_prompt: false, // Disable FedCM
           });
 
           // Also initialize OAuth2 for popup method
-          window.gapi?.load('auth2', () => {
+          window.gapi?.load("auth2", () => {
             window.gapi.auth2.init({
               client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
             });
           });
+
+          console.log("Google Sign-In initialized successfully");
         } catch (error) {
           console.error("Google Sign-In initialization error:", error);
         }
@@ -57,9 +65,11 @@ export default function Signup() {
     // Load Google APIs
     const loadGoogleAPIs = () => {
       // Load Google Identity Services
-      if (!document.querySelector('script[src*="accounts.google.com/gsi/client"]')) {
-        const gsiScript = document.createElement('script');
-        gsiScript.src = 'https://accounts.google.com/gsi/client';
+      if (
+        !document.querySelector('script[src*="accounts.google.com/gsi/client"]')
+      ) {
+        const gsiScript = document.createElement("script");
+        gsiScript.src = "https://accounts.google.com/gsi/client";
         gsiScript.async = true;
         gsiScript.defer = true;
         gsiScript.onload = initializeGoogleSignIn;
@@ -67,9 +77,11 @@ export default function Signup() {
       }
 
       // Load Google API Platform Library (for popup method)
-      if (!document.querySelector('script[src*="apis.google.com/js/platform.js"]')) {
-        const gapiScript = document.createElement('script');
-        gapiScript.src = 'https://apis.google.com/js/platform.js';
+      if (
+        !document.querySelector('script[src*="apis.google.com/js/platform.js"]')
+      ) {
+        const gapiScript = document.createElement("script");
+        gapiScript.src = "https://apis.google.com/js/platform.js";
         gapiScript.async = true;
         gapiScript.defer = true;
         document.head.appendChild(gapiScript);
@@ -93,15 +105,15 @@ export default function Signup() {
         toast.error("Please complete your profile");
         navigate("/profile-completion", {
           state: {
-            user: result.user
+            user: result.user,
           },
-          replace: true
+          replace: true,
         });
         return;
       }
 
       toast.success("Welcome to Assesme!");
-      navigate("/dashboard");
+      navigate(from, { replace: true });
     } catch (error) {
       console.error("Google login error:", error);
       toast.error(error.response?.data?.detail || "Google login failed");
@@ -114,43 +126,69 @@ export default function Signup() {
     setGoogleLoading(true);
 
     try {
-      // Try popup method first (more reliable than FedCM)
-      if (window.gapi && window.gapi.auth2) {
-        const authInstance = window.gapi.auth2.getAuthInstance();
-        if (authInstance) {
-          authInstance.signIn().then(async (googleUser) => {
+      // Try the new Google Identity Services first
+      if (window.google && window.google.accounts) {
+        try {
+          window.google.accounts.id.prompt((notification) => {
+            if (
+              notification.isNotDisplayed() ||
+              notification.isSkippedMoment()
+            ) {
+              // Fallback to popup method
+              handleGooglePopupLogin();
+            }
+          });
+          return;
+        } catch (error) {
+          console.log("GSI prompt failed, trying popup method:", error);
+        }
+      }
+
+      // Fallback to popup method
+      handleGooglePopupLogin();
+    } catch (error) {
+      console.error("Google login error:", error);
+      toast.error("Google Sign-In error. Please try again.");
+      setGoogleLoading(false);
+    }
+  };
+
+  const handleGooglePopupLogin = () => {
+    // Use OAuth2 popup method as fallback
+    if (window.gapi && window.gapi.auth2) {
+      const authInstance = window.gapi.auth2.getAuthInstance();
+      if (authInstance) {
+        authInstance
+          .signIn()
+          .then(async (googleUser) => {
             const idToken = googleUser.getAuthResponse().id_token;
             await handleGoogleResponse({ credential: idToken });
-          }).catch((error) => {
+          })
+          .catch((error) => {
             console.error("Google popup login error:", error);
             toast.error("Google Sign-In cancelled or failed");
             setGoogleLoading(false);
           });
-          return;
-        }
-      }
-
-      // Fallback to GSI prompt
-      if (window.google && window.google.accounts) {
-        try {
-          window.google.accounts.id.prompt((notification) => {
-            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-              toast.error("Google Sign-In not available. Please use email signup.");
-              setGoogleLoading(false);
-            }
-          });
-        } catch (error) {
-          console.log("GSI prompt failed:", error);
-          toast.error("Google Sign-In not available. Please use email signup.");
-          setGoogleLoading(false);
-        }
       } else {
-        toast.error("Google Sign-In not loaded. Please refresh the page.");
-        setGoogleLoading(false);
+        // Direct OAuth2 URL method as last resort
+        const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+        const redirectUri = `${window.location.origin}/auth/google/callback`;
+        const scope = "openid email profile";
+        const responseType = "code";
+
+        const authUrl =
+          `https://accounts.google.com/oauth/authorize?` +
+          `client_id=${clientId}&` +
+          `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+          `scope=${encodeURIComponent(scope)}&` +
+          `response_type=${responseType}&` +
+          `access_type=offline&` +
+          `prompt=select_account`;
+
+        window.location.href = authUrl;
       }
-    } catch (error) {
-      console.error("Google login error:", error);
-      toast.error("Google Sign-In error. Please try again.");
+    } else {
+      toast.error("Google Sign-In not available. Please try email login.");
       setGoogleLoading(false);
     }
   };
