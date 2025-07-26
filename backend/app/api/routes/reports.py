@@ -276,18 +276,9 @@ async def get_report(report_id: str, current_user: User = Depends(get_current_us
 
 @router.get("/{report_id}/download")
 async def download_report(
-    report_id: str, current_user: User = Depends(get_current_user)
+    report_id: str
 ):
-    """Download report PDF with enhanced logging"""
-    logger.info(f"Download request for report_id: {report_id} by user: {current_user.email}")
-
     report = await ReportLog.get(report_id)
-    if not report or report.user_id != str(current_user.id):
-        logger.warning(f"Report not found or unauthorized access - report_id: {report_id}")
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Report not found"
-        )
-
     if report.status != ReportStatus.COMPLETED or not report.pdf_path:
         logger.warning(f"Report not ready for download - status: {report.status}, pdf_path: {report.pdf_path}")
         raise HTTPException(

@@ -424,7 +424,7 @@ export default function Admin() {
     try {
       const basicAuth = sessionStorage.getItem("adminAuth");
       const response = await fetch(
-        `https://backend.assesme.com/admin/users/${userId}/subscriptions`,
+        `https://backend.assesme.com/admin/users/${userId}/transactions`,
         {
           headers: {
             Authorization: `Basic ${basicAuth}`,
@@ -435,6 +435,7 @@ export default function Admin() {
 
       if (response.ok) {
         const subscriptionsData = await response.json();
+        console.log("Subscriptions data:", subscriptionsData);
         setUserSubscriptions(subscriptionsData);
       } else {
         toast.error("Failed to fetch user subscriptions");
@@ -1034,9 +1035,12 @@ export default function Admin() {
                                     <span className="font-medium text-neutral-900">
                                       Plan:
                                     </span>
-                                    <p className="text-neutral-600">
-                                      {subscription.plan_name}
-                                    </p>
+                                    {subscription.razorpay_payment_id && (
+                                      <div className="mt-2 text-xs text-neutral-500">
+                                        Payment ID:{" "}
+                                        {subscription.razorpay_payment_id}
+                                      </div>
+                                    )}
                                   </div>
                                   <div>
                                     <span className="font-medium text-neutral-900">
@@ -1069,21 +1073,13 @@ export default function Admin() {
                                   </div>
                                   <div>
                                     <span className="font-medium text-neutral-900">
-                                      Active Until:
+                                      Package Name
                                     </span>
                                     <p className="text-neutral-600">
-                                      {new Date(
-                                        subscription.active_until
-                                      ).toLocaleDateString()}
+                                      {subscription.package_name}
                                     </p>
                                   </div>
                                 </div>
-                                {subscription.razorpay_payment_id && (
-                                  <div className="mt-2 text-xs text-neutral-500">
-                                    Payment ID:{" "}
-                                    {subscription.razorpay_payment_id}
-                                  </div>
-                                )}
                               </div>
                             ))}
                           </div>
@@ -1127,58 +1123,24 @@ export default function Admin() {
                                       <span className="text-xs bg-primary-100 text-primary-800 px-2 py-1 rounded">
                                         {report.plan_name}
                                       </span>
-                                    </div>
-
-                                    {/* Token Usage */}
-                                    <div className="bg-white rounded p-3 mb-3">
-                                      <h5 className="text-sm font-medium text-neutral-900 mb-2">
-                                        ChatGPT Token Usage
-                                      </h5>
-                                      <div className="grid grid-cols-3 gap-4 text-sm">
-                                        <div>
-                                          <span className="text-neutral-600">
-                                            Prompt:
+                                      <div className="ml-4">
+                                        {report.file_url ? (
+                                          <button
+                                            onClick={() =>
+                                              handleDownloadReport(report.id)
+                                            }
+                                            className="btn-outline btn-sm"
+                                          >
+                                            <Download className="h-4 w-4 mr-1" />
+                                            Download PDF
+                                          </button>
+                                        ) : (
+                                          <span className="text-sm text-neutral-500 px-3 py-2 bg-neutral-200 rounded">
+                                            {report.status}
                                           </span>
-                                          <span className="ml-2 font-medium text-neutral-900">
-                                            {report.token_usage.prompt.toLocaleString()}
-                                          </span>
-                                        </div>
-                                        <div>
-                                          <span className="text-neutral-600">
-                                            Completion:
-                                          </span>
-                                          <span className="ml-2 font-medium text-neutral-900">
-                                            {report.token_usage.completion.toLocaleString()}
-                                          </span>
-                                        </div>
-                                        <div>
-                                          <span className="text-neutral-600">
-                                            Total:
-                                          </span>
-                                          <span className="ml-2 font-semibold text-primary-600">
-                                            {report.token_usage.total.toLocaleString()}
-                                          </span>
-                                        </div>
+                                        )}
                                       </div>
                                     </div>
-                                  </div>
-
-                                  <div className="ml-4">
-                                    {report.file_url ? (
-                                      <button
-                                        onClick={() =>
-                                          handleDownloadReport(report.id)
-                                        }
-                                        className="btn-outline btn-sm"
-                                      >
-                                        <Download className="h-4 w-4 mr-1" />
-                                        Download PDF
-                                      </button>
-                                    ) : (
-                                      <span className="text-sm text-neutral-500 px-3 py-2 bg-neutral-200 rounded">
-                                        {report.status}
-                                      </span>
-                                    )}
                                   </div>
                                 </div>
                               </div>
