@@ -716,8 +716,8 @@ export default function Reports() {
                           Report in Progress
                         </h3>
                         <p className="text-warning-700 text-sm">
-                          Your report is being generated. This usually takes 2-5
-                          minutes.
+                          Your report is being generated. This usually takes
+                          12-15 minutes.
                         </p>
                       </div>
                     </div>
@@ -832,6 +832,11 @@ export default function Reports() {
                         >
                           {report.status}
                         </span>
+                        {report.status === "processing" && (
+                          <div className="flex items-center text-xs text-neutral-500">
+                            Report will be available in 12-15 minutes
+                          </div>
+                        )}
                       </div>
                       <div
                         className={`text-xs px-2 py-1 rounded whitespace-nowrap ${getComplexityColor(
