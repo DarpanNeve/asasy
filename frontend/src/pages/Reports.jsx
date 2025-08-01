@@ -804,91 +804,92 @@ export default function Reports() {
               key={report.id}
               className="card hover:shadow-md transition-shadow"
             >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4 flex-1 min-w-0">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+                <div className="flex items-start sm:items-center space-x-4 flex-1 min-w-0">
                   <div className="p-3 bg-primary-50 rounded-lg flex-shrink-0">
                     <FileText className="h-6 w-6 text-primary-600" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-neutral-900 truncate">
+                    <h3 className="font-semibold text-neutral-900 text-sm sm:text-base">
                       {report.title || "Technology Assessment Report"}
                     </h3>
-                    <p className="text-sm text-neutral-600 line-clamp-2 break-words">
+                    <p className="text-xs sm:text-sm text-neutral-600 line-clamp-2 break-words mt-1">
                       {report.idea}
                     </p>
-                    <div className="flex items-center space-x-4 mt-2 flex-wrap">
-                      <div className="flex items-center space-x-1">
-                        <Calendar className="h-4 w-4 text-neutral-400 flex-shrink-0" />
-                        <span className="text-sm text-neutral-500 whitespace-nowrap">
-                          {new Date(report.created_at).toLocaleDateString()}
-                        </span>
+
+                    {/* Mobile-first metadata layout */}
+                    <div className="mt-3 space-y-2">
+                      {/* Date and Status row */}
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0">
+                        <div className="flex items-center space-x-1">
+                          <Calendar className="h-4 w-4 text-neutral-400 flex-shrink-0" />
+                          <span className="text-xs sm:text-sm text-neutral-500">
+                            {new Date(report.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          {getStatusIcon(report.status)}
+                          <span
+                            className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(
+                              report.status
+                            )}`}
+                          >
+                            {report.status}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex items-center space-x-1">
-                        {getStatusIcon(report.status)}
-                        <span
-                          className={`px-2 py-1 text-xs font-medium rounded-full whitespace-nowrap ${getStatusColor(
-                            report.status
-                          )}`}
-                        >
-                          {report.status}
-                        </span>
-                        {report.status === "processing" && (
+
+                      {/* Processing message */}
+                      {report.status === "processing" && (
+                        <div className="text-xs text-neutral-500 bg-neutral-50 p-2 rounded">
+                          Report will be available in 12-15 minutes
+                        </div>
+                      )}
+
+                      {/* Complexity and tokens row */}
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0">
+                        <div className="text-xs bg-primary-100 text-primary-800 px-2 py-1 rounded inline-block w-fit">
+                          {report.complexity}
+                        </div>
+                        {report.tokens_used && (
                           <div className="flex items-center text-xs text-neutral-500">
-                            Report will be available in 12-15 minutes
+                            <Zap className="w-3 h-3 mr-1" />
+                            {report.tokens_used} tokens
                           </div>
                         )}
                       </div>
-                      <div
-                        className={`text-xs px-2 py-1 rounded whitespace-nowrap ${getComplexityColor(
-                          report.complexity
-                        )}`}
-                      >
-                        <span className="text-xs bg-primary-100 text-primary-800 px-2 py-1 rounded whitespace-nowrap">
-                          {report.complexity}
-                        </span>
-                      </div>
-
-                      {report.tokens_used && (
-                        <div className="flex items-center text-xs text-neutral-500">
-                          <Zap className="w-3 h-3 mr-1" />
-                          {report.tokens_used} tokens
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-2 ml-4">
-                  {report.status === "completed" && report.pdf_url && (
-                    <>
-                      <button
-                        onClick={() =>
-                          handlePreviewPdf(report.id, report.title)
-                        }
-                        className="btn-outline btn-sm"
-                        disabled={pdfLoading}
-                      >
-                        {pdfLoading ? (
-                          <div className="spinner" />
-                        ) : (
-                          <>
-                            <Eye className="h-4 w-4 mr-1" />
-                            Preview
-                          </>
-                        )}
-                      </button>
-                      <button
-                        onClick={() =>
-                          handleDownloadReport(report.id, report.title)
-                        }
-                        className="btn-primary btn-sm"
-                      >
-                        <Download className="h-4 w-4 mr-1" />
-                        Download
-                      </button>
-                    </>
-                  )}
-                </div>
+                {/* Action buttons - mobile responsive */}
+                {report.status === "completed" && report.pdf_url && (
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2 lg:ml-4">
+                    <button
+                      onClick={() => handlePreviewPdf(report.id, report.title)}
+                      className="btn-outline btn-sm flex items-center justify-center"
+                      disabled={pdfLoading}
+                    >
+                      {pdfLoading ? (
+                        <div className="spinner" />
+                      ) : (
+                        <>
+                          <Eye className="h-4 w-4 mr-1" />
+                          Preview
+                        </>
+                      )}
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleDownloadReport(report.id, report.title)
+                      }
+                      className="btn-primary btn-sm flex items-center justify-center"
+                    >
+                      <Download className="h-4 w-4 mr-1" />
+                      Download
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ))}

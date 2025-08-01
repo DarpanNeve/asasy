@@ -337,11 +337,11 @@ export default function Header() {
                 </>
               )}
             </div>
-            {user && userBalance && !compact && true && (
-              <div className="text-center mb-8">
-                <div className="inline-flex items-center px-6 py-3 bg-white rounded-full shadow-lg border border-gray-200">
+            {user && userBalance && (
+              <div className="ml-4">
+                <div className="flex items-center px-4 py-2 bg-white rounded-full shadow border border-gray-200">
                   <Zap className="w-5 h-5 text-blue-600 mr-2" />
-                  <span className="text-gray-700 mr-2">Available Tokens:</span>
+                  <span className="text-gray-700 mr-2">Tokens:</span>
                   <span className="font-bold text-blue-600 text-lg">
                     {userBalance.available_tokens.toLocaleString()}
                   </span>
