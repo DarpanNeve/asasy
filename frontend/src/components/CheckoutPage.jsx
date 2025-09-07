@@ -1,29 +1,24 @@
-import React, { useState } from 'react';
-import { 
-  X, 
-  CreditCard, 
-  Shield, 
-  Calculator, 
+import React, { useState } from "react";
+import {
+  X,
+  CreditCard,
+  Shield,
+  Calculator,
   DollarSign,
   Zap,
   CheckCircle,
   ArrowLeft,
   Lock,
   Globe,
-  Clock
-} from 'lucide-react';
-import { formatCurrency, getPricingBreakdown } from '../utils/currencyUtils';
-import { api } from '../services/api';
-import toast from 'react-hot-toast';
+  Clock,
+} from "lucide-react";
+import { formatCurrency, getPricingBreakdown } from "../utils/currencyUtils";
+import { api } from "../services/api";
+import toast from "react-hot-toast";
 
-const CheckoutPage = ({ 
-  isOpen, 
-  packageData, 
-  onClose, 
-  onSuccess 
-}) => {
+const CheckoutPage = ({ isOpen, packageData, onClose, onSuccess }) => {
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState('review'); // 'review' or 'processing'
+  const [step, setStep] = useState("review"); // 'review' or 'processing'
 
   if (!isOpen || !packageData) return null;
 
@@ -33,12 +28,12 @@ const CheckoutPage = ({
 
   const handleConfirmPurchase = async () => {
     setLoading(true);
-    setStep('processing');
-    
+    setStep("processing");
+
     try {
       // Create order
-      const orderResponse = await api.post('/tokens/purchase/create-order', {
-        package_id: packageData.id
+      const orderResponse = await api.post("/tokens/purchase/create-order", {
+        package_id: packageData.id,
       });
 
       const { order_id, amount, currency } = orderResponse.data;
@@ -48,56 +43,59 @@ const CheckoutPage = ({
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: amount,
         currency: currency,
-        name: 'Asasy',
-        description: `Purchase ${packageData.name} (${packageData.tokens.toLocaleString()} tokens)`,
+        name: "Assesme",
+        description: `Purchase ${
+          packageData.name
+        } (${packageData.tokens.toLocaleString()} tokens)`,
         order_id: order_id,
         handler: async function (response) {
           try {
             // Verify payment
-            await api.post('/tokens/purchase/verify-payment', {
+            await api.post("/tokens/purchase/verify-payment", {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_order_id: response.razorpay_order_id,
-              razorpay_signature: response.razorpay_signature
+              razorpay_signature: response.razorpay_signature,
             });
 
-            toast.success(`Successfully purchased ${packageData.tokens.toLocaleString()} tokens!`);
+            toast.success(
+              `Successfully purchased ${packageData.tokens.toLocaleString()} tokens!`
+            );
             onSuccess();
           } catch (error) {
-            console.error('Payment verification failed:', error);
-            toast.error('Payment verification failed. Please contact support.');
-            setStep('review');
+            console.error("Payment verification failed:", error);
+            toast.error("Payment verification failed. Please contact support.");
+            setStep("review");
             setLoading(false);
           }
         },
         prefill: {
-          name: 'User', // You can get this from user context
-          email: 'user@example.com', // You can get this from user context
+          name: "User", // You can get this from user context
+          email: "user@example.com", // You can get this from user context
         },
         theme: {
-          color: '#3B82F6'
+          color: "#3B82F6",
         },
         modal: {
-          ondismiss: function() {
-            setStep('review');
+          ondismiss: function () {
+            setStep("review");
             setLoading(false);
-          }
-        }
+          },
+        },
       };
 
       const rzp = new window.Razorpay(options);
       rzp.open();
 
-      rzp.on('payment.failed', function (response) {
-        console.error('Payment failed:', response.error);
-        toast.error('Payment failed. Please try again.');
-        setStep('review');
+      rzp.on("payment.failed", function (response) {
+        console.error("Payment failed:", response.error);
+        toast.error("Payment failed. Please try again.");
+        setStep("review");
         setLoading(false);
       });
-
     } catch (error) {
-      console.error('Purchase failed:', error);
-      toast.error('Failed to initiate purchase. Please try again.');
-      setStep('review');
+      console.error("Purchase failed:", error);
+      toast.error("Failed to initiate purchase. Please try again.");
+      setStep("review");
       setLoading(false);
     }
   };
@@ -105,14 +103,13 @@ const CheckoutPage = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[95vh] overflow-y-auto">
-        
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-2xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              {step === 'processing' && (
+              {step === "processing" && (
                 <button
-                  onClick={() => setStep('review')}
+                  onClick={() => setStep("review")}
                   className="mr-3 p-2 hover:bg-gray-100 rounded-lg transition-colors"
                   disabled={loading}
                 >
@@ -120,7 +117,7 @@ const CheckoutPage = ({
                 </button>
               )}
               <h2 className="text-2xl font-bold text-gray-900">
-                {step === 'review' ? 'Review Your Order' : 'Processing Payment'}
+                {step === "review" ? "Review Your Order" : "Processing Payment"}
               </h2>
             </div>
             <button
@@ -134,7 +131,7 @@ const CheckoutPage = ({
         </div>
 
         <div className="p-6">
-          {step === 'review' ? (
+          {step === "review" ? (
             <>
               {/* Package Details */}
               <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 mb-6">
@@ -144,7 +141,9 @@ const CheckoutPage = ({
                       <Zap className="h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-gray-900">{packageData.name}</h3>
+                      <h3 className="text-xl font-bold text-gray-900">
+                        {packageData.name}
+                      </h3>
                       <p className="text-gray-600">{packageData.description}</p>
                     </div>
                   </div>
@@ -152,10 +151,12 @@ const CheckoutPage = ({
                     <div className="text-3xl font-bold text-blue-600">
                       {formatCurrency(basePrice)}
                     </div>
-                    <div className="text-sm text-gray-600">{packageData.tokens.toLocaleString()} Tokens</div>
+                    <div className="text-sm text-gray-600">
+                      {packageData.tokens.toLocaleString()} Tokens
+                    </div>
                   </div>
                 </div>
-                
+
                 {/* Package Benefits */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                   <div className="flex items-center text-sm text-gray-700">
@@ -179,7 +180,7 @@ const CheckoutPage = ({
                   <Calculator className="w-5 h-5 mr-2" />
                   Price Breakdown
                 </h4>
-                
+
                 <div className="space-y-3">
                   <div className="flex justify-between items-center py-2">
                     <span className="text-gray-600 flex items-center">
@@ -190,18 +191,20 @@ const CheckoutPage = ({
                       {formatCurrency(basePrice)}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between items-center py-2">
                     <span className="text-gray-600">GST (18%)</span>
                     <span className="font-medium">
                       {formatCurrency(gstAmount)}
                     </span>
                   </div>
-                  
+
                   <hr className="border-gray-300 my-3" />
-                  
+
                   <div className="flex justify-between items-center py-3 bg-white rounded-lg px-4">
-                    <span className="text-lg font-bold text-gray-900">Total Amount</span>
+                    <span className="text-lg font-bold text-gray-900">
+                      Total Amount
+                    </span>
                     <span className="text-2xl font-bold text-blue-600">
                       {formatCurrency(totalPrice)}
                     </span>
@@ -216,9 +219,12 @@ const CheckoutPage = ({
                   <div className="flex items-center">
                     <Shield className="w-5 h-5 text-green-600 mr-3" />
                     <div>
-                      <p className="text-sm font-medium text-green-800">Secure Payment</p>
+                      <p className="text-sm font-medium text-green-800">
+                        Secure Payment
+                      </p>
                       <p className="text-xs text-green-600">
-                        Your payment is processed securely through Razorpay with 256-bit SSL encryption
+                        Your payment is processed securely through Razorpay with
+                        256-bit SSL encryption
                       </p>
                     </div>
                   </div>
@@ -274,13 +280,18 @@ const CheckoutPage = ({
               <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
                 <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-white"></div>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Processing Your Payment</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Processing Your Payment
+              </h3>
               <p className="text-gray-600 mb-6">
-                Please complete the payment in the Razorpay window. Do not close this page.
+                Please complete the payment in the Razorpay window. Do not close
+                this page.
               </p>
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-left">
                 <p className="text-sm text-yellow-800">
-                  <strong>Note:</strong> If the payment window doesn't open, please check if pop-ups are blocked in your browser and try again.
+                  <strong>Note:</strong> If the payment window doesn't open,
+                  please check if pop-ups are blocked in your browser and try
+                  again.
                 </p>
               </div>
             </div>

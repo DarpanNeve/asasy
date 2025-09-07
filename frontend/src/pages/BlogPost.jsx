@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { 
-  Calendar, 
-  User, 
-  Eye, 
+import {
+  Calendar,
+  User,
+  Eye,
   ArrowLeft,
   Share2,
   Twitter,
   Linkedin,
   Facebook,
-  Link as LinkIcon
+  Link as LinkIcon,
 } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -35,20 +35,25 @@ export default function BlogPost() {
       setLoading(true);
       const response = await api.get(`/blog/posts/${slug}`);
       setPost(response.data);
-      
+
       // Update page title and meta description
       document.title = response.data.meta_title || response.data.title;
       if (response.data.meta_description) {
-        const metaDescription = document.querySelector('meta[name="description"]');
+        const metaDescription = document.querySelector(
+          'meta[name="description"]'
+        );
         if (metaDescription) {
-          metaDescription.setAttribute('content', response.data.meta_description);
+          metaDescription.setAttribute(
+            "content",
+            response.data.meta_description
+          );
         }
       }
     } catch (error) {
       console.error("Failed to fetch blog post:", error);
       if (error.response?.status === 404) {
         toast.error("Blog post not found");
-        navigate('/blog');
+        navigate("/blog");
       } else {
         toast.error("Failed to load blog post");
       }
@@ -60,44 +65,50 @@ export default function BlogPost() {
   const fetchRelatedPosts = async () => {
     try {
       const response = await api.get("/blog/posts?post_type=blog&limit=3");
-      setRelatedPosts(response.data.posts.filter(p => p.slug !== slug));
+      setRelatedPosts(response.data.posts.filter((p) => p.slug !== slug));
     } catch (error) {
       console.error("Failed to fetch related posts:", error);
     }
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
   const handleShare = (platform) => {
     const url = window.location.href;
     const title = post.title;
-    
-    let shareUrl = '';
-    
+
+    let shareUrl = "";
+
     switch (platform) {
-      case 'twitter':
-        shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`;
+      case "twitter":
+        shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+          url
+        )}&text=${encodeURIComponent(title)}`;
         break;
-      case 'linkedin':
-        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+      case "linkedin":
+        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+          url
+        )}`;
         break;
-      case 'facebook':
-        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+      case "facebook":
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+          url
+        )}`;
         break;
-      case 'copy':
+      case "copy":
         navigator.clipboard.writeText(url);
-        toast.success('Link copied to clipboard!');
+        toast.success("Link copied to clipboard!");
         return;
     }
-    
+
     if (shareUrl) {
-      window.open(shareUrl, '_blank', 'width=600,height=400');
+      window.open(shareUrl, "_blank", "width=600,height=400");
     }
   };
 
@@ -119,11 +130,10 @@ export default function BlogPost() {
         <Header />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-neutral-900 mb-4">Post not found</h1>
-            <button
-              onClick={() => navigate('/blog')}
-              className="btn-primary"
-            >
+            <h1 className="text-2xl font-bold text-neutral-900 mb-4">
+              Post not found
+            </h1>
+            <button onClick={() => navigate("/blog")} className="btn-primary">
               Back to Blog
             </button>
           </div>
@@ -140,7 +150,7 @@ export default function BlogPost() {
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Back Button */}
         <button
-          onClick={() => navigate('/blog')}
+          onClick={() => navigate("/blog")}
           className="flex items-center text-blue-600 hover:text-blue-700 mb-8 transition-colors"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -152,12 +162,8 @@ export default function BlogPost() {
           <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-6 leading-tight">
             {post.title}
           </h1>
-          
+
           <div className="flex flex-wrap items-center gap-6 text-neutral-600 mb-6">
-            <div className="flex items-center">
-              <Calendar className="h-4 w-4 mr-2" />
-              {formatDate(post.published_at)}
-            </div>
             <div className="flex items-center">
               <User className="h-4 w-4 mr-2" />
               {post.author_name}
@@ -183,28 +189,28 @@ export default function BlogPost() {
           <div className="flex items-center space-x-4 py-4 border-y border-neutral-200">
             <span className="text-sm font-medium text-neutral-700">Share:</span>
             <button
-              onClick={() => handleShare('twitter')}
+              onClick={() => handleShare("twitter")}
               className="p-2 text-neutral-600 hover:text-blue-400 transition-colors"
               title="Share on Twitter"
             >
               <Twitter className="h-5 w-5" />
             </button>
             <button
-              onClick={() => handleShare('linkedin')}
+              onClick={() => handleShare("linkedin")}
               className="p-2 text-neutral-600 hover:text-blue-600 transition-colors"
               title="Share on LinkedIn"
             >
               <Linkedin className="h-5 w-5" />
             </button>
             <button
-              onClick={() => handleShare('facebook')}
+              onClick={() => handleShare("facebook")}
               className="p-2 text-neutral-600 hover:text-blue-800 transition-colors"
               title="Share on Facebook"
             >
               <Facebook className="h-5 w-5" />
             </button>
             <button
-              onClick={() => handleShare('copy')}
+              onClick={() => handleShare("copy")}
               className="p-2 text-neutral-600 hover:text-neutral-800 transition-colors"
               title="Copy link"
             >
@@ -214,7 +220,7 @@ export default function BlogPost() {
         </header>
 
         {/* Article Content */}
-        <div 
+        <div
           className="prose prose-lg max-w-none mb-12"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
@@ -222,7 +228,9 @@ export default function BlogPost() {
         {/* Related Posts */}
         {relatedPosts.length > 0 && (
           <section className="border-t border-neutral-200 pt-12">
-            <h2 className="text-2xl font-bold text-neutral-900 mb-8">Related Articles</h2>
+            <h2 className="text-2xl font-bold text-neutral-900 mb-8">
+              Related Articles
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedPosts.slice(0, 3).map((relatedPost) => (
                 <article

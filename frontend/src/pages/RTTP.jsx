@@ -303,6 +303,14 @@ export default function RTTP() {
             {/* Enhanced CTA buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <button
+                onClick={handleDirectBooking}
+                className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-lg px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center"
+              >
+                <Calendar className="mr-2 h-5 w-5 group-hover:animate-pulse" />
+                Book Consultation
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </button>
+              <button
                 onClick={() =>
                   window.open("https://forms.gle/1AHvijC9uidoGeig8", "_blank")
                 }
@@ -312,16 +320,6 @@ export default function RTTP() {
                 Join as Expert
                 <ExternalLink className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </button>
-
-              <button
-                onClick={handleDirectBooking}
-                className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-lg px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center"
-              >
-                <Calendar className="mr-2 h-5 w-5 group-hover:animate-pulse" />
-                Book Consultation
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-
               <a
                 href="https://www.youtube.com/watch?v=your-video-id"
                 target="_blank"
