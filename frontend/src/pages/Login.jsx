@@ -21,7 +21,7 @@ export default function Login() {
     formState: { errors },
   } = useForm();
 
-  // Initialize Google Sign-In with popup method (no FedCM)
+  // Initialize Google Sign-In
   useEffect(() => {
     const initializeGoogleSignIn = () => {
       if (window.google && window.google.accounts) {
@@ -31,16 +31,7 @@ export default function Login() {
             callback: handleGoogleResponse,
             auto_select: false,
             cancel_on_tap_outside: true,
-            use_fedcm_for_prompt: false, // Disable FedCM
           });
-
-          // Also initialize OAuth2 for popup method
-          window.gapi?.load("auth2", () => {
-            window.gapi.auth2.init({
-              client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-            });
-          });
-
           console.log("Google Sign-In initialized successfully");
         } catch (error) {
           console.error("Google Sign-In initialization error:", error);
@@ -48,38 +39,82 @@ export default function Login() {
       }
     };
 
-    // Load Google APIs
-    const loadGoogleAPIs = () => {
-      // Load Google Identity Services
-      if (
-        !document.querySelector('script[src*="accounts.google.com/gsi/client"]')
-      ) {
-        const gsiScript = document.createElement("script");
-        gsiScript.src = "https://accounts.google.com/gsi/client";
-        gsiScript.async = true;
-        gsiScript.defer = true;
-        gsiScript.onload = initializeGoogleSignIn;
-        document.head.appendChild(gsiScript);
-      }
-
-      // Load Google API Platform Library (for popup method)
-      if (
-        !document.querySelector('script[src*="apis.google.com/js/platform.js"]')
-      ) {
-        const gapiScript = document.createElement("script");
-        gapiScript.src = "https://apis.google.com/js/platform.js";
-        gapiScript.async = true;
-        gapiScript.defer = true;
-        document.head.appendChild(gapiScript);
-      }
-    };
-
     if (window.google) {
       initializeGoogleSignIn();
     } else {
-      loadGoogleAPIs();
+      const gsiScript = document.createElement("script");
+      gsiScript.src = "https://accounts.google.com/gsi/client";
+      gsiScript.async = true;
+      gsiScript.defer = true;
+      gsiScript.onload = initializeGoogleSignIn;
+      document.head.appendChild(gsiScript);
     }
   }, []);
+
+  const handleGoogleResponse = async (response) => {
+    setGoogleLoading(true);
+    try {
+      const result = await googleLogin(response.credential);
+
+      // Check if profile completion is needed
+      if (result.profile_incomplete) {
+        toast.error("Please complete your profile");
+        navigate("/profile-completion", {
+          state: {
+            user: result.user,
+            from: location,
+          },
+          replace: true,
+        });
+        return;
+      }
+
+      toast.success("Welcome back!");
+      navigate(from, { replace: true });
+    } catch (error) {
+      console.error("Google login error:", error);
+      toast.error(error.response?.data?.detail || "Google login failed");
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    try {
+      await login(data.email, data.password);
+      toast.success("Welcome back!");
+      navigate(from, { replace: true });
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error(
+        error.response?.data?.detail || "Login failed. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = () => {
+    setGoogleLoading(true);
+    try {
+      if (window.google && window.google.accounts) {
+        window.google.accounts.id.prompt((notification) => {
+          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+            setGoogleLoading(false);
+            toast.error("Google Sign-In prompt was not displayed. Please try again.");
+          }
+        });
+      } else {
+        setGoogleLoading(false);
+        toast.error("Google Sign-In is not available. Please try again later.");
+      }
+    } catch (error) {
+      setGoogleLoading(false);
+      console.error("Google login error:", error);
+      toast.error("Google Sign-In error. Please try again.");
+    }
+  };
 
   const handleGoogleResponse = async (response) => {
     setGoogleLoading(true);
