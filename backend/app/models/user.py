@@ -29,6 +29,8 @@ class User(Document):
     email_verification_expires: Optional[datetime] = None
     password_reset_token: Optional[str] = None
     password_reset_expires: Optional[datetime] = None
+    password_reset_otp: Optional[str] = None
+    password_reset_otp_expires: Optional[datetime] = None
     
     # Timestamps
     created_at: datetime = Field(default_factory=datetime.utcnow)

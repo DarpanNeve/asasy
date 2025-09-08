@@ -13,7 +13,7 @@ from app.core.security import (
     verify_token,
 )
 from app.core.rate_limiter import limiter
-from app.services.email_service import send_otp_email, send_welcome_email
+from app.services.email_service import send_otp_email, send_welcome_email, send_password_reset_email
 from app.services.oauth_service import verify_google_token
 from app.models.user import User, OAuthProvider
 from app.schemas.auth import (
@@ -28,6 +28,7 @@ from app.schemas.auth import (
     CompleteProfile,
 )
 from app.schemas.user import UserResponse
+from app.schemas.auth import PasswordReset,PasswordResetConfirm,PasswordResetOTPVerify
 import secrets
 import logging
 import traceback
@@ -435,6 +436,99 @@ async def resend_verification(request: Request, email: str):
             logger.error(f"Failed to send verification email: {e}")
 
         return {"message": "Verification code sent"}
+    except Exception as e:
+        traceback.print_exc()
+        raise
+
+@router.post("/forgot-password")
+@limiter.limit("5/minute")
+async def forgot_password(request: Request, password_reset: PasswordReset):
+    """Request password reset OTP"""
+    try:
+        user = await User.find_one({"email": password_reset.email})
+        if not user:
+            # Return a generic message to prevent email enumeration
+            return {"message": "If an account with that email exists, a password reset OTP has been sent."}
+
+        # Generate verification code
+        verification_code = str(secrets.randbelow(900000) + 100000)  # 6-digit code
+        verification_expires = datetime.utcnow() + timedelta(minutes=10)
+
+        user.password_reset_otp = verification_code
+        user.password_reset_otp_expires = verification_expires
+        user.password_reset_token = None # Clear old token
+        user.password_reset_expires = None # Clear old token expiry
+        await user.save()
+
+        # Send password reset OTP email
+        try:
+            await send_otp_email(user.email, verification_code, user.name)
+        except Exception as e:
+            logger.error(f"Failed to send password reset OTP email: {e}")
+            # Still return success to prevent email enumeration
+            return {"message": "If an account with that email exists, a password reset OTP has been sent."}
+
+        return {"message": "If an account with that email exists, a password reset OTP has been sent."}
+    except Exception as e:
+        traceback.print_exc()
+        raise
+
+@router.post("/verify-password-reset-otp")
+@limiter.limit("5/minute")
+async def verify_password_reset_otp(request: Request, verification: PasswordResetOTPVerify):
+    """Verify password reset OTP"""
+    try:
+        user = await User.find_one({"email": verification.email})
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+            )
+
+        # Check verification code
+        if (
+            not user.password_reset_otp
+            or user.password_reset_otp != verification.otp
+            or user.password_reset_otp_expires < datetime.utcnow()
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid or expired OTP",
+            )
+
+        return {"message": "OTP verified successfully. You can now reset your password."}
+    except Exception as e:
+        traceback.print_exc()
+        raise
+
+@router.post("/reset-password")
+@limiter.limit("5/minute")
+async def reset_password(request: Request, password_reset_confirm: PasswordResetConfirm):
+    """Reset password with OTP"""
+    try:
+        user = await User.find_one({"email": password_reset_confirm.email})
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+            )
+
+        if (
+            not user.password_reset_otp
+            or user.password_reset_otp != password_reset_confirm.otp
+            or user.password_reset_otp_expires < datetime.utcnow()
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid or expired OTP",
+            )
+
+        # Update password
+        user.password_hash = get_password_hash(password_reset_confirm.new_password)
+        user.password_reset_otp = None
+        user.password_reset_otp_expires = None
+        user.updated_at = datetime.utcnow()
+        await user.save()
+
+        return {"message": "Password has been reset successfully."}
     except Exception as e:
         traceback.print_exc()
         raise

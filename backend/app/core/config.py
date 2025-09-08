@@ -73,6 +73,7 @@ class Settings(BaseSettings):
     MAX_FILE_SIZE: int = 10 * 1024 * 1024  # 10MB
     ALLOWED_FILE_TYPES: List[str] = ["pdf", "docx", "txt"]
 
+    FRONTEND_URL:str = "https://assesme.com"
     # Report generation
     REPORTS_STORAGE_PATH: str = "reports"
     MAX_REPORTS_FREE_USERS: int = 1
