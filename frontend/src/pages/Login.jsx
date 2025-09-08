@@ -102,7 +102,9 @@ export default function Login() {
         window.google.accounts.id.prompt((notification) => {
           if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
             setGoogleLoading(false);
-            toast.error("Google Sign-In prompt was not displayed. Please try again.");
+            toast.error(
+              "Google Sign-In prompt was not displayed. Please try again."
+            );
           }
         });
       } else {
@@ -448,7 +450,8 @@ export default function Login() {
             Unlock Your Technology's Potential
           </h2>
           <p className="text-lg opacity-90 max-w-md mx-auto">
-            Get AI-powered insights and connect with experts to accelerate your innovation journey.
+            Get AI-powered insights and connect with experts to accelerate your
+            innovation journey.
           </p>
           <BarChart3 className="w-32 h-32 mx-auto mt-8 opacity-75" />
         </div>
