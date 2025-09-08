@@ -9,6 +9,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [googleInitialized, setGoogleInitialized] = useState(false);
   const { login, googleLogin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -21,44 +22,109 @@ export default function Login() {
     formState: { errors },
   } = useForm();
 
+  // Google Sign-In initialization
   useEffect(() => {
     const initializeGoogleSignIn = () => {
-      if (window.google && window.google.accounts) {
-        try {
-          window.google.accounts.id.initialize({
-            client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-            callback: handleGoogleResponse,
-            auto_select: false,
-            cancel_on_tap_outside: true,
-          });
-          console.log("Google Sign-In initialized successfully");
-        } catch (error) {
-          console.error("Google Sign-In initialization error:", error);
-        }
+      console.log("Initializing Google Sign-In...");
+
+      // Check if Google library is loaded
+      if (!window.google || !window.google.accounts) {
+        console.error("Google library not loaded");
+        return;
+      }
+
+      // Check if client ID is available
+      const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+      if (!clientId) {
+        console.error("Google Client ID not found in environment variables");
+        toast.error("Google Client ID not configured");
+        return;
+      }
+
+      console.log("Client ID found:", clientId.substring(0, 10) + "...");
+
+      try {
+        window.google.accounts.id.initialize({
+          client_id: clientId,
+          callback: handleGoogleResponse,
+          auto_select: false,
+          cancel_on_tap_outside: true,
+          use_fedcm_for_prompt: false,
+        });
+
+        setGoogleInitialized(true);
+        console.log("Google Sign-In initialized successfully");
+      } catch (error) {
+        console.error("Google Sign-In initialization error:", error);
+        toast.error("Failed to initialize Google Sign-In");
       }
     };
 
-    if (
-      !document.querySelector('script[src*="accounts.google.com/gsi/client"]')
-    ) {
-      const gsiScript = document.createElement("script");
-      gsiScript.src = "https://accounts.google.com/gsi/client";
-      gsiScript.async = true;
-      gsiScript.defer = true;
-      gsiScript.onload = initializeGoogleSignIn;
-      document.head.appendChild(gsiScript);
-    } else {
-      initializeGoogleSignIn();
-    }
+    const loadGoogleScript = () => {
+      return new Promise((resolve, reject) => {
+        // Check if script already exists
+        const existingScript = document.querySelector(
+          'script[src*="accounts.google.com/gsi/client"]'
+        );
+        if (existingScript) {
+          if (window.google && window.google.accounts) {
+            resolve();
+          } else {
+            existingScript.onload = resolve;
+            existingScript.onerror = reject;
+          }
+          return;
+        }
+
+        const script = document.createElement("script");
+        script.src = "https://accounts.google.com/gsi/client";
+        script.async = true;
+        script.defer = true;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    };
+
+    const setupGoogleSignIn = async () => {
+      try {
+        await loadGoogleScript();
+        // Give a small delay for the library to be fully ready
+        setTimeout(initializeGoogleSignIn, 200);
+      } catch (error) {
+        console.error("Failed to load Google Script:", error);
+        toast.error("Failed to load Google Sign-In");
+      }
+    };
+
+    setupGoogleSignIn();
+
+    // Cleanup function
+    return () => {
+      if (window.google && window.google.accounts) {
+        try {
+          window.google.accounts.id.cancel();
+        } catch (error) {
+          console.log("Error canceling Google Sign-In:", error);
+        }
+      }
+    };
   }, []);
 
   const handleGoogleResponse = async (response) => {
+    console.log("Google response received");
     setGoogleLoading(true);
+
     try {
+      if (!response || !response.credential) {
+        throw new Error("No credential received from Google");
+      }
+
+      console.log("Calling googleLogin with credential...");
       const result = await googleLogin(response.credential);
 
       // Check if profile completion is needed
-      if (result.profile_incomplete) {
+      if (result && result.profile_incomplete) {
         toast.error("Please complete your profile");
         navigate("/profile-completion", {
           state: {
@@ -74,7 +140,9 @@ export default function Login() {
       navigate(from, { replace: true });
     } catch (error) {
       console.error("Google login error:", error);
-      toast.error(error.response?.data?.detail || "Google login failed");
+      const errorMessage =
+        error.response?.data?.detail || error.message || "Google login failed";
+      toast.error(errorMessage);
     } finally {
       setGoogleLoading(false);
     }
@@ -97,17 +165,97 @@ export default function Login() {
   };
 
   const handleGoogleLogin = () => {
+    console.log("Google login button clicked");
+    console.log("Google initialized:", googleInitialized);
+
+    if (!googleInitialized) {
+      toast.error(
+        "Google Sign-In is not ready yet. Please try again in a moment."
+      );
+      return;
+    }
+
+    if (!window.google || !window.google.accounts) {
+      toast.error("Google Sign-In not available");
+      return;
+    }
+
     setGoogleLoading(true);
+
     try {
-      if (window.google && window.google.accounts) {
-        window.google.accounts.id.prompt();
-      } else {
-        throw new Error("Google Sign-In not available");
-      }
+      // Try to show the One Tap prompt first
+      window.google.accounts.id.prompt((notification) => {
+        console.log("Google prompt notification:", notification);
+
+        if (notification.isNotDisplayed()) {
+          console.log(
+            "Prompt not displayed:",
+            notification.getNotDisplayedReason()
+          );
+          // Prompt failed, so we'll rely on the manual button click
+        } else if (notification.isSkippedMoment()) {
+          console.log("Prompt skipped:", notification.getSkippedReason());
+        } else if (notification.isDismissedMoment()) {
+          console.log("Prompt dismissed:", notification.getDismissedReason());
+        }
+
+        // If prompt doesn't work, user can still click the button
+        if (
+          notification.isNotDisplayed() ||
+          notification.isSkippedMoment() ||
+          notification.isDismissedMoment()
+        ) {
+          setGoogleLoading(false);
+        }
+      });
     } catch (error) {
       console.error("Google login error:", error);
       toast.error("Google Sign-In error. Please try again.");
       setGoogleLoading(false);
+    }
+  };
+
+  // Alternative Google button click handler for direct sign-in
+  const handleDirectGoogleSignIn = () => {
+    if (!googleInitialized || !window.google || !window.google.accounts) {
+      toast.error("Google Sign-In not available");
+      return;
+    }
+
+    setGoogleLoading(true);
+
+    // Create a temporary div for the Google button
+    const tempDiv = document.createElement("div");
+    tempDiv.style.position = "absolute";
+    tempDiv.style.top = "-9999px";
+    tempDiv.style.left = "-9999px";
+    document.body.appendChild(tempDiv);
+
+    try {
+      window.google.accounts.id.renderButton(tempDiv, {
+        theme: "outline",
+        size: "large",
+        text: "signin_with",
+        shape: "rectangular",
+        width: 250,
+      });
+
+      // Trigger click on the rendered button
+      setTimeout(() => {
+        const googleButton = tempDiv.querySelector('div[role="button"]');
+        if (googleButton) {
+          googleButton.click();
+        } else {
+          console.log("Google button not found, falling back to prompt");
+          window.google.accounts.id.prompt();
+        }
+        document.body.removeChild(tempDiv);
+      }, 100);
+    } catch (error) {
+      console.error("Direct Google sign-in error:", error);
+      document.body.removeChild(tempDiv);
+      setGoogleLoading(false);
+      toast.error("Google Sign-In error. Please try again.");
     }
   };
 
@@ -282,8 +430,8 @@ export default function Login() {
               <div>
                 <button
                   type="button"
-                  onClick={handleGoogleLogin}
-                  disabled={googleLoading}
+                  onClick={handleDirectGoogleSignIn}
+                  disabled={googleLoading || !googleInitialized}
                   className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {googleLoading ? (
@@ -311,11 +459,16 @@ export default function Login() {
                           d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                         />
                       </svg>
-                      Continue with Google
+                      {!googleInitialized
+                        ? "Loading Google..."
+                        : "Continue with Google"}
                     </>
                   )}
                 </button>
               </div>
+
+              {/* Hidden div for Google button rendering - Alternative approach */}
+              <div id="google-signin-button" style={{ display: "none" }}></div>
             </form>
           </div>
         </div>
