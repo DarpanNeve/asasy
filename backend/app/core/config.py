@@ -67,7 +67,7 @@ class Settings(BaseSettings):
 
     # Admin credentials
     ADMIN_USERNAME: str = "admin"
-    ADMIN_PASSWORD: str = "admin123"
+    ADMIN_PASSWORD: str = "ENtUAtONintE"
 
     # File upload
     MAX_FILE_SIZE: int = 10 * 1024 * 1024  # 10MB
