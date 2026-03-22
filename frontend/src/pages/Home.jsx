@@ -300,28 +300,8 @@ export default function Home() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 pt-20 pb-32 overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-blue-400/20 to-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
-          <div
-            className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-teal-400/15 to-teal-300/15 rounded-full blur-3xl animate-pulse"
-            style={{ animationDelay: "2s" }}
-          ></div>
-          <div
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-cyan-400/10 to-blue-400/10 rounded-full blur-3xl animate-pulse"
-            style={{ animationDelay: "1s" }}
-          ></div>
-        </div>
-
-        <div
-          className="absolute inset-0 opacity-[0.02] z-0"
-          style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(15,23,42,0.15) 1px, transparent 0)`,
-            backgroundSize: "24px 24px",
-          }}
-        ></div>
-
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <section className="min-h-screen bg-white pt-20 pb-32">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-16"
             initial="hidden"
