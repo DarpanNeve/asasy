@@ -159,6 +159,89 @@ async def send_welcome_email(email: str, name: str) -> bool:
         logger.error(f"Welcome email error: {e}")
         return False
 
+async def send_password_reset_email(email: str, name: str, reset_token: str) -> bool:
+    """Send password reset email"""
+    try:
+        reset_link = f"{settings.FRONTEND_URL}/reset-password?token={reset_token}"
+        
+        if not settings.MSG91_API_KEY or not settings.MSG91_TEMPLATE_ID:
+            logger.info(f"Password reset email would be sent to {email} ({name}) with link: {reset_link}")
+            return True
+            
+        url = "https://control.msg91.com/api/v5/email/send"
+        
+        headers = {
+            "Content-Type": "application/json",
+            "Authkey": settings.MSG91_API_KEY
+        }
+        
+        email_subject = "Password Reset Request for Asasy Account"
+        email_body = f"""
+        <html>
+          <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <h1 style="color: #2563eb; margin-bottom: 10px;">Password Reset</h1>
+            </div>
+            
+            <div style="background-color: #f8fafc; padding: 30px; border-radius: 10px; margin-bottom: 30px;">
+              <h2 style="color: #1e293b; margin-bottom: 20px;">Hi {name},</h2>
+              <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+                You have requested to reset your password for your Asasy account. Please click the link below to reset your password:
+              </p>
+              
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="{reset_link}" style="background-color: #2563eb; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+                  Reset Your Password
+                </a>
+              </div>
+              
+              <p style="color: #475569; font-size: 14px; line-height: 1.6; margin-top: 20px;">
+                This link is valid for 1 hour. If you did not request a password reset, please ignore this email.
+              </p>
+            </div>
+            
+            <div style="text-align: center; color: #64748b; font-size: 12px;">
+              <p>Best regards,<br>The Asasy Team</p>
+            </div>
+          </body>
+        </html>
+        """
+        
+        payload = {
+            "to": [
+                {
+                    "email": email,
+                    "name": name
+                }
+            ],
+            "from": {
+                "email": settings.MSG91_FROM_EMAIL or "noreply@asasy.com",
+                "name": "Asasy"
+            },
+            "domain": settings.MSG91_DOMAIN or "asasy.com",
+            "template_id": settings.MSG91_PASSWORD_RESET_TEMPLATE_ID or settings.MSG91_TEMPLATE_ID,
+            "subject": email_subject,
+            "body": email_body,
+            "variables": {
+                "name": name,
+                "reset_link": reset_link
+            }
+        }
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, json=payload, headers=headers)
+            
+        if response.status_code == 200:
+            logger.info(f"Password reset email sent successfully to {email}")
+            return True
+        else:
+            logger.error(f"MSG91 password reset email error: {response.status_code} - {response.text}")
+            return False
+            
+    except Exception as e:
+        logger.error(f"Password reset email error: {e}")
+        return False
+
 async def send_report_ready_email(email: str, name: str, report_title: str, report_id: str) -> bool:
     """Send notification when report is ready"""
     try:

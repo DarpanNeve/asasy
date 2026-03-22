@@ -22,6 +22,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Quote,
+  Check,
+  Briefcase,
+  FlaskConical,
+  Building,
+  Handshake,
+  Landmark,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { api } from "../services/api";
@@ -61,30 +67,46 @@ export default function Home() {
     };
   }, []);
 
-  const features = [
+  const coreFeatures = [
     {
-      icon: Zap,
-      title: "AI-Powered Analysis",
-      description:
-        "Generate comprehensive technology assessment reports in minutes using advanced AI algorithms.",
-    },
-    {
-      icon: FileText,
-      title: "Professional Reports",
-      description:
-        "Export publication-ready PDF reports with detailed analysis and professional formatting.",
-    },
-    {
-      icon: Shield,
-      title: "RTTP Certified",
-      description:
-        "Work with Registered Technology Transfer Professionals for expert IP commercialization guidance.",
+      icon: Sparkles,
+      title: "AI-Powered Reports",
+      description: "Data-backed, globally benchmarked outputs.",
     },
     {
       icon: Users,
-      title: "Global Network",
-      description:
-        "Access to worldwide network of technology transfer offices and IP licensing experts.",
+      title: "Expert Integration",
+      description: "Access to top technology transfer professionals worldwide.",
+    },
+    {
+      icon: Shield,
+      title: "IP Landscape & Freedom-to-Operate",
+      description: "Minimize legal risks early.",
+    },
+    {
+      icon: TrendingUp,
+      title: "Commercialisation Pathways",
+      description: "Licensing, startup creation, JV, or CSR integration.",
+    },
+    {
+      icon: Award,
+      title: "Regulatory & Compliance Mapping",
+      description: "FDA, CE, BIS, AIS readiness.",
+    },
+    {
+      icon: BarChart3,
+      title: "Financial & ROI Projections",
+      description: "Cost models, TAM/SAM/SOM, 5-year forecasts.",
+    },
+    {
+      icon: Shield,
+      title: "Enterprise-Grade Security",
+      description: "Your data stays private and protected.",
+    },
+    {
+      icon: Globe,
+      title: "Global Market Access",
+      description: "Connect with partners, investors, and customers worldwide.",
     },
   ];
 
@@ -231,7 +253,8 @@ export default function Home() {
     } catch (error) {
       if (error.response?.status === 403) {
         toast.error(
-          error.response?.data?.detail || "Insufficient tokens. Please purchase more tokens."
+          error.response?.data?.detail ||
+            "Insufficient tokens. Please purchase more tokens."
         );
         navigate("/login-pricing");
       } else {
@@ -277,9 +300,8 @@ export default function Home() {
     <div className="min-h-screen bg-white">
       <Header />
 
-      {/* Hero Section with Report Generator */}
+      {/* Hero Section */}
       <section className="relative min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 pt-20 pb-32 overflow-hidden">
-        {/* Modern Background Elements */}
         <div className="absolute inset-0 z-0">
           <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-blue-400/20 to-indigo-400/20 rounded-full blur-3xl animate-pulse"></div>
           <div
@@ -292,7 +314,6 @@ export default function Home() {
           ></div>
         </div>
 
-        {/* Subtle Grid Pattern */}
         <div
           className="absolute inset-0 opacity-[0.02] z-0"
           style={{
@@ -302,7 +323,6 @@ export default function Home() {
         ></div>
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Header Section */}
           <motion.div
             className="text-center mb-16"
             initial="hidden"
@@ -335,21 +355,34 @@ export default function Home() {
             </h1>
 
             <motion.p
-              className="text-xl text-slate-600 mb-8 max-w-3xl mx-auto leading-relaxed"
+              className="text-xl text-slate-600 mb-4 max-w-3xl mx-auto leading-relaxed"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.8 }}
             >
-              Transform your innovation into commercial success. Get
-              comprehensive technology assessment reports with expert RTTP
-              guidance.
-              <span className="font-semibold text-slate-800">
-                {" "}
-                Start with a free report - no credit card required.
-              </span>
+              Validate, Protect, and Scale Your Innovation with Confidence.
+            </motion.p>
+            <motion.p
+              className="text-lg text-slate-500 mx-auto"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.8 }}
+            >
+              Transform your research, startup idea, or IP into a market-ready
+              opportunity. Get instant, AI-driven assessment reports that cover
+              technical feasibility, IP strength, market readiness,
+              commercialisation potential, and risk analysis.
+            </motion.p>
+            <motion.p
+              className="text-lg text-slate-500 mb-8 mx-auto"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.8 }}
+            >
+              Trusted by innovators, startups, universities, incubators, and
+              enterprises.
             </motion.p>
 
-            {/* Feature Pills */}
             <motion.div
               className="flex flex-wrap justify-center gap-3 mb-12"
               initial={{ opacity: 0, y: 20 }}
@@ -358,8 +391,17 @@ export default function Home() {
             >
               {[
                 { icon: Sparkles, text: "AI-Powered Analysis", color: "blue" },
-                { icon: Shield, text: "RTTP Certified", color: "emerald" },
-                { icon: Zap, text: "Results in Minutes", color: "amber" },
+                {
+                  icon: Shield,
+                  text: "Certified Experts",
+                  color: "emerald",
+                },
+                { icon: Zap, text: "Reports in Minutes", color: "amber" },
+                {
+                  icon: FileText,
+                  text: "Token-Based Flexible Pricing",
+                  color: "purple",
+                },
               ].map((feature, index) => (
                 <motion.div
                   key={index}
@@ -377,271 +419,166 @@ export default function Home() {
                 </motion.div>
               ))}
             </motion.div>
-          </motion.div>
 
-          {/* Main Form Card */}
-          <motion.div
-            className="max-w-4xl mx-auto"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9, duration: 0.6 }}
-          >
-            <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 md:p-12">
-              <form
-                onSubmit={handleSubmit(handleGenerateReport)}
-                className="space-y-6"
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9, duration: 0.8 }}
+            >
+              <a
+                href="#generate-report"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document
+                    .querySelector("#generate-report")
+                    .scrollIntoView({ behavior: "smooth" });
+                }}
+                className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
               >
-                <div className="relative">
-                  {/* Report Complexity Selection */}
-                  <div className="mb-6">
-                    <label className="block text-sm font-semibold text-slate-700 mb-4">
-                      Choose Report Complexity
-                    </label>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {[
-                        {
-                          id: "basic",
-                          name: "Basic",
-                          tokens: "2,500",
-                          description: "Essential analysis",
-                          color: "blue",
-                        },
-                        {
-                          id: "advanced", 
-                          name: "Advanced",
-                          tokens: "7,500",
-                          description: "Comprehensive analysis",
-                          color: "purple",
-                        },
-                        {
-                          id: "comprehensive",
-                          name: "Comprehensive", 
-                          tokens: "9,000",
-                          description: "Premium analysis",
-                          color: "emerald",
-                        },
-                      ].map((option) => (
-                        <button
-                          key={option.id}
-                          type="button"
-                          onClick={() => setSelectedComplexity(option.id)}
-                          disabled={isGenerating}
-                          className={`
-                            relative p-4 rounded-xl border-2 transition-all duration-300 text-left
-                            ${
-                              selectedComplexity === option.id
-                                ? `border-${option.color}-500 bg-${option.color}-50 shadow-lg`
-                                : "border-slate-200 bg-white/80 hover:border-slate-300 hover:shadow-md"
-                            }
-                            disabled:opacity-50 disabled:cursor-not-allowed
-                          `}
-                        >
-                          <div className="flex items-center justify-between mb-2">
-                            <h3 className={`font-semibold ${
-                              selectedComplexity === option.id 
-                                ? `text-${option.color}-700` 
-                                : "text-slate-700"
-                            }`}>
-                              {option.name}
-                            </h3>
-                            <div className={`
-                              w-4 h-4 rounded-full border-2 transition-all duration-200
-                              ${
-                                selectedComplexity === option.id
-                                  ? `border-${option.color}-500 bg-${option.color}-500`
-                                  : "border-slate-300"
-                              }
-                            `}>
-                              {selectedComplexity === option.id && (
-                                <div className="w-full h-full rounded-full bg-white scale-50"></div>
-                              )}
-                            </div>
-                          </div>
-                          <p className="text-sm text-slate-600 mb-1">
-                            {option.tokens} tokens
-                          </p>
-                          <p className="text-xs text-slate-500">
-                            {option.description}
-                          </p>
-                          
-                          {selectedComplexity === option.id && (
-                            <motion.div
-                              className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10"
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              transition={{ duration: 0.3 }}
-                            />
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <label className="block text-sm font-semibold text-slate-700 mb-3">
-                    Describe Your Technology Innovation
-                  </label>
-                  <div className="relative">
-                    <textarea
-                      {...register("idea", {
-                        required: "Please describe your technology idea",
-                        minLength: {
-                          value: 50,
-                          message: "Please provide at least 50 characters",
-                        },
-                      })}
-                      rows={6}
-                      className="w-full p-6 pr-16 border-2 border-slate-200 rounded-2xl shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:outline-none resize-none text-lg transition-all duration-300 hover:shadow-md bg-white/80 backdrop-blur-sm"
-                      placeholder="Include the following elements for better analysis:
-
-1. What is the core technology or invention?
-2. What real-world problem does it solve?
-3. What are the main features and how does it work?
-4. Who are the potential users or markets?
-5. Any development status (idea, prototype, tested, patented)?
-6. Mention any unique advantages (speed, cost, sustainability, accuracy, etc.)
-
-Example Format to Follow:
-A wearable biosensor patch that monitors glucose levels in real-time using sweat analysis. Designed for non-invasive diabetes management. Includes AI-based alerts and mobile app integration. Currently at prototype stage, patent filed in India, and tested with 100 users during a 2-month pilot."
-                      disabled={isGenerating}
-                    />
-                    <button
-                      type="submit"
-                      disabled={isGenerating}
-                      className="absolute bottom-4 right-4 p-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-4 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
-                    >
-                      {isGenerating ? (
-                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                      ) : (
-                        <Send className="h-6 w-6" />
-                      )}
-                    </button>
-                  </div>
-                  {errors.idea && (
-                    <p className="text-red-600 text-sm mt-2 flex items-center gap-1">
-                      <span className="w-1 h-1 bg-red-600 rounded-full"></span>
-                      {errors.idea.message}
-                    </p>
-                  )}
-                </div>
-
-                {/* Generate Button */}
-                <motion.button
-                  type="submit"
-                  disabled={isGenerating}
-                  className="w-full py-4 px-8 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-2xl hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-4 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-3 text-lg"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  {isGenerating ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      Generating Your Report...
-                    </>
-                  ) : (
-                    <>
-                      Generate Free Assessment Report
-                      <ArrowRight className="h-5 w-5" />
-                    </>
-                  )}
-                </motion.button>
-              </form>
-
-              <section className="py-16 bg-neutral-50">
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                  <h2 className="text-3xl font-bold text-neutral-900 mb-10">
-                    Download Sample Reports
-                  </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-                    {/* Basic */}
-                    <a
-                      href="/assets/pdf/basic-sample.pdf"
-                      download
-                      className="group bg-white p-6 rounded-2xl border border-neutral-200 shadow-sm hover:shadow-lg transition"
-                    >
-                      <div className="text-5xl mb-4 text-primary-600">📄</div>
-                      <h3 className="text-xl font-semibold text-neutral-800 mb-2 group-hover:text-primary-600">
-                        Basic
-                      </h3>
-                      <p className="text-sm text-neutral-500">
-                        Ideal for early-stage IP assessments
-                      </p>
-                    </a>
-
-                    {/* Advance */}
-                    <a
-                      href="/assets/pdf/advance-sample.pdf"
-                      download
-                      className="group bg-white p-6 rounded-2xl border border-neutral-200 shadow-sm hover:shadow-lg transition"
-                    >
-                      <div className="text-5xl mb-4 text-secondary-600">📄</div>
-                      <h3 className="text-xl font-semibold text-neutral-800 mb-2 group-hover:text-secondary-600">
-                        Advance
-                      </h3>
-                      <p className="text-sm text-neutral-500">
-                        Includes licensing and market insights
-                      </p>
-                    </a>
-
-                    {/* Comprehensive */}
-                    <a
-                      href="/assets/pdf/comprehensive-sample.pdf"
-                      download
-                      className="group bg-white p-6 rounded-2xl border border-neutral-200 shadow-sm hover:shadow-lg transition"
-                    >
-                      <div className="text-5xl mb-4 text-accent-600">📄</div>
-                      <h3 className="text-xl font-semibold text-neutral-800 mb-2 group-hover:text-accent-600">
-                        Comprehensive
-                      </h3>
-                      <p className="text-sm text-neutral-500">
-                        Complete due diligence + commercialization plan
-                      </p>
-                    </a>
-                  </div>
-                </div>
-              </section>
-
-              {/* Trust Indicators */}
-              <div className="mt-8 pt-8 border-t border-slate-200">
-                <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-slate-600">
-                  <motion.div
-                    className="flex items-center gap-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1.2 }}
-                  >
-                    <Shield className="h-4 w-4 text-emerald-500" />
-                    <span>Enterprise Grade Security</span>
-                  </motion.div>
-                  <motion.div
-                    className="flex items-center gap-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1.4 }}
-                  >
-                    <Sparkles className="h-4 w-4 text-blue-500" />
-                    <span>Advanced AI Analysis</span>
-                  </motion.div>
-                  <motion.div
-                    className="flex items-center gap-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1.6 }}
-                  >
-                    <Zap className="h-4 w-4 text-amber-500" />
-                    <span>Instant Results</span>
-                  </motion.div>
-                </div>
-              </div>
-            </div>
+                Get Started Now
+                <ArrowRight className="ml-3 h-5 w-5" />
+              </a>
+            </motion.div>
           </motion.div>
         </div>
       </section>
-      {/* Features Section */}
+
+      {/* Why Assesme? Section */}
+      <section className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">
+              Why Assesme?
+            </h2>
+            <p className="text-xl text-slate-600 mx-auto mb-12">
+              Today, most innovations never reach the market — not because they
+              lack potential, but because they lack structured validation.
+              Assesme solves this by providing
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Instant Technology Assessment Reports",
+                description: "Aligned with WIPO, EPO, NIH, and OECD standards.",
+              },
+              {
+                title: "IP & Patentability Insights",
+                description: "For national and international filings.",
+              },
+              {
+                title: "Market, Competition & Risk Analysis",
+                description: "For better decision-making.",
+              },
+              {
+                title: "Commercialisation Roadmaps",
+                description: "For licensing, spin-offs, or partnerships.",
+              },
+              {
+                title: "TRL & Feasibility Checks",
+                description: "For early-stage research and prototypes.",
+              },
+              {
+                title: "Investor-Ready Documentation",
+                description: "To improve fundraising success.",
+              },
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                className="bg-slate-50 p-8 rounded-2xl shadow-sm hover:shadow-lg transition-shadow"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <CheckCircle className="h-8 w-8 text-blue-600 mb-4" />
+                <h3 className="text-xl font-semibold text-slate-800 mb-2">
+                  {item.title}
+                </h3>
+                <p className="text-slate-600">{item.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Who Can Use Assesme? Section */}
+      <section className="py-24 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">
+              Who Can Use Assesme?
+            </h2>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-12">
+              Assesme is built for the entire innovation ecosystem
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                icon: Lightbulb,
+                title: "Startups & Founders",
+                description: "Validate ideas before investing years of effort.",
+              },
+              {
+                icon: Landmark,
+                title: "Universities & Academia",
+                description:
+                  "Assess research outputs, patents, and student innovations.",
+              },
+              {
+                icon: FlaskConical,
+                title: "R&D Labs & Corporates",
+                description:
+                  "De-risk projects and identify commercialization paths.",
+              },
+              {
+                icon: Briefcase,
+                title: "Investors & VCs",
+                description:
+                  "Get standardized, comparable due diligence reports.",
+              },
+              {
+                icon: Building,
+                title: "Government & Policy Bodies",
+                description:
+                  "Evaluate funding proposals with data-driven reports.",
+              },
+              {
+                icon: Handshake,
+                title: "Incubators & Accelerators",
+                description:
+                  "Screen applications and guide startups with structured assessments.",
+              },
+            ].map((user, index) => (
+              <motion.div
+                key={index}
+                className="text-center p-8 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-shadow"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <div className="flex justify-center mb-4">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                    <user.icon className="h-8 w-8 text-blue-600" />
+                  </div>
+                </div>
+                <h3 className="text-xl font-semibold text-slate-800 mb-2">
+                  {user.title}
+                </h3>
+                <p className="text-slate-600">{user.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Core Features Section */}
       <section
         id="features"
         className="py-24 bg-gradient-to-b from-white via-slate-50/30 to-white relative overflow-hidden"
       >
-        {/* Background Elements */}
         <div className="absolute inset-0 z-0">
           <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-blue-400/10 to-indigo-400/10 rounded-full blur-3xl animate-pulse"></div>
           <div
@@ -649,8 +586,6 @@ A wearable biosensor patch that monitors glucose levels in real-time using sweat
             style={{ animationDelay: "2s" }}
           ></div>
         </div>
-
-        {/* Subtle Grid Pattern */}
         <div
           className="absolute inset-0 opacity-[0.015] z-0"
           style={{
@@ -658,59 +593,25 @@ A wearable biosensor patch that monitors glucose levels in real-time using sweat
             backgroundSize: "40px 40px",
           }}
         />
-
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Header Section */}
           <motion.div
             className="text-center mb-20"
             initial="hidden"
             animate="visible"
             variants={fadeIn}
           >
-            {/* Feature Badge */}
-            <motion.div
-              className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-blue-200 rounded-full mb-6 shadow-sm"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-              <span className="text-sm font-medium text-slate-700">
-                Advanced IP Technology
-              </span>
-            </motion.div>
-
             <h2 className="text-4xl md:text-6xl font-bold text-slate-900 mb-6 leading-tight">
-              Powerful Features for
-              <span className="block bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                IP Commercialization
-              </span>
+              Core Features
             </h2>
-
-            <motion.p
-              className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-            >
-              Everything you need to conduct thorough technology assessments and
-              make
-              <span className="font-semibold text-slate-800">
-                {" "}
-                data-driven commercialization decisions
-              </span>{" "}
-              with confidence.
-            </motion.p>
           </motion.div>
-
-          {/* Features Grid */}
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
             variants={staggerContainer}
             initial="hidden"
-            animate="visible"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
           >
-            {features.map((feature, index) => {
+            {coreFeatures.map((feature, index) => {
               const IconComponent = feature.icon;
               return (
                 <motion.div
@@ -719,31 +620,15 @@ A wearable biosensor patch that monitors glucose levels in real-time using sweat
                   variants={fadeIn}
                   whileHover="hover"
                 >
-                  {/* Feature Card */}
                   <div className="relative h-full p-8 bg-white/70 backdrop-blur-xl rounded-3xl border border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 group-hover:scale-105 group-hover:-translate-y-2">
-                    {/* Card Background Gradient */}
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-transparent to-indigo-50/50 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-                    {/* Icon Container */}
                     <motion.div
                       className="relative z-10 inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 bg-gradient-to-br from-blue-100 to-indigo-100 group-hover:from-blue-500 group-hover:to-indigo-600 transition-all duration-500 shadow-md group-hover:shadow-lg"
                       variants={cardHover}
                     >
-                      {/* Icon Glow Effect */}
                       <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-400/20 to-indigo-400/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
                       <IconComponent className="relative z-10 h-10 w-10 text-blue-600 group-hover:text-white transition-colors duration-500" />
-
-                      {/* Active Indicator */}
-                      <motion.div
-                        className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-white shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        initial={{ scale: 0 }}
-                        whileHover={{ scale: 1 }}
-                        transition={{ delay: 0.2 }}
-                      />
                     </motion.div>
-
-                    {/* Content */}
                     <div className="relative z-10">
                       <h3 className="text-xl font-bold text-slate-900 mb-4 group-hover:text-slate-800 transition-colors duration-300">
                         {feature.title}
@@ -752,58 +637,332 @@ A wearable biosensor patch that monitors glucose levels in real-time using sweat
                         {feature.description}
                       </p>
                     </div>
-
-                    {/* Hover Arrow */}
-                    <motion.div
-                      className="absolute bottom-6 right-6 w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300"
-                      initial={{ scale: 0, rotate: -180 }}
-                      whileHover={{ scale: 1, rotate: 0 }}
-                    >
-                      <svg
-                        className="w-4 h-4 text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </motion.div>
-
-                    {/* Shine Effect */}
-                    <div className="absolute inset-0 rounded-3xl bg-gradient-to-tr from-white/10 via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                   </div>
                 </motion.div>
               );
             })}
           </motion.div>
+        </div>
+      </section>
 
-          {/* Bottom CTA Section */}
-          <motion.div
-            className="text-center mt-20"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.6 }}
-          >
-            <div className="inline-flex items-center gap-8 px-8 py-4 bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 shadow-lg">
-              {[
-                { icon: "🚀", label: "92% Accuracy Rate" },
-                { icon: "⚡", label: "< 60 Second Analysis" },
-                { icon: "🔒", label: "Enterprise Security" },
-              ].map((stat, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <span className="text-lg">{stat.icon}</span>
-                  <span className="text-sm font-medium text-slate-700">
-                    {stat.label}
-                  </span>
+      {/* How Assesme Works Section */}
+      <section className="py-24 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-4xl font-bold text-slate-900 mb-12">
+              How Assesme Works
+            </h2>
+          </div>
+          <div className="relative max-w-3xl mx-auto">
+            <div className="absolute left-1/2 top-10 bottom-10 w-0.5 hidden md:block" />
+            {[
+              {
+                icon: Lightbulb,
+                title: "Describe Your Innovation",
+                description:
+                  "Share details about your idea, prototype, or patent.",
+              },
+              {
+                icon: Zap,
+                title: "AI Review",
+                description:
+                  "Assesme’s engine analyses and validates across 30+ parameters.",
+              },
+              {
+                icon: FileText,
+                title: "Download Your Report",
+                description:
+                  "Receive structured, investor-grade PDF instantly.",
+              },
+              {
+                icon: Users,
+                title: "Get Guidance",
+                description:
+                  "Connect with experts for next steps, IP licensing, or funding.",
+              },
+            ].map((step, index) => (
+              <motion.div
+                key={index}
+                className="flex items-center mb-16"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.5, delay: index * 0.2 }}
+              >
+                <div
+                  className={`flex-1 ${
+                    index % 2 === 0 ? "md:pr-12" : "md:pl-12 md:order-2"
+                  }`}
+                >
+                  <div className="p-6 bg-white rounded-2xl shadow-md">
+                    <h3 className="text-xl font-semibold text-slate-800 mb-2">
+                      {step.title}
+                    </h3>
+                    <p className="text-slate-600">{step.description}</p>
+                  </div>
                 </div>
-              ))}
-            </div>
+                <div className="hidden md:flex w-16 h-16 bg-blue-600 rounded-full items-center justify-center text-white font-bold z-10 shadow-lg flex-shrink-0 md:order-1">
+                  <step.icon className="h-8 w-8" />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits of Using Assesme Section */}
+      <section className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-4xl font-bold text-slate-900 mb-12">
+              Benefits of Using Assesme
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                for: "Startups",
+                benefit: "De-risk your business model before scaling.",
+              },
+              {
+                for: "Researchers",
+                benefit:
+                  "Ensure your work has real-world commercialisation potential.",
+              },
+              {
+                for: "Corporates",
+                benefit: "Benchmark internal R&D with industry trends.",
+              },
+              {
+                for: "Investors",
+                benefit: "Standardised evaluation of deal flow.",
+              },
+              {
+                for: "Policy Makers",
+                benefit: "Transparent, data-driven innovation assessment.",
+              },
+              {
+                for: "Accelerators",
+                benefit:
+                  "Identify high-potential ventures faster with objective insights.",
+              },
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                className="bg-slate-50 p-8 rounded-2xl"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <h3 className="text-xl font-semibold text-slate-800 mb-2">
+                  {item.for}
+                </h3>
+                <p className="text-slate-600">{item.benefit}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Report Generator Section */}
+      <section id="generate-report" className="py-24 bg-slate-100">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            className="bg-white rounded-3xl shadow-2xl p-8 md:p-12"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.6 }}
+          >
+            <form
+              onSubmit={handleSubmit(handleGenerateReport)}
+              className="space-y-6"
+            >
+              <div className="relative">
+                <div className="mb-6">
+                  <label className="block text-sm font-semibold text-slate-700 mb-4">
+                    Choose Report Complexity
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {[
+                      {
+                        id: "basic",
+                        name: "Basic",
+                        tokens: "2,500",
+                        description: "Essential analysis",
+                        color: "blue",
+                      },
+                      {
+                        id: "advanced",
+                        name: "Advanced",
+                        tokens: "7,500",
+                        description: "Comprehensive analysis",
+                        color: "purple",
+                      },
+                      {
+                        id: "comprehensive",
+                        name: "Comprehensive",
+                        tokens: "9,000",
+                        description: "Premium analysis",
+                        color: "emerald",
+                      },
+                    ].map((option) => (
+                      <button
+                        key={option.id}
+                        type="button"
+                        onClick={() => setSelectedComplexity(option.id)}
+                        disabled={isGenerating}
+                        className={`relative p-4 rounded-xl border-2 transition-all duration-300 text-left ${
+                          selectedComplexity === option.id
+                            ? `border-${option.color}-500 bg-${option.color}-50 shadow-lg`
+                            : "border-slate-200 bg-white/80 hover:border-slate-300 hover:shadow-md"
+                        } disabled:opacity-50 disabled:cursor-not-allowed`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <h3
+                            className={`font-semibold ${
+                              selectedComplexity === option.id
+                                ? `text-${option.color}-700`
+                                : "text-slate-700"
+                            }`}
+                          >
+                            {option.name}
+                          </h3>
+                          <div
+                            className={`w-4 h-4 rounded-full border-2 transition-all duration-200 ${
+                              selectedComplexity === option.id
+                                ? `border-${option.color}-500 bg-${option.color}-500`
+                                : "border-slate-300"
+                            }`}
+                          >
+                            {selectedComplexity === option.id && (
+                              <div className="w-full h-full rounded-full bg-white scale-50"></div>
+                            )}
+                          </div>
+                        </div>
+                        <p className="text-sm text-slate-600 mb-1">
+                          {option.tokens} tokens
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          {option.description}
+                        </p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <label className="block text-sm font-semibold text-slate-700 mb-3">
+                  Describe Your Technology Innovation
+                </label>
+                <div className="relative">
+                  <textarea
+                    {...register("idea", {
+                      required: "Please describe your technology idea",
+                      minLength: {
+                        value: 50,
+                        message: "Please provide at least 50 characters",
+                      },
+                    })}
+                    rows={6}
+                    className="w-full p-6 pr-16 border-2 border-slate-200 rounded-2xl shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:outline-none resize-none text-lg transition-all duration-300 hover:shadow-md bg-white/80 backdrop-blur-sm"
+                    placeholder="Include the following elements for better analysis..."
+                    disabled={isGenerating}
+                  />
+                  <button
+                    type="submit"
+                    disabled={isGenerating}
+                    className="absolute bottom-4 right-4 p-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-4 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
+                  >
+                    {isGenerating ? (
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                    ) : (
+                      <Send className="h-6 w-6" />
+                    )}
+                  </button>
+                </div>
+                {errors.idea && (
+                  <p className="text-red-600 text-sm mt-2">
+                    {errors.idea.message}
+                  </p>
+                )}
+              </div>
+
+              <motion.button
+                type="submit"
+                disabled={isGenerating}
+                className="w-full py-4 px-8 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-2xl hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-4 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-3 text-lg"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                {isGenerating ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    Generating Your Report...
+                  </>
+                ) : (
+                  <>
+                    Generate Assessment Report
+                    <ArrowRight className="h-5 w-5" />
+                  </>
+                )}
+              </motion.button>
+            </form>
           </motion.div>
+        </div>
+      </section>
+
+      <section className="py-16 bg-neutral-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-bold text-neutral-900 mb-10">
+            Download Sample Reports
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+            {/* Basic */}
+            <a
+              href="/assets/pdf/basic-sample.pdf"
+              download
+              className="group bg-white p-6 rounded-2xl border border-neutral-200 shadow-sm hover:shadow-lg transition"
+            >
+              <div className="text-5xl mb-4 text-primary-600">📄</div>
+              <h3 className="text-xl font-semibold text-neutral-800 mb-2 group-hover:text-primary-600">
+                Basic
+              </h3>
+              <p className="text-sm text-neutral-500">
+                Ideal for early-stage IP assessments
+              </p>
+            </a>
+
+            {/* Advance */}
+            <a
+              href="/assets/pdf/advance-sample.pdf"
+              download
+              className="group bg-white p-6 rounded-2xl border border-neutral-200 shadow-sm hover:shadow-lg transition"
+            >
+              <div className="text-5xl mb-4 text-secondary-600">📄</div>
+              <h3 className="text-xl font-semibold text-neutral-800 mb-2 group-hover:text-secondary-600">
+                Advance
+              </h3>
+              <p className="text-sm text-neutral-500">
+                Includes licensing and market insights
+              </p>
+            </a>
+
+            {/* Comprehensive */}
+            <a
+              href="/assets/pdf/comprehensive-sample.pdf"
+              download
+              className="group bg-white p-6 rounded-2xl border border-neutral-200 shadow-sm hover:shadow-lg transition"
+            >
+              <div className="text-5xl mb-4 text-accent-600">📄</div>
+              <h3 className="text-xl font-semibold text-neutral-800 mb-2 group-hover:text-accent-600">
+                Comprehensive
+              </h3>
+              <p className="text-sm text-neutral-500">
+                Complete due diligence + commercialization plan
+              </p>
+            </a>
+          </div>
         </div>
       </section>
 
@@ -992,9 +1151,7 @@ A wearable biosensor patch that monitors glucose levels in real-time using sweat
         </div>
       </section> */}
 
-      
       <section className="relative py-24 bg-gradient-to-br from-slate-50 via-white to-blue-50 overflow-hidden">
-        
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1)_0%,transparent_50%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_80%,rgba(168,85,247,0.08)_0%,transparent_50%)]" />
 
@@ -1010,9 +1167,9 @@ A wearable biosensor patch that monitors glucose levels in real-time using sweat
               Proven Process
             </div>
             <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-purple-800 bg-clip-text text-transparent mb-6">
-              IP Commercialisation Journey
+              Commercialisation Journey
             </h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-slate-600 mx-auto leading-relaxed">
               Transform your innovation into commercial success through our
               <span className="text-blue-600 font-semibold">
                 {" "}
@@ -1089,9 +1246,7 @@ A wearable biosensor patch that monitors glucose levels in real-time using sweat
         </div>
       </section>
 
-
-
-         {/* RTTP Section */}
+      {/* RTTP Section */}
       <section className="py-20 bg-gradient-to-br from-blue-700 to-indigo-800 relative overflow-hidden">
         {/* Background decorative elements */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(168,85,247,0.1)_0%,transparent_50%)]" />
@@ -1124,13 +1279,12 @@ A wearable biosensor patch that monitors glucose levels in real-time using sweat
                 <ArrowRight className="ml-3 h-5 w-5" />
               </Link>
               {/* Secondary button for RTTPs to join */}
-              
             </div>
           </motion.div>
         </div>
       </section>
 
-{/* 
+      {/* 
       
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

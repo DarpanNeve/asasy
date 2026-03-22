@@ -67,12 +67,13 @@ class Settings(BaseSettings):
 
     # Admin credentials
     ADMIN_USERNAME: str = "admin"
-    ADMIN_PASSWORD: str = "admin123"
+    ADMIN_PASSWORD: str = "ENtUAtONintE"
 
     # File upload
     MAX_FILE_SIZE: int = 10 * 1024 * 1024  # 10MB
     ALLOWED_FILE_TYPES: List[str] = ["pdf", "docx", "txt"]
 
+    FRONTEND_URL:str = "https://assesme.com"
     # Report generation
     REPORTS_STORAGE_PATH: str = "reports"
     MAX_REPORTS_FREE_USERS: int = 1

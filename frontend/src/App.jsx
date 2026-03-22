@@ -1,4 +1,7 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -8,6 +11,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import Layout from "./components/Layout";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ForgotPassword from "./pages/ForgotPassword";
 import ProfileCompletion from "./pages/ProfileCompletion";
 import Profile from "./pages/Profile";
 import Reports from "./pages/Reports";
@@ -16,7 +20,7 @@ import Home from "./pages/Home";
 import RTTP from "./pages/RTTP";
 import Admin from "./pages/Admin";
 import Contact from "./pages/Contact";
-import PressReleases from "./pages/PressReleases";  
+import PressReleases from "./pages/PressReleases";
 import Privacy from "./pages/Privacy";
 import About from "./pages/About";
 import Terms from "./pages/Terms";
@@ -40,96 +44,96 @@ const queryClient = new QueryClient({
   },
 });
 
+const router = createBrowserRouter(
+  [
+    { path: "/", element: <Home /> },
+    { path: "/login", element: <Login /> },
+    { path: "/signup", element: <Signup /> },
+    { path: "/forgot-password", element: <ForgotPassword /> },
+    { path: "/profile-completion", element: <ProfileCompletion /> },
+    { path: "/rttp", element: <RTTP /> },
+    { path: "/contact", element: <Contact /> },
+    { path: "/about", element: <About /> },
+    {
+      path: "/pricing",
+      element: (
+        <div className="min-h-screen">
+          <Header />
+          <TokenPricingSection
+            compact={false}
+            showReportTypes={true}
+            showHeader={true}
+          />
+          <Footer />
+        </div>
+      ),
+    },
+    { path: "/admin", element: <Admin /> },
+    { path: "/careers", element: <Careers /> },
+    { path: "/blog", element: <Blog /> },
+    { path: "/blog/:slug", element: <BlogPost /> },
+    { path: "/press-releases", element: <PressReleases /> },
+    { path: "/press-releases/:slug", element: <BlogPost /> },
+    { path: "/privacy", element: <Privacy /> },
+    { path: "/terms", element: <Terms /> },
+    { path: "/pricing-policy", element: <PricingPolicy /> },
+    { path: "/refund-policy", element: <RefundPolicy /> },
+    {
+      path: "/profile",
+      element: (
+        <ProtectedRoute>
+          <Layout>
+            <Profile />
+          </Layout>
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/login-pricing",
+      element: (
+        <ProtectedRoute>
+          <Layout>
+            <Pricing />
+          </Layout>
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/reports",
+      element: (
+        <ProtectedRoute>
+          <Layout>
+            <Reports />
+          </Layout>
+        </ProtectedRoute>
+      ),
+    },
+  ],
+  {
+    future: {
+      // opt-in to future flags
+      v7_startTransition: true,
+      v7_relativeSplatPath: true,
+    },
+  }
+);
+
 function App() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <AppProvider>
-            <Router>
-              <div className="min-h-screen bg-neutral-50">
-                <Routes>
-                  {/* Public routes */}
-                  <Route path="/" element={<Home />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/signup" element={<Signup />} />
-                  <Route
-                    path="/profile-completion"
-                    element={<ProfileCompletion />}
-                  />
-                  <Route path="/rttp" element={<RTTP />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/about" element={<About />} />
-                  <Route
-                    path="/pricing"
-                    element={
-                      <div className="min-h-screen">
-                        <Header />
-                        <TokenPricingSection
-                          compact={false}
-                          showReportTypes={true}
-                          showHeader={true}
-                        />
-                        <Footer />
-                      </div>
-                    }
-                  />
-                  <Route path="/admin" element={<Admin />} />
-
-                  {/* Legal pages */}
-                  <Route path="/careers" element={<Careers />} />
-                  <Route path="/blog" element={<Blog />} />
-                  <Route path="/blog/:slug" element={<BlogPost />} />
-                  <Route path="/press-releases" element={<PressReleases />} />
-                  <Route path="/press-releases/:slug" element={<BlogPost />} />
-                  <Route path="/privacy" element={<Privacy />} />
-                  <Route path="/terms" element={<Terms />} />
-                  <Route path="/pricing-policy" element={<PricingPolicy />} />
-                  <Route path="/refund-policy" element={<RefundPolicy />} />
-
-                  {/* Protected routes */}
-
-                  <Route
-                    path="/profile"
-                    element={
-                      <ProtectedRoute>
-                        <Layout>
-                          <Profile />
-                        </Layout>
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/login-pricing"
-                    element={
-                      <ProtectedRoute>
-                        <Layout>
-                          <Pricing />
-                        </Layout>
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/reports"
-                    element={
-                      <ProtectedRoute>
-                        <Layout>
-                          <Reports />
-                        </Layout>
-                      </ProtectedRoute>
-                    }
-                  />
-                </Routes>
-
-                <Toaster
-                  position="top-right"
-                  toastOptions={{
-                    className: "bg-white shadow-lg border",
-                    duration: 4000,
-                  }}
-                />
-              </div>
-            </Router>
+            <div className="min-h-screen bg-neutral-50">
+              <RouterProvider router={router} />
+              <Toaster
+                position="top-right"
+                toastOptions={{
+                  className: "bg-white shadow-lg border",
+                  duration: 4000,
+                }}
+              />
+            </div>
           </AppProvider>
         </AuthProvider>
       </QueryClientProvider>

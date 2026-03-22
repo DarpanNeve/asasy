@@ -1,5 +1,6 @@
 import { createContext, useContext, useReducer, useEffect } from 'react'
 import { api } from '../services/api'
+import { useAuth } from './AuthContext'
 
 const AppContext = createContext({})
 
@@ -50,12 +51,15 @@ export const useApp = () => {
 
 export const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState)
+  const { isAuthenticated } = useAuth()
 
   // Fetch initial data
   useEffect(() => {
-    fetchTokenPackages()
-    fetchTokenBalance()
-  }, [])
+    if (isAuthenticated) {
+      fetchTokenPackages()
+      fetchTokenBalance()
+    }
+  }, [isAuthenticated])
 
   const fetchTokenPackages = async () => {
     try {

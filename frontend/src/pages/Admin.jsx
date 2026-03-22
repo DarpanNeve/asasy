@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Users,
   FileText,
@@ -551,7 +551,7 @@ export default function Admin() {
 
       XLSX.writeFile(
         workbook,
-        `asasy-transactions-${new Date().toISOString().split("T")[0]}.xlsx`
+        `Assesme-transactions-${new Date().toISOString().split("T")[0]}.xlsx`
       );
       toast.success("Transactions exported successfully");
     } catch (error) {
@@ -633,9 +633,19 @@ export default function Admin() {
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
         <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-4">
-              <BarChart3 className="h-8 w-8 text-primary-600" />
-            </div>
+            <Link
+              to="/"
+              className="flex items-center group"
+              onClick={() => window.scrollTo(0, 0)}
+            >
+              <div className="relative flex items-center h-16">
+                <img
+                  src="/logoas.png"
+                  alt="Assesme Logo"
+                  className="h-17 w-auto object-contain"
+                />
+              </div>
+            </Link>
             <h1 className="text-2xl font-bold text-neutral-900">Admin Panel</h1>
             <p className="text-neutral-600 mt-2">
               Enter admin credentials to continue
@@ -708,10 +718,20 @@ export default function Admin() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <BarChart3 className="h-8 w-8 text-primary-600" />
-              <span className="ml-2 text-xl font-bold text-gradient">
-                Asasy Admin
-              </span>
+              <Link
+                to="/"
+                className="flex items-center group"
+                onClick={() => window.scrollTo(0, 0)}
+              >
+                <div className="relative flex items-center h-16">
+                  <img
+                    src="/logoas.png"
+                    alt="Assesme Logo"
+                    className="h-17 w-auto object-contain"
+                  />
+                </div>
+              </Link>
+            
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-neutral-600">

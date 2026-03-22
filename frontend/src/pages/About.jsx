@@ -57,34 +57,104 @@ export default function AboutUs() {
 
   const reportTypes = [
     {
-      name: "Basic",
-      description: "Ideal for early-stage IP assessments",
+      id: "basic",
+      name: "Basic Report",
+      tokens: "2,500",
+      description: "Essential analysis and insights",
       features: [
-        "Technology overview",
-        "Basic market analysis",
-        "IP landscape scan",
+        "Executive Summary (1–2 line value proposition)",
+        "Problem/Opportunity Statement",
+        "Technology Overview (core idea, brief features)",
+        "Key Benefits (USP)",
+        "Applications (primary markets/use cases)",
+        "IP Snapshot (status & country)",
+        "Next Steps (e.g., pilot studies, further R&D)",
+        "Expanded Executive Summary (go/no-go recommendation)",
+        "Problem & Solution Fit (with background justification)",
+        "Technical Feasibility (prototype status, TRL stage)",
+        "IP Summary (landscape & freedom-to-operate overview)",
+        "Market Signals (interest letters, pilot test data)",
+        "Early Competitors (known tech or patent citations)",
+        "Regulatory/Compliance Overview",
+        "Risk Summary and Key Questions",
       ],
+      color: "bg-blue-50 border-blue-200",
     },
     {
-      name: "Advanced",
-      description: "Includes licensing and market insights",
+      id: "advanced",
+      name: "Advanced Report",
+      tokens: "7,500",
+      description: "Comprehensive analysis with detailed insights",
       features: [
-        "Comprehensive analysis",
-        "Licensing opportunities",
-        "Market potential assessment",
-        "Competitive landscape",
+        "Executive Summary (1–2 line value proposition)",
+        "Problem/Opportunity Statement",
+        "Technology Overview (core idea, brief features)",
+        "Key Benefits (USP)",
+        "Applications (primary markets/use cases)",
+        "IP Snapshot (status & country)",
+        "Next Steps (e.g., pilot studies, further R&D)",
+        "Expanded Executive Summary (go/no-go recommendation)",
+        "Problem & Solution Fit (with background justification)",
+        "Technical Feasibility (prototype status, TRL stage)",
+        "IP Summary (landscape & freedom-to-operate overview)",
+        "Market Signals (interest letters, pilot test data)",
+        "Early Competitors (known tech or patent citations)",
+        "Regulatory/Compliance Overview",
+        "Risk Summary and Key Questions",
+        "Detailed Business Case (narrative for VCs)",
+        "Technology Description (core claims, development stage, TRL framework)",
+        "Market & Competition (segmentation, SWOT analysis, barriers to entry)",
+        "TRL & Technical Challenges (scale-up readiness)",
+        "Detailed IP & Legal Status (global patent families, claims, FTO risks)",
+        "Regulatory Pathways (e.g., CE, FDA, BIS, AIS)",
+        "Commercialization Options (spin-off, licensing, JVs)",
+        "Preliminary Financial Estimates (cost vs ROI model)",
+        "Summary & Go-to-Market Plan",
       ],
+      color: "bg-purple-50 border-purple-200",
     },
     {
-      name: "Comprehensive",
-      description: "Complete due diligence + commercialization plan",
+      id: "comprehensive",
+      name: "Comprehensive Report",
+      tokens: "9,000",
+      description: "Premium analysis with AI-driven insights",
       features: [
-        "Full due diligence",
-        "Commercialization strategy",
-        "Risk assessment",
-        "Implementation roadmap",
-        "ROI projections",
+        "Executive Summary (1–2 line value proposition)",
+        "Problem/Opportunity Statement",
+        "Technology Overview (core idea, brief features)",
+        "Key Benefits (USP)",
+        "Applications (primary markets/use cases)",
+        "IP Snapshot (status & country)",
+        "Next Steps (e.g., pilot studies, further R&D)",
+        "Expanded Executive Summary (go/no-go recommendation)",
+        "Problem & Solution Fit (with background justification)",
+        "Technical Feasibility (prototype status, TRL stage)",
+        "IP Summary (landscape & freedom-to-operate overview)",
+        "Market Signals (interest letters, pilot test data)",
+        "Early Competitors (known tech or patent citations)",
+        "Regulatory/Compliance Overview",
+        "Risk Summary and Key Questions",
+        "Detailed Business Case (narrative for VCs)",
+        "Technology Description (core claims, development stage, TRL framework)",
+        "Market & Competition (segmentation, SWOT analysis, barriers to entry)",
+        "TRL & Technical Challenges (scale-up readiness)",
+        "Detailed IP & Legal Status (global patent families, claims, FTO risks)",
+        "Regulatory Pathways (e.g., CE, FDA, BIS, AIS)",
+        "Commercialisation Options (spin-off, licensing, JVs)",
+        "Preliminary Financial Estimates (cost vs ROI model)",
+        "Summary & Go-to-Market Plan",
+        "In-depth IP Claims Analysis (protection scope, robustness)",
+        "Global Freedom-to-Operate Report (US, EU, India, China)",
+        "Market Analysis (size, trends, addressable market, adoption barriers)",
+        "Business Models (licensing, SaaS, product, hybrid)",
+        "5-Year ROI & Revenue Projections (unit cost, pricing, TAM/SAM/SOM)",
+        "Funding Strategy (grants, accelerators, VC, PE, SBIR)",
+        "Licensing & Exit Strategy (terms, IP deal structures)",
+        "Team & Strategic Partners Required (talent, advisors)",
+        "Implementation Roadmap (milestones, MVP, pilot scaling)",
+        "Appendices (patent tables, market research data, technical drawings)",
       ],
+      color: "bg-emerald-50 border-emerald-200",
     },
   ];
 
@@ -413,26 +483,30 @@ export default function AboutUs() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="space-y-12">
             {reportTypes.map((report, index) => (
               <div
                 key={index}
-                className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow"
+                className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow"
               >
-                <div className="text-center mb-6">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                    {report.name}
-                  </h3>
-                  <p className="text-gray-600">{report.description}</p>
+                <div className="grid md:grid-cols-3 gap-8">
+                  <div className="md:col-span-1">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                      {report.name}
+                    </h3>
+                    <p className="text-gray-600">{report.description}</p>
+                  </div>
+                  <div className="md:col-span-2">
+                    <ul className="space-y-3 sm:columns-2">
+                      {report.features.map((feature, featureIndex) => (
+                        <li key={featureIndex} className="flex items-start break-inside-avoid">
+                          <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-1 flex-shrink-0" />
+                          <span className="text-gray-700">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
-                <ul className="space-y-3">
-                  {report.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-start">
-                      <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-0.5" />
-                      <span className="text-gray-700">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
               </div>
             ))}
           </div>
