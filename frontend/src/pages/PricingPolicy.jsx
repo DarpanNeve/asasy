@@ -55,7 +55,7 @@ export default function Terms() {
               produce customized outputs.
             </p>
             <p className="text-gray-700 mb-4">
-              Services are available under different tiers—Basic, Advanced, and
+              Services are available under different tiers—Advanced and
               Comprehensive—each offering varying depths of analysis, IP
               insights, market data, and commercialization strategies. The
               platform operates on a token-based subscription system, with token
@@ -117,7 +117,7 @@ export default function Terms() {
                 INR 7500 for 24000 tokens).
               </li>
               <li>
-                Each report type consumes tokens (Basic: 2500, Advanced: 7500,
+                Each report type consumes tokens (Advanced: 7500,
                 Comprehensive: 9000).
               </li>
               <li>

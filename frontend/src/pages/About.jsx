@@ -57,30 +57,6 @@ export default function AboutUs() {
 
   const reportTypes = [
     {
-      id: "basic",
-      name: "Basic Report",
-      tokens: "2,500",
-      description: "Essential analysis and insights",
-      features: [
-        "Executive Summary (1–2 line value proposition)",
-        "Problem/Opportunity Statement",
-        "Technology Overview (core idea, brief features)",
-        "Key Benefits (USP)",
-        "Applications (primary markets/use cases)",
-        "IP Snapshot (status & country)",
-        "Next Steps (e.g., pilot studies, further R&D)",
-        "Expanded Executive Summary (go/no-go recommendation)",
-        "Problem & Solution Fit (with background justification)",
-        "Technical Feasibility (prototype status, TRL stage)",
-        "IP Summary (landscape & freedom-to-operate overview)",
-        "Market Signals (interest letters, pilot test data)",
-        "Early Competitors (known tech or patent citations)",
-        "Regulatory/Compliance Overview",
-        "Risk Summary and Key Questions",
-      ],
-      color: "bg-blue-50 border-blue-200",
-    },
-    {
       id: "advanced",
       name: "Advanced Report",
       tokens: "7,500",
