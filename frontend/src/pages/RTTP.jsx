@@ -117,7 +117,7 @@ export default function RTTP() {
       area: "IP Licensing Strategy",
       description: "Help you license to industry, startups, or global players",
       icon: FileText,
-      color: "from-blue-400 to-indigo-500",
+      color: "from-blue-400 to-blue-600",
       details:
         "Develop comprehensive licensing strategies, negotiate terms, and connect with potential licensees across industries and geographies.",
       features: [
@@ -143,7 +143,7 @@ export default function RTTP() {
       area: "Funding Roadmap",
       description: "Map SBIR/VC/CSR/Angel investments and pitch readiness",
       icon: DollarSign,
-      color: "from-purple-400 to-pink-500",
+      color: "from-teal-400 to-teal-400",
       details:
         "Create strategic funding pathways including government grants, venture capital, corporate partnerships, and angel investments.",
       features: ["Grant Applications", "VC Connections", "Pitch Preparation"],
@@ -265,17 +265,17 @@ export default function RTTP() {
       <Header />
 
       {/* Enhanced Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100">
         {/* Animated background elements */}
         <div className="absolute inset-0">
-          <div className="absolute top-10 left-10 w-20 h-20 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full opacity-20 animate-pulse"></div>
-          <div className="absolute top-40 right-20 w-16 h-16 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full opacity-20 animate-pulse delay-300"></div>
+          <div className="absolute top-10 left-10 w-20 h-20 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full opacity-20 animate-pulse"></div>
+          <div className="absolute top-40 right-20 w-16 h-16 bg-gradient-to-r from-teal-400 to-teal-400 rounded-full opacity-20 animate-pulse delay-300"></div>
           <div className="absolute bottom-20 left-1/4 w-24 h-24 bg-gradient-to-r from-teal-400 to-blue-500 rounded-full opacity-20 animate-pulse delay-700"></div>
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full mb-6 shadow-lg">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-100 to-blue-200 rounded-full mb-6 shadow-lg">
               <Award className="h-10 w-10 text-blue-600" />
             </div>
 
@@ -288,7 +288,7 @@ export default function RTTP() {
 
             <h1 className="text-4xl md:text-6xl font-bold text-neutral-900 mb-6 leading-tight">
               Work with{" "}
-              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
                 RTTP Experts
               </span>
             </h1>
@@ -304,7 +304,7 @@ export default function RTTP() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <button
                 onClick={handleDirectBooking}
-                className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-lg px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center"
+                className="group bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white text-lg px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center"
               >
                 <Calendar className="mr-2 h-5 w-5 group-hover:animate-pulse" />
                 Book Consultation
@@ -314,7 +314,7 @@ export default function RTTP() {
                 onClick={() =>
                   window.open("https://forms.gle/1AHvijC9uidoGeig8", "_blank")
                 }
-                className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-lg px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center"
+                className="group bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white text-lg px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center"
               >
                 <User className="mr-2 h-5 w-5 group-hover:animate-pulse" />
                 Join as Expert
@@ -344,7 +344,7 @@ export default function RTTP() {
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-6">
                 What is an{" "}
-                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
                   RTTP?
                 </span>
               </h2>
@@ -363,7 +363,7 @@ export default function RTTP() {
                       key={index}
                       className="group flex items-start p-4 rounded-lg hover:bg-blue-50 transition-colors"
                     >
-                      <div className="w-10 h-10 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                      <div className="w-10 h-10 bg-gradient-to-r from-blue-100 to-blue-200 rounded-full flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
                         <Icon className="h-5 w-5 text-blue-600" />
                       </div>
                       <div>
@@ -381,11 +381,11 @@ export default function RTTP() {
             </div>
 
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 rounded-2xl transform rotate-6 opacity-10"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-600 rounded-2xl transform rotate-6 opacity-10"></div>
               <div className="relative bg-white rounded-2xl p-8 shadow-xl border border-neutral-100">
                 <div className="grid grid-cols-2 gap-6">
                   <div className="text-center group">
-                    <div className="w-16 h-16 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <div className="w-16 h-16 bg-gradient-to-r from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                       <Users className="h-8 w-8 text-blue-600" />
                     </div>
                     <h3 className="text-3xl font-bold text-neutral-900 mb-2">
@@ -403,8 +403,8 @@ export default function RTTP() {
                     <p className="text-neutral-600">Success Rate</p>
                   </div>
                   <div className="text-center group">
-                    <div className="w-16 h-16 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                      <Globe className="h-8 w-8 text-purple-600" />
+                    <div className="w-16 h-16 bg-gradient-to-r from-teal-100 to-teal-50 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                      <Globe className="h-8 w-8 text-teal-600" />
                     </div>
                     <h3 className="text-3xl font-bold text-neutral-900 mb-2">
                       50+
@@ -436,7 +436,7 @@ export default function RTTP() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-6">
               How{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
                 RTTPs
               </span>{" "}
               Can Help You
@@ -497,7 +497,7 @@ export default function RTTP() {
                     </div>
 
                     {selectedService === index && (
-                      <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-100 animate-in slide-in-from-top-2">
+                      <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border border-blue-100 animate-in slide-in-from-top-2">
                         <p className="text-sm text-neutral-700 leading-relaxed">
                           {service.details}
                         </p>
@@ -517,7 +517,7 @@ export default function RTTP() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-6">
               What Our{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
                 Clients Say
               </span>
             </h2>
@@ -545,7 +545,7 @@ export default function RTTP() {
                   "{testimonial.content}"
                 </p>
                 <div className="flex items-center">
-                  <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center mr-3">
+                  <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full flex items-center justify-center mr-3">
                     <User className="w-5 h-5 text-white" />
                   </div>
                   <div>
@@ -566,13 +566,13 @@ export default function RTTP() {
       {/* Enhanced Contact Form Section */}
       <section
         id="contact"
-        className="py-20 bg-gradient-to-br from-blue-50 to-purple-50"
+        className="py-20 bg-gradient-to-br from-blue-50 to-blue-100"
       >
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-6">
               Get in{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
                 Touch
               </span>
             </h2>
@@ -694,7 +694,7 @@ export default function RTTP() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-lg px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center mx-auto disabled:opacity-50"
+                  className="group bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white text-lg px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center mx-auto disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>

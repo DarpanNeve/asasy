@@ -102,7 +102,6 @@ export default function Reports() {
 
     // Check token requirements
     const tokenRequirements = {
-      basic: 2500,
       advanced: 7500,
       comprehensive: 9000,
     };
@@ -239,9 +238,9 @@ export default function Reports() {
   const getComplexityColor = (complexity) => {
     switch (complexity) {
       case "basic":
-        return "bg-blue-100 text-blue-800";
+        return "bg-slate-100 text-slate-700";
       case "advanced":
-        return "bg-purple-100 text-purple-800";
+        return "bg-teal-100 text-teal-800";
       case "comprehensive":
         return "bg-emerald-100 text-emerald-800";
       default:
@@ -288,7 +287,7 @@ export default function Reports() {
           <Plus className="h-5 w-5 mr-2" />
           Generate Report
         </button>
-        {userBalance && userBalance.available_tokens < 2500 && (
+        {userBalance && userBalance.available_tokens < 7500 && (
           <button
             onClick={() => setShowTokenPurchase(true)}
             className="btn-outline mt-4 sm:mt-0 sm:ml-2"
@@ -364,9 +363,6 @@ export default function Reports() {
                     }`}
                   >
                     <option value="">Select complexity level</option>
-                    <option value="basic">
-                      Basic (2,500 tokens) - Essential analysis
-                    </option>
                     <option value="advanced">
                       Advanced (7,500 tokens) - Comprehensive analysis
                     </option>

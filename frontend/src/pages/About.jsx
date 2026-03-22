@@ -30,7 +30,7 @@ export default function AboutUs() {
         "Work with Registered Technology Transfer Professionals for expert IP commercialization guidance and industry expertise.",
     },
     {
-      icon: <Clock className="w-8 h-8 text-purple-500" />,
+      icon: <Clock className="w-8 h-8 text-teal-500" />,
       title: "Results in Minutes",
       description:
         "Get instant analysis in less than 60 seconds. No more waiting weeks for technology assessments.",
@@ -42,7 +42,7 @@ export default function AboutUs() {
         "Enterprise-grade security ensures your intellectual property and sensitive data remain protected.",
     },
     {
-      icon: <Globe className="w-8 h-8 text-indigo-500" />,
+      icon: <Globe className="w-8 h-8 text-teal-500" />,
       title: "Global Network",
       description:
         "Access to worldwide network of technology transfer offices and IP licensing experts.",
@@ -111,7 +111,7 @@ export default function AboutUs() {
         "Preliminary Financial Estimates (cost vs ROI model)",
         "Summary & Go-to-Market Plan",
       ],
-      color: "bg-purple-50 border-purple-200",
+      color: "bg-teal-50 border-teal-200",
     },
     {
       id: "comprehensive",
@@ -185,7 +185,7 @@ export default function AboutUs() {
         "Delivered over 50 seminars and guest lectures at multiple universities",
     },
     {
-      icon: <Users className="w-6 h-6 text-purple-500" />,
+      icon: <Users className="w-6 h-6 text-teal-500" />,
       title: "Multi-Industry Expert",
       description:
         "Extensive experience across Ed-tech, Information-Tech, Legal-Tech, and Food-Tech startups",
@@ -198,7 +198,7 @@ export default function AboutUs() {
 
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-800 opacity-10"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
             About <span className="text-blue-600">Assesme</span>
@@ -242,7 +242,7 @@ export default function AboutUs() {
       </section>
 
       {/* Founder Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-50 to-purple-50">
+      <section className="py-20 bg-gradient-to-r from-blue-50 to-blue-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
@@ -310,7 +310,7 @@ export default function AboutUs() {
             </h2>
           </div>
 
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 md:p-12">
+          <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl p-8 md:p-12">
             <div className="max-w-4xl mx-auto">
               <p className="text-lg text-gray-700 leading-relaxed mb-6">
                 Mr. Venkatesh Bharti is a distinguished and versatile solution
@@ -426,11 +426,11 @@ export default function AboutUs() {
                   <div className="text-sm text-gray-600">Startups</div>
                 </div>
                 <div className="bg-gray-50 rounded-lg p-4 text-center">
-                  <Shield className="w-8 h-8 text-purple-500 mx-auto mb-2" />
+                  <Shield className="w-8 h-8 text-teal-500 mx-auto mb-2" />
                   <div className="text-sm text-gray-600">Enterprises</div>
                 </div>
                 <div className="bg-gray-50 rounded-lg p-4 text-center">
-                  <Globe className="w-8 h-8 text-indigo-500 mx-auto mb-2" />
+                  <Globe className="w-8 h-8 text-teal-500 mx-auto mb-2" />
                   <div className="text-sm text-gray-600">Rttp expert</div>
                 </div>
               </div>

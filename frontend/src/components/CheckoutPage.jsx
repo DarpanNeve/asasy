@@ -134,10 +134,10 @@ const CheckoutPage = ({ isOpen, packageData, onClose, onSuccess }) => {
           {step === "review" ? (
             <>
               {/* Package Details */}
-              <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 mb-6">
+              <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-6 mb-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center">
-                    <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mr-4">
+                    <div className="p-3 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full mr-4">
                       <Zap className="h-6 w-6 text-white" />
                     </div>
                     <div>
@@ -168,7 +168,7 @@ const CheckoutPage = ({ isOpen, packageData, onClose, onSuccess }) => {
                     <span>90 Days Validity</span>
                   </div>
                   <div className="flex items-center text-sm text-gray-700">
-                    <Globe className="h-4 w-4 text-purple-500 mr-2" />
+                    <Globe className="h-4 w-4 text-teal-500 mr-2" />
                     <span>Global Access</span>
                   </div>
                 </div>
@@ -258,7 +258,7 @@ const CheckoutPage = ({ isOpen, packageData, onClose, onSuccess }) => {
                 <button
                   onClick={handleConfirmPurchase}
                   disabled={loading}
-                  className="flex-1 py-3 px-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 disabled:opacity-50"
+                  className="flex-1 py-3 px-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-blue-900 transition-all duration-300 disabled:opacity-50"
                 >
                   {loading ? (
                     <div className="flex items-center justify-center">
@@ -277,7 +277,7 @@ const CheckoutPage = ({ isOpen, packageData, onClose, onSuccess }) => {
           ) : (
             /* Processing Step */
             <div className="text-center py-12">
-              <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full flex items-center justify-center mx-auto mb-6">
                 <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-white"></div>
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">

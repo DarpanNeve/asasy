@@ -40,7 +40,7 @@ export default function Home() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [isGenerating, setIsGenerating] = useState(false);
-  const [selectedComplexity, setSelectedComplexity] = useState("basic");
+  const [selectedComplexity, setSelectedComplexity] = useState("advanced");
   const [activeLogoIndex, setActiveLogoIndex] = useState(0);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
 
@@ -122,7 +122,7 @@ export default function Home() {
       step: 2,
       title: "Conduct a Technology Assessment",
       description:
-        "Analyse technical feasibility. Study market demand, competition, and IP strength. Choose from 4 report formats (Basic to Comprehensive).",
+        "Analyse technical feasibility. Study market demand, competition, and IP strength. Choose from 2 report formats (Advanced or Comprehensive).",
       icon: FileText,
     },
     {
@@ -210,7 +210,6 @@ export default function Home() {
 
     // Check token requirements based on complexity
     const tokenRequirements = {
-      basic: 2500,
       advanced: 7500,
       comprehensive: 9000,
     };
@@ -303,9 +302,9 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 pt-20 pb-32 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-blue-400/20 to-indigo-400/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-blue-400/20 to-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
           <div
-            className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-purple-400/15 to-pink-400/15 rounded-full blur-3xl animate-pulse"
+            className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-teal-400/15 to-teal-300/15 rounded-full blur-3xl animate-pulse"
             style={{ animationDelay: "2s" }}
           ></div>
           <div
@@ -345,7 +344,7 @@ export default function Home() {
             <h1 className="text-5xl md:text-7xl font-bold text-slate-900 mb-6 leading-tight">
               AI-Powered Technology
               <motion.span
-                className="block bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent"
+                className="block bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.8 }}
@@ -400,7 +399,7 @@ export default function Home() {
                 {
                   icon: FileText,
                   text: "Token-Based Flexible Pricing",
-                  color: "purple",
+                  color: "teal",
                 },
               ].map((feature, index) => (
                 <motion.div
@@ -433,7 +432,7 @@ export default function Home() {
                     .querySelector("#generate-report")
                     .scrollIntoView({ behavior: "smooth" });
                 }}
-                className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
               >
                 Get Started Now
                 <ArrowRight className="ml-3 h-5 w-5" />
@@ -580,9 +579,9 @@ export default function Home() {
         className="py-24 bg-gradient-to-b from-white via-slate-50/30 to-white relative overflow-hidden"
       >
         <div className="absolute inset-0 z-0">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-blue-400/10 to-indigo-400/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-blue-400/10 to-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
           <div
-            className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-r from-purple-400/8 to-pink-400/8 rounded-full blur-3xl animate-pulse"
+            className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-r from-teal-400/8 to-teal-300/8 rounded-full blur-3xl animate-pulse"
             style={{ animationDelay: "2s" }}
           ></div>
         </div>
@@ -621,12 +620,12 @@ export default function Home() {
                   whileHover="hover"
                 >
                   <div className="relative h-full p-8 bg-white/70 backdrop-blur-xl rounded-3xl border border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 group-hover:scale-105 group-hover:-translate-y-2">
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-transparent to-indigo-50/50 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-transparent to-blue-50/50 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <motion.div
-                      className="relative z-10 inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 bg-gradient-to-br from-blue-100 to-indigo-100 group-hover:from-blue-500 group-hover:to-indigo-600 transition-all duration-500 shadow-md group-hover:shadow-lg"
+                      className="relative z-10 inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 bg-gradient-to-br from-blue-100 to-blue-200 group-hover:from-blue-500 group-hover:to-blue-800 transition-all duration-500 shadow-md group-hover:shadow-lg"
                       variants={cardHover}
                     >
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-400/20 to-indigo-400/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-400/20 to-blue-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                       <IconComponent className="relative z-10 h-10 w-10 text-blue-600 group-hover:text-white transition-colors duration-500" />
                     </motion.div>
                     <div className="relative z-10">
@@ -784,21 +783,14 @@ export default function Home() {
                   <label className="block text-sm font-semibold text-slate-700 mb-4">
                     Choose Report Complexity
                   </label>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
-                      {
-                        id: "basic",
-                        name: "Basic",
-                        tokens: "2,500",
-                        description: "Essential analysis",
-                        color: "blue",
-                      },
                       {
                         id: "advanced",
                         name: "Advanced",
                         tokens: "7,500",
                         description: "Comprehensive analysis",
-                        color: "purple",
+                        color: "teal",
                       },
                       {
                         id: "comprehensive",
@@ -872,7 +864,7 @@ export default function Home() {
                   <button
                     type="submit"
                     disabled={isGenerating}
-                    className="absolute bottom-4 right-4 p-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-4 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
+                    className="absolute bottom-4 right-4 p-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl hover:from-blue-700 hover:to-blue-900 focus:outline-none focus:ring-4 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
                   >
                     {isGenerating ? (
                       <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
@@ -891,7 +883,7 @@ export default function Home() {
               <motion.button
                 type="submit"
                 disabled={isGenerating}
-                className="w-full py-4 px-8 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-2xl hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-4 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-3 text-lg"
+                className="w-full py-4 px-8 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-semibold rounded-2xl hover:from-blue-700 hover:to-blue-900 focus:outline-none focus:ring-4 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-3 text-lg"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -917,22 +909,7 @@ export default function Home() {
           <h2 className="text-3xl font-bold text-neutral-900 mb-10">
             Download Sample Reports
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-            {/* Basic */}
-            <a
-              href="/assets/pdf/basic-sample.pdf"
-              download
-              className="group bg-white p-6 rounded-2xl border border-neutral-200 shadow-sm hover:shadow-lg transition"
-            >
-              <div className="text-5xl mb-4 text-primary-600">📄</div>
-              <h3 className="text-xl font-semibold text-neutral-800 mb-2 group-hover:text-primary-600">
-                Basic
-              </h3>
-              <p className="text-sm text-neutral-500">
-                Ideal for early-stage IP assessments
-              </p>
-            </a>
-
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             {/* Advance */}
             <a
               href="/assets/pdf/advance-sample.pdf"
@@ -1004,7 +981,7 @@ export default function Home() {
 
           <div className="relative">
             <div className="relative overflow-hidden rounded-3xl bg-white/60 backdrop-blur-xl border border-white/20 shadow-2xl p-8 md:p-12">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-50/30 via-purple-50/30 to-indigo-50/30 animate-gradient-x"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-50/30 via-blue-50/30 to-blue-50/30 animate-gradient-x"></div>
 
               <div className="relative z-10">
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-6 md:gap-8">
@@ -1035,8 +1012,8 @@ export default function Home() {
                   relative w-16 h-16 md:w-20 md:h-20 rounded-2xl 
                   ${
                     index === activeLogoIndex
-                      ? "bg-gradient-to-br from-blue-500 to-indigo-600 shadow-xl shadow-blue-500/25"
-                      : "bg-gradient-to-br from-slate-100 to-slate-200 group-hover:from-blue-100 group-hover:to-indigo-100"
+                      ? "bg-gradient-to-br from-blue-500 to-blue-700 shadow-xl shadow-blue-500/25"
+                      : "bg-gradient-to-br from-slate-100 to-slate-200 group-hover:from-blue-100 group-hover:to-blue-200"
                   }
                   flex items-center justify-center
                   transition-all duration-300 ease-in-out
@@ -1166,7 +1143,7 @@ export default function Home() {
               <span className="w-2 h-2 bg-blue-600 rounded-full mr-2 animate-pulse"></span>
               Proven Process
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-purple-800 bg-clip-text text-transparent mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-blue-900 bg-clip-text text-transparent mb-6">
               Commercialisation Journey
             </h2>
             <p className="text-xl text-slate-600 mx-auto leading-relaxed">
@@ -1194,24 +1171,24 @@ export default function Home() {
                   <div className="absolute inset-0 bg-gradient-to-br from-white/80 to-white/40 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 group-hover:shadow-2xl transition-all duration-500" />
 
                   {/* Glowing border on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/20 group-hover:to-purple-500/20 rounded-2xl transition-all duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-blue-500/0 group-hover:from-blue-500/20 group-hover:to-blue-500/20 rounded-2xl transition-all duration-500" />
 
                   <div className="relative p-8 h-full flex flex-col">
                     {/* Step number with gradient background */}
                     <div className="flex items-start justify-between mb-6">
                       <div className="relative">
-                        <div className="w-16 h-16 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-500">
+                        <div className="w-16 h-16 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-500">
                           <span className="text-white font-bold text-lg">
                             {step.step}
                           </span>
                         </div>
-                        <div className="absolute -inset-2 bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                        <div className="absolute -inset-2 bg-gradient-to-br from-blue-600/20 to-blue-800/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                       </div>
 
                       {/* Icon with animated background */}
                       <div className="relative">
                         <div className="w-12 h-12 bg-gradient-to-br from-slate-100 to-blue-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                          <IconComponent className="h-6 w-6 text-blue-600 group-hover:text-purple-600 transition-colors duration-500" />
+                          <IconComponent className="h-6 w-6 text-blue-600 group-hover:text-teal-600 transition-colors duration-500" />
                         </div>
                       </div>
                     </div>
@@ -1247,7 +1224,7 @@ export default function Home() {
       </section>
 
       {/* RTTP Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-700 to-indigo-800 relative overflow-hidden">
+      <section className="py-20 bg-gradient-to-br from-blue-700 to-blue-900 relative overflow-hidden">
         {/* Background decorative elements */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(168,85,247,0.1)_0%,transparent_50%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(59,130,246,0.1)_0%,transparent_50%)]" />

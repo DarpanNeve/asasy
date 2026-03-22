@@ -475,7 +475,7 @@ export default function Login() {
       </div>
 
       {/* Right side - Hero with background */}
-      <div className="hidden md:flex flex-1 items-center justify-center bg-gradient-to-br from-blue-400 to-purple-600 p-8">
+      <div className="hidden md:flex flex-1 items-center justify-center bg-gradient-to-br from-blue-500 to-blue-700 p-8">
         <div className="text-center text-white">
           <h2 className="text-4xl font-extrabold mb-4 drop-shadow-lg">
             Unlock Your Technology's Potential

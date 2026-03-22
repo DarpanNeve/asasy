@@ -71,7 +71,7 @@ export default function Header() {
       case "starter":
         return "from-blue-500 to-blue-600";
       case "pro":
-        return "from-purple-500 to-purple-600";
+        return "from-teal-500 to-teal-600";
       case "max":
         return "from-emerald-500 to-emerald-600";
       case "enterprise":
@@ -86,7 +86,7 @@ export default function Header() {
       case "starter":
         return "from-blue-600 to-blue-700";
       case "pro":
-        return "from-purple-600 to-purple-700";
+        return "from-teal-600 to-teal-700";
       case "max":
         return "from-emerald-600 to-emerald-700";
       case "enterprise":
@@ -198,7 +198,7 @@ export default function Header() {
             {user ? (
               <Link
                 to="/reports"
-                className="px-5 py-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"
+                className="px-5 py-2 rounded-full bg-gradient-to-r from-blue-600 to-blue-800 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"
                 onClick={() => window.scrollTo(0, 0)}
               >
                 Dashboard
@@ -214,7 +214,7 @@ export default function Header() {
                 </Link>
                 <Link
                   to="/signup"
-                  className="px-5 py-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"
+                  className="px-5 py-2 rounded-full bg-gradient-to-r from-blue-600 to-blue-800 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"
                   onClick={() => window.scrollTo(0, 0)}
                 >
                   Get Started

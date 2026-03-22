@@ -1421,7 +1421,7 @@ export default function Admin() {
                           {post.status}
                         </span>
                         {post.featured && (
-                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-800">
+                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-teal-100 text-teal-800">
                             Featured
                           </span>
                         )}
@@ -1531,7 +1531,7 @@ export default function Admin() {
                           {post.status}
                         </span>
                         {post.featured && (
-                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-800">
+                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-teal-100 text-teal-800">
                             Featured
                           </span>
                         )}

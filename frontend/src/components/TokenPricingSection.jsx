@@ -57,6 +57,9 @@ const TokenPricingSection = ({
         popular: pkg.package_type === "pro",
       }));
 
+      // Filter out starter package
+      packages = packages.filter((pkg) => pkg.package_type !== "starter");
+
       // Add Enterprise plan as display-only option
       packages.push({
         id: "enterprise-display",
@@ -108,7 +111,7 @@ const TokenPricingSection = ({
       case "starter":
         return "from-blue-500 to-blue-600";
       case "pro":
-        return "from-purple-500 to-purple-600";
+        return "from-teal-500 to-teal-600";
       case "max":
         return "from-emerald-500 to-emerald-600";
       case "enterprise":
@@ -123,7 +126,7 @@ const TokenPricingSection = ({
       case "starter":
         return "from-blue-600 to-blue-700";
       case "pro":
-        return "from-purple-600 to-purple-700";
+        return "from-teal-600 to-teal-700";
       case "max":
         return "from-emerald-600 to-emerald-700";
       case "enterprise":
@@ -164,30 +167,6 @@ const TokenPricingSection = ({
 
   const reportTypes = [
     {
-      id: "basic",
-      name: "Basic Report",
-      tokens: "2,500",
-      description: "Essential analysis and insights",
-      features: [
-        "Executive Summary (1–2 line value proposition)",
-        "Problem/Opportunity Statement",
-        "Technology Overview (core idea, brief features)",
-        "Key Benefits (USP)",
-        "Applications (primary markets/use cases)",
-        "IP Snapshot (status & country)",
-        "Next Steps (e.g., pilot studies, further R&D)",
-        "Expanded Executive Summary (go/no-go recommendation)",
-        "Problem & Solution Fit (with background justification)",
-        "Technical Feasibility (prototype status, TRL stage)",
-        "IP Summary (landscape & freedom-to-operate overview)",
-        "Market Signals (interest letters, pilot test data)",
-        "Early Competitors (known tech or patent citations)",
-        "Regulatory/Compliance Overview",
-        "Risk Summary and Key Questions",
-      ],
-      color: "bg-blue-50 border-blue-200",
-    },
-    {
       id: "advanced",
       name: "Advanced Report",
       tokens: "7,500",
@@ -218,7 +197,7 @@ const TokenPricingSection = ({
         "Preliminary Financial Estimates (cost vs ROI model)",
         "Summary & Go-to-Market Plan",
       ],
-      color: "bg-purple-50 border-purple-200",
+      color: "bg-teal-50 border-teal-200",
     },
     {
       id: "comprehensive",
@@ -354,9 +333,9 @@ const TokenPricingSection = ({
   // Responsive grid classes based on compact mode
   const getGridClasses = () => {
     if (compact) {
-      return "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4";
+      return "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4";
     }
-    return "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6";
+    return "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6";
   };
 
   const getContainerClasses = () => {
@@ -483,15 +462,7 @@ const TokenPricingSection = ({
                             <th className="text-left py-6 px-6 text-gray-900 font-bold text-lg min-w-[200px]">
                               Feature
                             </th>
-                            <th className="text-center py-6 px-6 text-blue-600 font-bold text-lg min-w-[160px]">
-                              <div className="flex flex-col items-center">
-                                <span>Basic</span>
-                                <span className="text-sm font-normal text-gray-600 mt-1">
-                                  2,500 tokens
-                                </span>
-                              </div>
-                            </th>
-                            <th className="text-center py-6 px-6 text-purple-600 font-bold text-lg min-w-[160px]">
+                            <th className="text-center py-6 px-6 text-teal-600 font-bold text-lg min-w-[160px]">
                               <div className="flex flex-col items-center">
                                 <span>Advanced</span>
                                 <span className="text-sm font-normal text-gray-600 mt-1">
@@ -519,20 +490,6 @@ const TokenPricingSection = ({
                             >
                               <td className="py-4 px-6 font-semibold text-gray-900">
                                 {item.feature}
-                              </td>
-                              <td className="py-4 px-6 text-center">
-                                <div className="flex flex-col items-center">
-                                  {item.basic.included ? (
-                                    <Check className="w-6 h-6 text-green-600 mb-1" />
-                                  ) : (
-                                    <X className="w-6 h-6 text-red-400 mb-1" />
-                                  )}
-                                  {item.basic.note && (
-                                    <span className="text-xs text-gray-600 text-center max-w-[120px]">
-                                      {item.basic.note}
-                                    </span>
-                                  )}
-                                </div>
                               </td>
                               <td className="py-4 px-6 text-center">
                                 <div className="flex flex-col items-center">

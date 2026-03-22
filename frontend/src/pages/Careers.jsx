@@ -24,8 +24,8 @@ export default function Careers() {
       description:
         "Share your expertise in technology transfer and help innovators commercialize their research",
       icon: Award,
-      color: "from-blue-500 to-indigo-600",
-      hoverColor: "from-blue-600 to-indigo-700",
+      color: "from-blue-500 to-blue-700",
+      hoverColor: "from-blue-600 to-blue-800",
       benefits: [
         "Flexible remote work",
         "Competitive compensation",
@@ -67,8 +67,8 @@ export default function Careers() {
       description:
         "Join our team and help build the future of technology transfer and AI-powered innovation",
       icon: Briefcase,
-      color: "from-purple-500 to-pink-600",
-      hoverColor: "from-purple-600 to-pink-700",
+      color: "from-teal-500 to-teal-500",
+      hoverColor: "from-teal-600 to-teal-600",
       benefits: [
         "Competitive salary & equity",
         "Professional development budget",
@@ -128,10 +128,10 @@ export default function Careers() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100">
         <div className="absolute inset-0">
-          <div className="absolute top-10 left-10 w-20 h-20 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full opacity-20 animate-pulse"></div>
-          <div className="absolute top-40 right-20 w-16 h-16 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full opacity-20 animate-pulse delay-300"></div>
+          <div className="absolute top-10 left-10 w-20 h-20 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full opacity-20 animate-pulse"></div>
+          <div className="absolute top-40 right-20 w-16 h-16 bg-gradient-to-r from-teal-400 to-teal-400 rounded-full opacity-20 animate-pulse delay-300"></div>
           <div className="absolute bottom-20 left-1/4 w-24 h-24 bg-gradient-to-r from-teal-400 to-blue-500 rounded-full opacity-20 animate-pulse delay-700"></div>
         </div>
 
@@ -139,7 +139,7 @@ export default function Careers() {
           <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-bold text-neutral-900 mb-6 leading-tight">
               Join Our{" "}
-              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
                 Mission
               </span>
             </h1>
@@ -158,7 +158,7 @@ export default function Careers() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-6">
               Career{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
                 Opportunities
               </span>
             </h2>
@@ -256,7 +256,7 @@ export default function Careers() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-6">
               Our{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
                 Values
               </span>
             </h2>
@@ -273,7 +273,7 @@ export default function Careers() {
                   key={index}
                   className="text-center group hover:transform hover:scale-105 transition-all duration-300"
                 >
-                  <div className="w-16 h-16 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:shadow-lg transition-shadow">
+                  <div className="w-16 h-16 bg-gradient-to-r from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:shadow-lg transition-shadow">
                     <Icon className="h-8 w-8 text-blue-600" />
                   </div>
                   <h3 className="text-xl font-semibold text-neutral-900 mb-2">

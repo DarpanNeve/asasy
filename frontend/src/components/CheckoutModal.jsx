@@ -39,7 +39,7 @@ const CheckoutModal = ({
           </div>
 
           {/* Package Details */}
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 mb-6">
+          <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-4 mb-6">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-lg font-semibold text-gray-900">
                 {packageData.name}
@@ -134,7 +134,7 @@ const CheckoutModal = ({
             <button
               onClick={() => onConfirmPurchase(packageData)}
               disabled={loading}
-              className="flex-1 py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 disabled:opacity-50"
+              className="flex-1 py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-blue-900 transition-all duration-300 disabled:opacity-50"
             >
               {loading ? (
                 <div className="flex items-center justify-center">

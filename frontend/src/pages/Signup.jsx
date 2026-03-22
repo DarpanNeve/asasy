@@ -306,7 +306,7 @@ export default function Signup() {
 
   if (showOtpForm) {
     return (
-      <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-400 to-purple-600">
+      <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-500 to-blue-700">
         <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-xl">
           <div>
             <Link
@@ -398,7 +398,7 @@ export default function Signup() {
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-white">
       {/* Left side - Hero */}
-      <div className="hidden md:flex flex-1 items-center justify-center bg-gradient-to-br from-blue-400 to-purple-600 p-8">
+      <div className="hidden md:flex flex-1 items-center justify-center bg-gradient-to-br from-blue-500 to-blue-700 p-8">
         <div className="text-center text-white">
           <h2 className="text-4xl font-extrabold mb-4 drop-shadow-lg">
             Start Your Innovation Journey Today
