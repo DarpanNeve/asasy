@@ -86,17 +86,14 @@ export default function Blog() {
       <Header />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-50 to-blue-100 py-20">
+      <section className="bg-slate-50 border-b border-slate-200 py-36 md:py-48">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold text-neutral-900 mb-6">
-              Our{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-                Blog
-              </span>
+            <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-6">
+              Our Blog
             </h1>
             <p className="text-xl text-neutral-600 mb-8 max-w-3xl mx-auto">
-              Insights, trends, and expert perspectives on technology transfer, 
+              Insights, trends, and expert perspectives on technology transfer,
               innovation commercialization, and the future of research.
             </p>
             

@@ -116,24 +116,24 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
+    <div className="min-h-screen bg-white">
       <Header />
 
-      {/* Contact Form Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-50 to-blue-100">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-6">
-              Get in{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-                Touch
-              </span>
-            </h2>
-            <p className="text-xl text-neutral-600">
-              Have questions about working with RTTPs? We're here to help.
-            </p>
-          </div>
+      {/* Page Hero */}
+      <section className="bg-slate-50 border-b border-slate-200 py-36 md:py-48">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-4">
+            Get in Touch
+          </h1>
+          <p className="text-xl text-neutral-600">
+            Have questions about our services or working with RTTPs? We're here to help.
+          </p>
+        </div>
+      </section>
 
+      {/* Contact Form Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Success/Error Messages */}
           {submitStatus === "success" && (
             <div className="mb-8 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center">
@@ -260,7 +260,7 @@ const ContactPage = () => {
                 <button
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="group bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white text-lg px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center mx-auto disabled:opacity-50"
+                  className="group bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white text-lg px-8 py-3 rounded-lg transition-colors duration-200 shadow-sm flex items-center justify-center mx-auto disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>

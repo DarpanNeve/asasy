@@ -25,9 +25,7 @@ import {
   ExternalLink,
   Star,
   Zap,
-  Sparkles,
   ChevronRight,
-  PlayCircle,
   Clock,
   CheckCircle2,
 } from "lucide-react";
@@ -264,75 +262,40 @@ export default function RTTP() {
     <div className="min-h-screen bg-white">
       <Header />
 
-      {/* Enhanced Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100">
-        {/* Animated background elements */}
-        <div className="absolute inset-0">
-          <div className="absolute top-10 left-10 w-20 h-20 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full opacity-20 animate-pulse"></div>
-          <div className="absolute top-40 right-20 w-16 h-16 bg-gradient-to-r from-teal-400 to-teal-400 rounded-full opacity-20 animate-pulse delay-300"></div>
-          <div className="absolute bottom-20 left-1/4 w-24 h-24 bg-gradient-to-r from-teal-400 to-blue-500 rounded-full opacity-20 animate-pulse delay-700"></div>
-        </div>
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-100 to-blue-200 rounded-full mb-6 shadow-lg">
-              <Award className="h-10 w-10 text-blue-600" />
-            </div>
-
-            <div className="mb-6">
-              <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800 mb-4">
-                <Sparkles className="w-4 h-4 mr-2" />
-                Certified Technology Transfer Experts
-              </span>
-            </div>
-
+      {/* Hero Section */}
+      <section className="bg-slate-50 border-b border-slate-200 py-40 md:py-56">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-bold text-neutral-900 mb-6 leading-tight">
-              Work with{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-                RTTP Experts
-              </span>
+              Work with RTTP Experts
             </h1>
 
-            <p className="text-xl text-neutral-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Access Registered Technology Transfer Professionals (RTTPs) –
-              experts in IP licensing, tech transfer, and commercialisation. Get
-              the guidance you need to transform your innovation into commercial
-              success.
+            <p className="text-xl text-neutral-600 mb-10 max-w-3xl mx-auto leading-relaxed">
+              Access Registered Technology Transfer Professionals (RTTPs) —
+              specialists in IP licensing, tech transfer, and commercialisation.
+              Get the guidance you need to transform your innovation into commercial success.
             </p>
 
-            {/* Enhanced CTA buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={handleDirectBooking}
-                className="group bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white text-lg px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center"
+                className="bg-blue-600 hover:bg-blue-700 text-white text-base font-medium px-8 py-3 rounded-lg transition-colors duration-200 flex items-center justify-center shadow-sm"
               >
-                <Calendar className="mr-2 h-5 w-5 group-hover:animate-pulse" />
+                <Calendar className="mr-2 h-5 w-5" />
                 Book Consultation
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="ml-2 h-4 w-4" />
               </button>
               <button
                 onClick={() =>
                   window.open("https://forms.gle/1AHvijC9uidoGeig8", "_blank")
                 }
-                className="group bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white text-lg px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center"
+                className="border border-blue-600 text-blue-600 hover:bg-blue-50 text-base font-medium px-8 py-3 rounded-lg transition-colors duration-200 flex items-center justify-center"
               >
-                <User className="mr-2 h-5 w-5 group-hover:animate-pulse" />
+                <User className="mr-2 h-5 w-5" />
                 Join as Expert
-                <ExternalLink className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                <ExternalLink className="ml-2 h-4 w-4" />
               </button>
-              <a
-                href="https://www.youtube.com/watch?v=your-video-id"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white text-lg px-8 py-4 rounded-full transition-all duration-300 flex items-center justify-center"
-              >
-                <PlayCircle className="mr-2 h-5 w-5 group-hover:animate-pulse" />
-                Learn More
-                <ExternalLink className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </a>
             </div>
-
-            {/* Trust indicators */}
           </div>
         </div>
       </section>
@@ -430,7 +393,7 @@ export default function RTTP() {
       {/* Enhanced Services Section */}
       <section
         id="services"
-        className="py-20 bg-gradient-to-br from-neutral-50 to-blue-50"
+        className="py-20 bg-slate-50"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -566,7 +529,7 @@ export default function RTTP() {
       {/* Enhanced Contact Form Section */}
       <section
         id="contact"
-        className="py-20 bg-gradient-to-br from-blue-50 to-blue-100"
+        className="py-20 bg-white border-t border-slate-100"
       >
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -694,7 +657,7 @@ export default function RTTP() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="group bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white text-lg px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center mx-auto disabled:opacity-50"
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-base font-medium px-8 py-3 rounded-lg transition-colors duration-200 shadow-sm flex items-center justify-center mx-auto disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>

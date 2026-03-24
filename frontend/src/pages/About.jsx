@@ -93,7 +93,7 @@ export default function AboutUs() {
       id: "comprehensive",
       name: "Comprehensive Report",
       tokens: "9,000",
-      description: "Premium analysis with AI-driven insights",
+      description: "Premium analysis with expert-driven insights",
       features: [
         "Executive Summary (1–2 line value proposition)",
         "Problem/Opportunity Statement",
@@ -169,31 +169,30 @@ export default function AboutUs() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-white">
       <Header />
 
       {/* Hero Section */}
-      <section className="relative py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-800 opacity-10"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="bg-slate-50 border-b border-slate-200 py-40 md:py-56">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
             About <span className="text-blue-600">Assesme</span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
             Transform your innovation into commercial success with our
-            AI-powered technology assessment platform. Get comprehensive reports
-            with expert RTTP guidance in minutes, not weeks.
+            technology assessment platform. Get comprehensive reports
+            with expert RTTP guidance in days, not weeks.
           </p>
           <div className="flex flex-wrap justify-center gap-4 text-sm font-medium">
-            <div className="flex items-center bg-white px-4 py-2 rounded-full shadow-sm">
+            <div className="flex items-center bg-white border border-slate-200 px-4 py-2 rounded-md shadow-sm">
               <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
               AI-Powered Analysis
             </div>
-            <div className="flex items-center bg-white px-4 py-2 rounded-full shadow-sm">
+            <div className="flex items-center bg-white border border-slate-200 px-4 py-2 rounded-md shadow-sm">
               <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
               RTTP Certified
             </div>
-            <div className="flex items-center bg-white px-4 py-2 rounded-full shadow-sm">
+            <div className="flex items-center bg-white border border-slate-200 px-4 py-2 rounded-md shadow-sm">
               <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
               Results in Minutes
             </div>
@@ -218,7 +217,7 @@ export default function AboutUs() {
       </section>
 
       {/* Founder Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-50 to-blue-100">
+      <section className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
@@ -286,7 +285,7 @@ export default function AboutUs() {
             </h2>
           </div>
 
-          <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl p-8 md:p-12">
+          <div className="bg-slate-50 rounded-2xl p-8 md:p-12 border border-slate-200">
             <div className="max-w-4xl mx-auto">
               <p className="text-lg text-gray-700 leading-relaxed mb-6">
                 Mr. Venkatesh Bharti is a distinguished and versatile solution
@@ -343,10 +342,9 @@ export default function AboutUs() {
               Our Mission
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              We're revolutionizing technology transfer by making professional
-              IP assessments accessible, fast, and data-driven. Our AI-powered
-              platform empowers innovators to make confident commercialization
-              decisions.
+              We're advancing technology transfer by making professional
+              IP assessments accessible, fast, and data-driven. Our platform
+              empowers innovators to make confident commercialization decisions.
             </p>
           </div>
 
@@ -423,9 +421,8 @@ export default function AboutUs() {
               Why Choose Assesme?
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Our platform combines cutting-edge AI technology with expert human
-              insight to deliver unparalleled technology assessment
-              capabilities.
+              Our platform combines advanced methodology with expert human
+              insight to deliver rigorous technology assessment capabilities.
             </p>
           </div>
 

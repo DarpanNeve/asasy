@@ -81,21 +81,15 @@ export default function PressReleases() {
       <Header />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-50 to-blue-100 py-20">
+      <section className="bg-slate-50 border-b border-slate-200 py-36 md:py-48">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-100 to-blue-200 rounded-full mb-6">
-              <Megaphone className="h-8 w-8 text-blue-600" />
-            </div>
-            <h1 className="text-4xl md:text-6xl font-bold text-neutral-900 mb-6">
-              Press{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-                Releases
-              </span>
+            <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-6">
+              Press Releases
             </h1>
             <p className="text-xl text-neutral-600 mb-8 max-w-3xl mx-auto">
               Stay updated with the latest news, announcements, and milestones
-              from Asasy and the technology transfer industry.
+              from Assesme and the technology transfer industry.
             </p>
 
             {/* Search */}

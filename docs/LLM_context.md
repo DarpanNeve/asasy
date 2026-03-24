@@ -31,6 +31,15 @@ Users submit a technology idea/concept; the AI engine analyzes it across 30+ par
 - **Accents/gradients**: Slate, deeper blue (`blue-800/900`) — no indigo, no pink, no purple anywhere in the app
 - **Button gradients**: `from-blue-600 to-blue-800` (hover: `to-blue-900`)
 
+## Page Design Standards
+- **Page hero height**: `py-28 md:py-36` for content pages (About, Careers, RTTP, Blog, Press Releases), `py-24 md:py-32` for listing pages, `py-16 md:py-24` for policy pages (Privacy, Terms, Pricing Policy, Refund Policy)
+- **Hero background**: `bg-slate-50 border-b border-slate-200` — clean, no gradient, no animated elements
+- **No animated pulse orbs** anywhere in the app — unprofessional
+- **No `hover:scale-105 transform`** on buttons — use `hover:bg-blue-700` or `hover:opacity-90` only
+- **AI language**: "AI-Powered" is the product's identity — keep it in labels, headings, and feature names. What to avoid is AI-*generated-sounding* copy: generic buzzwords, overly enthusiastic filler phrases, and fluffy marketing language that lacks specificity
+- **Card hover**: `hover:shadow-md` or `hover:shadow-lg` only — no `transform hover:-translate-y-2`
+- **Section backgrounds alternate**: `bg-white` ↔ `bg-slate-50` — no blue gradient sections
+
 ## Tech Stack
 - **Frontend**: React + Vite, Tailwind CSS, Framer Motion, React Hook Form, Lucide icons
 - **Backend**: Python (FastAPI), located in `/backend/`

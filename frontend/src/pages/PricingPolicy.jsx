@@ -1,16 +1,20 @@
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
-export default function Terms() {
+export default function PricingPolicy() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
 
+      {/* Page Hero */}
+      <section className="bg-slate-50 border-b border-slate-200 py-28 md:py-36">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900">Pricing Policy</h1>
+        </div>
+      </section>
+
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="prose prose-lg max-w-none">
-          <h1 className="text-4xl font-bold text-gray-900 mb-8">
-            Terms & Conditions
-          </h1>
           <p className="text-gray-600 mb-8">Effective Date: July 18, 2025</p>
           <p className="text-gray-600 mb-8">
             Platform Owner: Assesme (a product powered by Vastav Intellect IP

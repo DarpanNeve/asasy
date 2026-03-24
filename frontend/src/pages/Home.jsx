@@ -558,13 +558,7 @@ export default function Home() {
         id="features"
         className="py-24 bg-gradient-to-b from-white via-slate-50/30 to-white relative overflow-hidden"
       >
-        <div className="absolute inset-0 z-0">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-blue-400/10 to-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
-          <div
-            className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-r from-teal-400/8 to-teal-300/8 rounded-full blur-3xl animate-pulse"
-            style={{ animationDelay: "2s" }}
-          ></div>
-        </div>
+        <div className="absolute inset-0 z-0"></div>
         <div
           className="absolute inset-0 opacity-[0.015] z-0"
           style={{
@@ -599,7 +593,7 @@ export default function Home() {
                   variants={fadeIn}
                   whileHover="hover"
                 >
-                  <div className="relative h-full p-8 bg-white/70 backdrop-blur-xl rounded-3xl border border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 group-hover:scale-105 group-hover:-translate-y-2">
+                  <div className="relative h-full p-8 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-300">
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-transparent to-blue-50/50 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <motion.div
                       className="relative z-10 inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 bg-gradient-to-br from-blue-100 to-blue-200 group-hover:from-blue-500 group-hover:to-blue-800 transition-all duration-500 shadow-md group-hover:shadow-lg"
@@ -945,17 +939,17 @@ export default function Home() {
             transition={{ duration: 0.6 }}
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/70 backdrop-blur-sm border border-slate-200 rounded-full mb-4 shadow-sm">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
               <span className="text-sm font-medium text-slate-700">
-                Live Innovation Network
+                Global Innovation Network
               </span>
             </div>
             <h3 className="text-xl font-semibold text-slate-600 mb-2">
               Trusted by innovators at
             </h3>
             <p className="text-sm text-slate-500 max-w-2xl mx-auto">
-              Join thousands of technology leaders who trust our AI-powered
-              assessment platform
+              Join thousands of technology leaders who trust our
+              AI-powered assessment platform
             </p>
           </motion.div>
 
@@ -1120,7 +1114,7 @@ export default function Home() {
             variants={fadeIn}
           >
             <div className="inline-flex items-center justify-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-6">
-              <span className="w-2 h-2 bg-blue-600 rounded-full mr-2 animate-pulse"></span>
+              <span className="w-2 h-2 bg-blue-600 rounded-full mr-2"></span>
               Proven Process
             </div>
             <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-blue-900 bg-clip-text text-transparent mb-6">

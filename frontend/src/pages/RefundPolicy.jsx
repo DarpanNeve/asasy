@@ -6,11 +6,15 @@ export default function RefundPolicy() {
     <div className="flex flex-col min-h-screen bg-white">
       <Header />
 
+      {/* Page Hero */}
+      <section className="bg-slate-50 border-b border-slate-200 py-28 md:py-36">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900">Refund &amp; Cancellation Policy</h1>
+        </div>
+      </section>
+
       <main className="flex-grow max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <article className="prose prose-lg mx-auto space-y-8">
-          <h1 className="text-4xl font-bold text-center text-gray-900">
-            Refund & Cancellation Policy
-          </h1>
 
           <div className="space-y-4">
             <p>
