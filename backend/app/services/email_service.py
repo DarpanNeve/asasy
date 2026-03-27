@@ -242,6 +242,102 @@ async def send_password_reset_email(email: str, name: str, reset_token: str) -> 
         logger.error(f"Password reset email error: {e}")
         return False
 
+async def _send_transactional_email(email: str, name: str, subject: str, body: str) -> bool:
+    """Generic transactional email sender"""
+    try:
+        if not settings.MSG91_API_KEY or not settings.MSG91_TEMPLATE_ID:
+            logger.info(f"Transactional email (fallback) to {email}: {subject}")
+            return True
+
+        url = "https://control.msg91.com/api/v5/email/send"
+        headers = {"Content-Type": "application/json", "Authkey": settings.MSG91_API_KEY}
+        payload = {
+            "to": [{"email": email, "name": name}],
+            "from": {"email": settings.MSG91_FROM_EMAIL or "noreply@assesme.com", "name": "Assesme"},
+            "domain": settings.MSG91_DOMAIN or "assesme.com",
+            "template_id": settings.MSG91_TEMPLATE_ID,
+            "subject": subject,
+            "body": body,
+            "variables": {"name": name},
+        }
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, json=payload, headers=headers)
+        if response.status_code == 200:
+            logger.info(f"Email sent to {email}: {subject}")
+            return True
+        logger.error(f"Email error {response.status_code}: {response.text}")
+        return False
+    except Exception as e:
+        logger.error(f"Email send error: {e}")
+        return False
+
+
+async def send_investor_confirmation_email(email: str, name: str) -> bool:
+    subject = "Investor Registration Confirmed — Assesme"
+    body = f"""
+    <html><body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="background:#f8fafc;padding:30px;border-radius:10px;">
+        <h2 style="color:#1e293b;">Hi {name},</h2>
+        <p style="color:#475569;font-size:16px;line-height:1.6;">
+          Thank you for registering as an investor on Assesme. Your profile has been received and our team will review it shortly.
+        </p>
+        <p style="color:#475569;font-size:16px;line-height:1.6;">
+          We will connect you with relevant technology opportunities that match your investment focus.
+        </p>
+        <div style="margin:24px 0;">
+          <a href="https://assesme.com" style="background:#2563eb;color:white;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;">Visit Assesme</a>
+        </div>
+        <p style="color:#64748b;font-size:13px;">Best regards,<br>The Assesme Team<br>support@assesme.com</p>
+      </div>
+    </body></html>
+    """
+    return await _send_transactional_email(email, name, subject, body)
+
+
+async def send_technology_confirmation_email(email: str, name: str, tech_title: str) -> bool:
+    subject = f"Technology Submission Received — {tech_title}"
+    body = f"""
+    <html><body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="background:#f8fafc;padding:30px;border-radius:10px;">
+        <h2 style="color:#1e293b;">Hi {name},</h2>
+        <p style="color:#475569;font-size:16px;line-height:1.6;">
+          Your technology submission <strong>"{tech_title}"</strong> has been successfully received by Assesme.
+        </p>
+        <p style="color:#475569;font-size:16px;line-height:1.6;">
+          Our team will review your submission and reach out with next steps for commercialization, licensing, or investor matching.
+        </p>
+        <div style="margin:24px 0;">
+          <a href="https://assesme.com" style="background:#2563eb;color:white;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;">Visit Assesme</a>
+        </div>
+        <p style="color:#64748b;font-size:13px;">Best regards,<br>The Assesme Team<br>support@assesme.com</p>
+      </div>
+    </body></html>
+    """
+    return await _send_transactional_email(email, name, subject, body)
+
+
+async def send_prototype_confirmation_email(email: str, name: str) -> bool:
+    subject = "Prototype Inquiry Received — Assesme"
+    body = f"""
+    <html><body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="background:#f8fafc;padding:30px;border-radius:10px;">
+        <h2 style="color:#1e293b;">Hi {name},</h2>
+        <p style="color:#475569;font-size:16px;line-height:1.6;">
+          Thank you for submitting your prototyping inquiry to Assesme. We have received your request and our prototyping team will review the details.
+        </p>
+        <p style="color:#475569;font-size:16px;line-height:1.6;">
+          You can expect to hear from us within <strong>48 hours</strong> with a detailed response and next steps.
+        </p>
+        <div style="margin:24px 0;">
+          <a href="https://assesme.com" style="background:#2563eb;color:white;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;">Visit Assesme</a>
+        </div>
+        <p style="color:#64748b;font-size:13px;">Best regards,<br>The Assesme Team<br>support@assesme.com</p>
+      </div>
+    </body></html>
+    """
+    return await _send_transactional_email(email, name, subject, body)
+
+
 async def send_report_ready_email(email: str, name: str, report_title: str, report_id: str) -> bool:
     """Send notification when report is ready"""
     try:

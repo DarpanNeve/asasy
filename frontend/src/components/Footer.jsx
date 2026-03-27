@@ -75,44 +75,29 @@ export default function Footer() {
             <h3 className="text-xl font-semibold mb-6 text-white">Services</h3>
             <ul className="space-y-3 text-gray-300 text-sm">
               <li>
-                <Link
-                  to="/pricing"
-                  className="hover:text-blue-400 transition-colors"
-                >
+                <Link to="/pricing" className="hover:text-blue-400 transition-colors">
                   AI Reports
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/rttp"
-                  className="hover:text-blue-400 transition-colors"
-                >
-                  RTTP Experts
+                <Link to="/experts" className="hover:text-blue-400 transition-colors">
+                  Experts
                 </Link>
               </li>
               <li>
-                <a
-                  href="/rttp#contact"
-                  className="hover:text-blue-400 transition-colors"
-                >
-                  Tech Scouting
-                </a>
+                <Link to="/investors" className="hover:text-blue-400 transition-colors">
+                  Investors
+                </Link>
               </li>
               <li>
-                <a
-                  href="/rttp#contact"
-                  className="hover:text-blue-400 transition-colors"
-                >
-                  IP Licensing
-                </a>
+                <Link to="/technologies" className="hover:text-blue-400 transition-colors">
+                  Submit Technology
+                </Link>
               </li>
               <li>
-                <a
-                  href="/rttp#contact"
-                  className="hover:text-blue-400 transition-colors"
-                >
-                  Market Analysis
-                </a>
+                <Link to="/prototype" className="hover:text-blue-400 transition-colors">
+                  Prototype
+                </Link>
               </li>
             </ul>
           </div>
@@ -122,44 +107,26 @@ export default function Footer() {
             <h3 className="text-xl font-semibold mb-6 text-white">Company</h3>
             <ul className="space-y-3 text-gray-300 text-sm">
               <li>
-                <Link to="/" className="hover:text-blue-400 transition-colors">
-                  Home
-                </Link>
+                <Link to="/" className="hover:text-blue-400 transition-colors">Home</Link>
               </li>
               <li>
-                <Link
-                  to="/pricing"
-                  className="hover:text-blue-400 transition-colors"
-                >
-                  Pricing
-                </Link>
+                <Link to="/about" className="hover:text-blue-400 transition-colors">About Us</Link>
               </li>
               <li>
-                <Link
-                  to="/rttp"
-                  className="hover:text-blue-400 transition-colors"
-                >
-                  RTTP Experts
-                </Link>
+                <Link to="/pricing" className="hover:text-blue-400 transition-colors">Pricing</Link>
               </li>
               <li>
-                <Link
-                  to="/about"
-                  className="hover:text-blue-400 transition-colors"
-                >
-                  About Us
-                </Link>
-              </li>{" "}
-              {/* Changed to Link assuming an About Us page */}
+                <Link to="/contact" className="hover:text-blue-400 transition-colors">Contact</Link>
+              </li>
               <li>
-                <Link
-                  to="/contact"
-                  className="hover:text-blue-400 transition-colors"
-                >
-                  Contact
-                </Link>
-              </li>{" "}
-              {/* Changed to Link assuming a Contact page */}
+                <Link to="/careers" className="hover:text-blue-400 transition-colors">Careers</Link>
+              </li>
+              <li>
+                <Link to="/blog" className="hover:text-blue-400 transition-colors">Blog</Link>
+              </li>
+              <li>
+                <Link to="/press-releases" className="hover:text-blue-400 transition-colors">Press Releases</Link>
+              </li>
             </ul>
           </div>
 

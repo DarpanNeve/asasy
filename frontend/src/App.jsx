@@ -18,6 +18,10 @@ import Reports from "./pages/Reports";
 import Pricing from "./pages/Pricing";
 import Home from "./pages/Home";
 import RTTP from "./pages/RTTP";
+import Experts from "./pages/Experts";
+import Investors from "./pages/Investors";
+import Technologies from "./pages/Technologies";
+import Prototype from "./pages/Prototype";
 import Admin from "./pages/Admin";
 import Contact from "./pages/Contact";
 import PressReleases from "./pages/PressReleases";
@@ -52,6 +56,10 @@ const router = createBrowserRouter(
     { path: "/forgot-password", element: <ForgotPassword /> },
     { path: "/profile-completion", element: <ProfileCompletion /> },
     { path: "/rttp", element: <RTTP /> },
+    { path: "/experts", element: <Experts /> },
+    { path: "/investors", element: <Investors /> },
+    { path: "/technologies", element: <Technologies /> },
+    { path: "/prototype", element: <Prototype /> },
     { path: "/contact", element: <Contact /> },
     { path: "/about", element: <About /> },
     {

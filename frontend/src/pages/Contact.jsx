@@ -179,6 +179,7 @@ const ContactPage = () => {
                   </option>
 
                   <option value="compliance_risks">Compliance and Risks</option>
+                  <option value="prototyping">Prototyping</option>
                   <option value="other">Other</option>
                 </select>
                 {errors.reason && (

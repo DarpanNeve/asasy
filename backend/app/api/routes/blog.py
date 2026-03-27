@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from typing import Optional, List
-import secrets
 from datetime import datetime
 
 from app.models.blog import BlogPost, PostType, PostStatus
+from app.models.user import User
+from app.core.security import require_admin
 from app.schemas.blog import (
     BlogPostCreate,
     BlogPostUpdate,
@@ -15,22 +15,6 @@ from app.schemas.blog import (
 from app.core.config import settings
 
 router = APIRouter()
-security = HTTPBasic()
-
-
-def verify_admin_credentials(credentials: HTTPBasicCredentials = Depends(security)):
-    """Verify admin credentials for blog management"""
-    is_correct_username = secrets.compare_digest(credentials.username, settings.ADMIN_USERNAME)
-    is_correct_password = secrets.compare_digest(credentials.password, settings.ADMIN_PASSWORD)
-
-    if not (is_correct_username and is_correct_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid admin credentials",
-            headers={"WWW-Authenticate": "Basic"},
-        )
-    return credentials
-
 
 # Public endpoints
 @router.get("/posts", response_model=BlogPostListResponse)
@@ -127,7 +111,7 @@ async def get_post_by_slug(slug: str):
 @router.post("/admin/posts", response_model=BlogPostResponse)
 async def create_post(
         post_data: BlogPostCreate,
-        credentials: HTTPBasicCredentials = Depends(verify_admin_credentials)
+        admin: User = Depends(require_admin)
 ):
     """Create a new blog post or press release"""
 
@@ -181,7 +165,7 @@ async def get_all_posts_admin(
         status: Optional[PostStatus] = None,
         page: int = Query(1, ge=1),
         limit: int = Query(10, ge=1, le=50),
-        credentials: HTTPBasicCredentials = Depends(verify_admin_credentials)
+        admin: User = Depends(require_admin)
 ):
     """Get all posts for admin (including drafts)"""
 
@@ -235,7 +219,7 @@ async def get_all_posts_admin(
 async def update_post(
         post_id: str,
         post_data: BlogPostUpdate,
-        credentials: HTTPBasicCredentials = Depends(verify_admin_credentials)
+        admin: User = Depends(require_admin)
 ):
     """Update a blog post"""
 
@@ -283,7 +267,7 @@ async def update_post(
 @router.post("/admin/posts/{post_id}/publish")
 async def publish_post(
         post_id: str,
-        credentials: HTTPBasicCredentials = Depends(verify_admin_credentials)
+        admin: User = Depends(require_admin)
 ):
     """Publish a blog post"""
 
@@ -303,7 +287,7 @@ async def publish_post(
 @router.post("/admin/posts/{post_id}/unpublish")
 async def unpublish_post(
         post_id: str,
-        credentials: HTTPBasicCredentials = Depends(verify_admin_credentials)
+        admin: User = Depends(require_admin)
 ):
     """Unpublish a blog post"""
 
@@ -323,7 +307,7 @@ async def unpublish_post(
 @router.delete("/admin/posts/{post_id}")
 async def delete_post(
         post_id: str,
-        credentials: HTTPBasicCredentials = Depends(verify_admin_credentials)
+        admin: User = Depends(require_admin)
 ):
     """Delete a blog post"""
 

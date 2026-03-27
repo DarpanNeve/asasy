@@ -8,6 +8,7 @@ from app.models.report import ReportLog
 from app.models.contact import ContactSubmission
 from app.models.token import TokenPackage, TokenTransaction, UserTokenBalance
 from app.models.blog import BlogPost
+from app.models.onboarding import InvestorRegistration, TechnologySubmission, PrototypeInquiry
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +37,9 @@ async def init_database():
                 TokenTransaction,
                 UserTokenBalance,
                 BlogPost,
+                InvestorRegistration,
+                TechnologySubmission,
+                PrototypeInquiry,
             ]
         )
         

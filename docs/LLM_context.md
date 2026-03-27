@@ -17,7 +17,7 @@ Users submit a technology idea/concept; the AI engine analyzes it across 30+ par
 ## Token Packages (Active)
 | Package | Type | Notes |
 |---|---|---|
-| Pro | pro | Indigo color theme |
+| Pro | pro | Teal color theme |
 | Max | max | Emerald color theme |
 | Enterprise | enterprise | Contact-only, orange color theme, display only |
 
@@ -25,7 +25,7 @@ Users submit a technology idea/concept; the AI engine analyzes it across 30+ par
 
 ## Color System
 - **Primary**: Blue (trust, professionalism — `blue-600`)
-- **Pro/Advanced tier**: Teal (`teal-500/600`) — deliberately chosen for this IP/tech-transfer platform; reads analytical and credible, not AI-generic
+- **Pro/Advanced tier**: Teal (`teal-500/600`)
 - **Comprehensive/Max tier**: Emerald (`emerald-500/600`)
 - **Enterprise tier**: Orange (`orange-500/600`)
 - **Accents/gradients**: Slate, deeper blue (`blue-800/900`) — no indigo, no pink, no purple anywhere in the app
@@ -36,7 +36,7 @@ Users submit a technology idea/concept; the AI engine analyzes it across 30+ par
 - **Hero background**: `bg-slate-50 border-b border-slate-200` — clean, no gradient, no animated elements
 - **No animated pulse orbs** anywhere in the app — unprofessional
 - **No `hover:scale-105 transform`** on buttons — use `hover:bg-blue-700` or `hover:opacity-90` only
-- **AI language**: "AI-Powered" is the product's identity — keep it in labels, headings, and feature names. What to avoid is AI-*generated-sounding* copy: generic buzzwords, overly enthusiastic filler phrases, and fluffy marketing language that lacks specificity
+- **AI language**: "AI-Powered" is the product's identity — keep it in labels, headings, and feature names.
 - **Card hover**: `hover:shadow-md` or `hover:shadow-lg` only — no `transform hover:-translate-y-2`
 - **Section backgrounds alternate**: `bg-white` ↔ `bg-slate-50` — no blue gradient sections
 
@@ -56,6 +56,9 @@ Users submit a technology idea/concept; the AI engine analyzes it across 30+ par
 | `frontend/src/components/Header.jsx` | Navigation — token balance display |
 | `frontend/src/components/CheckoutPage.jsx` | Payment flow |
 | `backend/app/` | FastAPI routes, models, report generation |
+| `backend/app/api/routes/onboarding.py` | Investor, Technology, Prototype form submission endpoints + stats |
+| `backend/app/models/onboarding.py` | Beanie ODM models for all 3 onboarding types |
+| `backend/app/services/email_service.py` | Confirmation emails for all 3 onboarding forms |
 
 ## Business Rules
 - Minimum token purchase must cover Advanced (7,500) as the entry-level report
@@ -63,6 +66,37 @@ Users submit a technology idea/concept; the AI engine analyzes it across 30+ par
 - Enterprise tier is contact-only (routes to `/contact`)
 - Reports take 12–15 minutes to generate
 - Users receive free tokens on signup
+
+## Routing (current)
+| Path | Page | Notes |
+|---|---|---|
+| `/` | Home | |
+| `/about` | About | |
+| `/pricing` | Pricing | |
+| `/experts` | Experts | **New.** Replaces `/rttp` in navbar. `/rttp` still works as legacy URL. |
+| `/investors` | Investors | **New.** Form + pie chart of registered technologies by sector |
+| `/technologies` | Technologies | **New.** IP holder technology submission form |
+| `/prototype` | Prototype | **New.** Prototype development inquiry form |
+| `/contact` | Contact | "Prototyping" added to Reason dropdown |
+| `/admin` | Admin | + 3 new tabs: Investors, Technologies, Prototype Inquiries |
+| `/rttp` | RTTP | Legacy — kept intact, not linked from nav |
+
+## Navigation Structure
+**Top Navbar**: Home | About | Experts | Investors | Technologies | Prototype | Pricing | Contact | Sign In / Get Started / Dashboard
+**Footer (Company column)**: Home | About | Pricing | Contact | Careers | Blog | Press Releases
+**Footer (Services column)**: AI Reports | Experts | Investors | Submit Technology | Prototype
+
+> Career, Blog, and Press links were removed from the top navbar and placed in the footer Company column.
+
+## Onboarding System (new)
+All 3 forms POST to `/onboarding/*`, send confirmation email to the submitter via the existing msg91 email service, and are fully viewable in the Admin panel.
+
+| Form | Endpoint | Admin Tab |
+|---|---|---|
+| Investor Registration | POST `/onboarding/investors` | "Investors" tab |
+| Technology Submission | POST `/onboarding/technologies` | "Technologies" tab |
+| Prototype Inquiry | POST `/onboarding/prototype` | "Prototype Inquiries" tab |
+| Technology stats | GET `/onboarding/technologies/stats` | Used for pie chart on `/investors` page |
 
 ## Target Users
 Startups & Founders, Universities & Academia, R&D Labs & Corporates, Investors & VCs, Government & Policy Bodies, Incubators & Accelerators, RTTP Professionals

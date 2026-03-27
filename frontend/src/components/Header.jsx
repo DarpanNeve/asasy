@@ -12,7 +12,6 @@ export default function Header() {
   const [tokenPackages, setTokenPackages] = useState([]);
   const location = useLocation();
 
-  // Scroll to top when location changes
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location]);
@@ -35,7 +34,6 @@ export default function Header() {
         popular: pkg.package_type === "pro",
       }));
 
-      // Add Enterprise plan as display-only option
       packages.push({
         id: "enterprise-display",
         name: "Enterprise",
@@ -68,54 +66,48 @@ export default function Header() {
 
   const getColorForPackage = (type) => {
     switch (type) {
-      case "starter":
-        return "from-blue-500 to-blue-600";
-      case "pro":
-        return "from-teal-500 to-teal-600";
-      case "max":
-        return "from-emerald-500 to-emerald-600";
-      case "enterprise":
-        return "from-orange-500 to-orange-600";
-      default:
-        return "from-blue-500 to-blue-600";
+      case "starter": return "from-blue-500 to-blue-600";
+      case "pro": return "from-teal-500 to-teal-600";
+      case "max": return "from-emerald-500 to-emerald-600";
+      case "enterprise": return "from-orange-500 to-orange-600";
+      default: return "from-blue-500 to-blue-600";
     }
   };
 
   const getHoverColorForPackage = (type) => {
     switch (type) {
-      case "starter":
-        return "from-blue-600 to-blue-700";
-      case "pro":
-        return "from-teal-600 to-teal-700";
-      case "max":
-        return "from-emerald-600 to-emerald-700";
-      case "enterprise":
-        return "from-orange-600 to-orange-700";
-      default:
-        return "from-blue-600 to-blue-700";
+      case "starter": return "from-blue-600 to-blue-700";
+      case "pro": return "from-teal-600 to-teal-700";
+      case "max": return "from-emerald-600 to-emerald-700";
+      case "enterprise": return "from-orange-600 to-orange-700";
+      default: return "from-blue-600 to-blue-700";
     }
   };
 
   const getIconForPackage = (type) => {
     switch (type) {
-      case "starter":
-        return Zap;
-      case "pro":
-        return Crown;
-      case "max":
-        return Rocket;
-      case "enterprise":
-        return Diamond;
-      default:
-        return Zap;
+      case "starter": return Zap;
+      case "pro": return Crown;
+      case "max": return Rocket;
+      case "enterprise": return Diamond;
+      default: return Zap;
     }
   };
 
-  // Handle navigation with scroll to top
   const handleNavigation = () => {
     setMobileMenuOpen(false);
     window.scrollTo(0, 0);
   };
+
+  const navLinks = [
+    { to: "/about", label: "About" },
+    { to: "/experts", label: "Experts" },
+    { to: "/investors", label: "Investors" },
+    { to: "/technologies", label: "Technologies" },
+    { to: "/prototype", label: "Prototype" },
+    { to: "/pricing", label: "Pricing" },
+    { to: "/contact", label: "Contact" },
+  ];
 
   return (
     <nav className="bg-white/90 backdrop-blur-md shadow-lg border-b border-neutral-100 sticky top-0 z-50">
@@ -124,7 +116,7 @@ export default function Header() {
           {/* Logo */}
           <Link
             to="/"
-            className="flex items-center group"
+            className="flex items-center group flex-shrink-0"
             onClick={() => window.scrollTo(0, 0)}
           >
             <div className="relative flex items-center h-16">
@@ -137,68 +129,22 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-4">
-            <Link
-              to="/"
-              className="text-neutral-700 hover:text-blue-600 font-medium transition-colors duration-200"
-              onClick={() => window.scrollTo(0, 0)}
-            >
-              Home
-            </Link>
-            <Link
-              to="/about"
-              className="text-neutral-700 hover:text-blue-600 font-medium transition-colors duration-200"
-              onClick={() => window.scrollTo(0, 0)}
-            >
-              About
-            </Link>
-            <Link
-              to="/pricing"
-              className="text-neutral-700 hover:text-blue-600 font-medium transition-colors duration-200"
-              onClick={() => window.scrollTo(0, 0)}
-            >
-              Pricing
-            </Link>
-            <Link
-              to="/rttp"
-              className="text-neutral-700 hover:text-blue-600 font-medium transition-colors duration-200"
-              onClick={() => window.scrollTo(0, 0)}
-            >
-              RTTP Experts
-            </Link>
-            <Link
-              to="/careers"
-              className="text-neutral-700 hover:text-blue-600 font-medium transition-colors duration-200"
-              onClick={() => window.scrollTo(0, 0)}
-            >
-              Career
-            </Link>
-            <Link
-              to="/blog"
-              className="text-neutral-700 hover:text-blue-600 font-medium transition-colors duration-200"
-              onClick={() => window.scrollTo(0, 0)}
-            >
-              Blog
-            </Link>
-            <Link
-              to="/press-releases"
-              className="text-neutral-700 hover:text-blue-600 font-medium transition-colors duration-200"
-              onClick={() => window.scrollTo(0, 0)}
-            >
-              Press
-            </Link>
-            <Link
-              to="/contact"
-              className="text-neutral-700 hover:text-blue-600 font-medium transition-colors duration-200"
-              onClick={() => window.scrollTo(0, 0)}
-            >
-              Contact
-            </Link>
+          <div className="hidden lg:flex items-center space-x-3 xl:space-x-4">
+            {navLinks.map(({ to, label }) => (
+              <Link
+                key={to}
+                to={to}
+                className="text-neutral-700 hover:text-blue-600 font-medium transition-colors duration-200 text-sm whitespace-nowrap"
+                onClick={() => window.scrollTo(0, 0)}
+              >
+                {label}
+              </Link>
+            ))}
 
             {user ? (
               <Link
                 to="/reports"
-                className="px-5 py-2 rounded-full bg-gradient-to-r from-blue-600 to-blue-800 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"
+                className="px-4 py-2 rounded-full bg-gradient-to-r from-blue-600 to-blue-800 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 text-sm whitespace-nowrap"
                 onClick={() => window.scrollTo(0, 0)}
               >
                 Dashboard
@@ -207,14 +153,14 @@ export default function Header() {
               <>
                 <Link
                   to="/login"
-                  className="text-neutral-700 hover:text-blue-600 font-medium transition-colors duration-200"
+                  className="text-neutral-700 hover:text-blue-600 font-medium transition-colors duration-200 text-sm"
                   onClick={() => window.scrollTo(0, 0)}
                 >
                   Sign In
                 </Link>
                 <Link
                   to="/signup"
-                  className="px-5 py-2 rounded-full bg-gradient-to-r from-blue-600 to-blue-800 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"
+                  className="px-4 py-2 rounded-full bg-gradient-to-r from-blue-600 to-blue-800 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 text-sm whitespace-nowrap"
                   onClick={() => window.scrollTo(0, 0)}
                 >
                   Get Started
@@ -222,94 +168,42 @@ export default function Header() {
               </>
             )}
             {user && userBalance && (
-              <div className="ml-4">
-                <div className="flex items-center px-4 py-2 bg-white rounded-full shadow border border-gray-200">
-                  <Zap className="w-5 h-5 text-blue-600 mr-2" />
-                  <span className="text-gray-700 mr-2">Tokens:</span>
-                  <span className="font-bold text-blue-600 text-lg">
-                    {userBalance.available_tokens.toLocaleString()}
-                  </span>
-                </div>
+              <div className="flex items-center px-3 py-1.5 bg-white rounded-full shadow border border-gray-200">
+                <Zap className="w-4 h-4 text-blue-600 mr-1.5" />
+                <span className="text-gray-700 text-sm mr-1">Tokens:</span>
+                <span className="font-bold text-blue-600 text-sm">
+                  {userBalance.available_tokens.toLocaleString()}
+                </span>
               </div>
             )}
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="lg:hidden">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="text-neutral-600 hover:text-neutral-900 transition-colors p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               aria-label="Toggle mobile menu"
             >
-              {mobileMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
         </div>
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden absolute top-16 left-0 w-full bg-white/95 backdrop-blur-md shadow-lg border-t border-neutral-200 py-2 z-40">
+          <div className="lg:hidden absolute top-16 left-0 w-full bg-white/95 backdrop-blur-md shadow-lg border-t border-neutral-200 py-2 z-40">
             <div className="px-1 pt-2 pb-3 space-y-1 sm:px-3">
-              <Link
-                to="/"
-                className="block px-3 py-2 text-neutral-700 hover:bg-blue-50 hover:text-blue-600 rounded-md transition-colors duration-200"
-                onClick={handleNavigation}
-              >
-                Home
-              </Link>
-              <Link
-                to="/about"
-                className="block px-3 py-2 text-neutral-700 hover:bg-blue-50 hover:text-blue-600 rounded-md transition-colors duration-200"
-                onClick={handleNavigation}
-              >
-                About
-              </Link>
-              <Link
-                to="/pricing"
-                className="block px-3 py-2 text-neutral-700 hover:bg-blue-50 hover:text-blue-600 rounded-md transition-colors duration-200"
-                onClick={handleNavigation}
-              >
-                Pricing
-              </Link>
-              <Link
-                to="/rttp"
-                className="block px-3 py-2 text-neutral-700 hover:bg-blue-50 hover:text-blue-600 rounded-md transition-colors duration-200"
-                onClick={handleNavigation}
-              >
-                RTTP Experts
-              </Link>
-              <Link
-                to="/careers"
-                className="block px-3 py-2 text-neutral-700 hover:bg-blue-50 hover:text-blue-600 rounded-md transition-colors duration-200"
-                onClick={handleNavigation}
-              >
-                Career
-              </Link>
-              <Link
-                to="/blog"
-                className="block px-3 py-2 text-neutral-700 hover:bg-blue-50 hover:text-blue-600 rounded-md transition-colors duration-200"
-                onClick={handleNavigation}
-              >
-                Blog
-              </Link>
-              <Link
-                to="/press-releases"
-                className="block px-3 py-2 text-neutral-700 hover:bg-blue-50 hover:text-blue-600 rounded-md transition-colors duration-200"
-                onClick={handleNavigation}
-              >
-                Press
-              </Link>
-              <Link
-                to="/contact"
-                className="block px-3 py-2 text-neutral-700 hover:bg-blue-50 hover:text-blue-600 rounded-md transition-colors duration-200"
-                onClick={handleNavigation}
-              >
-                Contact
-              </Link>
+              {navLinks.map(({ to, label }) => (
+                <Link
+                  key={to}
+                  to={to}
+                  className="block px-3 py-2 text-neutral-700 hover:bg-blue-50 hover:text-blue-600 rounded-md transition-colors duration-200"
+                  onClick={handleNavigation}
+                >
+                  {label}
+                </Link>
+              ))}
               {user ? (
                 <Link
                   to="/reports"
@@ -338,8 +232,8 @@ export default function Header() {
               )}
             </div>
             {user && userBalance && (
-              <div className="ml-4">
-                <div className="flex items-center px-4 py-2 bg-white rounded-full shadow border border-gray-200">
+              <div className="px-4 pb-3">
+                <div className="flex items-center px-4 py-2 bg-white rounded-full shadow border border-gray-200 w-fit">
                   <Zap className="w-5 h-5 text-blue-600 mr-2" />
                   <span className="text-gray-700 mr-2">Tokens:</span>
                   <span className="font-bold text-blue-600 text-lg">

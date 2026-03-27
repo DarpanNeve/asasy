@@ -5,6 +5,9 @@ from datetime import datetime
 import logging
 
 from app.core.rate_limiter import limiter
+from app.models.user import User
+from app.core.security import require_admin
+from fastapi import Depends
 
 logger = logging.getLogger(__name__)
 router = APIRouter(
@@ -63,8 +66,8 @@ async def submit_contact_form(request: Request, submission: ContactSubmission):
         )
 
 @router.get("/submissions")
-async def get_contact_submissions():
-    """Get all contact submissions (admin only in production)"""
+async def get_contact_submissions(admin: User = Depends(require_admin)):
+    """Get all contact submissions (admin only)"""
     try:
         # Sort by submission date, newest first
         sorted_submissions = sorted(
@@ -81,8 +84,8 @@ async def get_contact_submissions():
         )
 
 @router.get("/export")
-async def export_contact_submissions():
-    """Export contact submissions as CSV (admin only in production)"""
+async def export_contact_submissions(admin: User = Depends(require_admin)):
+    """Export contact submissions as CSV (admin only)"""
     try:
         import csv
         import io

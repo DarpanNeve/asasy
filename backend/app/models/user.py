@@ -20,6 +20,7 @@ class User(Document):
     # Profile
     is_active: bool = True
     is_verified: bool = False
+    is_admin: bool = False
     
     # Usage tracking
     reports_generated: int = 0

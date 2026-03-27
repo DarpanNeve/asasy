@@ -11,6 +11,7 @@ class UserResponse(BaseModel):
     oauth_provider: OAuthProvider
     is_active: bool
     is_verified: bool
+    is_admin: bool
     phone: Optional[str] = None
     company: Optional[str] = None
     job_title: Optional[str] = None
