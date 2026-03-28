@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./contexts/AuthContext";
 import { AppProvider } from "./contexts/AppContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Layout from "./components/Layout";
@@ -130,20 +131,22 @@ function App() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <AppProvider>
-            <div className="min-h-screen bg-neutral-50">
-              <RouterProvider router={router} />
-              <Toaster
-                position="top-right"
-                toastOptions={{
-                  className: "bg-white shadow-lg border",
-                  duration: 4000,
-                }}
-              />
-            </div>
-          </AppProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <AppProvider>
+              <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300">
+                <RouterProvider router={router} />
+                <Toaster
+                  position="top-right"
+                  toastOptions={{
+                    className: "bg-white dark:bg-slate-800 dark:text-slate-100 shadow-lg border dark:border-slate-700",
+                    duration: 4000,
+                  }}
+                />
+              </div>
+            </AppProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );

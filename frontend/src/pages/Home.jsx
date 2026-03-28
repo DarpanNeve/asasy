@@ -296,11 +296,11 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300">
       <Header />
 
       {/* Hero Section */}
-      <section className="min-h-screen bg-white pt-20 pb-32">
+      <section className="min-h-screen bg-white dark:bg-slate-950 pt-20 pb-32">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-16"
@@ -321,7 +321,7 @@ export default function Home() {
               </span>
             </motion.div>
 
-            <h1 className="text-5xl md:text-7xl font-bold text-slate-900 mb-6 leading-tight">
+            <h1 className="text-5xl md:text-7xl font-bold text-slate-900 dark:text-slate-100 mb-6 leading-tight">
               AI-Powered Technology
               <motion.span
                 className="block bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent"
@@ -423,13 +423,13 @@ export default function Home() {
       </section>
 
       {/* Why Assesme? Section */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-white dark:bg-slate-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">
+            <h2 className="text-4xl font-bold text-slate-900 dark:text-slate-100 mb-4">
               Why Assesme?
             </h2>
-            <p className="text-xl text-slate-600 mx-auto mb-12">
+            <p className="text-xl text-slate-600 dark:text-slate-400 mx-auto mb-12">
               Today, most innovations never reach the market — not because they
               lack potential, but because they lack structured validation.
               Assesme solves this by providing
@@ -464,17 +464,18 @@ export default function Home() {
             ].map((item, index) => (
               <motion.div
                 key={index}
-                className="bg-slate-50 p-8 rounded-2xl shadow-sm hover:shadow-lg transition-shadow"
+                className="bg-slate-50 dark:bg-slate-900 p-8 rounded-2xl shadow-sm hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-700 border border-transparent dark:border-slate-800 transition-all duration-300"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.5 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: -3 }}
               >
-                <CheckCircle className="h-8 w-8 text-blue-600 mb-4" />
-                <h3 className="text-xl font-semibold text-slate-800 mb-2">
+                <CheckCircle className="h-8 w-8 text-blue-600 dark:text-blue-400 mb-4" />
+                <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-2">
                   {item.title}
                 </h3>
-                <p className="text-slate-600">{item.description}</p>
+                <p className="text-slate-600 dark:text-slate-400">{item.description}</p>
               </motion.div>
             ))}
           </div>
@@ -482,13 +483,13 @@ export default function Home() {
       </section>
 
       {/* Who Can Use Assesme? Section */}
-      <section className="py-24 bg-slate-50">
+      <section className="py-24 bg-slate-50 dark:bg-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">
+            <h2 className="text-4xl font-bold text-slate-900 dark:text-slate-100 mb-4">
               Who Can Use Assesme?
             </h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-12">
+            <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto mb-12">
               Assesme is built for the entire innovation ecosystem
             </p>
           </div>
@@ -532,21 +533,21 @@ export default function Home() {
             ].map((user, index) => (
               <motion.div
                 key={index}
-                className="text-center p-8 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-shadow"
+                className="text-center p-8 bg-white dark:bg-slate-800/60 rounded-2xl shadow-sm hover:shadow-lg border border-transparent dark:border-slate-700 hover:border-blue-100 dark:hover:border-blue-700 transition-all duration-300"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.5 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <div className="flex justify-center mb-4">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                    <user.icon className="h-8 w-8 text-blue-600" />
+                  <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/40 rounded-2xl flex items-center justify-center">
+                    <user.icon className="h-8 w-8 text-blue-600 dark:text-blue-400" />
                   </div>
                 </div>
-                <h3 className="text-xl font-semibold text-slate-800 mb-2">
+                <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-2">
                   {user.title}
                 </h3>
-                <p className="text-slate-600">{user.description}</p>
+                <p className="text-slate-600 dark:text-slate-400">{user.description}</p>
               </motion.div>
             ))}
           </div>
@@ -556,7 +557,7 @@ export default function Home() {
       {/* Core Features Section */}
       <section
         id="features"
-        className="py-24 bg-gradient-to-b from-white via-slate-50/30 to-white relative overflow-hidden"
+        className="py-24 bg-gradient-to-b from-white via-slate-50/30 to-white dark:from-slate-950 dark:via-slate-900/30 dark:to-slate-950 relative overflow-hidden"
       >
         <div className="absolute inset-0 z-0"></div>
         <div
@@ -573,7 +574,7 @@ export default function Home() {
             animate="visible"
             variants={fadeIn}
           >
-            <h2 className="text-4xl md:text-6xl font-bold text-slate-900 mb-6 leading-tight">
+            <h2 className="text-4xl md:text-6xl font-bold text-slate-900 dark:text-slate-100 mb-6 leading-tight">
               Core Features
             </h2>
           </motion.div>
@@ -593,7 +594,7 @@ export default function Home() {
                   variants={fadeIn}
                   whileHover="hover"
                 >
-                  <div className="relative h-full p-8 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-300">
+                  <div className="relative h-full p-8 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md hover:border-blue-100 dark:hover:border-blue-700 transition-all duration-300">
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-transparent to-blue-50/50 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <motion.div
                       className="relative z-10 inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 bg-gradient-to-br from-blue-100 to-blue-200 group-hover:from-blue-500 group-hover:to-blue-800 transition-all duration-500 shadow-md group-hover:shadow-lg"
@@ -619,10 +620,10 @@ export default function Home() {
       </section>
 
       {/* How Assesme Works Section */}
-      <section className="py-24 bg-slate-50">
+      <section className="py-24 bg-slate-50 dark:bg-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-4xl font-bold text-slate-900 mb-12">
+            <h2 className="text-4xl font-bold text-slate-900 dark:text-slate-100 mb-12">
               How Assesme Works
             </h2>
           </div>
@@ -667,11 +668,11 @@ export default function Home() {
                     index % 2 === 0 ? "md:pr-12" : "md:pl-12 md:order-2"
                   }`}
                 >
-                  <div className="p-6 bg-white rounded-2xl shadow-md">
-                    <h3 className="text-xl font-semibold text-slate-800 mb-2">
+                  <div className="p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-transparent dark:border-slate-700">
+                    <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-2">
                       {step.title}
                     </h3>
-                    <p className="text-slate-600">{step.description}</p>
+                    <p className="text-slate-600 dark:text-slate-400">{step.description}</p>
                   </div>
                 </div>
                 <div className="hidden md:flex w-16 h-16 bg-blue-600 rounded-full items-center justify-center text-white font-bold z-10 shadow-lg flex-shrink-0 md:order-1">
@@ -684,10 +685,10 @@ export default function Home() {
       </section>
 
       {/* Benefits of Using Assesme Section */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-white dark:bg-slate-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-4xl font-bold text-slate-900 mb-12">
+            <h2 className="text-4xl font-bold text-slate-900 dark:text-slate-100 mb-12">
               Benefits of Using Assesme
             </h2>
           </div>
@@ -722,16 +723,16 @@ export default function Home() {
             ].map((item, index) => (
               <motion.div
                 key={index}
-                className="bg-slate-50 p-8 rounded-2xl"
+                className="bg-slate-50 dark:bg-slate-900 p-8 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-blue-100 dark:hover:border-blue-700 transition-all duration-300"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.5 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                <h3 className="text-xl font-semibold text-slate-800 mb-2">
+                <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-2">
                   {item.for}
                 </h3>
-                <p className="text-slate-600">{item.benefit}</p>
+                <p className="text-slate-600 dark:text-slate-400">{item.benefit}</p>
               </motion.div>
             ))}
           </div>
@@ -739,10 +740,10 @@ export default function Home() {
       </section>
 
       {/* Report Generator Section */}
-      <section id="generate-report" className="py-24 bg-slate-100">
+      <section id="generate-report" className="py-24 bg-slate-100 dark:bg-slate-900">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            className="bg-white rounded-3xl shadow-2xl p-8 md:p-12"
+            className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl p-8 md:p-12 border border-transparent dark:border-slate-700"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
