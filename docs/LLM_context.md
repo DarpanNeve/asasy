@@ -32,13 +32,17 @@ Users submit a technology idea/concept; the AI engine analyzes it across 30+ par
 - **Button gradients**: `from-blue-600 to-blue-800` (hover: `to-blue-900`)
 
 ## Page Design Standards
-- **Page hero height**: `py-28 md:py-36` for content pages (About, Careers, RTTP, Blog, Press Releases), `py-24 md:py-32` for listing pages, `py-16 md:py-24` for policy pages (Privacy, Terms, Pricing Policy, Refund Policy)
-- **Hero background**: `bg-slate-50 border-b border-slate-200` — clean, no gradient, no animated elements
-- **No animated pulse orbs** anywhere in the app — unprofessional
-- **No `hover:scale-105 transform`** on buttons — use `hover:bg-blue-700` or `hover:opacity-90` only
+- **Hero sections (content pages)**: Dark `bg-slate-900` with `bg-dot-grid` dot pattern + gradient fade at bottom. White text, badge pill above heading.
+- **Hero entrance**: Framer Motion `initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}` with `duration: 0.7, ease: [0.22, 1, 0.36, 1]`
+- **Card hover**: `whileHover={{ y: -4 }}` + `card-interactive` class (border glow) — no abrupt scale transforms
+- **Card grids**: Always use stagger animation via Framer Motion `variants` + `whileInView` with `viewport={{ once: true }}`
+- **Section backgrounds alternate**: `bg-white dark:bg-slate-950` ↔ `bg-slate-50 dark:bg-slate-900`
+- **No blue gradient body sections** — only the RTTP CTA block uses `bg-gradient-to-br from-blue-700 to-blue-900`
+- **No animated pulse orbs** — still prohibited
+- **Buttons**: Use `btn-glow` CSS class for primary buttons (blue shadow on hover). `whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}` on CTAs.
 - **AI language**: "AI-Powered" is the product's identity — keep it in labels, headings, and feature names.
-- **Card hover**: `hover:shadow-md` or `hover:shadow-lg` only — no `transform hover:-translate-y-2`
-- **Section backgrounds alternate**: `bg-white` ↔ `bg-slate-50` — no blue gradient sections
+- **Dark mode**: Fully supported. Toggle in Header. ThemeContext sets `.dark` on `<html>`. All new components MUST include `dark:` variants.
+- **Icon badges**: Use `bg-gradient-to-br from-X-500 to-X-700 rounded-xl` with white icon inside — no flat colored circles
 
 ## Tech Stack
 - **Frontend**: React + Vite, Tailwind CSS, Framer Motion, React Hook Form, Lucide icons
@@ -50,10 +54,16 @@ Users submit a technology idea/concept; the AI engine analyzes it across 30+ par
 | File | Purpose |
 |---|---|
 | `frontend/src/components/TokenPricingSection.jsx` | Pricing page — token packages + report requirements table |
-| `frontend/src/pages/Home.jsx` | Landing page — hero, features, report generator, sample downloads |
+| `frontend/src/pages/Home.jsx` | Landing page — thin orchestrator, imports all section components |
+| `frontend/src/components/home/` | **Home page sections** — each section is a separate component |
+| `frontend/src/components/home/HeroSection.jsx` | Hero with trust badge, animated headline, feature pills |
+| `frontend/src/components/home/ReportGeneratorSection.jsx` | Report generation form (self-contained with auth, API, navigation) |
+| `frontend/src/components/home/CommercializationSection.jsx` | 6-step commercialization journey |
 | `frontend/src/pages/Reports.jsx` | Dashboard — generate + manage reports |
 | `frontend/src/pages/Pricing.jsx` | Standalone pricing page |
-| `frontend/src/components/Header.jsx` | Navigation — token balance display |
+| `frontend/src/components/Header.jsx` | Navigation — token balance, dark mode toggle, active indicator |
+| `frontend/src/components/FormFields.jsx` | Shared form fields with dark mode support |
+| `frontend/src/contexts/ThemeContext.jsx` | Light/dark mode context with localStorage persistence |
 | `frontend/src/components/CheckoutPage.jsx` | Payment flow |
 | `backend/app/` | FastAPI routes, models, report generation |
 | `backend/app/api/routes/onboarding.py` | Investor, Technology, Prototype form submission endpoints + stats |
