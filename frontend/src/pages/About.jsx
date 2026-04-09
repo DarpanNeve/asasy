@@ -29,7 +29,11 @@ const stagger = {
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+  },
 };
 
 const MISSION_PILLARS = [
@@ -37,37 +41,43 @@ const MISSION_PILLARS = [
     icon: FileSearch,
     color: "bg-blue-600",
     title: "Evidence-Based Validation",
-    description: "Every report is grounded in WIPO, EPO, NIH, and OECD standards — not guesswork.",
+    description:
+      "Every report is grounded in WIPO, EPO, NIH, and OECD standards — not guesswork.",
   },
   {
     icon: Shield,
     color: "bg-teal-600",
     title: "IP-First Thinking",
-    description: "We treat your intellectual property as the core asset and structure every assessment accordingly.",
+    description:
+      "We treat your intellectual property as the core asset and structure every assessment accordingly.",
   },
   {
     icon: Globe,
     color: "bg-emerald-600",
     title: "Global Commercialization",
-    description: "From Indian filings to international licensing, we give you globally relevant insights.",
+    description:
+      "From Indian filings to international licensing, we give you globally relevant insights.",
   },
   {
     icon: Target,
     color: "bg-orange-500",
     title: "Investor-Ready Output",
-    description: "Every report is structured to be readable by VCs, government bodies, and industry partners.",
+    description:
+      "Every report is structured to be readable by VCs, government bodies, and industry partners.",
   },
   {
     icon: Users,
     color: "bg-blue-700",
     title: "Ecosystem for All",
-    description: "Startups, academia, R&D labs, investors, and incubators — one platform for the whole innovation stack.",
+    description:
+      "Startups, academia, R&D labs, investors, and incubators — one platform for the whole innovation stack.",
   },
   {
     icon: Lightbulb,
     color: "bg-teal-700",
     title: "From Idea to Impact",
-    description: "We walk with you from early validation through commercialization pathways and funding readiness.",
+    description:
+      "We walk with you from early validation through commercialization pathways and funding readiness.",
   },
 ];
 
@@ -83,25 +93,29 @@ const FOUNDER_HIGHLIGHTS = [
     icon: Award,
     color: "bg-amber-500",
     title: "Young & Innovative Scientist Award",
-    description: "Recipient of prestigious DRDO award in 2022, conferred by Defence Minister Shri. Rajnath Singh",
+    description:
+      "Recipient of prestigious DRDO award in 2022, conferred by Defence Minister Shri. Rajnath Singh",
   },
   {
     icon: Trophy,
     color: "bg-blue-600",
     title: "100+ IP Rights",
-    description: "Holder of over 100 intellectual property rights, including 80+ granted patents",
+    description:
+      "Holder of over 100 intellectual property rights, including 80+ granted patents",
   },
   {
     icon: BookOpen,
     color: "bg-teal-600",
     title: "50+ Seminars",
-    description: "Delivered over 50 seminars and guest lectures at multiple universities",
+    description:
+      "Delivered over 50 seminars and guest lectures at multiple universities",
   },
   {
     icon: Users,
     color: "bg-emerald-600",
     title: "Multi-Industry Expert",
-    description: "Extensive experience across Ed-tech, Information-Tech, Legal-Tech, and Food-Tech startups",
+    description:
+      "Extensive experience across Ed-tech, Information-Tech, Legal-Tech, and Food-Tech startups",
   },
 ];
 
@@ -114,8 +128,14 @@ const REPORT_TYPES = [
     tokenColor: "text-teal-600 dark:text-teal-400",
     borderColor: "border-teal-200 dark:border-teal-800/50",
     bg: "bg-teal-50 dark:bg-teal-900/10",
-    description: "VC-ready analysis with SWOT, ROI model, and commercialization paths",
-    highlights: ["24+ parameters", "Market & SWOT analysis", "Preliminary ROI model", "IP & Regulatory overview"],
+    description:
+      "VC-ready analysis with SWOT, ROI model, and commercialization paths",
+    highlights: [
+      "24+ parameters",
+      "Market & SWOT analysis",
+      "Preliminary ROI model",
+      "IP & Regulatory overview",
+    ],
   },
   {
     name: "Comprehensive Report",
@@ -125,8 +145,14 @@ const REPORT_TYPES = [
     tokenColor: "text-emerald-600 dark:text-emerald-400",
     borderColor: "border-emerald-200 dark:border-emerald-800/50",
     bg: "bg-emerald-50 dark:bg-emerald-900/10",
-    description: "Full due-diligence — IP claims, 5-yr forecasts, global FTO, funding strategy",
-    highlights: ["30+ parameters", "5-Year ROI projections", "Global FTO (US, EU, India, China)", "Funding & Exit strategy"],
+    description:
+      "Full due-diligence — IP claims, 5-yr forecasts, global FTO, funding strategy",
+    highlights: [
+      "30+ parameters",
+      "5-Year ROI projections",
+      "Global FTO (US, EU, India, China)",
+      "Funding & Exit strategy",
+    ],
   },
 ];
 
@@ -155,11 +181,16 @@ export default function AboutUs() {
               </span>
             </h1>
             <p className="text-xl text-slate-300 mb-10 max-w-3xl mx-auto leading-relaxed">
-              We built Assesme because too many innovations die not from lack of potential,
-              but from lack of structured validation. We are changing that — one report at a time.
+              We built Assesme because too many innovations die not from lack of
+              potential, but from lack of structured validation. We are changing
+              that — one report at a time.
             </p>
             <div className="flex flex-wrap justify-center gap-3 text-sm font-medium">
-              {["AI-Powered Analysis", "RTTP Certified", "Investor-Ready Reports"].map((pill) => (
+              {[
+                "AI-Powered Analysis",
+                "Experts Certified",
+                "Investor-Ready Reports",
+              ].map((pill) => (
                 <div
                   key={pill}
                   className="flex items-center bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-2 rounded-full text-white"
@@ -187,7 +218,9 @@ export default function AboutUs() {
                 <div className="text-3xl md:text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">
                   {stat.value}
                 </div>
-                <div className="text-slate-600 dark:text-slate-400 text-sm">{stat.label}</div>
+                <div className="text-slate-600 dark:text-slate-400 text-sm">
+                  {stat.label}
+                </div>
               </motion.div>
             ))}
           </motion.div>
@@ -214,7 +247,8 @@ export default function AboutUs() {
               </span>
             </h2>
             <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
-              We advance technology transfer by making professional IP assessments accessible, fast, and data-driven.
+              We advance technology transfer by making professional IP
+              assessments accessible, fast, and data-driven.
             </p>
           </motion.div>
 
@@ -234,7 +268,9 @@ export default function AboutUs() {
                   whileHover={{ y: -4 }}
                   className="group bg-white dark:bg-slate-800/80 rounded-2xl p-6 border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-700 transition-all duration-300"
                 >
-                  <div className={`w-12 h-12 ${pillar.color} rounded-xl flex items-center justify-center mb-4 shadow-md group-hover:scale-105 transition-transform duration-300`}>
+                  <div
+                    className={`w-12 h-12 ${pillar.color} rounded-xl flex items-center justify-center mb-4 shadow-md group-hover:scale-105 transition-transform duration-300`}
+                  >
                     <Icon className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-slate-900 dark:text-slate-200 mb-2 group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors">
@@ -266,7 +302,8 @@ export default function AboutUs() {
               </span>
             </h2>
             <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
-              A recognized innovator with a proven track record across IP, technology, and entrepreneurship
+              A recognized innovator with a proven track record across IP,
+              technology, and entrepreneurship
             </p>
           </motion.div>
 
@@ -295,8 +332,10 @@ export default function AboutUs() {
                 Founder & Chief Innovation Officer
               </p>
               <p className="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
-                Distinguished solution finder and versatile innovator with expertise across multiple technical domains.
-                A serial inventor, speaker, and startup advisor who has translated research into real-world commercial value.
+                Distinguished solution finder and versatile innovator with
+                expertise across multiple technical domains. A serial inventor,
+                speaker, and startup advisor who has translated research into
+                real-world commercial value.
               </p>
               <div className="flex gap-3 justify-center lg:justify-start">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs font-medium">
@@ -324,7 +363,9 @@ export default function AboutUs() {
                     whileHover={{ y: -2 }}
                     className="flex items-start space-x-4 bg-white dark:bg-slate-800/80 rounded-xl p-6 shadow-sm hover:shadow-md border border-slate-100 dark:border-slate-700 transition-all duration-300"
                   >
-                    <div className={`w-11 h-11 ${highlight.color} rounded-xl flex items-center justify-center flex-shrink-0 shadow-md`}>
+                    <div
+                      className={`w-11 h-11 ${highlight.color} rounded-xl flex items-center justify-center flex-shrink-0 shadow-md`}
+                    >
                       <Icon className="w-5 h-5 text-white" />
                     </div>
                     <div>
@@ -359,7 +400,8 @@ export default function AboutUs() {
               </span>
             </h2>
             <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              Two comprehensive report types designed for different stages and purposes.
+              Two comprehensive report types designed for different stages and
+              purposes.
             </p>
           </motion.div>
 
@@ -383,10 +425,13 @@ export default function AboutUs() {
                       {report.name}
                     </h3>
                     <p className={`font-semibold text-sm ${report.tokenColor}`}>
-                      {report.tokens} tokens · {report.priceINR} / {report.priceUSD}
+                      {report.tokens} tokens · {report.priceINR} /{" "}
+                      {report.priceUSD}
                     </p>
                   </div>
-                  <span className={`text-xs px-2.5 py-1 rounded-full ${report.tokenColor} bg-white dark:bg-slate-800 border border-current font-semibold`}>
+                  <span
+                    className={`text-xs px-2.5 py-1 rounded-full ${report.tokenColor} bg-white dark:bg-slate-800 border border-current font-semibold`}
+                  >
                     {report.tokens} tokens
                   </span>
                 </div>
@@ -395,7 +440,10 @@ export default function AboutUs() {
                 </p>
                 <ul className="space-y-2">
                   {report.highlights.map((h, hi) => (
-                    <li key={hi} className="flex items-center gap-2 text-slate-700 dark:text-slate-300 text-sm">
+                    <li
+                      key={hi}
+                      className="flex items-center gap-2 text-slate-700 dark:text-slate-300 text-sm"
+                    >
                       <CheckCircle className="w-4 h-4 text-teal-500 flex-shrink-0" />
                       {h}
                     </li>
@@ -451,7 +499,10 @@ export default function AboutUs() {
                 "Mr. Bharti's reputation as a speaker is well-established, having delivered over 50+ seminars, sharing his profound knowledge and innovative ideas. As a guest lecturer at multiple universities, he inspires the next generation of scientists and entrepreneurs.",
                 "Renowned for his brainstorming prowess and strategic planning, Mr. Bharti excels in developing, organizing, and delivering compelling proof-of-concept demonstrations. His ability to quickly identify issues and devise reliable solutions makes him a valuable asset, capable of transforming sectors with his innovative approaches.",
               ].map((para, i) => (
-                <p key={i} className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
+                <p
+                  key={i}
+                  className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed"
+                >
                   {para}
                 </p>
               ))}

@@ -48,7 +48,9 @@ const ContactPage = () => {
     if (!formData.phone) newErrors.phone = "Phone number is required";
     if (!formData.email) {
       newErrors.email = "Email is required";
-    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(formData.email)) {
+    } else if (
+      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(formData.email)
+    ) {
       newErrors.email = "Invalid email address";
     }
     if (!formData.message) newErrors.message = "Message is required";
@@ -84,13 +86,16 @@ const ContactPage = () => {
       const result = await response.json();
       setSubmitStatus("success");
       toast.success(
-        result.message || "Thank you for your inquiry! We will get back to you soon."
+        result.message ||
+          "Thank you for your inquiry! We will get back to you soon.",
       );
       setFormData({ reason: "", name: "", phone: "", email: "", message: "" });
     } catch (error) {
       console.error("Contact form error:", error);
       setSubmitStatus("error");
-      toast.error(error.message || "Failed to submit your inquiry. Please try again.");
+      toast.error(
+        error.message || "Failed to submit your inquiry. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -118,7 +123,8 @@ const ContactPage = () => {
               Get in Touch
             </h1>
             <p className="text-xl text-slate-300">
-              Have questions about our services or working with RTTPs? We're here to help.
+              Have questions about our services or working with experts? We're
+              here to help.
             </p>
           </motion.div>
         </div>
@@ -150,7 +156,8 @@ const ContactPage = () => {
               >
                 <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 mr-3 flex-shrink-0" />
                 <span className="text-red-800 dark:text-red-300">
-                  Sorry, there was an error sending your message. Please try again.
+                  Sorry, there was an error sending your message. Please try
+                  again.
                 </span>
               </motion.div>
             )}
@@ -182,7 +189,9 @@ const ContactPage = () => {
                   <option value="ip_licensing">IP Licensing</option>
                   <option value="startup_formation">Startup Formation</option>
                   <option value="funding_strategy">Funding Strategy</option>
-                  <option value="global_market_access">Global Market Access</option>
+                  <option value="global_market_access">
+                    Global Market Access
+                  </option>
                   <option value="compliance_risks">Compliance and Risks</option>
                   <option value="prototyping">Prototyping</option>
                   <option value="other">Other</option>
