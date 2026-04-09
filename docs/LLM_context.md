@@ -109,15 +109,36 @@ Users submit a technology idea/concept; the AI engine analyzes it across 30+ par
 |---|---|
 | Home | `ReportGeneratorSection` is now position #2 (right after Hero) — report generation is first priority |
 | Home Hero | Primary CTA → "Generate Your Report" → `/reports`; Secondary → "View Pricing" → `/pricing` |
-| Home Hero | "Validate, Protect, and Scale Your Innovation with Confidence" headline; "Trusted by 9,840 Innovators" badge |
+| Home Hero | **"Validate, Protect, and Scale Your Innovation with Confidence & Assurance"** headline; "Trusted by 9,840 Innovators" badge |
 | Home | WhyAssesme + WhoCanUse sections present; SampleReports section; all icon containers use solid colors (no gradients) |
+| Home | `HowItWorksSection` title renamed → **"How Investor Access & Matching Works"** (badge: "Investor Access") |
+| Home | All sections standardized to `py-24` padding — SampleReports and FinalCTA were `py-20`, now `py-24` |
 | Pricing | Complete redesign — 5-plan grid (Starter ₹290, Starter Comp ₹390, Advanced ₹799, Comprehensive ₹999, Enterprise), full non-collapsible comparison table, sample report downloads |
-| About | Fully revamped — mission pillars, improved founder section, report types with pricing and CTAs |
-| Investors | SVG pie chart (static sector data); **5-step wizard form** with progress bar; draft saved to DB after each step |
+| About | Fully revamped — mission pillars, improved founder section, report types with pricing and CTAs; all sections `py-24` |
+| Investors | SVG pie chart (static sector data); **5-step wizard form** with progress bar; draft saved to DB after each step; all sections `py-24` |
 | Technologies | "Who Should Apply" improved; **5-step wizard form** with progress bar; draft saved to DB after each step |
+| Technologies | **New "Submission Guidelines" section** above the form — shows all 6 ELIGIBILITY_ITEMS as visible cards (never hidden) |
 | Experts | "Join as Expert" scrolls to `#join-form` (page bottom form) |
 | Prototype | "Simple. Structured. Execution-Driven." process section; "What We've Already Built" portfolio with Delivered chips |
 | Layout (sidebar) | "Buy Tokens" link fixed: was `/login-pricing` (broken) → now `/pricing` |
+| Reports (dashboard) | Full dark mode on all modals, report cards, search/filter, pagination |
+| Reports (dashboard) | **Confirmation dialog** before generating — shows report type, tokens required, generation time, and refund warning |
+| ReportGeneratorSection | **Confirmation dialog** before generating (same pattern as Reports.jsx) |
+| Character Limit | **10,000 char max** enforced on both frontend (all textareas) and backend (`ReportCreate` schema `max_length=10000`) |
+| Character Counter | Live character counter shown on report idea textarea (turns red at 90% of limit) |
+
+## Character Limit Rules
+- **Report idea/concept**: max 10,000 characters
+- Frontend: `maxLength={10000}` on all textarea inputs + live counter display
+- Backend: `max_length=10000` in `ReportCreate` Pydantic schema (`backend/app/schemas/report.py`)
+- Counter shows `{current} / 10,000` and turns red at ≥ 9,000 chars
+
+## Confirmation Dialog (Report Generation)
+Both `ReportGeneratorSection` and `Reports.jsx` modal show a confirmation dialog before submitting:
+- Displays: Report Type, Tokens Required, Generation Time (12–15 min)
+- Displays current token balance (Reports.jsx only)
+- Warning: tokens deducted immediately, no cancellation, auto-refund on failure
+- "Back" reopens the form; "Confirm & Generate" proceeds
 
 ## Routing (current)
 | Path | Page | Notes |

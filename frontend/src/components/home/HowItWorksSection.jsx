@@ -41,17 +41,17 @@ export default function HowItWorksSection() {
         >
           <div className="inline-flex items-center justify-center px-4 py-1.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 rounded-full text-sm font-medium mb-4">
             <span className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full mr-2" />
-            Simple Process
+            Investor Access
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-slate-100 mb-4 leading-tight">
-            How{" "}
+            How Investor{" "}
             <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              Assessme
+              Access & Matching
             </span>{" "}
             Works
           </h2>
           <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-            Three structured steps from submission to meaningful connection
+            Three structured steps from submission to curated investor connection
           </p>
         </motion.div>
 

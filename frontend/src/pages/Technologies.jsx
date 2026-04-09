@@ -544,7 +544,67 @@ export default function Technologies() {
       </section>
 
 
-      <section id="submit" className="py-24 bg-white dark:bg-slate-950">
+      <section className="py-24 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+          >
+            <div className="inline-flex items-center justify-center px-4 py-1.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 rounded-full text-sm font-medium mb-4">
+              <span className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full mr-2" />
+              Before You Apply
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-slate-100 mb-4">
+              Submission{" "}
+              <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+                Guidelines
+              </span>
+            </h2>
+            <p className="text-lg text-neutral-500 dark:text-slate-400 max-w-2xl mx-auto">
+              All applicants must meet these criteria before submitting. Read carefully before proceeding.
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-60px" }}
+          >
+            {ELIGIBILITY_ITEMS.map((item, i) => (
+              <motion.div
+                key={i}
+                variants={fadeUp}
+                className="flex items-start gap-3 bg-slate-50 dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-700"
+              >
+                <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+                  <CheckCircle className="h-4 w-4 text-white" />
+                </div>
+                <p className="text-sm text-neutral-700 dark:text-slate-300 leading-relaxed font-medium">{item}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          <motion.div
+            className="mt-8 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/30 rounded-2xl p-6 text-center"
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <p className="text-neutral-700 dark:text-slate-300 text-sm leading-relaxed">
+              <span className="font-semibold text-blue-700 dark:text-blue-400">All guidelines must be confirmed</span>{" "}
+              in Step 5 of the application form. Incomplete or inaccurate applications will not proceed to investor access.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      <section id="submit" className="py-24 bg-slate-50 dark:bg-slate-900">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-12"

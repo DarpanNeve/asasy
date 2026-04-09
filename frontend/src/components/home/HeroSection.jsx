@@ -34,7 +34,7 @@ export default function HeroSection() {
           >
             Validate, Protect, and Scale
             <span className="block bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              Your Innovation with Confidence
+              Your Innovation with Confidence & Assurance
             </span>
           </motion.h1>
 
