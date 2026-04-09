@@ -30,6 +30,64 @@ const fadeUp = {
   },
 };
 
+const SECTOR_DATA = [
+  { label: "AI/ML", value: 28, color: "#3b82f6" },
+  { label: "Healthcare", value: 19, color: "#14b8a6" },
+  { label: "Deep Tech", value: 14, color: "#10b981" },
+  { label: "IoT", value: 11, color: "#f59e0b" },
+  { label: "FinTech", value: 10, color: "#8b5cf6" },
+  { label: "AgriTech", value: 8, color: "#ef4444" },
+  { label: "Others", value: 10, color: "#94a3b8" },
+];
+
+function SectorPieChart({ data }) {
+  const total = data.reduce((sum, d) => sum + d.value, 0);
+  let cumulative = 0;
+  const r = 80;
+  const cx = 110;
+  const cy = 110;
+
+  const slices = data.map((d) => {
+    const startAngle = (cumulative / total) * 2 * Math.PI - Math.PI / 2;
+    cumulative += d.value;
+    const endAngle = (cumulative / total) * 2 * Math.PI - Math.PI / 2;
+    const x1 = cx + r * Math.cos(startAngle);
+    const y1 = cy + r * Math.sin(startAngle);
+    const x2 = cx + r * Math.cos(endAngle);
+    const y2 = cy + r * Math.sin(endAngle);
+    const largeArc = d.value / total > 0.5 ? 1 : 0;
+    const path = `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+    return { ...d, path };
+  });
+
+  return (
+    <div className="flex flex-col lg:flex-row items-center gap-8">
+      <div className="flex-shrink-0">
+        <svg width="220" height="220" viewBox="0 0 220 220">
+          {slices.map((s, i) => (
+            <path key={i} d={s.path} fill={s.color} stroke="white" strokeWidth="2" className="hover:opacity-80 transition-opacity cursor-pointer">
+              <title>{s.label}: {s.value}%</title>
+            </path>
+          ))}
+          <circle cx={cx} cy={cy} r="36" fill="white" className="dark:hidden" />
+          <circle cx={cx} cy={cy} r="36" fill="#0f172a" className="hidden dark:block" />
+          <text x={cx} y={cy - 6} textAnchor="middle" className="fill-slate-700 dark:fill-slate-300" fontSize="11" fontWeight="600">Tech</text>
+          <text x={cx} y={cy + 10} textAnchor="middle" className="fill-slate-500" fontSize="10">Sectors</text>
+        </svg>
+      </div>
+      <div className="grid grid-cols-2 gap-3 flex-1">
+        {data.map((d, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <span className="w-3 h-3 rounded-sm flex-shrink-0" style={{ backgroundColor: d.color }} />
+            <span className="text-sm text-slate-700 dark:text-slate-300 font-medium">{d.label}</span>
+            <span className="text-sm text-slate-500 dark:text-slate-400 ml-auto">{d.value}%</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 const WHY_CARDS = [
   {
     icon: Target,
@@ -154,7 +212,28 @@ function SectionDivider({ label }) {
   );
 }
 
+const STEPS = [
+  { label: "Basic Info", short: "1" },
+  { label: "Investment Profile", short: "2" },
+  { label: "Experience", short: "3" },
+  { label: "Intent", short: "4" },
+  { label: "Eligibility", short: "5" },
+];
+
+const INVESTOR_STEP_DATA = (step, form, selectedSectors, beyondFunding) => {
+  if (step === 0) return { full_name: form.full_name, organization: form.organization, investor_type: form.investor_type, email: form.email, phone: form.phone, linkedin: form.linkedin };
+  if (step === 1) return { investment_stage: form.investment_stage, ticket_size: form.ticket_size, sectors: selectedSectors, geography_preference: form.geography_preference };
+  if (step === 2) return { num_investments: form.num_investments, years_experience: form.years_experience, past_investments_desc: form.past_investments_desc };
+  if (step === 3) return { beyond_funding: beyondFunding, roi_horizon: form.roi_horizon, areas_of_interest: form.areas_of_interest };
+  return {};
+};
+
+const INVESTOR_DRAFT_KEY = "assesme_investor_draft_id";
+
 export default function Investors() {
+  const [step, setStep] = useState(0);
+  const [draftId, setDraftId] = useState(() => localStorage.getItem(INVESTOR_DRAFT_KEY) || null);
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -177,13 +256,7 @@ export default function Investors() {
 
   const [selectedSectors, setSelectedSectors] = useState([]);
   const [beyondFunding, setBeyondFunding] = useState([]);
-  const [eligibility, setEligibility] = useState([
-    false,
-    false,
-    false,
-    false,
-    false,
-  ]);
+  const [eligibility, setEligibility] = useState([false, false, false, false, false]);
   const [declaration, setDeclaration] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -195,9 +268,7 @@ export default function Investors() {
 
   const toggleSector = (sector) => {
     setSelectedSectors((prev) =>
-      prev.includes(sector)
-        ? prev.filter((s) => s !== sector)
-        : [...prev, sector],
+      prev.includes(sector) ? prev.filter((s) => s !== sector) : [...prev, sector],
     );
     if (errors.sectors) setErrors((p) => ({ ...p, sectors: "" }));
   };
@@ -217,28 +288,66 @@ export default function Investors() {
     if (errors.eligibility) setErrors((p) => ({ ...p, eligibility: "" }));
   };
 
-  const validate = () => {
+  const validateStep = (s) => {
     const e = {};
-    if (!form.full_name.trim()) e.full_name = "Required";
-    if (!form.organization.trim()) e.organization = "Required";
-    if (!form.investor_type) e.investor_type = "Required";
-    if (!form.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
-      e.email = "Valid email required";
-    if (!form.phone.trim()) e.phone = "Required";
-    if (!form.investment_stage) e.investment_stage = "Required";
-    if (!form.ticket_size) e.ticket_size = "Required";
-    if (selectedSectors.length === 0) e.sectors = "Select at least one sector";
-    if (!eligibility.every(Boolean))
-      e.eligibility = "Please accept all eligibility criteria";
-    if (!declaration)
-      e.declaration = "Please accept the declaration to proceed";
+    if (s === 0) {
+      if (!form.full_name.trim()) e.full_name = "Required";
+      if (!form.organization.trim()) e.organization = "Required";
+      if (!form.investor_type) e.investor_type = "Required";
+      if (!form.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Valid email required";
+      if (!form.phone.trim()) e.phone = "Required";
+    }
+    if (s === 1) {
+      if (!form.investment_stage) e.investment_stage = "Required";
+      if (!form.ticket_size) e.ticket_size = "Required";
+      if (selectedSectors.length === 0) e.sectors = "Select at least one sector";
+    }
+    if (s === 4) {
+      if (!eligibility.every(Boolean)) e.eligibility = "Please accept all eligibility criteria";
+      if (!declaration) e.declaration = "Please accept the declaration to proceed";
+    }
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
+  const saveDraft = async (currentStep) => {
+    const stepData = INVESTOR_STEP_DATA(currentStep, form, selectedSectors, beyondFunding);
+    try {
+      setIsSavingDraft(true);
+      if (!draftId) {
+        const res = await api.post("/onboarding/investors/draft", {
+          email: form.email || null,
+          step_reached: currentStep + 1,
+          data: stepData,
+        });
+        setDraftId(res.data.draft_id);
+        localStorage.setItem(INVESTOR_DRAFT_KEY, res.data.draft_id);
+      } else {
+        await api.patch(`/onboarding/investors/draft/${draftId}`, {
+          step_reached: currentStep + 1,
+          data: stepData,
+        });
+      }
+    } catch {
+    } finally {
+      setIsSavingDraft(false);
+    }
+  };
+
+  const handleNext = async () => {
+    if (!validateStep(step)) return;
+    await saveDraft(step);
+    setStep((s) => s + 1);
+  };
+
+  const handleBack = () => {
+    setErrors({});
+    setStep((s) => s - 1);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validate()) return;
+    if (!validateStep(4)) return;
     setIsSubmitting(true);
     try {
       const areasValue = [
@@ -278,6 +387,7 @@ export default function Investors() {
       });
 
       setSubmitted(true);
+      localStorage.removeItem(INVESTOR_DRAFT_KEY);
       toast.success("Registration submitted successfully!");
     } catch (err) {
       toast.error(
@@ -444,6 +554,34 @@ export default function Investors() {
         </div>
       </section>
 
+      <section className="py-16 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+          >
+            <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-slate-100 mb-3">
+              Technology Distribution by Sector
+            </h2>
+            <p className="text-neutral-500 dark:text-slate-400 text-sm">
+              Based on 9,840+ registered innovations across the platform
+            </p>
+          </motion.div>
+          <motion.div
+            className="bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-200 dark:border-slate-700 shadow-sm"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <SectorPieChart data={SECTOR_DATA} />
+          </motion.div>
+        </div>
+      </section>
+
       <section id="register" className="py-24 bg-white dark:bg-slate-950">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -479,303 +617,198 @@ export default function Investors() {
                 Registration Received
               </h3>
               <p className="text-neutral-600 dark:text-slate-400">
-                Thank you for registering. A confirmation has been sent to your
-                email. Our team will review your profile and be in touch
-                shortly.
+                Thank you for registering. A confirmation has been sent to your email. Our team will review your profile and be in touch shortly.
               </p>
             </motion.div>
           ) : (
-            <motion.form
-              onSubmit={handleSubmit}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.55 }}
-              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl p-8 shadow-sm space-y-8"
-            >
-              <div>
-                <SectionDivider label="Basic Information" />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <Field
-                    label="Full Name"
-                    name="full_name"
-                    value={form.full_name}
-                    onChange={handleChange}
-                    error={errors.full_name}
-                    placeholder="Your full name"
-                  />
-                  <Field
-                    label="Organization / Fund"
-                    name="organization"
-                    value={form.organization}
-                    onChange={handleChange}
-                    error={errors.organization}
-                    placeholder="Organization or fund name"
-                  />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <SelectField
-                    label="Investor Type"
-                    name="investor_type"
-                    value={form.investor_type}
-                    onChange={handleChange}
-                    error={errors.investor_type}
-                    options={INVESTOR_TYPES}
-                    placeholder="Select type"
-                  />
-                  <Field
-                    label="Email"
-                    name="email"
-                    type="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    error={errors.email}
-                    placeholder="you@example.com"
-                  />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Field
-                    label="Phone"
-                    name="phone"
-                    type="tel"
-                    value={form.phone}
-                    onChange={handleChange}
-                    error={errors.phone}
-                    placeholder="+91 98765 43210"
-                  />
-                  <Field
-                    label="LinkedIn or Website URL"
-                    name="linkedin"
-                    value={form.linkedin}
-                    onChange={handleChange}
-                    error={errors.linkedin}
-                    placeholder="https://linkedin.com/in/yourprofile"
-                    optional
-                  />
-                </div>
-              </div>
-
-              <div>
-                <SectionDivider label="Investment Profile" />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <SelectField
-                    label="Investment Stage"
-                    name="investment_stage"
-                    value={form.investment_stage}
-                    onChange={handleChange}
-                    error={errors.investment_stage}
-                    options={STAGES}
-                    placeholder="Select stage"
-                  />
-                  <SelectField
-                    label="Ticket Size"
-                    name="ticket_size"
-                    value={form.ticket_size}
-                    onChange={handleChange}
-                    error={errors.ticket_size}
-                    options={TICKET_DISPLAY}
-                    placeholder="Select range"
-                  />
-                </div>
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-neutral-700 dark:text-slate-300 mb-2">
-                    Sectors of Interest
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {SECTORS_LIST.map((sector) => {
-                      const selected = selectedSectors.includes(sector);
-                      return (
-                        <button
-                          key={sector}
-                          type="button"
-                          onClick={() => toggleSector(sector)}
-                          className={
-                            selected
-                              ? "border border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg px-3 py-1.5 text-sm transition-all duration-150"
-                              : "border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg px-3 py-1.5 text-sm transition-all duration-150"
-                          }
-                        >
-                          {sector}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  {errors.sectors && (
-                    <p className="mt-1.5 text-xs text-red-600 dark:text-red-400 flex items-center gap-1">
-                      <span className="inline-block w-1 h-1 rounded-full bg-red-500 dark:bg-red-400" />
-                      {errors.sectors}
-                    </p>
-                  )}
-                </div>
-                <SelectField
-                  label="Geography Preference"
-                  name="geography_preference"
-                  value={form.geography_preference}
-                  onChange={handleChange}
-                  error={errors.geography_preference}
-                  options={GEOGRAPHY_OPTIONS}
-                  placeholder="Select preference"
-                />
-              </div>
-
-              <div>
-                <SectionDivider label="Experience & Credibility" />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <SelectField
-                    label="Number of Prior Investments"
-                    name="num_investments"
-                    value={form.num_investments}
-                    onChange={handleChange}
-                    error={errors.num_investments}
-                    options={NUM_INVESTMENTS}
-                    placeholder="Select range"
-                  />
-                  <SelectField
-                    label="Years of Investment Experience"
-                    name="years_experience"
-                    value={form.years_experience}
-                    onChange={handleChange}
-                    error={errors.years_experience}
-                    options={YEARS_EXPERIENCE}
-                    placeholder="Select range"
-                  />
-                </div>
-                <TextareaField
-                  label="Portfolio Description"
-                  name="past_investments_desc"
-                  value={form.past_investments_desc}
-                  onChange={handleChange}
-                  placeholder="Portfolio links or brief description"
-                  rows={2}
-                  optional
-                />
-              </div>
-
-              <div>
-                <SectionDivider label="Investment Intent" />
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-neutral-700 dark:text-slate-300 mb-2">
-                    Involvement Beyond Funding{" "}
-                    <span className="text-neutral-400 dark:text-slate-500 font-normal">
-                      (Optional)
-                    </span>
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {BEYOND_FUNDING_OPTIONS.map((item) => {
-                      const selected = beyondFunding.includes(item);
-                      return (
-                        <button
-                          key={item}
-                          type="button"
-                          onClick={() => toggleBeyondFunding(item)}
-                          className={
-                            selected
-                              ? "border border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg px-3 py-1.5 text-sm transition-all duration-150"
-                              : "border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg px-3 py-1.5 text-sm transition-all duration-150"
-                          }
-                        >
-                          {item}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-                <div className="mb-6">
-                  <SelectField
-                    label="Expected ROI Horizon"
-                    name="roi_horizon"
-                    value={form.roi_horizon}
-                    onChange={handleChange}
-                    error={errors.roi_horizon}
-                    options={ROI_HORIZON}
-                    placeholder="Select horizon"
-                  />
-                </div>
-                <TextareaField
-                  label="Areas of Interest"
-                  name="areas_of_interest"
-                  value={form.areas_of_interest}
-                  onChange={handleChange}
-                  placeholder="Specific technologies, sectors, or problem areas"
-                  rows={3}
-                  optional
-                />
-              </div>
-
-              <div>
-                <SectionDivider label="Eligibility Checklist" />
-                <p className="text-sm text-neutral-500 dark:text-slate-400 mb-4">
-                  Please confirm the following to proceed
-                </p>
-                <div className="space-y-3">
-                  {ELIGIBILITY_ITEMS.map((item, i) => (
-                    <label
-                      key={i}
-                      className="flex items-start gap-3 cursor-pointer"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={eligibility[i]}
-                        onChange={() => toggleEligibility(i)}
-                        className="w-4 h-4 rounded border-slate-300 text-blue-600 mt-0.5 cursor-pointer accent-blue-600"
-                      />
-                      <span className="text-sm text-neutral-700 dark:text-slate-300">
-                        {item}
-                      </span>
-                    </label>
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm overflow-hidden">
+              {/* Step Progress Bar */}
+              <div className="border-b border-slate-100 dark:border-slate-800 px-8 pt-6 pb-0">
+                <div className="flex items-center justify-between mb-4">
+                  {STEPS.map((s, i) => (
+                    <div key={i} className="flex items-center flex-1">
+                      <div className="flex flex-col items-center">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${i < step ? "bg-emerald-500 text-white" : i === step ? "bg-blue-600 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500"}`}>
+                          {i < step ? <CheckCircle className="h-4 w-4" /> : s.short}
+                        </div>
+                        <span className={`text-xs mt-1 font-medium hidden sm:block whitespace-nowrap transition-colors duration-300 ${i === step ? "text-blue-600 dark:text-blue-400" : i < step ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400 dark:text-slate-500"}`}>
+                          {s.label}
+                        </span>
+                      </div>
+                      {i < STEPS.length - 1 && (
+                        <div className={`flex-1 h-0.5 mx-2 mb-4 transition-colors duration-300 ${i < step ? "bg-emerald-400" : "bg-slate-200 dark:bg-slate-700"}`} />
+                      )}
+                    </div>
                   ))}
                 </div>
-                {errors.eligibility && (
-                  <p className="mt-2 text-xs text-red-600 dark:text-red-400 flex items-center gap-1">
-                    <span className="inline-block w-1 h-1 rounded-full bg-red-500 dark:bg-red-400" />
-                    {errors.eligibility}
-                  </p>
-                )}
               </div>
 
-              <div>
-                <SectionDivider label="Final Declaration" />
-                <label className="flex items-start gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={declaration}
-                    onChange={() => {
-                      setDeclaration((p) => !p);
-                      if (errors.declaration)
-                        setErrors((p) => ({ ...p, declaration: "" }));
-                    }}
-                    className="w-4 h-4 rounded border-slate-300 text-blue-600 mt-0.5 cursor-pointer accent-blue-600"
-                  />
-                  <span className="text-sm text-neutral-700 dark:text-slate-300">
-                    I agree to be evaluated and approved before onboarding. I
-                    confirm the information provided is accurate.
-                  </span>
-                </label>
-                {errors.declaration && (
-                  <p className="mt-2 text-xs text-red-600 dark:text-red-400 flex items-center gap-1">
-                    <span className="inline-block w-1 h-1 rounded-full bg-red-500 dark:bg-red-400" />
-                    {errors.declaration}
-                  </p>
-                )}
-              </div>
-
-              <div className="pt-2">
-                <motion.button
-                  type="submit"
-                  disabled={isSubmitting}
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.99 }}
-                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3.5 px-6 rounded-lg transition-all duration-200 shadow-md btn-glow flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              <form onSubmit={handleSubmit} className="p-8">
+                <motion.div
+                  key={step}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-6 min-h-[320px]"
                 >
-                  {isSubmitting ? (
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
-                  ) : (
-                    <Send className="h-4 w-4" />
+                  {step === 0 && (
+                    <>
+                      <div>
+                        <h3 className="text-base font-semibold text-neutral-800 dark:text-slate-200 mb-1">Basic Information</h3>
+                        <p className="text-sm text-neutral-500 dark:text-slate-400">Tell us who you are.</p>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <Field label="Full Name" name="full_name" value={form.full_name} onChange={handleChange} error={errors.full_name} placeholder="Your full name" />
+                        <Field label="Organization / Fund" name="organization" value={form.organization} onChange={handleChange} error={errors.organization} placeholder="Organization or fund name" />
+                        <SelectField label="Investor Type" name="investor_type" value={form.investor_type} onChange={handleChange} error={errors.investor_type} options={INVESTOR_TYPES} placeholder="Select type" />
+                        <Field label="Email" name="email" type="email" value={form.email} onChange={handleChange} error={errors.email} placeholder="you@example.com" />
+                        <Field label="Phone" name="phone" type="tel" value={form.phone} onChange={handleChange} error={errors.phone} placeholder="+91 98765 43210" />
+                        <Field label="LinkedIn or Website" name="linkedin" value={form.linkedin} onChange={handleChange} error={errors.linkedin} placeholder="https://linkedin.com/in/yourprofile" optional />
+                      </div>
+                    </>
                   )}
-                  {isSubmitting ? "Submitting..." : "Submit Registration"}
-                </motion.button>
-              </div>
-            </motion.form>
+
+                  {step === 1 && (
+                    <>
+                      <div>
+                        <h3 className="text-base font-semibold text-neutral-800 dark:text-slate-200 mb-1">Investment Profile</h3>
+                        <p className="text-sm text-neutral-500 dark:text-slate-400">Tell us about your investment focus and capacity.</p>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <SelectField label="Investment Stage" name="investment_stage" value={form.investment_stage} onChange={handleChange} error={errors.investment_stage} options={STAGES} placeholder="Select stage" />
+                        <SelectField label="Ticket Size" name="ticket_size" value={form.ticket_size} onChange={handleChange} error={errors.ticket_size} options={TICKET_DISPLAY} placeholder="Select range" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-neutral-700 dark:text-slate-300 mb-2">
+                          Sectors of Interest <span className="text-red-500">*</span>
+                        </label>
+                        <div className="flex flex-wrap gap-2">
+                          {SECTORS_LIST.map((sector) => {
+                            const selected = selectedSectors.includes(sector);
+                            return (
+                              <button key={sector} type="button" onClick={() => toggleSector(sector)}
+                                className={selected ? "border border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg px-3 py-1.5 text-sm transition-all duration-150" : "border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg px-3 py-1.5 text-sm transition-all duration-150"}
+                              >
+                                {sector}
+                              </button>
+                            );
+                          })}
+                        </div>
+                        {errors.sectors && <p className="mt-1.5 text-xs text-red-600 dark:text-red-400">{errors.sectors}</p>}
+                      </div>
+                      <SelectField label="Geography Preference" name="geography_preference" value={form.geography_preference} onChange={handleChange} options={GEOGRAPHY_OPTIONS} placeholder="Select preference (optional)" />
+                    </>
+                  )}
+
+                  {step === 2 && (
+                    <>
+                      <div>
+                        <h3 className="text-base font-semibold text-neutral-800 dark:text-slate-200 mb-1">Experience & Credibility</h3>
+                        <p className="text-sm text-neutral-500 dark:text-slate-400">Help us understand your investment background.</p>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <SelectField label="Number of Prior Investments" name="num_investments" value={form.num_investments} onChange={handleChange} options={NUM_INVESTMENTS} placeholder="Select range (optional)" />
+                        <SelectField label="Years of Investment Experience" name="years_experience" value={form.years_experience} onChange={handleChange} options={YEARS_EXPERIENCE} placeholder="Select range (optional)" />
+                      </div>
+                      <TextareaField label="Portfolio Description" name="past_investments_desc" value={form.past_investments_desc} onChange={handleChange} placeholder="Portfolio links or brief description of past investments" rows={3} optional />
+                    </>
+                  )}
+
+                  {step === 3 && (
+                    <>
+                      <div>
+                        <h3 className="text-base font-semibold text-neutral-800 dark:text-slate-200 mb-1">Investment Intent</h3>
+                        <p className="text-sm text-neutral-500 dark:text-slate-400">What are you looking for beyond capital deployment?</p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-neutral-700 dark:text-slate-300 mb-2">
+                          Involvement Beyond Funding <span className="text-neutral-400 dark:text-slate-500 font-normal">(Optional)</span>
+                        </label>
+                        <div className="flex flex-wrap gap-2">
+                          {BEYOND_FUNDING_OPTIONS.map((item) => {
+                            const selected = beyondFunding.includes(item);
+                            return (
+                              <button key={item} type="button" onClick={() => toggleBeyondFunding(item)}
+                                className={selected ? "border border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg px-3 py-1.5 text-sm transition-all duration-150" : "border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg px-3 py-1.5 text-sm transition-all duration-150"}
+                              >
+                                {item}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                      <SelectField label="Expected ROI Horizon" name="roi_horizon" value={form.roi_horizon} onChange={handleChange} options={ROI_HORIZON} placeholder="Select horizon (optional)" />
+                      <TextareaField label="Areas of Interest" name="areas_of_interest" value={form.areas_of_interest} onChange={handleChange} placeholder="Specific technologies, sectors, or problem areas you want to invest in" rows={3} optional />
+                    </>
+                  )}
+
+                  {step === 4 && (
+                    <>
+                      <div>
+                        <h3 className="text-base font-semibold text-neutral-800 dark:text-slate-200 mb-1">Eligibility & Declaration</h3>
+                        <p className="text-sm text-neutral-500 dark:text-slate-400">Please confirm the following before submitting.</p>
+                      </div>
+                      <div className="space-y-3">
+                        {ELIGIBILITY_ITEMS.map((item, i) => (
+                          <label key={i} className="flex items-start gap-3 cursor-pointer group">
+                            <input type="checkbox" checked={eligibility[i]} onChange={() => toggleEligibility(i)} className="w-4 h-4 rounded border-slate-300 text-blue-600 mt-0.5 cursor-pointer accent-blue-600" />
+                            <span className="text-sm text-neutral-700 dark:text-slate-300 group-hover:text-neutral-900 dark:group-hover:text-slate-100 transition-colors">{item}</span>
+                          </label>
+                        ))}
+                      </div>
+                      {errors.eligibility && <p className="text-xs text-red-600 dark:text-red-400">{errors.eligibility}</p>}
+                      <div className="border-t border-slate-100 dark:border-slate-700 pt-5">
+                        <label className="flex items-start gap-3 cursor-pointer group">
+                          <input type="checkbox" checked={declaration} onChange={() => { setDeclaration((p) => !p); if (errors.declaration) setErrors((p) => ({ ...p, declaration: "" })); }} className="w-4 h-4 rounded border-slate-300 text-blue-600 mt-0.5 cursor-pointer accent-blue-600" />
+                          <span className="text-sm text-neutral-700 dark:text-slate-300 font-medium group-hover:text-neutral-900 dark:group-hover:text-slate-100 transition-colors">
+                            I agree to be evaluated and approved before onboarding. I confirm the information provided is accurate.
+                          </span>
+                        </label>
+                        {errors.declaration && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{errors.declaration}</p>}
+                      </div>
+                    </>
+                  )}
+                </motion.div>
+
+                {/* Navigation Buttons */}
+                <div className="flex items-center justify-between mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
+                  <button
+                    type="button"
+                    onClick={handleBack}
+                    disabled={step === 0}
+                    className="px-5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200"
+                  >
+                    ← Back
+                  </button>
+                  <span className="text-xs text-slate-400 dark:text-slate-500">
+                    Step {step + 1} of {STEPS.length}
+                  </span>
+                  {step < STEPS.length - 1 ? (
+                    <button
+                      type="button"
+                      onClick={handleNext}
+                      disabled={isSavingDraft}
+                      className="px-6 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-all duration-200 shadow-md btn-glow flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                      {isSavingDraft ? <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-white" /> : null}
+                      {isSavingDraft ? "Saving..." : "Continue →"}
+                    </button>
+                  ) : (
+                    <motion.button
+                      type="submit"
+                      disabled={isSubmitting}
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.99 }}
+                      className="px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg transition-all duration-200 shadow-md btn-glow flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isSubmitting ? <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" /> : <Send className="h-4 w-4" />}
+                      {isSubmitting ? "Submitting..." : "Submit Registration"}
+                    </motion.button>
+                  )}
+                </div>
+              </form>
+            </div>
           )}
         </div>
       </section>

@@ -4,37 +4,37 @@ import { Lightbulb, Landmark, FlaskConical, Briefcase, Building, Handshake } fro
 const USERS = [
   {
     icon: Lightbulb,
-    color: "from-blue-500 to-blue-700",
+    color: "bg-blue-600",
     title: "Startups & Founders",
     description: "Validate ideas before investing years of effort.",
   },
   {
     icon: Landmark,
-    color: "from-teal-500 to-teal-700",
+    color: "bg-teal-600",
     title: "Universities & Academia",
     description: "Assess research outputs, patents, and student innovations.",
   },
   {
     icon: FlaskConical,
-    color: "from-emerald-500 to-emerald-700",
+    color: "bg-emerald-600",
     title: "R&D Labs & Corporates",
     description: "De-risk projects and identify commercialization paths.",
   },
   {
     icon: Briefcase,
-    color: "from-orange-500 to-orange-700",
+    color: "bg-orange-500",
     title: "Investors & VCs",
     description: "Get standardized, comparable due diligence reports.",
   },
   {
     icon: Building,
-    color: "from-blue-600 to-blue-800",
+    color: "bg-blue-700",
     title: "Government & Policy Bodies",
     description: "Evaluate funding proposals with data-driven reports.",
   },
   {
     icon: Handshake,
-    color: "from-teal-600 to-teal-800",
+    color: "bg-teal-700",
     title: "Incubators & Accelerators",
     description: "Screen applications and guide startups with structured assessments.",
   },
@@ -92,7 +92,7 @@ export default function WhoCanUseSection() {
                 whileHover={{ y: -4 }}
                 className="group bg-white dark:bg-slate-800/70 rounded-2xl p-7 border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-700 transition-all duration-300"
               >
-                <div className={`w-14 h-14 bg-gradient-to-br ${user.color} rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-105 transition-transform duration-300`}>
+                <div className={`w-14 h-14 ${user.color} rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-105 transition-transform duration-300`}>
                   <Icon className="h-7 w-7 text-white" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-2 group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors duration-300">

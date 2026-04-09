@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
-import { Send, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import { api } from "../../services/api";
 import toast from "react-hot-toast";
@@ -29,7 +29,7 @@ export default function ReportGeneratorSection() {
       const balanceResponse = await api.get("/tokens/balance");
       if (balanceResponse.data.available_tokens < requiredTokens) {
         toast.error(`Insufficient tokens. Required: ${requiredTokens}, Available: ${balanceResponse.data.available_tokens}.`);
-        navigate("/login-pricing");
+        navigate("/pricing");
         return;
       }
     } catch {
@@ -45,7 +45,7 @@ export default function ReportGeneratorSection() {
     } catch (error) {
       if (error.response?.status === 403) {
         toast.error(error.response?.data?.detail || "Insufficient tokens. Please purchase more tokens.");
-        navigate("/login-pricing");
+        navigate("/pricing");
       } else {
         toast.error(error.response?.data?.detail || "Failed to generate report");
       }
@@ -121,29 +121,16 @@ export default function ReportGeneratorSection() {
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
                 Describe Your Technology Innovation
               </label>
-              <div className="relative">
-                <textarea
-                  {...register("idea", {
-                    required: "Please describe your technology idea",
-                    minLength: { value: 50, message: "Please provide at least 50 characters" },
-                  })}
-                  rows={6}
-                  className="w-full p-6 pr-16 border-2 border-slate-200 dark:border-slate-600 rounded-2xl shadow-sm focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 focus:outline-none resize-none text-lg transition-all duration-300 hover:shadow-md bg-white/80 dark:bg-slate-700/50 backdrop-blur-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
-                  placeholder="Include the following elements for better analysis: technology name, core function, intended application, current development stage, key innovations, target market..."
-                  disabled={isGenerating}
-                />
-                <button
-                  type="submit"
-                  disabled={isGenerating}
-                  className="absolute bottom-4 right-4 p-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl hover:from-blue-700 hover:to-blue-900 focus:outline-none focus:ring-4 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
-                >
-                  {isGenerating ? (
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white" />
-                  ) : (
-                    <Send className="h-6 w-6" />
-                  )}
-                </button>
-              </div>
+              <textarea
+                {...register("idea", {
+                  required: "Please describe your technology idea",
+                  minLength: { value: 50, message: "Please provide at least 50 characters" },
+                })}
+                rows={6}
+                className="w-full p-6 border-2 border-slate-200 dark:border-slate-600 rounded-2xl shadow-sm focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 focus:outline-none resize-none text-lg transition-all duration-300 hover:shadow-md bg-white/80 dark:bg-slate-700/50 backdrop-blur-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                placeholder="Include the following elements for better analysis: technology name, core function, intended application, current development stage, key innovations, target market..."
+                disabled={isGenerating}
+              />
               {errors.idea && <p className="text-red-600 dark:text-red-400 text-sm mt-2">{errors.idea.message}</p>}
             </div>
 

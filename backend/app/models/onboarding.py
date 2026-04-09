@@ -136,3 +136,27 @@ class PrototypeInquiry(Document):
     class Settings:
         name = "prototype_inquiries"
         indexes = ["email", "submitted_at", [("submitted_at", -1)]]
+
+
+class InvestorDraft(Document):
+    email: Optional[str] = None
+    step_reached: int = Field(default=1)
+    data: dict = Field(default_factory=dict)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+    class Settings:
+        name = "investor_drafts"
+        indexes = ["email", "created_at"]
+
+
+class TechnologyDraft(Document):
+    email: Optional[str] = None
+    step_reached: int = Field(default=1)
+    data: dict = Field(default_factory=dict)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+    class Settings:
+        name = "technology_drafts"
+        indexes = ["email", "created_at"]

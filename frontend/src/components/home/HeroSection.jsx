@@ -1,28 +1,28 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, Star } from "lucide-react";
+import { ArrowRight, Star, Users } from "lucide-react";
 
 const STATS = [
+  { value: "9,840+", label: "Innovators Trust Us" },
   { value: "Multi-Layer", label: "Evaluation System" },
-  { value: "Strict", label: "Investor Filtering" },
-  { value: "Intelligent", label: "Matching Engine" },
+  { value: "WIPO/EPO", label: "Aligned Standards" },
   { value: "Zero", label: "Random Listings" },
 ];
 
 export default function HeroSection() {
   return (
-    <section className="min-h-screen bg-white dark:bg-slate-950 pt-24 pb-20 flex flex-col justify-center">
+    <section className="min-h-screen bg-white dark:bg-slate-950 pt-5 pb-20 flex flex-col justify-center">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <motion.div
-            className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full mb-8"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-full mb-6"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
-            <Star className="h-4 w-4 text-amber-500 fill-current" />
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-              Structured. Validated. Matched.
+            <Users className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">
+              Trusted by 9,840 Innovators Worldwide
             </span>
           </motion.div>
 
@@ -32,14 +32,14 @@ export default function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
-            Where Serious Innovation
+            Validate, Protect, and Scale
             <span className="block bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              Meets Serious Capital
+              Your Innovation with Confidence
             </span>
           </motion.h1>
 
           <motion.p
-            className="text-lg md:text-xl text-slate-600 dark:text-slate-400 mb-6 max-w-2xl mx-auto leading-relaxed"
+            className="text-lg md:text-l text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{
@@ -48,10 +48,22 @@ export default function HeroSection() {
               ease: [0.22, 1, 0.36, 1],
             }}
           >
-            A structured platform that evaluates technologies and connects them
-            with the right investors based on data, not noise.
+            India’s First AI-Powered Platform to Evaluate,Build,and Fund
+            Innovation.
           </motion.p>
-
+          <motion.p
+            className="text-lg md:text-l text-slate-600 dark:text-slate-400 mb-6 max-w-2xl mx-auto leading-relaxed"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              delay: 0.25,
+              duration: 0.7,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+          >
+            Technology assessment, prototyping support, access to verified
+            investors through one structured ecosystem.
+          </motion.p>
           <motion.p
             className="text-sm text-slate-500 dark:text-slate-400 mb-10"
             initial={{ opacity: 0, y: 12 }}
@@ -72,19 +84,19 @@ export default function HeroSection() {
           >
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Link
-                to="/investors"
+                to="/reports"
                 className="inline-flex items-center justify-center px-8 py-3.5 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white font-semibold rounded-full btn-glow transition-all duration-300"
               >
-                Explore Verified Opportunities
+                Generate Your Report
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </motion.div>
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Link
-                to="/technologies"
+                to="/pricing"
                 className="inline-flex items-center justify-center px-8 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold rounded-full hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-md transition-all duration-300"
               >
-                Submit Your Technology
+                View Pricing
               </Link>
             </motion.div>
           </motion.div>

@@ -1,11 +1,13 @@
 from fastapi import APIRouter, HTTPException, status, Request, Depends
 from pydantic import BaseModel, EmailStr, Field
-from typing import Optional, List
+from typing import Optional, List, Any, Dict
+from bson import ObjectId
 import logging
 
 from app.core.rate_limiter import limiter
 from app.models.onboarding import (
     InvestorRegistration, TechnologySubmission, PrototypeInquiry,
+    InvestorDraft, TechnologyDraft,
     TechCategory, IPStatus, TRLLevel, InvestmentStage, TicketSize,
     PrototypeType, PrototypeBudget, PrototypeTimeline,
 )
@@ -62,6 +64,89 @@ class PrototypePayload(BaseModel):
     budget_range: PrototypeBudget
     timeline: PrototypeTimeline
     message: Optional[str] = Field(None, max_length=1000)
+
+
+class DraftPayload(BaseModel):
+    email: Optional[str] = None
+    step_reached: int = 1
+    data: Dict[str, Any] = Field(default_factory=dict)
+
+
+class DraftUpdatePayload(BaseModel):
+    step_reached: int
+    data: Dict[str, Any]
+
+
+@router.post("/investors/draft")
+@limiter.limit("20/minute")
+async def create_investor_draft(request: Request, payload: DraftPayload):
+    try:
+        draft = InvestorDraft(
+            email=payload.email,
+            step_reached=payload.step_reached,
+            data=payload.data,
+        )
+        await draft.insert()
+        return {"draft_id": str(draft.id)}
+    except Exception as e:
+        logger.error(f"Investor draft create error: {e}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to save draft.")
+
+
+@router.patch("/investors/draft/{draft_id}")
+@limiter.limit("30/minute")
+async def update_investor_draft(request: Request, draft_id: str, payload: DraftUpdatePayload):
+    try:
+        draft = await InvestorDraft.get(draft_id)
+        if not draft:
+            raise HTTPException(status_code=404, detail="Draft not found.")
+        draft.step_reached = payload.step_reached
+        draft.data.update(payload.data)
+        from datetime import datetime
+        draft.updated_at = datetime.utcnow()
+        await draft.save()
+        return {"draft_id": draft_id, "step_reached": draft.step_reached}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Investor draft update error: {e}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update draft.")
+
+
+@router.post("/technologies/draft")
+@limiter.limit("20/minute")
+async def create_technology_draft(request: Request, payload: DraftPayload):
+    try:
+        draft = TechnologyDraft(
+            email=payload.email,
+            step_reached=payload.step_reached,
+            data=payload.data,
+        )
+        await draft.insert()
+        return {"draft_id": str(draft.id)}
+    except Exception as e:
+        logger.error(f"Technology draft create error: {e}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to save draft.")
+
+
+@router.patch("/technologies/draft/{draft_id}")
+@limiter.limit("30/minute")
+async def update_technology_draft(request: Request, draft_id: str, payload: DraftUpdatePayload):
+    try:
+        draft = await TechnologyDraft.get(draft_id)
+        if not draft:
+            raise HTTPException(status_code=404, detail="Draft not found.")
+        draft.step_reached = payload.step_reached
+        draft.data.update(payload.data)
+        from datetime import datetime
+        draft.updated_at = datetime.utcnow()
+        await draft.save()
+        return {"draft_id": draft_id, "step_reached": draft.step_reached}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Technology draft update error: {e}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update draft.")
 
 
 @router.post("/investors")

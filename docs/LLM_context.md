@@ -14,14 +14,26 @@ Users submit a technology idea/concept; the AI engine analyzes it across 30+ par
 
 > **Basic Report (2,500 tokens) has been removed from the UI.** The backend still accepts it, but it is no longer offered to users.
 
-## Token Packages (Active)
+## Pricing (Current — No Free Token Concept)
+| Plan | INR | USD | Type | Notes |
+|---|---|---|---|---|
+| Starter Report | ₹290 | $2.99 | Advanced | Single report |
+| Starter Comprehensive | ₹390 | $4.50 | Comprehensive | Single report |
+| Advanced Pack | ₹799 | $9.99 | Advanced | Token pack — Most Popular |
+| Comprehensive Pack | ₹999 | $11.99 | Comprehensive | Token pack — Best Depth |
+| Enterprise | Custom | Custom | — | Contact only |
+
+> **Free Token concept has been removed.** No more "free tokens on signup" messaging.
+> Pricing page (`Pricing.jsx`) is now a standalone fully redesigned page — no longer uses `TokenPricingSection`.
+
+## Token Packages (Backend — Internal)
 | Package | Type | Notes |
 |---|---|---|
-| Pro | pro | Teal color theme |
-| Max | max | Emerald color theme |
+| Pro | pro | Teal color theme — maps to Advanced Pack (₹799) |
+| Max | max | Emerald color theme — maps to Comprehensive Pack (₹999) |
 | Enterprise | enterprise | Contact-only, orange color theme, display only |
 
-> **Starter Pack has been removed from the UI.** Filtered client-side via `pkg.package_type !== "starter"` in `TokenPricingSection.jsx`.
+> **Starter Pack is removed from backend display.** Filtered client-side.
 
 ## Color System
 - **Primary**: Blue (trust, professionalism — `blue-600`)
@@ -42,7 +54,7 @@ Users submit a technology idea/concept; the AI engine analyzes it across 30+ par
 - **Buttons**: Use `btn-glow` CSS class for primary buttons (blue shadow on hover). `whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}` on CTAs.
 - **AI language**: "AI-Powered" is the product's identity — keep it in labels, headings, and feature names.
 - **Dark mode**: Fully supported. Toggle in Header. ThemeContext sets `.dark` on `<html>`. All new components MUST include `dark:` variants.
-- **Icon badges**: Use SOLID `bg-X-600 rounded-xl` with white icon inside — NO gradients (`bg-gradient-to-br`) on icon containers. Gradient was previously used but is now replaced with solid colors for a cleaner, less AI-generated look.
+- **Icon badges**: Use SOLID `bg-X-600 rounded-xl` with white icon inside — NO gradients (`bg-gradient-to-br`) on icon containers.
 
 ## Tech Stack
 - **Frontend**: React + Vite, Tailwind CSS, Framer Motion, React Hook Form, Lucide icons
@@ -53,21 +65,29 @@ Users submit a technology idea/concept; the AI engine analyzes it across 30+ par
 ## Key Files
 | File | Purpose |
 |---|---|
-| `frontend/src/components/TokenPricingSection.jsx` | Pricing page — token packages + report requirements table |
+| `frontend/src/components/TokenPricingSection.jsx` | Legacy pricing component — no longer used on main Pricing page |
+| `frontend/src/pages/Pricing.jsx` | **Fully redesigned** standalone pricing page — all plans, comparison table, sample downloads |
 | `frontend/src/pages/Home.jsx` | Landing page — thin orchestrator, imports all section components |
 | `frontend/src/components/home/` | **Home page sections** — each section is a separate component |
-| `frontend/src/components/home/HeroSection.jsx` | Hero — dual CTA (investors/founders), stats bar |
+| `frontend/src/components/home/HeroSection.jsx` | Hero — "Validate, Protect, Scale" headline, "Trusted by 9,840 Innovators" badge, dual CTAs |
+| `frontend/src/components/home/WhyAssesmeSection.jsx` | Why Assesme — 6 feature cards |
+| `frontend/src/components/home/WhoCanUseSection.jsx` | Who Can Use Assesme — 6 user type cards |
 | `frontend/src/components/home/TheProblemSection.jsx` | Problem section — 3 problem cards + result block |
 | `frontend/src/components/home/TheSolutionSection.jsx` | Solution section — 3 solution cards |
 | `frontend/src/components/home/HowItWorksSection.jsx` | 3-step process: Submit → Evaluate → Match |
 | `frontend/src/components/home/ForInvestorsSection.jsx` | Investor pitch — checklist + investor types card |
 | `frontend/src/components/home/ForFoundersSection.jsx` | Founder pitch — checklist + who should apply card |
+| `frontend/src/components/home/SampleReportsSection.jsx` | Sample reports download section |
 | `frontend/src/components/home/PrototypingHighlightSection.jsx` | Prototyping services teaser |
-| `frontend/src/components/home/FinalCTASection.jsx` | Final dual CTA (replaces RTTPSection) |
+| `frontend/src/components/home/FinalCTASection.jsx` | Final dual CTA |
 | `frontend/src/components/home/ReportGeneratorSection.jsx` | Report generation form (self-contained with auth, API, navigation) |
 | `frontend/src/components/QuickInquiryWidget.jsx` | Fixed floating widget — phone, email, link to /contact |
 | `frontend/src/pages/Reports.jsx` | Dashboard — generate + manage reports |
-| `frontend/src/pages/Pricing.jsx` | Standalone pricing page |
+| `frontend/src/pages/About.jsx` | **Fully revamped** — new hero, mission pillars, founder section, report types with pricing |
+| `frontend/src/pages/Investors.jsx` | Investor registration + **SVG pie chart** of technology distribution by sector |
+| `frontend/src/pages/Technologies.jsx` | Technology submission — improved "Who Should Apply" section |
+| `frontend/src/pages/Prototype.jsx` | Improved process steps + improved showcase section |
+| `frontend/src/pages/Experts.jsx` | **Join as Expert** button now scrolls to `#join-form` (bottom form) |
 | `frontend/src/components/Header.jsx` | Navigation — token balance, dark mode toggle, active indicator |
 | `frontend/src/components/FormFields.jsx` | Shared form fields with dark mode support |
 | `frontend/src/contexts/ThemeContext.jsx` | Light/dark mode context with localStorage persistence |
@@ -78,22 +98,37 @@ Users submit a technology idea/concept; the AI engine analyzes it across 30+ par
 | `backend/app/services/email_service.py` | Confirmation emails for all 3 onboarding forms |
 
 ## Business Rules
-- Minimum token purchase must cover Advanced (7,500) as the entry-level report
-- Token balance shown in header and reports page
+- **No free tokens** — free token concept completely removed from UI
+- Minimum purchase: Starter Report (₹290 / $2.99) for a single Advanced Report
+- Token balance shown in header and reports page (for users who purchased token packs)
 - Enterprise tier is contact-only (routes to `/contact`)
 - Reports take 12–15 minutes to generate
-- Users receive free tokens on signup
+
+## Key UX Changes (Latest Batch)
+| Page | Change |
+|---|---|
+| Home | `ReportGeneratorSection` is now position #2 (right after Hero) — report generation is first priority |
+| Home Hero | Primary CTA → "Generate Your Report" → `/reports`; Secondary → "View Pricing" → `/pricing` |
+| Home Hero | "Validate, Protect, and Scale Your Innovation with Confidence" headline; "Trusted by 9,840 Innovators" badge |
+| Home | WhyAssesme + WhoCanUse sections present; SampleReports section; all icon containers use solid colors (no gradients) |
+| Pricing | Complete redesign — 5-plan grid (Starter ₹290, Starter Comp ₹390, Advanced ₹799, Comprehensive ₹999, Enterprise), full non-collapsible comparison table, sample report downloads |
+| About | Fully revamped — mission pillars, improved founder section, report types with pricing and CTAs |
+| Investors | SVG pie chart (static sector data); **5-step wizard form** with progress bar; draft saved to DB after each step |
+| Technologies | "Who Should Apply" improved; **5-step wizard form** with progress bar; draft saved to DB after each step |
+| Experts | "Join as Expert" scrolls to `#join-form` (page bottom form) |
+| Prototype | "Simple. Structured. Execution-Driven." process section; "What We've Already Built" portfolio with Delivered chips |
+| Layout (sidebar) | "Buy Tokens" link fixed: was `/login-pricing` (broken) → now `/pricing` |
 
 ## Routing (current)
 | Path | Page | Notes |
 |---|---|---|
 | `/` | Home | |
 | `/about` | About | |
-| `/pricing` | Pricing | |
-| `/experts` | Experts | **New.** Replaces `/rttp` in navbar. `/rttp` still works as legacy URL. |
-| `/investors` | Investors | **New.** Form + pie chart of registered technologies by sector |
-| `/technologies` | Technologies | **New.** IP holder technology submission form |
-| `/prototype` | Prototype | **New.** Prototype development inquiry form |
+| `/pricing` | Pricing | Standalone redesigned page |
+| `/experts` | Experts | Replaces `/rttp` in navbar. `/rttp` still works as legacy URL. |
+| `/investors` | Investors | Form + pie chart of registered technologies by sector |
+| `/technologies` | Technologies | IP holder technology submission form |
+| `/prototype` | Prototype | Prototype development inquiry form |
 | `/contact` | Contact | "Prototyping" added to Reason dropdown |
 | `/admin` | Admin | + 3 new tabs: Investors, Technologies, Prototype Inquiries |
 | `/rttp` | RTTP | Legacy — kept intact, not linked from nav |
@@ -105,7 +140,7 @@ Users submit a technology idea/concept; the AI engine analyzes it across 30+ par
 
 > Career, Blog, and Press links were removed from the top navbar and placed in the footer Company column.
 
-## Onboarding System (new)
+## Onboarding System
 All 3 forms POST to `/onboarding/*`, send confirmation email to the submitter via the existing msg91 email service, and are fully viewable in the Admin panel.
 
 | Form | Endpoint | Admin Tab |
@@ -114,6 +149,21 @@ All 3 forms POST to `/onboarding/*`, send confirmation email to the submitter vi
 | Technology Submission | POST `/onboarding/technologies` | "Technologies" tab |
 | Prototype Inquiry | POST `/onboarding/prototype` | "Prototype Inquiries" tab |
 | Technology stats | GET `/onboarding/technologies/stats` | Used for pie chart on `/investors` page |
+
+## Draft System (Progressive Save)
+Investor and Technology forms save data after **each step** — not just on final submit.
+
+| Action | Endpoint | Storage |
+|---|---|---|
+| Step 1 Next | `POST /onboarding/investors/draft` | Creates `InvestorDraft` doc, returns `draft_id` |
+| Steps 2–4 Next | `PATCH /onboarding/investors/draft/{id}` | Merges step data into existing draft |
+| Step 1 Next | `POST /onboarding/technologies/draft` | Creates `TechnologyDraft` doc |
+| Steps 2–4 Next | `PATCH /onboarding/technologies/draft/{id}` | Merges step data into existing draft |
+
+- `draft_id` is persisted in **localStorage** (`assesme_investor_draft_id`, `assesme_tech_draft_id`) — survives page refresh
+- On successful final submission: localStorage key is cleared
+- Draft models: `InvestorDraft`, `TechnologyDraft` in `investor_drafts` / `technology_drafts` MongoDB collections
+- Admin view only shows complete submissions (drafts are in separate collections)
 
 ## Target Users
 Startups & Founders, Universities & Academia, R&D Labs & Corporates, Investors & VCs, Government & Policy Bodies, Incubators & Accelerators, RTTP Professionals

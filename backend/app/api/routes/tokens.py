@@ -24,29 +24,32 @@ router = APIRouter()
 
 # +++ START: New Helper Functions for Currency Conversion +++
 
+def get_client_ip(request: Request) -> str:
+    """Extract real client IP, checking X-Forwarded-For first."""
+    forwarded_for = request.headers.get("X-Forwarded-For")
+    if forwarded_for:
+        return forwarded_for.split(",")[0].strip()
+    return request.client.host
+
+
 def get_currency_from_ip(ip: str) -> str:
     """
     Fetches the currency code from the user's IP address using a free geolocation API.
-    Defaults to 'USD' on failure or for local testing.
+    Defaults to 'INR' for localhost (dev environment).
     """
-    # Use a public IP for testing, as '127.0.0.1' won't provide geo-data.
-    if ip == "127.0.0.1":
-        ip = "8.8.8.8"  # Using Google's public DNS for demonstration purposes.
+    if ip in ("127.0.0.1", "::1", "localhost"):
+        return "INR"  # Local dev defaults to INR
 
     try:
-        # Using ip-api.com, a free, no-key-required service for IP geolocation.
         response = requests.get(f"http://ip-api.com/json/{ip}?fields=status,message,currency", timeout=5)
         response.raise_for_status()
         data = response.json()
         if data.get("status") == "success" and data.get("currency"):
-            # Ensure the currency is supported by Razorpay, otherwise fallback.
-            # A comprehensive list is here: https://razorpay.com/docs/payments/international-payments/
-            # For this example, we assume common currencies are fine.
             return data["currency"]
     except requests.RequestException as e:
         print(f"IP Geolocation failed for IP {ip}: {e}")
 
-    return "USD"  # Fallback currency
+    return "INR"  # Fallback to INR (primary market)
 
 
 def get_exchange_rate(base_currency: str, target_currency: str) -> float:
@@ -103,6 +106,7 @@ async def get_token_packages():
             name=package.name,
             package_type=package.package_type,
             tokens=package.tokens,
+            price_inr=package.price_inr,
             price_usd=package.price_usd,
             description=package.description
         )
@@ -126,10 +130,13 @@ async def get_user_token_balance(current_user: User = Depends(get_current_user))
 @router.post("/purchase/create-order", response_model=TokenOrderResponse)
 async def create_token_purchase_order(
         order_data: TokenPurchaseCreate,
-        request: Request,  # <-- Injected Request to get client IP
+        request: Request,
         current_user: User = Depends(get_current_user)
 ):
-    """Create a Razorpay order for token purchase with automatic currency conversion."""
+    """Create a Razorpay order for token purchase.
+    - INR users: use price_inr directly (no conversion, no GST added on top).
+    - All others: convert price_inr → target currency via live exchange rate.
+    """
     try:
         razorpay_client = get_razorpay_client()
 
@@ -141,20 +148,32 @@ async def create_token_purchase_order(
             )
 
         pricing = package.get_pricing_details()
-        base_price_usd = pricing["total_price"]
 
-        # --- Currency Conversion Logic ---
-        client_ip = request.client.host
-        target_currency = get_currency_from_ip(client_ip)
+        # --- Currency Detection ---
+        # Use frontend hint if provided (derived from browser timezone — reliable)
+        # Otherwise fall back to IP geolocation
+        if order_data.currency_hint in ("INR", "USD"):
+            target_currency = order_data.currency_hint
+        else:
+            client_ip = get_client_ip(request)
+            target_currency = get_currency_from_ip(client_ip)
 
-        exchange_rate = get_exchange_rate("USD", target_currency)
-        if exchange_rate == 1.0:
-            target_currency = "USD"  # Revert to USD if conversion fails
-
-        # Calculate amount in the smallest unit of the target currency (e.g., paise, cents)
-        final_amount_local = int((base_price_usd * exchange_rate) * 100)
-        final_currency = target_currency
-        # --- End of Logic ---
+        if target_currency == "INR":
+            # INR: use stored INR price directly — exact, no conversion needed
+            final_amount_local = int(package.price_inr * 100)  # paise
+            final_currency = "INR"
+            exchange_rate = 1.0
+        else:
+            # Non-INR: convert from INR to target currency
+            exchange_rate = get_exchange_rate("INR", target_currency)
+            if exchange_rate == 1.0:
+                # Conversion failed — fall back to USD using stored price_usd
+                target_currency = "USD"
+                final_amount_local = int(package.price_usd * 100)  # cents
+            else:
+                final_amount_local = int((package.price_inr * exchange_rate) * 100)
+            final_currency = target_currency
+        # --- End Currency Logic ---
 
         import time
         receipt = f"token_{str(current_user.id)[:8]}_{str(package.id)[:8]}_{int(time.time())}"
@@ -168,7 +187,8 @@ async def create_token_purchase_order(
                 "package_id": str(package.id),
                 "package_name": package.name,
                 "tokens": str(package.tokens),
-                "total_price_usd": str(pricing["total_price"]),
+                "price_inr": str(package.price_inr),
+                "price_usd": str(package.price_usd),
                 "target_currency": final_currency,
                 "exchange_rate": str(exchange_rate)
             }
@@ -184,7 +204,7 @@ async def create_token_purchase_order(
                 "id": str(package.id),
                 "name": package.name,
                 "tokens": package.tokens,
-                "pricing": pricing  # Still shows original USD pricing for user reference
+                "pricing": pricing
             }
         )
     except Exception as e:

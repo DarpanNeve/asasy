@@ -429,13 +429,24 @@ export default function Prototype() {
             viewport={{ once: true }}
             transition={{ duration: 0.55 }}
           >
+            <div className="inline-flex items-center justify-center px-4 py-1.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 rounded-full text-sm font-medium mb-4">
+              <span className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full mr-2" />
+              How It Works
+            </div>
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-slate-100 mb-4">
-              Simple. Structured. Execution-Driven.
+              Simple.{" "}
+              <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+                Structured.
+              </span>{" "}
+              Execution-Driven.
             </h2>
+            <p className="text-lg text-neutral-500 dark:text-slate-400 max-w-2xl mx-auto">
+              From inquiry to delivery, every step is transparent, milestone-based, and engineer-led.
+            </p>
           </motion.div>
 
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-4 gap-6"
+            className="grid grid-cols-1 md:grid-cols-4 gap-6 relative"
             variants={stagger}
             initial="hidden"
             whileInView="visible"
@@ -445,18 +456,18 @@ export default function Prototype() {
               const Icon = p.icon;
               return (
                 <motion.div key={i} variants={fadeUp} className="relative">
-                  <div className="bg-white dark:bg-slate-900 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm h-full hover:border-blue-200 dark:hover:border-blue-700 hover:shadow-md transition-all duration-300">
-                    <div className="flex items-center gap-3 mb-4">
+                  <div className="bg-white dark:bg-slate-900 rounded-2xl p-7 border border-slate-200 dark:border-slate-700 shadow-sm h-full hover:border-blue-200 dark:hover:border-blue-700 hover:shadow-xl transition-all duration-300 group">
+                    <div className="flex items-start justify-between mb-5">
                       <div
-                        className={`w-10 h-10 ${p.bg} rounded-xl flex items-center justify-center shadow-md`}
+                        className={`w-12 h-12 ${p.bg} rounded-xl flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-300`}
                       >
-                        <Icon className="h-5 w-5 text-white" />
+                        <Icon className="h-6 w-6 text-white" />
                       </div>
-                      <span className="text-2xl font-bold text-slate-200 dark:text-slate-700">
+                      <span className="text-4xl font-black text-slate-100 dark:text-slate-800 select-none">
                         {p.step}
                       </span>
                     </div>
-                    <h3 className="font-semibold text-neutral-900 dark:text-slate-200 mb-2">
+                    <h3 className="font-bold text-neutral-900 dark:text-slate-200 mb-2 text-base group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors">
                       {p.title}
                     </h3>
                     <p className="text-neutral-500 dark:text-slate-400 text-sm leading-relaxed">
@@ -464,8 +475,10 @@ export default function Prototype() {
                     </p>
                   </div>
                   {i < PROCESS_STEPS.length - 1 && (
-                    <div className="hidden md:flex absolute top-1/3 -right-3 z-10 items-center">
-                      <ArrowRight className="h-4 w-4 text-blue-300 dark:text-blue-600" />
+                    <div className="hidden md:flex absolute top-1/3 -right-4 z-10 items-center">
+                      <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center">
+                        <ArrowRight className="h-4 w-4 text-blue-500 dark:text-blue-400" />
+                      </div>
                     </div>
                   )}
                 </motion.div>
@@ -484,11 +497,18 @@ export default function Prototype() {
             viewport={{ once: true }}
             transition={{ duration: 0.55 }}
           >
+            <div className="inline-flex items-center justify-center px-4 py-1.5 bg-teal-100 dark:bg-teal-900/40 text-teal-700 dark:text-teal-400 rounded-full text-sm font-medium mb-4">
+              <span className="w-2 h-2 bg-teal-600 dark:bg-teal-400 rounded-full mr-2" />
+              Our Portfolio
+            </div>
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-slate-100 mb-4">
-              What We've Already Built
+              What We've{" "}
+              <span className="bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
+                Already Built
+              </span>
             </h2>
             <p className="text-lg text-neutral-500 dark:text-slate-400 max-w-2xl mx-auto">
-              Real projects, real engineering, real delivery.
+              Real projects. Real engineering. Real delivery — from concept to working product.
             </p>
           </motion.div>
 
@@ -504,14 +524,19 @@ export default function Prototype() {
                 key={i}
                 variants={fadeUp}
                 whileHover={{ y: -4 }}
-                className="bg-white dark:bg-slate-900 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm card-interactive"
+                className="bg-white dark:bg-slate-900 rounded-2xl p-7 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-700 transition-all duration-300 group"
               >
-                <span
-                  className={`inline-block text-xs px-2 py-0.5 rounded-full font-medium mb-4 ${project.tagColor}`}
-                >
-                  {project.tag}
-                </span>
-                <h3 className="font-semibold text-neutral-900 dark:text-slate-200 mb-2">
+                <div className="flex items-start justify-between mb-4">
+                  <span
+                    className={`inline-block text-xs px-2.5 py-1 rounded-full font-semibold ${project.tagColor}`}
+                  >
+                    {project.tag}
+                  </span>
+                  <span className="text-xs text-neutral-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-full">
+                    Delivered
+                  </span>
+                </div>
+                <h3 className="font-bold text-neutral-900 dark:text-slate-200 mb-3 text-base group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors">
                   {project.title}
                 </h3>
                 <p className="text-neutral-500 dark:text-slate-400 text-sm leading-relaxed">
@@ -519,6 +544,24 @@ export default function Prototype() {
                 </p>
               </motion.div>
             ))}
+          </motion.div>
+
+          <motion.div
+            className="mt-12 text-center"
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <p className="text-neutral-500 dark:text-slate-400 text-sm mb-4">
+              Ready to add your project to this list?
+            </p>
+            <a
+              href="#inquiry"
+              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-200 shadow-md btn-glow"
+            >
+              Start Your Prototype <ArrowRight className="h-4 w-4" />
+            </a>
           </motion.div>
         </div>
       </section>

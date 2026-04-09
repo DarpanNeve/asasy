@@ -20,7 +20,6 @@ import {
   MessageSquare,
   Send,
   Calendar,
-  ExternalLink,
   ChevronRight,
   CheckCircle2,
   Sparkles,
@@ -321,16 +320,14 @@ export default function Experts() {
                 <ArrowRight className="h-4 w-4" />
               </motion.a>
               <motion.a
-                href="https://forms.gle/1AHvijC9uidoGeig8"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#join-form"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="inline-flex items-center justify-center gap-2 border border-white/30 text-white hover:bg-white/10 font-medium px-8 py-3.5 rounded-lg transition-colors duration-200"
               >
                 <User className="h-4 w-4" />
                 Join as Expert
-                <ExternalLink className="h-4 w-4" />
+                <ArrowRight className="h-4 w-4" />
               </motion.a>
             </div>
           </motion.div>
@@ -502,7 +499,7 @@ export default function Experts() {
       </section>
 
       {/* Contact Form */}
-      <section className="py-24 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800">
+      <section id="join-form" className="py-24 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-12"
@@ -512,13 +509,13 @@ export default function Experts() {
             transition={{ duration: 0.55 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-slate-100 mb-4">
-              Get in{" "}
+              Join as an{" "}
               <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-                Touch
+                Expert
               </span>
             </h2>
             <p className="text-neutral-500 dark:text-slate-400">
-              Have questions? We're here to help.
+              Are you an RTTP professional, IP specialist, or industry expert? Reach out to join our growing network.
             </p>
           </motion.div>
 

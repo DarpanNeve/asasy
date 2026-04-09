@@ -35,9 +35,6 @@ import Careers from "./pages/Careers";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import "./index.css";
-import TokenPricingSection from "./components/TokenPricingSection";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -63,20 +60,7 @@ const router = createBrowserRouter(
     { path: "/prototype", element: <Prototype /> },
     { path: "/contact", element: <Contact /> },
     { path: "/about", element: <About /> },
-    {
-      path: "/pricing",
-      element: (
-        <div className="min-h-screen">
-          <Header />
-          <TokenPricingSection
-            compact={false}
-            showReportTypes={true}
-            showHeader={true}
-          />
-          <Footer />
-        </div>
-      ),
-    },
+    { path: "/pricing", element: <Pricing /> },
     { path: "/admin", element: <Admin /> },
     { path: "/careers", element: <Careers /> },
     { path: "/blog", element: <Blog /> },
@@ -93,16 +77,6 @@ const router = createBrowserRouter(
         <ProtectedRoute>
           <Layout>
             <Profile />
-          </Layout>
-        </ProtectedRoute>
-      ),
-    },
-    {
-      path: "/login-pricing",
-      element: (
-        <ProtectedRoute>
-          <Layout>
-            <Pricing />
           </Layout>
         </ProtectedRoute>
       ),
