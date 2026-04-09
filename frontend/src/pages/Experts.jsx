@@ -36,65 +36,131 @@ const SERVICES = [
     area: "Tech Scouting",
     description: "Validate your innovation and position it correctly",
     icon: Lightbulb,
-    color: "from-amber-500 to-orange-500",
-    details: "Our experts help you identify market gaps, validate technical feasibility, and position your innovation for maximum commercial impact.",
-    features: ["Market Gap Analysis", "Technical Feasibility", "Commercial Positioning"],
+    color: "bg-amber-500",
+    details:
+      "Our experts help you identify market gaps, validate technical feasibility, and position your innovation for maximum commercial impact.",
+    features: [
+      "Market Gap Analysis",
+      "Technical Feasibility",
+      "Commercial Positioning",
+    ],
   },
   {
     area: "IP Licensing Strategy",
     description: "Help you license to industry, startups, or global players",
     icon: FileText,
-    color: "from-blue-500 to-blue-700",
-    details: "Develop comprehensive licensing strategies, negotiate terms, and connect with potential licensees across industries and geographies.",
+    color: "bg-blue-600",
+    details:
+      "Develop comprehensive licensing strategies, negotiate terms, and connect with potential licensees across industries and geographies.",
     features: ["Licensing Strategy", "Term Negotiation", "Global Connections"],
   },
   {
     area: "Startup Formation",
     description: "Guide business model, cap tables, and investor readiness",
     icon: TrendingUp,
-    color: "from-emerald-500 to-teal-600",
-    details: "From concept to company — we guide you through business model development, equity structures, and preparing for investment rounds.",
-    features: ["Business Model Design", "Cap Table Structure", "Investor Readiness"],
+    color: "bg-emerald-600",
+    details:
+      "From concept to company we guide you through business model development, equity structures, and preparing for investment rounds.",
+    features: [
+      "Business Model Design",
+      "Cap Table Structure",
+      "Investor Readiness",
+    ],
   },
   {
     area: "Funding Roadmap",
     description: "Map SBIR/VC/CSR/Angel investments and pitch readiness",
     icon: DollarSign,
-    color: "from-teal-500 to-cyan-600",
-    details: "Create strategic funding pathways including government grants, venture capital, corporate partnerships, and angel investments.",
+    color: "bg-teal-600",
+    details:
+      "Create strategic funding pathways including government grants, venture capital, corporate partnerships, and angel investments.",
     features: ["Grant Applications", "VC Connections", "Pitch Preparation"],
   },
   {
     area: "Global Market Access",
     description: "Prepare your tech/IP for international commercialisation",
     icon: Globe,
-    color: "from-cyan-500 to-blue-600",
-    details: "Navigate international markets, regulatory requirements, and establish global partnerships for technology transfer.",
-    features: ["Market Entry Strategy", "Regulatory Compliance", "Partnership Development"],
+    color: "bg-cyan-600",
+    details:
+      "Navigate international markets, regulatory requirements, and establish global partnerships for technology transfer.",
+    features: [
+      "Market Entry Strategy",
+      "Regulatory Compliance",
+      "Partnership Development",
+    ],
   },
   {
     area: "Compliance & Risk",
     description: "Ensure regulatory and legal due diligence is done right",
     icon: Shield,
-    color: "from-rose-500 to-red-600",
-    details: "Comprehensive risk assessment, regulatory compliance guidance, and legal due diligence for technology commercialization.",
+    color: "bg-rose-600",
+    details:
+      "Comprehensive risk assessment, regulatory compliance guidance, and legal due diligence for technology commercialization.",
     features: ["Risk Assessment", "Legal Due Diligence", "Compliance Guidance"],
   },
 ];
 
 const BENEFITS = [
-  { title: "Builds Trust for Investors", description: "Professional validation increases investor confidence", icon: Shield },
-  { title: "Increases Commercialisation Success Rate", description: "Proven methodologies improve your chances of success", icon: TrendingUp },
-  { title: "Avoids Legal/IP Mistakes", description: "Expert guidance prevents costly legal pitfalls", icon: CheckCircle2 },
-  { title: "Access to Global Network", description: "Connect with tech transfer offices worldwide", icon: Globe },
-  { title: "Academic Institution Support", description: "Specialized guidance for research commercialization", icon: BookOpen },
+  {
+    title: "Builds Trust for Investors",
+    description: "Professional validation increases investor confidence",
+    icon: Shield,
+  },
+  {
+    title: "Increases Commercialisation Success Rate",
+    description: "Proven methodologies improve your chances of success",
+    icon: TrendingUp,
+  },
+  {
+    title: "Avoids Legal/IP Mistakes",
+    description: "Expert guidance prevents costly legal pitfalls",
+    icon: CheckCircle2,
+  },
+  {
+    title: "Access to Global Network",
+    description: "Connect with tech transfer offices worldwide",
+    icon: Globe,
+  },
+  {
+    title: "Academic Institution Support",
+    description: "Specialized guidance for research commercialization",
+    icon: BookOpen,
+  },
 ];
 
 const STATS = [
-  { icon: Users, stat: 500, suffix: "+", label: "Global Experts", color: "from-blue-500 to-blue-700", iconColor: "text-white" },
-  { icon: TrendingUp, stat: 85, suffix: "%", label: "Success Rate", color: "from-emerald-500 to-teal-600", iconColor: "text-white" },
-  { icon: Globe, stat: 50, suffix: "+", label: "Countries", color: "from-teal-500 to-cyan-600", iconColor: "text-white" },
-  { icon: Building, stat: 1000, suffix: "+", label: "Institutions", color: "from-amber-500 to-orange-500", iconColor: "text-white" },
+  {
+    icon: Users,
+    stat: 500,
+    suffix: "+",
+    label: "Global Experts",
+    color: "bg-blue-600",
+    iconColor: "text-white",
+  },
+  {
+    icon: TrendingUp,
+    stat: 85,
+    suffix: "%",
+    label: "Success Rate",
+    color: "bg-emerald-600",
+    iconColor: "text-white",
+  },
+  {
+    icon: Globe,
+    stat: 9,
+    suffix: "+",
+    label: "Countries",
+    color: "bg-teal-600",
+    iconColor: "text-white",
+  },
+  {
+    icon: Building,
+    stat: 45,
+    suffix: "+",
+    label: "Institutions",
+    color: "bg-amber-500",
+    iconColor: "text-white",
+  },
 ];
 
 const stagger = {
@@ -104,7 +170,11 @@ const stagger = {
 
 const fadeUp = {
   hidden: { opacity: 0, y: 22 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+  },
 };
 
 function useCountUp(target, duration = 1600) {
@@ -130,7 +200,7 @@ function useCountUp(target, duration = 1600) {
           requestAnimationFrame(step);
         }
       },
-      { threshold: 0.5 }
+      { threshold: 0.5 },
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -139,7 +209,15 @@ function useCountUp(target, duration = 1600) {
   return [count, ref];
 }
 
-function StatCard({ icon: Icon, stat, suffix, label, color, iconColor, delay }) {
+function StatCard({
+  icon: Icon,
+  stat,
+  suffix,
+  label,
+  color,
+  iconColor,
+  delay,
+}) {
   const [count, ref] = useCountUp(stat);
   return (
     <motion.div
@@ -150,11 +228,14 @@ function StatCard({ icon: Icon, stat, suffix, label, color, iconColor, delay }) 
       transition={{ delay, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className="text-center"
     >
-      <div className={`w-16 h-16 bg-gradient-to-br ${color} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg`}>
+      <div
+        className={`w-16 h-16 ${color} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg`}
+      >
         <Icon className={`h-8 w-8 ${iconColor}`} />
       </div>
       <h3 className="text-3xl font-bold text-neutral-900 dark:text-slate-100 mb-1">
-        {count}{suffix}
+        {count}
+        {suffix}
       </h3>
       <p className="text-neutral-500 dark:text-slate-400 text-sm">{label}</p>
     </motion.div>
@@ -165,7 +246,12 @@ export default function Experts() {
   const [selectedService, setSelectedService] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
@@ -177,7 +263,9 @@ export default function Experts() {
       });
       if (!response.ok) throw new Error("Failed to submit");
       const result = await response.json();
-      toast.success(result.message || "Thank you! We will get back to you soon.");
+      toast.success(
+        result.message || "Thank you! We will get back to you soon.",
+      );
       reset();
     } catch {
       toast.error("Failed to submit. Please try again.");
@@ -209,13 +297,15 @@ export default function Experts() {
           >
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-white/80 text-sm font-medium mb-6 backdrop-blur-sm">
               <Sparkles className="h-3.5 w-3.5 text-blue-400" />
-              RTTP-Certified Professionals
+              Certified Professionals
             </span>
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
               Work with Our Experts
             </h1>
             <p className="text-lg text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">
-              Access certified technology transfer and commercialisation professionals — specialists in IP licensing, tech transfer, and market access.
+              Access certified technology transfer and commercialisation
+              professionals specialists in IP licensing, tech transfer, and
+              market access.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.a
@@ -264,9 +354,17 @@ export default function Experts() {
                 </span>
               </h2>
               <p className="text-lg text-neutral-600 dark:text-slate-400 mb-8 leading-relaxed">
-                Our network comprises Registered Technology Transfer Professionals (RTTPs) and certified commercialisation specialists who bridge the gap between academic research and industry application.
+                Our network comprises certified commercialisation specialists
+                who bridge the gap between academic research and industry
+                application.
               </p>
-              <motion.div className="space-y-2" variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+              <motion.div
+                className="space-y-2"
+                variants={stagger}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
                 {BENEFITS.map((b, i) => {
                   const Icon = b.icon;
                   return (
@@ -279,8 +377,12 @@ export default function Experts() {
                         <Icon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-neutral-900 dark:text-slate-200 mb-0.5 text-sm">{b.title}</h3>
-                        <p className="text-neutral-500 dark:text-slate-400 text-sm">{b.description}</p>
+                        <h3 className="font-semibold text-neutral-900 dark:text-slate-200 mb-0.5 text-sm">
+                          {b.title}
+                        </h3>
+                        <p className="text-neutral-500 dark:text-slate-400 text-sm">
+                          {b.description}
+                        </p>
                       </div>
                     </motion.div>
                   );
@@ -325,7 +427,8 @@ export default function Experts() {
               Can Help You
             </h2>
             <p className="text-lg text-neutral-500 dark:text-slate-400 max-w-2xl mx-auto">
-              Comprehensive support across all aspects of technology transfer and commercialisation.
+              Comprehensive support across all aspects of technology transfer
+              and commercialisation.
             </p>
           </motion.div>
 
@@ -347,14 +450,23 @@ export default function Experts() {
                   className="bg-white dark:bg-slate-800/60 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm card-interactive cursor-pointer"
                   onClick={() => setSelectedService(isOpen ? null : index)}
                 >
-                  <div className={`w-12 h-12 bg-gradient-to-br ${service.color} rounded-xl flex items-center justify-center mb-5 shadow-md`}>
+                  <div
+                    className={`w-12 h-12 ${service.color} rounded-xl flex items-center justify-center mb-5 shadow-md`}
+                  >
                     <Icon className="h-6 w-6 text-white" />
                   </div>
-                  <h3 className="text-lg font-semibold text-neutral-900 dark:text-slate-100 mb-2">{service.area}</h3>
-                  <p className="text-neutral-500 dark:text-slate-400 text-sm mb-4 leading-relaxed">{service.description}</p>
+                  <h3 className="text-lg font-semibold text-neutral-900 dark:text-slate-100 mb-2">
+                    {service.area}
+                  </h3>
+                  <p className="text-neutral-500 dark:text-slate-400 text-sm mb-4 leading-relaxed">
+                    {service.description}
+                  </p>
                   <div className="space-y-1.5 mb-4">
                     {service.features.map((f, fi) => (
-                      <div key={fi} className="flex items-center text-sm text-neutral-500 dark:text-slate-400">
+                      <div
+                        key={fi}
+                        className="flex items-center text-sm text-neutral-500 dark:text-slate-400"
+                      >
                         <CheckCircle className="w-3.5 h-3.5 mr-2 text-emerald-500 flex-shrink-0" />
                         {f}
                       </div>
@@ -362,7 +474,10 @@ export default function Experts() {
                   </div>
                   <div className="flex items-center text-blue-600 dark:text-blue-400 font-medium text-sm">
                     <span>{isOpen ? "Show less" : "Learn more"}</span>
-                    <motion.div animate={{ rotate: isOpen ? 90 : 0 }} transition={{ duration: 0.2 }}>
+                    <motion.div
+                      animate={{ rotate: isOpen ? 90 : 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
                       <ChevronRight className="w-4 h-4 ml-1" />
                     </motion.div>
                   </div>
@@ -374,7 +489,9 @@ export default function Experts() {
                       transition={{ duration: 0.25 }}
                       className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800/40 overflow-hidden"
                     >
-                      <p className="text-sm text-neutral-700 dark:text-slate-300 leading-relaxed">{service.details}</p>
+                      <p className="text-sm text-neutral-700 dark:text-slate-300 leading-relaxed">
+                        {service.details}
+                      </p>
                     </motion.div>
                   )}
                 </motion.div>
@@ -396,9 +513,13 @@ export default function Experts() {
           >
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-slate-100 mb-4">
               Get in{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">Touch</span>
+              <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+                Touch
+              </span>
             </h2>
-            <p className="text-neutral-500 dark:text-slate-400">Have questions? We're here to help.</p>
+            <p className="text-neutral-500 dark:text-slate-400">
+              Have questions? We're here to help.
+            </p>
           </motion.div>
 
           <motion.div
@@ -415,7 +536,9 @@ export default function Experts() {
                   Reason for Contact
                 </label>
                 <select
-                  {...register("reason", { required: "Please select a reason" })}
+                  {...register("reason", {
+                    required: "Please select a reason",
+                  })}
                   className={inputCls(errors.reason)}
                 >
                   <option value="">Select a reason...</option>
@@ -423,46 +546,84 @@ export default function Experts() {
                   <option value="ip_licensing">IP Licensing</option>
                   <option value="startup_formation">Startup Formation</option>
                   <option value="funding_strategy">Funding Strategy</option>
-                  <option value="global_market_access">Global Market Access</option>
+                  <option value="global_market_access">
+                    Global Market Access
+                  </option>
                   <option value="compliance_risks">Compliance and Risks</option>
                   <option value="other">Other</option>
                 </select>
-                {errors.reason && <p className="mt-1.5 text-xs text-red-600">{errors.reason.message}</p>}
+                {errors.reason && (
+                  <p className="mt-1.5 text-xs text-red-600">
+                    {errors.reason.message}
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 dark:text-slate-300 mb-1.5">
-                    <User className="inline h-3.5 w-3.5 mr-1.5 text-blue-600 dark:text-blue-400" />Name
+                    <User className="inline h-3.5 w-3.5 mr-1.5 text-blue-600 dark:text-blue-400" />
+                    Name
                   </label>
-                  <input type="text" {...register("name", { required: "Required" })} className={inputCls(errors.name)} placeholder="Your full name" />
-                  {errors.name && <p className="mt-1.5 text-xs text-red-600">{errors.name.message}</p>}
+                  <input
+                    type="text"
+                    {...register("name", { required: "Required" })}
+                    className={inputCls(errors.name)}
+                    placeholder="Your full name"
+                  />
+                  {errors.name && (
+                    <p className="mt-1.5 text-xs text-red-600">
+                      {errors.name.message}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 dark:text-slate-300 mb-1.5">
-                    <Phone className="inline h-3.5 w-3.5 mr-1.5 text-blue-600 dark:text-blue-400" />Phone
+                    <Phone className="inline h-3.5 w-3.5 mr-1.5 text-blue-600 dark:text-blue-400" />
+                    Phone
                   </label>
-                  <input type="tel" {...register("phone", { required: "Required" })} className={inputCls(errors.phone)} placeholder="Your phone number" />
-                  {errors.phone && <p className="mt-1.5 text-xs text-red-600">{errors.phone.message}</p>}
+                  <input
+                    type="tel"
+                    {...register("phone", { required: "Required" })}
+                    className={inputCls(errors.phone)}
+                    placeholder="Your phone number"
+                  />
+                  {errors.phone && (
+                    <p className="mt-1.5 text-xs text-red-600">
+                      {errors.phone.message}
+                    </p>
+                  )}
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-neutral-700 dark:text-slate-300 mb-1.5">
-                  <Mail className="inline h-3.5 w-3.5 mr-1.5 text-blue-600 dark:text-blue-400" />Email
+                  <Mail className="inline h-3.5 w-3.5 mr-1.5 text-blue-600 dark:text-blue-400" />
+                  Email
                 </label>
                 <input
                   type="email"
-                  {...register("email", { required: "Required", pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: "Invalid email" } })}
+                  {...register("email", {
+                    required: "Required",
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: "Invalid email",
+                    },
+                  })}
                   className={inputCls(errors.email)}
                   placeholder="your.email@example.com"
                 />
-                {errors.email && <p className="mt-1.5 text-xs text-red-600">{errors.email.message}</p>}
+                {errors.email && (
+                  <p className="mt-1.5 text-xs text-red-600">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-neutral-700 dark:text-slate-300 mb-1.5">
-                  <MessageSquare className="inline h-3.5 w-3.5 mr-1.5 text-blue-600 dark:text-blue-400" />Message
+                  <MessageSquare className="inline h-3.5 w-3.5 mr-1.5 text-blue-600 dark:text-blue-400" />
+                  Message
                 </label>
                 <textarea
                   {...register("message", { required: "Required" })}
@@ -470,7 +631,11 @@ export default function Experts() {
                   className={`${inputCls(errors.message)} resize-none`}
                   placeholder="Tell us about your project..."
                 />
-                {errors.message && <p className="mt-1.5 text-xs text-red-600">{errors.message.message}</p>}
+                {errors.message && (
+                  <p className="mt-1.5 text-xs text-red-600">
+                    {errors.message.message}
+                  </p>
+                )}
               </div>
 
               <motion.button
@@ -480,7 +645,11 @@ export default function Experts() {
                 whileTap={{ scale: 0.99 }}
                 className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3.5 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg btn-glow flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" /> : <Send className="h-4 w-4" />}
+                {isSubmitting ? (
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
                 {isSubmitting ? "Sending..." : "Send Message"}
               </motion.button>
             </form>

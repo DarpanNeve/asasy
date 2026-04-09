@@ -1,34 +1,20 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
-  TrendingUp,
-  Users,
-  Globe,
+  Sparkles,
+  Target,
+  ShieldCheck,
+  Zap,
   BarChart3,
   CheckCircle,
-  Send,
-  DollarSign,
-  Target,
   ArrowRight,
-  Sparkles,
+  Send,
 } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Field, SelectField, TextareaField } from "../components/FormFields";
 import { api } from "../services/api";
 import toast from "react-hot-toast";
-
-const SECTORS = [
-  "AgriTech", "BioTech", "CleanTech", "DeepTech", "EdTech",
-  "HealthTech", "InfoTech", "MedTech", "Manufacturing", "Other",
-];
-const STAGES = ["Pre-Seed", "Seed", "Series A", "Series B", "Growth Stage", "Any Stage"];
-const TICKETS = ["< ₹25L", "₹25L – ₹1Cr", "₹1Cr – ₹5Cr", "₹5Cr – ₹25Cr", "₹25Cr+"];
-
-const SECTOR_COLORS = [
-  "#2563eb", "#0891b2", "#059669", "#d97706", "#7c3aed",
-  "#db2777", "#dc2626", "#65a30d", "#0284c7", "#6b7280",
-];
 
 const stagger = {
   hidden: { opacity: 0 },
@@ -37,32 +23,169 @@ const stagger = {
 
 const fadeUp = {
   hidden: { opacity: 0, y: 22 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+  },
 };
 
+const WHY_CARDS = [
+  {
+    icon: Target,
+    bg: "bg-blue-600",
+    title: "Multi-Layer Technology Filtration",
+    desc: "Every startup goes through structured checkpoints: TRL validation, MVP verification, market assessment, and founder credibility analysis.",
+  },
+  {
+    icon: ShieldCheck,
+    bg: "bg-teal-600",
+    title: "Investor Qualification System",
+    desc: "We evaluate financial capacity, investment experience, strategic contribution ability, and engagement intent.",
+  },
+  {
+    icon: Zap,
+    bg: "bg-emerald-600",
+    title: "Intelligent Matching Engine",
+    desc: "Matched based on investment stage, sector alignment, ticket size compatibility, risk appetite, and strategic synergy.",
+  },
+  {
+    icon: BarChart3,
+    bg: "bg-amber-500",
+    title: "Structured Deal Flow",
+    desc: "Scored opportunities with evaluation insights and clear investment readiness indicators. No cold pitches.",
+  },
+];
+
+const INVESTOR_TYPES = [
+  "Angel Investor",
+  "Venture Capitalist",
+  "Corporate Investor",
+  "Family Office",
+  "HNI / Individual",
+];
+
+const STAGES = [
+  "Pre-Seed",
+  "Seed",
+  "Series A",
+  "Series B",
+  "Growth Stage",
+  "Any Stage",
+];
+
+const TICKET_DISPLAY = [
+  "< ₹10 Lakhs",
+  "₹10–50 Lakhs",
+  "₹50 Lakhs–2 Cr",
+  "₹2–10 Cr",
+  "₹10 Cr+",
+];
+
+const TICKET_MAP = {
+  "< ₹10 Lakhs": "< ₹25L",
+  "₹10–50 Lakhs": "₹25L – ₹1Cr",
+  "₹50 Lakhs–2 Cr": "₹1Cr – ₹5Cr",
+  "₹2–10 Cr": "₹5Cr – ₹25Cr",
+  "₹10 Cr+": "₹25Cr+",
+};
+
+const SECTORS_LIST = [
+  "AI/ML",
+  "IoT",
+  "Healthcare",
+  "Deep Tech",
+  "EdTech",
+  "FinTech",
+  "Sustainability",
+  "Defence",
+  "AgriTech",
+  "Women-Based",
+  "Social Startups",
+  "Others",
+];
+
+const GEOGRAPHY_OPTIONS = ["India", "Global", "Specific Region"];
+
+const NUM_INVESTMENTS = ["0–5", "5–20", "20+"];
+
+const YEARS_EXPERIENCE = ["< 2 years", "2–5 years", "5–10 years", "10+ years"];
+
+const BEYOND_FUNDING_OPTIONS = [
+  "Mentorship",
+  "Strategic Support",
+  "Industry Connections",
+  "No involvement",
+];
+
+const ROI_HORIZON = ["1–3 years", "3–5 years", "5–10 years"];
+
+const ELIGIBILITY_ITEMS = [
+  "Minimum annual investment capacity ≥ ₹25 Lakhs",
+  "At least 1 prior investment OR strong financial backing proof",
+  "Willingness to review evaluated technologies (not raw ideas)",
+  "Agrees to platform evaluation framework",
+  "Accepts confidentiality & IP protection terms",
+];
+
+const WHO_LEFT = [
+  "Angel Investors",
+  "Venture Capitalists",
+  "Family Offices",
+  "Corporate Investors",
+  "HNI / High-Net-Worth Individuals",
+];
+
+const WHO_RIGHT = [
+  "Access to filtered technologies",
+  "Reduced screening time",
+  "Early access to investment-ready innovations",
+  "Insights beyond pitch decks",
+];
+
+function SectionDivider({ label }) {
+  return (
+    <div className="flex items-center gap-3 mb-5">
+      <h3 className="text-sm font-semibold text-neutral-700 dark:text-slate-300 uppercase tracking-wide">
+        {label}
+      </h3>
+      <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
+    </div>
+  );
+}
+
 export default function Investors() {
-  const [stats, setStats] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
   const [form, setForm] = useState({
-    full_name: "", organization: "", designation: "", email: "",
-    phone: "", country: "", investment_focus: "", investment_stage: "",
-    ticket_size: "", areas_of_interest: "", message: "",
+    full_name: "",
+    organization: "",
+    investor_type: "",
+    email: "",
+    phone: "",
+    linkedin: "",
+    investment_stage: "",
+    ticket_size: "",
+    geography_preference: "",
+    num_investments: "",
+    years_experience: "",
+    past_investments_desc: "",
+    roi_horizon: "",
+    areas_of_interest: "",
   });
+
+  const [selectedSectors, setSelectedSectors] = useState([]);
+  const [beyondFunding, setBeyondFunding] = useState([]);
+  const [eligibility, setEligibility] = useState([
+    false,
+    false,
+    false,
+    false,
+    false,
+  ]);
+  const [declaration, setDeclaration] = useState(false);
   const [errors, setErrors] = useState({});
-
-  useEffect(() => {
-    fetchStats();
-  }, []);
-
-  const fetchStats = async () => {
-    try {
-      const res = await api.get("/onboarding/technologies/stats");
-      setStats(res.data);
-    } catch {
-      // stats optional
-    }
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -70,17 +193,45 @@ export default function Investors() {
     if (errors[name]) setErrors((p) => ({ ...p, [name]: "" }));
   };
 
+  const toggleSector = (sector) => {
+    setSelectedSectors((prev) =>
+      prev.includes(sector)
+        ? prev.filter((s) => s !== sector)
+        : [...prev, sector],
+    );
+    if (errors.sectors) setErrors((p) => ({ ...p, sectors: "" }));
+  };
+
+  const toggleBeyondFunding = (item) => {
+    setBeyondFunding((prev) =>
+      prev.includes(item) ? prev.filter((x) => x !== item) : [...prev, item],
+    );
+  };
+
+  const toggleEligibility = (i) => {
+    setEligibility((prev) => {
+      const next = [...prev];
+      next[i] = !next[i];
+      return next;
+    });
+    if (errors.eligibility) setErrors((p) => ({ ...p, eligibility: "" }));
+  };
+
   const validate = () => {
     const e = {};
-    if (!form.full_name) e.full_name = "Required";
-    if (!form.organization) e.organization = "Required";
-    if (!form.designation) e.designation = "Required";
-    if (!form.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Valid email required";
-    if (!form.phone) e.phone = "Required";
-    if (!form.country) e.country = "Required";
-    if (!form.investment_focus) e.investment_focus = "Required";
+    if (!form.full_name.trim()) e.full_name = "Required";
+    if (!form.organization.trim()) e.organization = "Required";
+    if (!form.investor_type) e.investor_type = "Required";
+    if (!form.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
+      e.email = "Valid email required";
+    if (!form.phone.trim()) e.phone = "Required";
     if (!form.investment_stage) e.investment_stage = "Required";
     if (!form.ticket_size) e.ticket_size = "Required";
+    if (selectedSectors.length === 0) e.sectors = "Select at least one sector";
+    if (!eligibility.every(Boolean))
+      e.eligibility = "Please accept all eligibility criteria";
+    if (!declaration)
+      e.declaration = "Please accept the declaration to proceed";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -90,28 +241,57 @@ export default function Investors() {
     if (!validate()) return;
     setIsSubmitting(true);
     try {
-      await api.post("/onboarding/investors", form);
+      const areasValue = [
+        form.areas_of_interest,
+        selectedSectors.length > 0
+          ? `Sectors: ${selectedSectors.join(", ")}`
+          : "",
+        beyondFunding.length > 0
+          ? `Beyond Funding: ${beyondFunding.join(", ")}`
+          : "",
+        form.linkedin ? `LinkedIn: ${form.linkedin}` : "",
+        form.num_investments ? `Investments made: ${form.num_investments}` : "",
+        form.years_experience ? `Experience: ${form.years_experience}` : "",
+        form.geography_preference
+          ? `Geography: ${form.geography_preference}`
+          : "",
+        form.past_investments_desc
+          ? `Portfolio: ${form.past_investments_desc}`
+          : "",
+        form.roi_horizon ? `ROI Horizon: ${form.roi_horizon}` : "",
+      ]
+        .filter(Boolean)
+        .join(" | ");
+
+      await api.post("/onboarding/investors", {
+        full_name: form.full_name,
+        organization: form.organization,
+        designation: form.investor_type,
+        email: form.email,
+        phone: form.phone,
+        country: "India",
+        investment_focus: "Other",
+        investment_stage: form.investment_stage,
+        ticket_size: TICKET_MAP[form.ticket_size],
+        areas_of_interest: areasValue.slice(0, 1000),
+        message: "",
+      });
+
       setSubmitted(true);
       toast.success("Registration submitted successfully!");
     } catch (err) {
-      toast.error(err?.response?.data?.detail || "Submission failed. Please try again.");
+      toast.error(
+        err?.response?.data?.detail || "Submission failed. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const whyPoints = [
-    { icon: Target, title: "Curated Deal Flow", desc: "Access pre-screened technologies validated by RTTP professionals across 10+ sectors.", color: "from-blue-500 to-blue-700" },
-    { icon: Globe, title: "Global Reach", desc: "Technologies from universities, R&D labs, and independent inventors across 5+ countries.", color: "from-teal-500 to-cyan-600" },
-    { icon: BarChart3, title: "Due Diligence Ready", desc: "Every technology comes with a structured assessment report covering TRL, IP, and market data.", color: "from-emerald-500 to-teal-600" },
-    { icon: DollarSign, title: "Multiple Entry Points", desc: "Invest directly, co-develop, or license — flexible structures to match your strategy.", color: "from-amber-500 to-orange-500" },
-  ];
-
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300">
       <Header />
 
-      {/* Hero */}
       <section className="relative bg-slate-900 dark:bg-slate-950 overflow-hidden">
         <div className="absolute inset-0 bg-dot-grid pointer-events-none opacity-60" />
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-slate-900 dark:from-slate-950 to-transparent pointer-events-none" />
@@ -126,10 +306,13 @@ export default function Investors() {
               Investor Network
             </span>
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
-              Investor Onboarding
+              Invest in Verified Innovation.{" "}
+              <span className="text-blue-400">Not Noise.</span>
             </h1>
             <p className="text-lg text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">
-              Join Assesme's investor network to access a curated pipeline of validated, IP-protected technologies ready for licensing, investment, or co-development.
+              Access a curated pipeline of high-potential technologies and
+              startups filtered, evaluated, and matched to your investment
+              strategy.
             </p>
             <motion.a
               href="#register"
@@ -137,13 +320,12 @@ export default function Investors() {
               whileTap={{ scale: 0.98 }}
               className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold px-8 py-3.5 rounded-lg transition-colors duration-200 shadow-lg btn-glow"
             >
-              Register as Investor <ArrowRight className="h-4 w-4" />
+              Join as a Verified Investor <ArrowRight className="h-4 w-4" />
             </motion.a>
           </motion.div>
         </div>
       </section>
 
-      {/* Why Section */}
       <section className="py-24 bg-white dark:bg-slate-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -154,12 +336,14 @@ export default function Investors() {
             transition={{ duration: 0.55 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-slate-100 mb-4">
-              Why Invest Through Assesme
+              Why Invest Through Assessme
             </h2>
             <p className="text-lg text-neutral-500 dark:text-slate-400 max-w-2xl mx-auto">
-              A structured, transparent process for discovering and investing in validated innovations.
+              A structured, transparent process for discovering and investing in
+              validated innovations.
             </p>
           </motion.div>
+
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
             variants={stagger}
@@ -167,8 +351,8 @@ export default function Investors() {
             whileInView="visible"
             viewport={{ once: true, margin: "-80px" }}
           >
-            {whyPoints.map((p, i) => {
-              const Icon = p.icon;
+            {WHY_CARDS.map((card, i) => {
+              const Icon = card.icon;
               return (
                 <motion.div
                   key={i}
@@ -176,11 +360,17 @@ export default function Investors() {
                   whileHover={{ y: -4 }}
                   className="bg-white dark:bg-slate-900 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm card-interactive"
                 >
-                  <div className={`w-12 h-12 bg-gradient-to-br ${p.color} rounded-xl flex items-center justify-center mb-5 shadow-md`}>
+                  <div
+                    className={`w-12 h-12 ${card.bg} rounded-xl flex items-center justify-center mb-5 shadow-md`}
+                  >
                     <Icon className="h-6 w-6 text-white" />
                   </div>
-                  <h3 className="font-semibold text-neutral-900 dark:text-slate-200 mb-2">{p.title}</h3>
-                  <p className="text-neutral-500 dark:text-slate-400 text-sm leading-relaxed">{p.desc}</p>
+                  <h3 className="font-semibold text-neutral-900 dark:text-slate-200 mb-2">
+                    {card.title}
+                  </h3>
+                  <p className="text-neutral-500 dark:text-slate-400 text-sm leading-relaxed">
+                    {card.desc}
+                  </p>
                 </motion.div>
               );
             })}
@@ -188,74 +378,73 @@ export default function Investors() {
         </div>
       </section>
 
-      {/* Pie Chart Section */}
-      {stats && stats.total > 0 && (
-        <section className="py-24 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
-              className="text-center mb-12"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.55 }}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-slate-100 mb-4">
-                Technology Portfolio
-              </h2>
-              <p className="text-lg text-neutral-500 dark:text-slate-400">
-                <span className="font-semibold text-blue-600 dark:text-blue-400">{stats.total}</span>{" "}
-                technologies registered across {stats.by_category.length} sectors
-              </p>
-            </motion.div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <motion.div
-                className="flex justify-center"
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <PieChartSVG data={stats.by_category} total={stats.total} />
-              </motion.div>
-              <motion.div
-                className="space-y-3"
-                variants={stagger}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-              >
-                {stats.by_category.map((item, i) => {
-                  const pct = Math.round((item.count / stats.total) * 100);
-                  return (
-                    <motion.div key={item.category} variants={fadeUp} className="flex items-center gap-3">
-                      <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: SECTOR_COLORS[i % SECTOR_COLORS.length] }} />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="text-sm font-medium text-neutral-700 dark:text-slate-300 truncate">{item.category}</span>
-                          <span className="text-sm text-neutral-500 dark:text-slate-400 ml-2">{item.count} ({pct}%)</span>
-                        </div>
-                        <div className="h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                          <motion.div
-                            className="h-full rounded-full"
-                            initial={{ width: 0 }}
-                            whileInView={{ width: `${pct}%` }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 1, delay: i * 0.05, ease: "easeOut" }}
-                            style={{ backgroundColor: SECTOR_COLORS[i % SECTOR_COLORS.length] }}
-                          />
-                        </div>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </motion.div>
-            </div>
-          </div>
-        </section>
-      )}
+      <section className="py-24 bg-slate-50 dark:bg-slate-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            className="text-center mb-14"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-slate-100 mb-4">
+              Who Should Join as an Investor
+            </h2>
+            <p className="text-lg text-neutral-500 dark:text-slate-400 max-w-xl mx-auto">
+              This platform is built for serious investors looking for curated,
+              evaluated deal flow.
+            </p>
+          </motion.div>
 
-      {/* Registration Form */}
-      <section id="register" className="py-24 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800">
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-4xl mx-auto"
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            <motion.div
+              variants={fadeUp}
+              className="bg-white dark:bg-slate-800 rounded-xl p-8 border border-slate-200 dark:border-slate-700 shadow-sm"
+            >
+              <h3 className="text-base font-semibold text-neutral-900 dark:text-slate-100 mb-5">
+                Investor Types
+              </h3>
+              <ul className="space-y-3">
+                {WHO_LEFT.map((item) => (
+                  <li key={item} className="flex items-center gap-3">
+                    <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                    <span className="text-neutral-700 dark:text-slate-300 text-sm">
+                      {item}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+            <motion.div
+              variants={fadeUp}
+              className="bg-white dark:bg-slate-800 rounded-xl p-8 border border-slate-200 dark:border-slate-700 shadow-sm"
+            >
+              <h3 className="text-base font-semibold text-neutral-900 dark:text-slate-100 mb-5">
+                What You Get
+              </h3>
+              <ul className="space-y-3">
+                {WHO_RIGHT.map((item) => (
+                  <li key={item} className="flex items-center gap-3">
+                    <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                    <span className="text-neutral-700 dark:text-slate-300 text-sm">
+                      {item}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      <section id="register" className="py-24 bg-white dark:bg-slate-950">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-12"
@@ -267,7 +456,9 @@ export default function Investors() {
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-slate-100 mb-4">
               Investor Registration
             </h2>
-            <p className="text-lg text-neutral-500 dark:text-slate-400">Complete the form below to join our investor network.</p>
+            <p className="text-lg text-neutral-500 dark:text-slate-400">
+              Complete the form below to join our verified investor network.
+            </p>
           </motion.div>
 
           {submitted ? (
@@ -284,8 +475,14 @@ export default function Investors() {
               >
                 <CheckCircle className="h-14 w-14 text-emerald-500 mx-auto mb-4" />
               </motion.div>
-              <h3 className="text-xl font-semibold text-neutral-900 dark:text-slate-100 mb-2">Registration Received</h3>
-              <p className="text-neutral-600 dark:text-slate-400">Thank you for registering. A confirmation has been sent to your email. Our team will be in touch shortly.</p>
+              <h3 className="text-xl font-semibold text-neutral-900 dark:text-slate-100 mb-2">
+                Registration Received
+              </h3>
+              <p className="text-neutral-600 dark:text-slate-400">
+                Thank you for registering. A confirmation has been sent to your
+                email. Our team will review your profile and be in touch
+                shortly.
+              </p>
             </motion.div>
           ) : (
             <motion.form
@@ -294,36 +491,287 @@ export default function Investors() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.55 }}
-              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl p-8 shadow-sm space-y-6"
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl p-8 shadow-sm space-y-8"
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Field label="Full Name" name="full_name" value={form.full_name} onChange={handleChange} error={errors.full_name} placeholder="Your full name" />
-                <Field label="Organization / Fund" name="organization" value={form.organization} onChange={handleChange} error={errors.organization} placeholder="Organization or fund name" />
+              <div>
+                <SectionDivider label="Basic Information" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <Field
+                    label="Full Name"
+                    name="full_name"
+                    value={form.full_name}
+                    onChange={handleChange}
+                    error={errors.full_name}
+                    placeholder="Your full name"
+                  />
+                  <Field
+                    label="Organization / Fund"
+                    name="organization"
+                    value={form.organization}
+                    onChange={handleChange}
+                    error={errors.organization}
+                    placeholder="Organization or fund name"
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <SelectField
+                    label="Investor Type"
+                    name="investor_type"
+                    value={form.investor_type}
+                    onChange={handleChange}
+                    error={errors.investor_type}
+                    options={INVESTOR_TYPES}
+                    placeholder="Select type"
+                  />
+                  <Field
+                    label="Email"
+                    name="email"
+                    type="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    error={errors.email}
+                    placeholder="you@example.com"
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Field
+                    label="Phone"
+                    name="phone"
+                    type="tel"
+                    value={form.phone}
+                    onChange={handleChange}
+                    error={errors.phone}
+                    placeholder="+91 98765 43210"
+                  />
+                  <Field
+                    label="LinkedIn or Website URL"
+                    name="linkedin"
+                    value={form.linkedin}
+                    onChange={handleChange}
+                    error={errors.linkedin}
+                    placeholder="https://linkedin.com/in/yourprofile"
+                    optional
+                  />
+                </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Field label="Designation / Role" name="designation" value={form.designation} onChange={handleChange} error={errors.designation} placeholder="e.g. Managing Partner" />
-                <Field label="Country" name="country" value={form.country} onChange={handleChange} error={errors.country} placeholder="Country" />
+
+              <div>
+                <SectionDivider label="Investment Profile" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <SelectField
+                    label="Investment Stage"
+                    name="investment_stage"
+                    value={form.investment_stage}
+                    onChange={handleChange}
+                    error={errors.investment_stage}
+                    options={STAGES}
+                    placeholder="Select stage"
+                  />
+                  <SelectField
+                    label="Ticket Size"
+                    name="ticket_size"
+                    value={form.ticket_size}
+                    onChange={handleChange}
+                    error={errors.ticket_size}
+                    options={TICKET_DISPLAY}
+                    placeholder="Select range"
+                  />
+                </div>
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-slate-300 mb-2">
+                    Sectors of Interest
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {SECTORS_LIST.map((sector) => {
+                      const selected = selectedSectors.includes(sector);
+                      return (
+                        <button
+                          key={sector}
+                          type="button"
+                          onClick={() => toggleSector(sector)}
+                          className={
+                            selected
+                              ? "border border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg px-3 py-1.5 text-sm transition-all duration-150"
+                              : "border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg px-3 py-1.5 text-sm transition-all duration-150"
+                          }
+                        >
+                          {sector}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {errors.sectors && (
+                    <p className="mt-1.5 text-xs text-red-600 dark:text-red-400 flex items-center gap-1">
+                      <span className="inline-block w-1 h-1 rounded-full bg-red-500 dark:bg-red-400" />
+                      {errors.sectors}
+                    </p>
+                  )}
+                </div>
+                <SelectField
+                  label="Geography Preference"
+                  name="geography_preference"
+                  value={form.geography_preference}
+                  onChange={handleChange}
+                  error={errors.geography_preference}
+                  options={GEOGRAPHY_OPTIONS}
+                  placeholder="Select preference"
+                />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Field label="Email" name="email" type="email" value={form.email} onChange={handleChange} error={errors.email} placeholder="you@example.com" />
-                <Field label="Phone" name="phone" type="tel" value={form.phone} onChange={handleChange} error={errors.phone} placeholder="+91 98765 43210" />
+
+              <div>
+                <SectionDivider label="Experience & Credibility" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <SelectField
+                    label="Number of Prior Investments"
+                    name="num_investments"
+                    value={form.num_investments}
+                    onChange={handleChange}
+                    error={errors.num_investments}
+                    options={NUM_INVESTMENTS}
+                    placeholder="Select range"
+                  />
+                  <SelectField
+                    label="Years of Investment Experience"
+                    name="years_experience"
+                    value={form.years_experience}
+                    onChange={handleChange}
+                    error={errors.years_experience}
+                    options={YEARS_EXPERIENCE}
+                    placeholder="Select range"
+                  />
+                </div>
+                <TextareaField
+                  label="Portfolio Description"
+                  name="past_investments_desc"
+                  value={form.past_investments_desc}
+                  onChange={handleChange}
+                  placeholder="Portfolio links or brief description"
+                  rows={2}
+                  optional
+                />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <SelectField label="Investment Focus" name="investment_focus" value={form.investment_focus} onChange={handleChange} error={errors.investment_focus} options={SECTORS} placeholder="Select sector" />
-                <SelectField label="Investment Stage" name="investment_stage" value={form.investment_stage} onChange={handleChange} error={errors.investment_stage} options={STAGES} placeholder="Select stage" />
-                <SelectField label="Ticket Size" name="ticket_size" value={form.ticket_size} onChange={handleChange} error={errors.ticket_size} options={TICKETS} placeholder="Select range" />
+
+              <div>
+                <SectionDivider label="Investment Intent" />
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-slate-300 mb-2">
+                    Involvement Beyond Funding{" "}
+                    <span className="text-neutral-400 dark:text-slate-500 font-normal">
+                      (Optional)
+                    </span>
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {BEYOND_FUNDING_OPTIONS.map((item) => {
+                      const selected = beyondFunding.includes(item);
+                      return (
+                        <button
+                          key={item}
+                          type="button"
+                          onClick={() => toggleBeyondFunding(item)}
+                          className={
+                            selected
+                              ? "border border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg px-3 py-1.5 text-sm transition-all duration-150"
+                              : "border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg px-3 py-1.5 text-sm transition-all duration-150"
+                          }
+                        >
+                          {item}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+                <div className="mb-6">
+                  <SelectField
+                    label="Expected ROI Horizon"
+                    name="roi_horizon"
+                    value={form.roi_horizon}
+                    onChange={handleChange}
+                    error={errors.roi_horizon}
+                    options={ROI_HORIZON}
+                    placeholder="Select horizon"
+                  />
+                </div>
+                <TextareaField
+                  label="Areas of Interest"
+                  name="areas_of_interest"
+                  value={form.areas_of_interest}
+                  onChange={handleChange}
+                  placeholder="Specific technologies, sectors, or problem areas"
+                  rows={3}
+                  optional
+                />
               </div>
-              <TextareaField label="Areas of Interest" name="areas_of_interest" value={form.areas_of_interest} onChange={handleChange} placeholder="Describe specific technologies, sectors, or problem areas you are interested in..." rows={3} optional />
-              <TextareaField label="Additional Message" name="message" value={form.message} onChange={handleChange} placeholder="Any specific requirements or questions..." rows={3} optional />
+
+              <div>
+                <SectionDivider label="Eligibility Checklist" />
+                <p className="text-sm text-neutral-500 dark:text-slate-400 mb-4">
+                  Please confirm the following to proceed
+                </p>
+                <div className="space-y-3">
+                  {ELIGIBILITY_ITEMS.map((item, i) => (
+                    <label
+                      key={i}
+                      className="flex items-start gap-3 cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={eligibility[i]}
+                        onChange={() => toggleEligibility(i)}
+                        className="w-4 h-4 rounded border-slate-300 text-blue-600 mt-0.5 cursor-pointer accent-blue-600"
+                      />
+                      <span className="text-sm text-neutral-700 dark:text-slate-300">
+                        {item}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+                {errors.eligibility && (
+                  <p className="mt-2 text-xs text-red-600 dark:text-red-400 flex items-center gap-1">
+                    <span className="inline-block w-1 h-1 rounded-full bg-red-500 dark:bg-red-400" />
+                    {errors.eligibility}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <SectionDivider label="Final Declaration" />
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={declaration}
+                    onChange={() => {
+                      setDeclaration((p) => !p);
+                      if (errors.declaration)
+                        setErrors((p) => ({ ...p, declaration: "" }));
+                    }}
+                    className="w-4 h-4 rounded border-slate-300 text-blue-600 mt-0.5 cursor-pointer accent-blue-600"
+                  />
+                  <span className="text-sm text-neutral-700 dark:text-slate-300">
+                    I agree to be evaluated and approved before onboarding. I
+                    confirm the information provided is accurate.
+                  </span>
+                </label>
+                {errors.declaration && (
+                  <p className="mt-2 text-xs text-red-600 dark:text-red-400 flex items-center gap-1">
+                    <span className="inline-block w-1 h-1 rounded-full bg-red-500 dark:bg-red-400" />
+                    {errors.declaration}
+                  </p>
+                )}
+              </div>
+
               <div className="pt-2">
                 <motion.button
                   type="submit"
                   disabled={isSubmitting}
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
-                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3.5 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg btn-glow flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3.5 px-6 rounded-lg transition-all duration-200 shadow-md btn-glow flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting ? <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" /> : <Send className="h-4 w-4" />}
+                  {isSubmitting ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+                  ) : (
+                    <Send className="h-4 w-4" />
+                  )}
                   {isSubmitting ? "Submitting..." : "Submit Registration"}
                 </motion.button>
               </div>
@@ -334,53 +782,5 @@ export default function Investors() {
 
       <Footer />
     </div>
-  );
-}
-
-function PieChartSVG({ data, total }) {
-  const size = 260;
-  const cx = size / 2;
-  const cy = size / 2;
-  const r = 90;
-  const innerR = 52;
-  let cumulative = 0;
-
-  const slices = data.map((item, i) => {
-    const pct = item.count / total;
-    const startAngle = cumulative * 2 * Math.PI - Math.PI / 2;
-    cumulative += pct;
-    const endAngle = cumulative * 2 * Math.PI - Math.PI / 2;
-    const x1 = cx + r * Math.cos(startAngle);
-    const y1 = cy + r * Math.sin(startAngle);
-    const x2 = cx + r * Math.cos(endAngle);
-    const y2 = cy + r * Math.sin(endAngle);
-    const xi1 = cx + innerR * Math.cos(endAngle);
-    const yi1 = cy + innerR * Math.sin(endAngle);
-    const xi2 = cx + innerR * Math.cos(startAngle);
-    const yi2 = cy + innerR * Math.sin(startAngle);
-    const largeArc = pct > 0.5 ? 1 : 0;
-    const d = `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} L ${xi1} ${yi1} A ${innerR} ${innerR} 0 ${largeArc} 0 ${xi2} ${yi2} Z`;
-    return { d, color: SECTOR_COLORS[i % SECTOR_COLORS.length] };
-  });
-
-  return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-      {slices.map((s, i) => (
-        <motion.path
-          key={i}
-          d={s.d}
-          fill={s.color}
-          stroke="white"
-          strokeWidth="2"
-          initial={{ opacity: 0, scale: 0.8 }}
-          whileInView={{ opacity: 0.9, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: i * 0.06, duration: 0.4 }}
-          style={{ transformOrigin: `${cx}px ${cy}px` }}
-        />
-      ))}
-      <text x={cx} y={cy - 8} textAnchor="middle" fontSize="22" fontWeight="700" fill="#1e293b">{total}</text>
-      <text x={cx} y={cy + 12} textAnchor="middle" fontSize="11" fill="#64748b">Technologies</text>
-    </svg>
   );
 }

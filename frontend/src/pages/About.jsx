@@ -30,42 +30,42 @@ export default function AboutUs() {
   const features = [
     {
       icon: Zap,
-      color: "from-blue-500 to-blue-700",
+      color: "bg-blue-600",
       title: "AI-Powered Analysis",
       description:
         "Generate comprehensive technology assessment reports in minutes using advanced AI algorithms with 92% accuracy rate.",
     },
     {
       icon: Award,
-      color: "from-teal-500 to-teal-700",
+      color: "bg-teal-600",
       title: "RTTP Certified",
       description:
         "Work with Registered Technology Transfer Professionals for expert IP commercialization guidance and industry expertise.",
     },
     {
       icon: Clock,
-      color: "from-emerald-500 to-emerald-700",
+      color: "bg-emerald-600",
       title: "Results in Minutes",
       description:
         "Get instant analysis in less than 60 seconds. No more waiting weeks for technology assessments.",
     },
     {
       icon: Shield,
-      color: "from-red-500 to-red-700",
+      color: "bg-red-600",
       title: "Enterprise Security",
       description:
         "Enterprise-grade security ensures your intellectual property and sensitive data remain protected.",
     },
     {
       icon: Globe,
-      color: "from-teal-500 to-teal-700",
+      color: "bg-teal-600",
       title: "Global Network",
       description:
         "Access to worldwide network of technology transfer offices and IP licensing experts.",
     },
     {
       icon: TrendingUp,
-      color: "from-orange-500 to-orange-700",
+      color: "bg-orange-600",
       title: "Data-Driven Decisions",
       description:
         "Make confident commercialization decisions with comprehensive market insights and licensing data.",
@@ -163,28 +163,28 @@ export default function AboutUs() {
   const founderHighlights = [
     {
       icon: Award,
-      color: "from-yellow-500 to-yellow-700",
+      color: "bg-amber-500",
       title: "Young & Innovative Scientist Award",
       description:
         "Recipient of prestigious DRDO award in 2022, conferred by Defence Minister Shri. Rajnath Singh",
     },
     {
       icon: Trophy,
-      color: "from-blue-500 to-blue-700",
+      color: "bg-blue-600",
       title: "100+ IP Rights",
       description:
         "Holder of over 100 intellectual property rights, including 80+ granted patents",
     },
     {
       icon: BookOpen,
-      color: "from-teal-500 to-teal-700",
+      color: "bg-teal-600",
       title: "50+ Seminars",
       description:
         "Delivered over 50 seminars and guest lectures at multiple universities",
     },
     {
       icon: Users,
-      color: "from-emerald-500 to-emerald-700",
+      color: "bg-emerald-600",
       title: "Multi-Industry Expert",
       description:
         "Extensive experience across Ed-tech, Information-Tech, Legal-Tech, and Food-Tech startups",
@@ -321,7 +321,7 @@ export default function AboutUs() {
                     whileHover={{ y: -2 }}
                     className="flex items-start space-x-4 bg-white dark:bg-slate-800/80 rounded-xl p-6 shadow-sm hover:shadow-md dark:hover:shadow-slate-900 border border-slate-100 dark:border-slate-700 transition-all duration-300"
                   >
-                    <div className={`w-11 h-11 bg-gradient-to-br ${highlight.color} rounded-xl flex items-center justify-center flex-shrink-0 shadow-md`}>
+                    <div className={`w-11 h-11 ${highlight.color} rounded-xl flex items-center justify-center flex-shrink-0 shadow-md`}>
                       <Icon className="w-5 h-5 text-white" />
                     </div>
                     <div>
@@ -441,16 +441,16 @@ export default function AboutUs() {
               <div className="grid grid-cols-2 gap-4">
                 {[
                   { Icon: Users, label: "Universities", color: "from-blue-500 to-blue-700" },
-                  { Icon: TrendingUp, label: "Startups", color: "from-teal-500 to-teal-700" },
-                  { Icon: Shield, label: "Enterprises", color: "from-emerald-500 to-emerald-700" },
-                  { Icon: Globe, label: "RTTP Experts", color: "from-orange-500 to-orange-700" },
+                  { Icon: TrendingUp, label: "Startups", color: "bg-teal-600" },
+                  { Icon: Shield, label: "Enterprises", color: "bg-emerald-600" },
+                  { Icon: Globe, label: "RTTP Experts", color: "bg-orange-600" },
                 ].map(({ Icon, label, color }, i) => (
                   <motion.div
                     key={i}
                     whileHover={{ y: -3 }}
                     className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4 text-center border border-slate-100 dark:border-slate-600"
                   >
-                    <div className={`w-10 h-10 bg-gradient-to-br ${color} rounded-xl flex items-center justify-center mx-auto mb-2 shadow-md`}>
+                    <div className={`w-10 h-10 ${color} rounded-xl flex items-center justify-center mx-auto mb-2 shadow-md`}>
                       <Icon className="w-5 h-5 text-white" />
                     </div>
                     <div className="text-sm text-slate-600 dark:text-slate-300 font-medium">{label}</div>
@@ -497,7 +497,7 @@ export default function AboutUs() {
                   whileHover={{ y: -4 }}
                   className="group bg-slate-50 dark:bg-slate-800/80 rounded-2xl p-6 border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-700 transition-all duration-300"
                 >
-                  <div className={`w-12 h-12 bg-gradient-to-br ${feature.color} rounded-xl flex items-center justify-center mb-4 shadow-md group-hover:scale-105 transition-transform duration-300`}>
+                  <div className={`w-12 h-12 ${feature.color} rounded-xl flex items-center justify-center mb-4 shadow-md group-hover:scale-105 transition-transform duration-300`}>
                     <Icon className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-xl font-bold text-slate-900 dark:text-slate-200 mb-3">

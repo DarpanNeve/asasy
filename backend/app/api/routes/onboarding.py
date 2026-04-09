@@ -25,11 +25,11 @@ router = APIRouter(prefix="/onboarding", tags=["Onboarding"])
 class InvestorPayload(BaseModel):
     full_name: str = Field(..., min_length=2, max_length=100)
     organization: str = Field(..., min_length=2, max_length=200)
-    designation: str = Field(..., min_length=2, max_length=100)
+    designation: Optional[str] = Field(None, max_length=100)
     email: EmailStr
     phone: str = Field(..., min_length=8, max_length=20)
-    country: str = Field(..., min_length=2, max_length=100)
-    investment_focus: TechCategory
+    country: str = Field(default="India", min_length=2, max_length=100)
+    investment_focus: TechCategory = TechCategory.OTHER
     investment_stage: InvestmentStage
     ticket_size: TicketSize
     areas_of_interest: Optional[str] = Field(None, max_length=1000)

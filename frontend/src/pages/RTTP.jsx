@@ -247,7 +247,7 @@ export default function RTTP() {
       const result = await response.json();
       toast.success(
         result.message ||
-          "Thank you for your inquiry! We will get back to you soon."
+          "Thank you for your inquiry! We will get back to you soon.",
       );
       reset();
     } catch (error) {
@@ -271,9 +271,10 @@ export default function RTTP() {
             </h1>
 
             <p className="text-xl text-neutral-600 mb-10 max-w-3xl mx-auto leading-relaxed">
-              Access Registered Technology Transfer Professionals (RTTPs) —
+              Access Registered Technology Transfer Professionals (RTTPs)
               specialists in IP licensing, tech transfer, and commercialisation.
-              Get the guidance you need to transform your innovation into commercial success.
+              Get the guidance you need to transform your innovation into
+              commercial success.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -391,10 +392,7 @@ export default function RTTP() {
       </section>
 
       {/* Enhanced Services Section */}
-      <section
-        id="services"
-        className="py-20 bg-slate-50"
-      >
+      <section id="services" className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-6">

@@ -25,7 +25,8 @@ export default function RTTPSection() {
             Work with RTTP Experts
           </h2>
           <p className="text-xl text-blue-100 mb-10 leading-relaxed">
-            Access Registered Technology Transfer Professionals (RTTPs) — experts in IP licensing, tech transfer, and commercialisation.
+            Access Registered Technology Transfer Professionals (RTTPs) experts
+            in IP licensing, tech transfer, and commercialisation.
           </p>
           <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
             <Link

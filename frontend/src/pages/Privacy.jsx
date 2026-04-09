@@ -9,7 +9,9 @@ export default function Privacy() {
       {/* Page Hero */}
       <section className="bg-slate-50 border-b border-slate-200 py-28 md:py-36">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900">Privacy Policy</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
+            Privacy Policy
+          </h1>
         </div>
       </section>
 
@@ -110,7 +112,7 @@ export default function Privacy() {
             <p className="text-gray-700 mb-4">
               If you choose to connect with our panel of certified experts for
               further assessment or consultation, only the required data is
-              shared—with your consent.
+              shared with your consent.
             </p>
 
             <h3 className="text-xl font-semibold text-gray-900 mb-2">

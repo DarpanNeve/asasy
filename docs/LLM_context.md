@@ -37,12 +37,12 @@ Users submit a technology idea/concept; the AI engine analyzes it across 30+ par
 - **Card hover**: `whileHover={{ y: -4 }}` + `card-interactive` class (border glow) — no abrupt scale transforms
 - **Card grids**: Always use stagger animation via Framer Motion `variants` + `whileInView` with `viewport={{ once: true }}`
 - **Section backgrounds alternate**: `bg-white dark:bg-slate-950` ↔ `bg-slate-50 dark:bg-slate-900`
-- **No blue gradient body sections** — only the RTTP CTA block uses `bg-gradient-to-br from-blue-700 to-blue-900`
+- **No blue gradient body sections** — only the FinalCTA block uses `bg-gradient-to-br from-blue-700 to-blue-900`
 - **No animated pulse orbs** — still prohibited
 - **Buttons**: Use `btn-glow` CSS class for primary buttons (blue shadow on hover). `whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}` on CTAs.
 - **AI language**: "AI-Powered" is the product's identity — keep it in labels, headings, and feature names.
 - **Dark mode**: Fully supported. Toggle in Header. ThemeContext sets `.dark` on `<html>`. All new components MUST include `dark:` variants.
-- **Icon badges**: Use `bg-gradient-to-br from-X-500 to-X-700 rounded-xl` with white icon inside — no flat colored circles
+- **Icon badges**: Use SOLID `bg-X-600 rounded-xl` with white icon inside — NO gradients (`bg-gradient-to-br`) on icon containers. Gradient was previously used but is now replaced with solid colors for a cleaner, less AI-generated look.
 
 ## Tech Stack
 - **Frontend**: React + Vite, Tailwind CSS, Framer Motion, React Hook Form, Lucide icons
@@ -56,9 +56,16 @@ Users submit a technology idea/concept; the AI engine analyzes it across 30+ par
 | `frontend/src/components/TokenPricingSection.jsx` | Pricing page — token packages + report requirements table |
 | `frontend/src/pages/Home.jsx` | Landing page — thin orchestrator, imports all section components |
 | `frontend/src/components/home/` | **Home page sections** — each section is a separate component |
-| `frontend/src/components/home/HeroSection.jsx` | Hero with trust badge, animated headline, feature pills |
+| `frontend/src/components/home/HeroSection.jsx` | Hero — dual CTA (investors/founders), stats bar |
+| `frontend/src/components/home/TheProblemSection.jsx` | Problem section — 3 problem cards + result block |
+| `frontend/src/components/home/TheSolutionSection.jsx` | Solution section — 3 solution cards |
+| `frontend/src/components/home/HowItWorksSection.jsx` | 3-step process: Submit → Evaluate → Match |
+| `frontend/src/components/home/ForInvestorsSection.jsx` | Investor pitch — checklist + investor types card |
+| `frontend/src/components/home/ForFoundersSection.jsx` | Founder pitch — checklist + who should apply card |
+| `frontend/src/components/home/PrototypingHighlightSection.jsx` | Prototyping services teaser |
+| `frontend/src/components/home/FinalCTASection.jsx` | Final dual CTA (replaces RTTPSection) |
 | `frontend/src/components/home/ReportGeneratorSection.jsx` | Report generation form (self-contained with auth, API, navigation) |
-| `frontend/src/components/home/CommercializationSection.jsx` | 6-step commercialization journey |
+| `frontend/src/components/QuickInquiryWidget.jsx` | Fixed floating widget — phone, email, link to /contact |
 | `frontend/src/pages/Reports.jsx` | Dashboard — generate + manage reports |
 | `frontend/src/pages/Pricing.jsx` | Standalone pricing page |
 | `frontend/src/components/Header.jsx` | Navigation — token balance, dark mode toggle, active indicator |

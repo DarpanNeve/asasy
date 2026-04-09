@@ -633,7 +633,7 @@ const TokenPricingSection = ({
                 <p className="text-gray-600">
                   Would you need any help choosing the right package? For
                   enterprise solutions with custom pricing and bulk discounts,
-                  don't hesitate to get in touch with our sales team.
+                  don't hesitate to get in touch with us.
                 </p>
               </div>
             </div>

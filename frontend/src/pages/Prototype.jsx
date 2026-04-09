@@ -5,13 +5,22 @@ import {
   Send,
   ArrowRight,
   Cpu,
-  Wrench,
-  Code2,
-  Box,
+  Activity,
+  Zap,
+  Smartphone,
+  Building2,
   FlaskConical,
-  Clock,
-  Shield,
+  TrendingUp,
+  BookOpen,
   Users,
+  Briefcase,
+  Upload,
+  Search,
+  Code2,
+  Package,
+  Shield,
+  Clock,
+  Wrench,
   Sparkles,
 } from "lucide-react";
 import Header from "../components/Header";
@@ -20,88 +29,196 @@ import { Field, SelectField, TextareaField } from "../components/FormFields";
 import { api } from "../services/api";
 import toast from "react-hot-toast";
 
-const PROTOTYPE_TYPES = [
-  "Electronic / Hardware",
-  "Mechanical / Structural",
-  "Software / Digital MVP",
-  "3D Model / CAD",
-  "Chemical / Material",
-  "Other",
-];
-
-const BUDGETS = ["< ₹1L", "₹1L – ₹5L", "₹5L – ₹20L", "₹20L – ₹50L", "₹50L+"];
-const TIMELINES = ["< 1 month", "1 – 3 months", "3 – 6 months", "6 – 12 months", "> 12 months"];
-
-const SERVICES = [
-  {
-    icon: Cpu,
-    title: "Electronic & Hardware",
-    desc: "PCB design, embedded systems, sensor integration, and functional hardware builds for IoT, robotics, and instrumentation projects.",
-    color: "from-blue-500 to-blue-700",
-  },
-  {
-    icon: Wrench,
-    title: "Mechanical & Structural",
-    desc: "Precision fabrication, CNC machining, and structural prototyping for mechanical devices, medical equipment, and industrial applications.",
-    color: "from-slate-500 to-slate-700",
-  },
-  {
-    icon: Code2,
-    title: "Software & Digital MVPs",
-    desc: "Rapid development of web apps, mobile apps, and SaaS MVPs to validate your digital product concept with real users.",
-    color: "from-emerald-500 to-teal-600",
-  },
-  {
-    icon: Box,
-    title: "3D Modelling & CAD",
-    desc: "Detailed 3D models, technical drawings, and CAD files for patent applications, investor presentations, or manufacturing handoffs.",
-    color: "from-amber-500 to-orange-500",
-  },
-  {
-    icon: FlaskConical,
-    title: "Chemical & Material",
-    desc: "Lab-scale formulation, material testing, and proof-of-concept builds for chemical, pharmaceutical, and advanced materials innovations.",
-    color: "from-teal-500 to-cyan-600",
-  },
-  {
-    icon: Shield,
-    title: "IP Documentation",
-    desc: "Technical drawings, functional specifications, and prototype documentation to strengthen patent applications and licensing packages.",
-    color: "from-rose-500 to-red-600",
-  },
-];
-
-const PROCESS = [
-  { step: "01", title: "Submit Inquiry", desc: "Fill out the inquiry form with your technology description, prototype type, budget, and timeline." },
-  { step: "02", title: "Initial Assessment", desc: "Our prototyping team reviews your submission and contacts you within 48 hours to discuss feasibility." },
-  { step: "03", title: "Scope & Proposal", desc: "We prepare a detailed scope of work with cost and timeline estimates for your review and approval." },
-  { step: "04", title: "Development", desc: "Development begins with regular milestone updates. You retain full IP ownership throughout the process." },
-  { step: "05", title: "Delivery", desc: "Receive the completed prototype with technical documentation, CAD files, and IP-ready deliverables." },
-];
-
-const TRUST = [
-  { icon: Shield, title: "IP Stays Yours", desc: "All prototypes are developed under NDA. You retain full intellectual property ownership." },
-  { icon: Clock, title: "48-Hour Response", desc: "Our prototyping team responds to all inquiries within 48 business hours with an initial feasibility assessment." },
-  { icon: Users, title: "Specialist Engineers", desc: "Work with domain-specific engineers handpicked for your technology type and sector." },
-];
-
 const stagger = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.09 } },
+  visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
 };
 
 const fadeUp = {
   hidden: { opacity: 0, y: 22 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+const SERVICES = [
+  {
+    icon: Cpu,
+    bg: "bg-blue-600",
+    title: "IoT & Hardware Prototypes",
+    desc: "Sensor integration, embedded systems, microcontroller programming, and full hardware builds.",
+  },
+  {
+    icon: Activity,
+    bg: "bg-teal-600",
+    title: "Medical Device Prototyping",
+    desc: "Healthcare device development, patient monitoring systems, and medical-grade hardware builds.",
+  },
+  {
+    icon: Zap,
+    bg: "bg-emerald-600",
+    title: "AI/ML Systems",
+    desc: "Model integration, inference pipelines, data processing, and AI-powered application MVPs.",
+  },
+  {
+    icon: Smartphone,
+    bg: "bg-violet-600",
+    title: "Mobile & Web MVPs",
+    desc: "Full-stack mobile apps, web applications, and SaaS MVPs from design to deployment.",
+  },
+  {
+    icon: Building2,
+    bg: "bg-amber-500",
+    title: "Industrial Development",
+    desc: "Industrial product prototyping, automation systems, and manufacturing process builds.",
+  },
+  {
+    icon: FlaskConical,
+    bg: "bg-rose-600",
+    title: "Research-to-Product",
+    desc: "Converting academic research, lab experiments, and patents into real, testable product prototypes.",
+  },
+];
+
+const WHO_CARDS = [
+  {
+    icon: Users,
+    bg: "bg-blue-600",
+    title: "Startups",
+    desc: "Needing an MVP for funding, customer validation, or demo purposes.",
+  },
+  {
+    icon: BookOpen,
+    bg: "bg-teal-600",
+    title: "Students & Researchers",
+    desc: "Building final-year projects, competition entries, or research prototypes.",
+  },
+  {
+    icon: FlaskConical,
+    bg: "bg-emerald-600",
+    title: "Researchers",
+    desc: "Converting innovation and lab work into working demonstrable products.",
+  },
+  {
+    icon: Briefcase,
+    bg: "bg-amber-500",
+    title: "Companies",
+    desc: "Testing new product ideas, internal tools, or market validation builds.",
+  },
+];
+
+const PROCESS_STEPS = [
+  {
+    step: "01",
+    icon: Upload,
+    bg: "bg-blue-600",
+    title: "Submit Your Requirement",
+    desc: "Fill out the inquiry form with your idea, prototype type, stage, and timeline.",
+  },
+  {
+    step: "02",
+    icon: Search,
+    bg: "bg-teal-600",
+    title: "Feasibility Evaluation",
+    desc: "We evaluate feasibility, scope, and complexity. Response within 48 hours.",
+  },
+  {
+    step: "03",
+    icon: Code2,
+    bg: "bg-emerald-600",
+    title: "Development Begins",
+    desc: "Hands-on engineering and prototyping with milestone-based progress updates.",
+  },
+  {
+    step: "04",
+    icon: Package,
+    bg: "bg-amber-500",
+    title: "Testing & Delivery",
+    desc: "Rigorous testing, iteration, and final delivery with documentation.",
+  },
+];
+
+const SHOWCASE_PROJECTS = [
+  {
+    tag: "IoT + Medical",
+    tagColor:
+      "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300",
+    title: "Continuous Glucose Monitoring System",
+    desc: "Real-time glucose tracking IoT device with sensor integration, data logging, and mobile app dashboard.",
+  },
+  {
+    tag: "IoT + Environment",
+    tagColor:
+      "bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300",
+    title: "Smart Air Quality Improvement Device",
+    desc: "Air quality monitoring and purification system with real-time PM2.5, CO2, and VOC sensing.",
+  },
+  {
+    tag: "IoT + Security",
+    tagColor:
+      "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300",
+    title: "Bicycle Security & Tracking System",
+    desc: "GPS-based smart lock with mobile alerts, location tracking, and tamper detection.",
+  },
+  {
+    tag: "AI + Healthcare",
+    tagColor:
+      "bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300",
+    title: "Cognitive Load Monitoring Wearable",
+    desc: "AI-powered wearable measuring cognitive stress via EEG, HRV, and GSR signals.",
+  },
+  {
+    tag: "IoT + Safety",
+    tagColor:
+      "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300",
+    title: "Smart Safety Companion Device",
+    desc: "Personal safety wearable with emergency SOS, location sharing, fall detection, and companion app.",
+  },
+];
+
+const TRUST_POINTS = [
+  {
+    icon: Shield,
+    title: "IP Stays Yours",
+    desc: "All work under NDA. Full intellectual property ownership retained by you throughout.",
+  },
+  {
+    icon: Clock,
+    title: "48-Hour Response",
+    desc: "Our team responds to all inquiries within 48 business hours with an initial feasibility assessment.",
+  },
+  {
+    icon: Wrench,
+    title: "Specialist Engineers",
+    desc: "Domain-specific engineers matched to your technology type IoT, AI, Medical, Software.",
+  },
+];
+
+const protoTypeMap = {
+  "IoT / Hardware": "Electronic / Hardware",
+  "Medical Device": "Electronic / Hardware",
+  "AI/ML System": "Software / Digital MVP",
+  "Web Application": "Software / Digital MVP",
+  "Mobile App": "Software / Digital MVP",
+  "Industrial Product": "Mechanical / Structural",
+  Other: "Other",
 };
 
 export default function Prototype() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({
-    full_name: "", organization: "", email: "", phone: "",
-    tech_description: "", prototype_type: "", budget_range: "",
-    timeline: "", message: "",
+    full_name: "",
+    email: "",
+    phone: "",
+    prototype_type: "",
+    tech_description: "",
+    current_stage: "",
+    budget_range: "",
+    timeline: "",
+    message: "",
   });
   const [errors, setErrors] = useState({});
 
@@ -114,26 +231,44 @@ export default function Prototype() {
   const validate = () => {
     const e = {};
     if (!form.full_name) e.full_name = "Required";
-    if (!form.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Valid email required";
+    if (!form.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
+      e.email = "Valid email required";
     if (!form.phone) e.phone = "Required";
-    if (!form.tech_description || form.tech_description.length < 20) e.tech_description = "Minimum 20 characters";
     if (!form.prototype_type) e.prototype_type = "Required";
-    if (!form.budget_range) e.budget_range = "Required";
-    if (!form.timeline) e.timeline = "Required";
+    if (!form.tech_description || form.tech_description.length < 20)
+      e.tech_description = "Minimum 20 characters";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (ev) => {
+    ev.preventDefault();
     if (!validate()) return;
     setIsSubmitting(true);
     try {
-      await api.post("/onboarding/prototype", form);
+      const messageValue = [
+        form.message,
+        form.current_stage ? `Current Stage: ${form.current_stage}` : "",
+      ]
+        .filter(Boolean)
+        .join(" | ");
+
+      await api.post("/onboarding/prototype", {
+        full_name: form.full_name,
+        email: form.email,
+        phone: form.phone,
+        tech_description: form.tech_description,
+        prototype_type: protoTypeMap[form.prototype_type] || "Other",
+        budget_range: form.budget_range || "< ₹1L",
+        timeline: form.timeline || "< 1 month",
+        message: messageValue.slice(0, 1000),
+      });
       setSubmitted(true);
       toast.success("Inquiry submitted successfully!");
     } catch (err) {
-      toast.error(err?.response?.data?.detail || "Submission failed. Please try again.");
+      toast.error(
+        err?.response?.data?.detail || "Submission failed. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -143,7 +278,6 @@ export default function Prototype() {
     <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300">
       <Header />
 
-      {/* Hero */}
       <section className="relative bg-slate-900 dark:bg-slate-950 overflow-hidden">
         <div className="absolute inset-0 bg-dot-grid pointer-events-none opacity-60" />
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-slate-900 dark:from-slate-950 to-transparent pointer-events-none" />
@@ -158,11 +292,12 @@ export default function Prototype() {
               From Concept to Reality
             </span>
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
-              Prototype Development
-              <span className="block text-slate-300 text-3xl md:text-4xl font-normal mt-2">Services</span>
+              Build What You Imagine. We Engineer It.
             </h1>
             <p className="text-lg text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">
-              Assesme connects innovators with specialist engineers to build, validate, and document their technology for commercialisation.
+              Turn your idea, research, or concept into a working prototype,
+              MVP, or industrial-ready product. From IoT devices to AI systems
+              to full-scale applications.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.a
@@ -171,23 +306,22 @@ export default function Prototype() {
                 whileTap={{ scale: 0.98 }}
                 className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold px-8 py-3.5 rounded-lg transition-colors duration-200 shadow-lg btn-glow"
               >
-                Submit Inquiry <ArrowRight className="h-4 w-4" />
+                Request a Prototype <ArrowRight className="h-4 w-4" />
               </motion.a>
               <motion.a
-                href="#services"
+                href="#showcase"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="inline-flex items-center justify-center gap-2 border border-white/30 text-white hover:bg-white/10 font-medium px-8 py-3.5 rounded-lg transition-colors duration-200"
               >
-                View Services
+                View Our Work
               </motion.a>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Services */}
-      <section id="services" className="py-24 bg-white dark:bg-slate-950">
+      <section className="py-24 bg-white dark:bg-slate-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-16"
@@ -197,13 +331,10 @@ export default function Prototype() {
             transition={{ duration: 0.55 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-slate-100 mb-4">
-              Prototyping{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-                Capabilities
-              </span>
+              End-to-End Prototyping Support
             </h2>
             <p className="text-lg text-neutral-500 dark:text-slate-400 max-w-2xl mx-auto">
-              Specialist support across hardware, software, mechanical, and materials domains.
+              We don't just guide you get actual execution.
             </p>
           </motion.div>
 
@@ -223,11 +354,17 @@ export default function Prototype() {
                   whileHover={{ y: -4 }}
                   className="bg-white dark:bg-slate-900 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm card-interactive"
                 >
-                  <div className={`w-12 h-12 bg-gradient-to-br ${s.color} rounded-xl flex items-center justify-center mb-5 shadow-md`}>
+                  <div
+                    className={`w-12 h-12 ${s.bg} rounded-xl flex items-center justify-center mb-5 shadow-md`}
+                  >
                     <Icon className="h-6 w-6 text-white" />
                   </div>
-                  <h3 className="font-semibold text-neutral-900 dark:text-slate-200 mb-2">{s.title}</h3>
-                  <p className="text-neutral-500 dark:text-slate-400 text-sm leading-relaxed">{s.desc}</p>
+                  <h3 className="font-semibold text-neutral-900 dark:text-slate-200 mb-2">
+                    {s.title}
+                  </h3>
+                  <p className="text-neutral-500 dark:text-slate-400 text-sm leading-relaxed">
+                    {s.desc}
+                  </p>
                 </motion.div>
               );
             })}
@@ -235,8 +372,7 @@ export default function Prototype() {
         </div>
       </section>
 
-      {/* Process */}
-      <section className="py-24 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
+      <section className="py-24 bg-slate-50 dark:bg-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-16"
@@ -245,62 +381,38 @@ export default function Prototype() {
             viewport={{ once: true }}
             transition={{ duration: 0.55 }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-slate-100 mb-4">How It Works</h2>
-            <p className="text-lg text-neutral-500 dark:text-slate-400 max-w-2xl mx-auto">
-              A clear, milestone-driven process from initial inquiry to final delivery.
-            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-slate-100 mb-4">
+              Built for Serious Builders
+            </h2>
           </motion.div>
 
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-5 gap-4"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
             variants={stagger}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-60px" }}
+            viewport={{ once: true, margin: "-80px" }}
           >
-            {PROCESS.map((p, i) => (
-              <motion.div key={i} variants={fadeUp} className="relative">
-                <div className="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm h-full hover:border-blue-200 dark:hover:border-blue-700 hover:shadow-md transition-all duration-300">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl flex items-center justify-center mb-4 shadow-md">
-                    <span className="text-white font-bold text-xs">{p.step}</span>
-                  </div>
-                  <h3 className="font-semibold text-neutral-900 dark:text-slate-200 mb-2 text-sm">{p.title}</h3>
-                  <p className="text-neutral-500 dark:text-slate-400 text-xs leading-relaxed">{p.desc}</p>
-                </div>
-                {i < PROCESS.length - 1 && (
-                  <div className="hidden md:flex absolute top-1/3 -right-2.5 z-10 items-center">
-                    <ArrowRight className="h-4 w-4 text-blue-300 dark:text-blue-600" />
-                  </div>
-                )}
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Trust */}
-      <section className="py-20 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
-            variants={stagger}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {TRUST.map((t, i) => {
-              const Icon = t.icon;
+            {WHO_CARDS.map((card, i) => {
+              const Icon = card.icon;
               return (
                 <motion.div
                   key={i}
                   variants={fadeUp}
-                  className="text-center p-6 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-300 group cursor-default"
+                  whileHover={{ y: -4 }}
+                  className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm card-interactive"
                 >
-                  <div className="w-14 h-14 bg-blue-100 dark:bg-blue-900/40 group-hover:bg-blue-200 dark:group-hover:bg-blue-900/60 rounded-2xl flex items-center justify-center mx-auto mb-4 transition-colors duration-300">
-                    <Icon className="h-7 w-7 text-blue-600 dark:text-blue-400" />
+                  <div
+                    className={`w-12 h-12 ${card.bg} rounded-xl flex items-center justify-center mb-5 shadow-md`}
+                  >
+                    <Icon className="h-6 w-6 text-white" />
                   </div>
-                  <h3 className="font-semibold text-neutral-900 dark:text-slate-200 mb-2">{t.title}</h3>
-                  <p className="text-neutral-500 dark:text-slate-400 text-sm leading-relaxed">{t.desc}</p>
+                  <h3 className="font-semibold text-neutral-900 dark:text-slate-200 mb-2">
+                    {card.title}
+                  </h3>
+                  <p className="text-neutral-500 dark:text-slate-400 text-sm leading-relaxed">
+                    {card.desc}
+                  </p>
                 </motion.div>
               );
             })}
@@ -308,8 +420,155 @@ export default function Prototype() {
         </div>
       </section>
 
-      {/* Form */}
-      <section id="inquiry" className="py-24 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
+      <section className="py-24 bg-white dark:bg-slate-950">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-slate-100 mb-4">
+              Simple. Structured. Execution-Driven.
+            </h2>
+          </motion.div>
+
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-4 gap-6"
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-60px" }}
+          >
+            {PROCESS_STEPS.map((p, i) => {
+              const Icon = p.icon;
+              return (
+                <motion.div key={i} variants={fadeUp} className="relative">
+                  <div className="bg-white dark:bg-slate-900 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm h-full hover:border-blue-200 dark:hover:border-blue-700 hover:shadow-md transition-all duration-300">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div
+                        className={`w-10 h-10 ${p.bg} rounded-xl flex items-center justify-center shadow-md`}
+                      >
+                        <Icon className="h-5 w-5 text-white" />
+                      </div>
+                      <span className="text-2xl font-bold text-slate-200 dark:text-slate-700">
+                        {p.step}
+                      </span>
+                    </div>
+                    <h3 className="font-semibold text-neutral-900 dark:text-slate-200 mb-2">
+                      {p.title}
+                    </h3>
+                    <p className="text-neutral-500 dark:text-slate-400 text-sm leading-relaxed">
+                      {p.desc}
+                    </p>
+                  </div>
+                  {i < PROCESS_STEPS.length - 1 && (
+                    <div className="hidden md:flex absolute top-1/3 -right-3 z-10 items-center">
+                      <ArrowRight className="h-4 w-4 text-blue-300 dark:text-blue-600" />
+                    </div>
+                  )}
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
+      </section>
+
+      <section id="showcase" className="py-24 bg-slate-50 dark:bg-slate-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-slate-100 mb-4">
+              What We've Already Built
+            </h2>
+            <p className="text-lg text-neutral-500 dark:text-slate-400 max-w-2xl mx-auto">
+              Real projects, real engineering, real delivery.
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-60px" }}
+          >
+            {SHOWCASE_PROJECTS.map((project, i) => (
+              <motion.div
+                key={i}
+                variants={fadeUp}
+                whileHover={{ y: -4 }}
+                className="bg-white dark:bg-slate-900 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm card-interactive"
+              >
+                <span
+                  className={`inline-block text-xs px-2 py-0.5 rounded-full font-medium mb-4 ${project.tagColor}`}
+                >
+                  {project.tag}
+                </span>
+                <h3 className="font-semibold text-neutral-900 dark:text-slate-200 mb-2">
+                  {project.title}
+                </h3>
+                <p className="text-neutral-500 dark:text-slate-400 text-sm leading-relaxed">
+                  {project.desc}
+                </p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="py-20 bg-white dark:bg-slate-950">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-slate-100 mb-4">
+              Not Just Development. Real Engineering.
+            </h2>
+          </motion.div>
+
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            {TRUST_POINTS.map((t, i) => {
+              const Icon = t.icon;
+              return (
+                <motion.div
+                  key={i}
+                  variants={fadeUp}
+                  className="text-center p-6 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-300 group cursor-default"
+                >
+                  <div className="w-14 h-14 bg-blue-100 dark:bg-blue-900/40 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 dark:group-hover:bg-blue-900/60 transition-colors duration-300">
+                    <Icon className="h-7 w-7 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <h3 className="font-semibold text-neutral-900 dark:text-slate-200 mb-2">
+                    {t.title}
+                  </h3>
+                  <p className="text-neutral-500 dark:text-slate-400 text-sm leading-relaxed">
+                    {t.desc}
+                  </p>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
+      </section>
+
+      <section id="inquiry" className="py-24 bg-slate-50 dark:bg-slate-900">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-12"
@@ -322,7 +581,8 @@ export default function Prototype() {
               Submit a Prototype Inquiry
             </h2>
             <p className="text-lg text-neutral-500 dark:text-slate-400">
-              Describe your technology and requirements. Our team responds within 48 hours.
+              Describe your technology and requirements. Our team responds
+              within 48 hours.
             </p>
           </motion.div>
 
@@ -342,9 +602,13 @@ export default function Prototype() {
                 >
                   <CheckCircle className="h-14 w-14 text-emerald-500 mx-auto mb-4" />
                 </motion.div>
-                <h3 className="text-xl font-semibold text-neutral-900 dark:text-slate-100 mb-2">Inquiry Received</h3>
+                <h3 className="text-xl font-semibold text-neutral-900 dark:text-slate-100 mb-2">
+                  Inquiry Received
+                </h3>
                 <p className="text-neutral-600 dark:text-slate-400">
-                  Thank you for reaching out. A confirmation has been sent to your email. Our prototyping team will contact you within 48 hours.
+                  Thank you for reaching out. A confirmation has been sent to
+                  your email. Our prototyping team will contact you within 48
+                  hours.
                 </p>
               </motion.div>
             ) : (
@@ -358,36 +622,128 @@ export default function Prototype() {
                 className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-8 shadow-sm space-y-6"
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Field label="Full Name" name="full_name" value={form.full_name} onChange={handleChange} error={errors.full_name} placeholder="Your full name" />
-                  <Field label="Organization" name="organization" value={form.organization} onChange={handleChange} placeholder="Company, university, or individual" optional />
+                  <Field
+                    label="Full Name"
+                    name="full_name"
+                    value={form.full_name}
+                    onChange={handleChange}
+                    error={errors.full_name}
+                    placeholder="Your full name"
+                    required
+                  />
+                  <Field
+                    label="Email"
+                    name="email"
+                    type="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    error={errors.email}
+                    placeholder="you@example.com"
+                    required
+                  />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Field label="Email" name="email" type="email" value={form.email} onChange={handleChange} error={errors.email} placeholder="you@example.com" />
-                  <Field label="Phone" name="phone" type="tel" value={form.phone} onChange={handleChange} error={errors.phone} placeholder="+91 98765 43210" />
+                  <Field
+                    label="Phone"
+                    name="phone"
+                    type="tel"
+                    value={form.phone}
+                    onChange={handleChange}
+                    error={errors.phone}
+                    placeholder="+91 98765 43210"
+                    required
+                  />
+                  <SelectField
+                    label="Prototype Type"
+                    name="prototype_type"
+                    value={form.prototype_type}
+                    onChange={handleChange}
+                    error={errors.prototype_type}
+                    options={[
+                      "IoT / Hardware",
+                      "Medical Device",
+                      "AI/ML System",
+                      "Web Application",
+                      "Mobile App",
+                      "Industrial Product",
+                      "Other",
+                    ]}
+                    placeholder="Select type"
+                  />
                 </div>
                 <TextareaField
-                  label="Technology Description"
+                  label="Brief Idea Description"
                   name="tech_description"
                   value={form.tech_description}
                   onChange={handleChange}
                   error={errors.tech_description}
-                  placeholder="Describe the technology you want prototyped. Include the core function, target application, and any existing technical documentation..."
-                  rows={5}
+                  placeholder="Describe your prototype idea core function, target users, and any existing documentation..."
+                  rows={4}
                 />
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <SelectField label="Prototype Type" name="prototype_type" value={form.prototype_type} onChange={handleChange} error={errors.prototype_type} options={PROTOTYPE_TYPES} placeholder="Select type" />
-                  <SelectField label="Budget Range" name="budget_range" value={form.budget_range} onChange={handleChange} error={errors.budget_range} options={BUDGETS} placeholder="Select budget" />
-                  <SelectField label="Timeline" name="timeline" value={form.timeline} onChange={handleChange} error={errors.timeline} options={TIMELINES} placeholder="Select timeline" />
+                  <SelectField
+                    label="Current Stage"
+                    name="current_stage"
+                    value={form.current_stage}
+                    onChange={handleChange}
+                    options={[
+                      "Just an Idea",
+                      "Have a Concept Document",
+                      "POC Exists",
+                      "Prototype Exists",
+                      "Need MVP",
+                    ]}
+                    placeholder="Select stage (optional)"
+                  />
+                  <SelectField
+                    label="Budget Range"
+                    name="budget_range"
+                    value={form.budget_range}
+                    onChange={handleChange}
+                    options={[
+                      "< ₹1L",
+                      "₹1L – ₹5L",
+                      "₹5L – ₹20L",
+                      "₹20L – ₹50L",
+                      "₹50L+",
+                    ]}
+                    placeholder="Select budget (optional)"
+                  />
+                  <SelectField
+                    label="Timeline"
+                    name="timeline"
+                    value={form.timeline}
+                    onChange={handleChange}
+                    options={[
+                      "< 1 month",
+                      "1 – 3 months",
+                      "3 – 6 months",
+                      "6 – 12 months",
+                      "> 12 months",
+                    ]}
+                    placeholder="Select timeline (optional)"
+                  />
                 </div>
-                <TextareaField label="Additional Notes" name="message" value={form.message} onChange={handleChange} placeholder="Any specific requirements, constraints, or questions..." rows={3} optional />
+                <TextareaField
+                  label="Additional Notes or Requirements"
+                  name="message"
+                  value={form.message}
+                  onChange={handleChange}
+                  placeholder="Any specific requirements, constraints, or questions..."
+                  rows={3}
+                />
                 <motion.button
                   type="submit"
                   disabled={isSubmitting}
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
-                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3.5 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg btn-glow flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3.5 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg btn-glow flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting ? <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" /> : <Send className="h-4 w-4" />}
+                  {isSubmitting ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+                  ) : (
+                    <Send className="h-4 w-4" />
+                  )}
                   {isSubmitting ? "Submitting..." : "Submit Inquiry"}
                 </motion.button>
               </motion.form>

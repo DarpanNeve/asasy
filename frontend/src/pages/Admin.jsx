@@ -8,7 +8,7 @@ import {
   FileSpreadsheet,
   TrendingUp,
   BarChart3,
-  Hash
+  Hash,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "../contexts/AuthContext";
@@ -63,9 +63,17 @@ export default function Admin() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <Link to="/" className="flex items-center group" onClick={() => window.scrollTo(0, 0)}>
+              <Link
+                to="/"
+                className="flex items-center group"
+                onClick={() => window.scrollTo(0, 0)}
+              >
                 <div className="relative flex items-center h-16">
-                  <img src="/logoas.png" alt="Assesme Logo" className="h-17 w-auto object-contain" />
+                  <img
+                    src="/logoas.png"
+                    alt="Assesme Logo"
+                    className="h-17 w-auto object-contain"
+                  />
                 </div>
               </Link>
             </div>
@@ -92,13 +100,25 @@ export default function Admin() {
               {[
                 { id: "dashboard", icon: BarChart3, label: "Dashboard" },
                 { id: "users", icon: Users, label: "Users & Reports" },
-                { id: "transactions", icon: CreditCard, label: "Token Purchases" },
-                { id: "contacts", icon: MessageSquare, label: "Contact Submissions" },
+                {
+                  id: "transactions",
+                  icon: CreditCard,
+                  label: "Token Purchases",
+                },
+                {
+                  id: "contacts",
+                  icon: MessageSquare,
+                  label: "Contact Submissions",
+                },
                 { id: "blog", icon: FileText, label: "Blog Posts" },
                 { id: "press", icon: FileText, label: "Press Releases" },
                 { id: "investors", icon: TrendingUp, label: "Investors" },
-                { id: "technologies", icon: FileSpreadsheet, label: "Technologies" },
-                { id: "prototype", icon: Hash, label: "Prototype Inquiries" }
+                {
+                  id: "technologies",
+                  icon: FileSpreadsheet,
+                  label: "Technologies",
+                },
+                { id: "prototype", icon: Hash, label: "Prototype Inquiries" },
               ].map((tab) => {
                 const Icon = tab.icon;
                 return (
@@ -114,13 +134,15 @@ export default function Admin() {
                     <Icon className="h-5 w-5 inline mr-2" />
                     {tab.label}
                   </button>
-                )
+                );
               })}
             </nav>
           </div>
         </div>
 
-        {activeTab === "dashboard" && <DashboardTab setActiveTab={setActiveTab} />}
+        {activeTab === "dashboard" && (
+          <DashboardTab setActiveTab={setActiveTab} />
+        )}
         {activeTab === "users" && <UsersTab />}
         {activeTab === "transactions" && <TransactionsTab />}
         {activeTab === "contacts" && <ContactsTab />}

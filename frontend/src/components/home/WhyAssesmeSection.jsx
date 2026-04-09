@@ -1,42 +1,47 @@
 import { motion } from "framer-motion";
 import {
-  FileSearch, Globe, TrendingUp, Map, FlaskConical, DollarSign,
+  FileSearch,
+  Globe,
+  TrendingUp,
+  Map,
+  FlaskConical,
+  DollarSign,
 } from "lucide-react";
 
 const WHY_ITEMS = [
   {
     icon: FileSearch,
-    color: "from-blue-500 to-blue-700",
+    color: "bg-blue-600",
     title: "Instant Technology Assessment",
     description: "Aligned with WIPO, EPO, NIH, and OECD standards.",
   },
   {
     icon: Globe,
-    color: "from-teal-500 to-teal-700",
+    color: "bg-teal-600",
     title: "IP & Patentability Insights",
     description: "For national and international filings.",
   },
   {
     icon: TrendingUp,
-    color: "from-emerald-500 to-emerald-700",
+    color: "bg-emerald-600",
     title: "Market, Competition & Risk Analysis",
     description: "For better decision-making at every stage.",
   },
   {
     icon: Map,
-    color: "from-blue-600 to-blue-800",
+    color: "bg-blue-700",
     title: "Commercialisation Roadmaps",
     description: "For licensing, spin-offs, or partnerships.",
   },
   {
     icon: FlaskConical,
-    color: "from-teal-600 to-teal-800",
+    color: "bg-teal-700",
     title: "TRL & Feasibility Checks",
     description: "For early-stage research and prototypes.",
   },
   {
     icon: DollarSign,
-    color: "from-orange-500 to-orange-700",
+    color: "bg-orange-500",
     title: "Investor-Ready Documentation",
     description: "To improve fundraising success.",
   },
@@ -49,7 +54,11 @@ const stagger = {
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+  },
 };
 
 export default function WhyAssesmeSection() {
@@ -74,8 +83,8 @@ export default function WhyAssesmeSection() {
             </span>
           </h2>
           <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-            Not because they lack potential — but because they lack structured validation.
-            Assesme solves this.
+            Not because they lack potential but because they lack structured
+            validation. Assesme solves this.
           </p>
         </motion.div>
 
@@ -95,7 +104,9 @@ export default function WhyAssesmeSection() {
                 whileHover={{ y: -4 }}
                 className="group bg-slate-50 dark:bg-slate-800/60 p-7 rounded-2xl border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-700 transition-all duration-300"
               >
-                <div className={`w-12 h-12 bg-gradient-to-br ${item.color} rounded-xl flex items-center justify-center mb-5 shadow-md group-hover:scale-105 transition-transform duration-300`}>
+                <div
+                  className={`w-12 h-12 ${item.color} rounded-xl flex items-center justify-center mb-5 shadow-md group-hover:scale-105 transition-transform duration-300`}
+                >
                   <Icon className="h-6 w-6 text-white" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-slate-200 mb-2 group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors duration-300">

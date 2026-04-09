@@ -27,7 +27,9 @@ export default function ContactsTab() {
 
   const exportContactSubmissions = async () => {
     try {
-      const { data } = await api.get("/contact/export", { responseType: "blob" });
+      const { data } = await api.get("/contact/export", {
+        responseType: "blob",
+      });
       const url = window.URL.createObjectURL(data);
       const link = document.createElement("a");
       link.href = url;
@@ -46,13 +48,20 @@ export default function ContactsTab() {
     .filter((submission) => {
       const matchesSearch =
         !contactSearchTerm ||
-        submission.name.toLowerCase().includes(contactSearchTerm.toLowerCase()) ||
-        submission.email.toLowerCase().includes(contactSearchTerm.toLowerCase()) ||
-        submission.message.toLowerCase().includes(contactSearchTerm.toLowerCase());
+        submission.name
+          .toLowerCase()
+          .includes(contactSearchTerm.toLowerCase()) ||
+        submission.email
+          .toLowerCase()
+          .includes(contactSearchTerm.toLowerCase()) ||
+        submission.message
+          .toLowerCase()
+          .includes(contactSearchTerm.toLowerCase());
 
       const matchesDate =
         !contactDateFilter ||
-        new Date(submission.submitted_at).toDateString() === new Date(contactDateFilter).toDateString();
+        new Date(submission.submitted_at).toDateString() ===
+          new Date(contactDateFilter).toDateString();
 
       return matchesSearch && matchesDate;
     })
@@ -91,9 +100,17 @@ export default function ContactsTab() {
               className="input"
             />
             {contactDateFilter && (
-              <button onClick={() => setContactDateFilter("")} className="btn-outline btn-sm">Clear</button>
+              <button
+                onClick={() => setContactDateFilter("")}
+                className="btn-outline btn-sm"
+              >
+                Clear
+              </button>
             )}
-            <button onClick={exportContactSubmissions} className="btn-primary flex items-center">
+            <button
+              onClick={exportContactSubmissions}
+              className="btn-primary flex items-center"
+            >
               <Download className="h-4 w-4 mr-1" /> Download CSV
             </button>
           </div>
@@ -110,22 +127,35 @@ export default function ContactsTab() {
                     <MessageSquare className="h-5 w-5 text-secondary-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-neutral-900">{submission.name}</h3>
+                    <h3 className="font-semibold text-neutral-900">
+                      {submission.name}
+                    </h3>
                     <div className="flex items-center space-x-4 text-sm text-neutral-600">
                       <span>{submission.email}</span>
                       <span>{submission.phone}</span>
                     </div>
-                    <div>Reason: <span className="font-semibold">{submission.reason ?? "contact"}</span></div>
+                    <div>
+                      Reason:{" "}
+                      <span className="font-semibold">
+                        {submission.reason ?? "contact"}
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div className="bg-neutral-50 rounded-lg p-4 mb-3">
-                  <h4 className="font-medium text-neutral-900 mb-2">Message:</h4>
+                  <h4 className="font-medium text-neutral-900 mb-2">
+                    Message:
+                  </h4>
                   <p className="text-neutral-700">{submission.message}</p>
                 </div>
               </div>
               <div className="ml-4 text-right">
-                <div className="text-sm text-neutral-500">{new Date(submission.submitted_at).toLocaleDateString()}</div>
-                <div className="text-xs text-neutral-400">{new Date(submission.submitted_at).toLocaleTimeString()}</div>
+                <div className="text-sm text-neutral-500">
+                  {new Date(submission.submitted_at).toLocaleDateString()}
+                </div>
+                <div className="text-xs text-neutral-400">
+                  {new Date(submission.submitted_at).toLocaleTimeString()}
+                </div>
               </div>
             </div>
           </div>
@@ -135,9 +165,13 @@ export default function ContactsTab() {
       {filteredContactSubmissions.length === 0 && (
         <div className="text-center py-12">
           <MessageSquare className="h-12 w-12 text-neutral-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-neutral-900 mb-2">No contact submissions found</h3>
+          <h3 className="text-lg font-medium text-neutral-900 mb-2">
+            No contact submissions found
+          </h3>
           <p className="text-neutral-600">
-            {contactSearchTerm || contactDateFilter ? "Try adjusting your search or filter criteria" : "No contact form submissions yet"}
+            {contactSearchTerm || contactDateFilter
+              ? "Try adjusting your search or filter criteria"
+              : "No contact form submissions yet"}
           </p>
         </div>
       )}
