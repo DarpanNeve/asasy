@@ -12,8 +12,6 @@ import SampleReportsSection from "../components/home/SampleReportsSection";
 import PrototypingHighlightSection from "../components/home/PrototypingHighlightSection";
 import ReportGeneratorSection from "../components/home/ReportGeneratorSection";
 import FinalCTASection from "../components/home/FinalCTASection";
-import QuickInquiryWidget from "../components/QuickInquiryWidget";
-
 export default function Home() {
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300">
@@ -30,7 +28,6 @@ export default function Home() {
       <SampleReportsSection />
       <PrototypingHighlightSection />
       <FinalCTASection />
-      <QuickInquiryWidget />
       <Footer />
     </div>
   );

@@ -102,7 +102,7 @@ export default function WhyAssesmeSection() {
                 key={index}
                 variants={fadeUp}
                 whileHover={{ y: -4 }}
-                className="group bg-slate-50 dark:bg-slate-800/60 p-7 rounded-2xl border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-700 transition-all duration-300"
+                className="group bg-slate-50 dark:bg-slate-800 p-7 rounded-2xl border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-700 transition-all duration-300"
               >
                 <div
                   className={`w-12 h-12 ${item.color} rounded-xl flex items-center justify-center mb-5 shadow-md group-hover:scale-105 transition-transform duration-300`}

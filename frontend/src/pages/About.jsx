@@ -127,7 +127,7 @@ const REPORT_TYPES = [
     priceUSD: "$9.99",
     tokenColor: "text-teal-600 dark:text-teal-400",
     borderColor: "border-teal-200 dark:border-teal-800/50",
-    bg: "bg-teal-50 dark:bg-teal-900/10",
+    bg: "bg-teal-50 dark:bg-teal-900/30",
     description:
       "VC-ready analysis with SWOT, ROI model, and commercialization paths",
     highlights: [
@@ -144,7 +144,7 @@ const REPORT_TYPES = [
     priceUSD: "$11.99",
     tokenColor: "text-emerald-600 dark:text-emerald-400",
     borderColor: "border-emerald-200 dark:border-emerald-800/50",
-    bg: "bg-emerald-50 dark:bg-emerald-900/10",
+    bg: "bg-emerald-50 dark:bg-emerald-900/30",
     description:
       "Full due-diligence — IP claims, 5-yr forecasts, global FTO, funding strategy",
     highlights: [
@@ -193,7 +193,7 @@ export default function AboutUs() {
               ].map((pill) => (
                 <div
                   key={pill}
-                  className="flex items-center bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-2 rounded-full text-white"
+                  className="flex items-center bg-white/10  border border-white/20 px-4 py-2 rounded-full text-white"
                 >
                   <CheckCircle className="w-4 h-4 text-teal-400 mr-2" />
                   {pill}
@@ -266,7 +266,7 @@ export default function AboutUs() {
                   key={index}
                   variants={fadeUp}
                   whileHover={{ y: -4 }}
-                  className="group bg-white dark:bg-slate-800/80 rounded-2xl p-6 border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-700 transition-all duration-300"
+                  className="group bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-700 transition-all duration-300"
                 >
                   <div
                     className={`w-12 h-12 ${pillar.color} rounded-xl flex items-center justify-center mb-4 shadow-md group-hover:scale-105 transition-transform duration-300`}

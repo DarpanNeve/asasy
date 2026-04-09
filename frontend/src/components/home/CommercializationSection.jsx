@@ -93,7 +93,7 @@ export default function CommercializationSection() {
                 whileHover={{ y: -6 }}
                 className="group relative"
               >
-                <div className="relative h-full bg-white dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-md border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-700 transition-all duration-400 overflow-hidden">
+                <div className="relative h-full bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-700 transition-all duration-400 overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-blue-500/0 group-hover:from-blue-500/5 group-hover:to-blue-600/5 dark:group-hover:from-blue-500/10 dark:group-hover:to-blue-600/10 transition-all duration-500" />
                   <div className="relative p-8 h-full flex flex-col">
                     <div className="flex items-start justify-between mb-6">

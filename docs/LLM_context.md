@@ -81,7 +81,7 @@ Users submit a technology idea/concept; the AI engine analyzes it across 30+ par
 | `frontend/src/components/home/PrototypingHighlightSection.jsx` | Prototyping services teaser |
 | `frontend/src/components/home/FinalCTASection.jsx` | Final dual CTA |
 | `frontend/src/components/home/ReportGeneratorSection.jsx` | Report generation form (self-contained with auth, API, navigation) |
-| `frontend/src/components/QuickInquiryWidget.jsx` | Fixed floating widget — phone, email, link to /contact |
+| `frontend/src/components/QuickInquiryWidget.jsx` | Fixed floating widget — phone, email, **inline contact form** (reason, name, phone, email, message), posts to `/contact` API. Rendered globally via `RootLayout` in App.jsx. |
 | `frontend/src/pages/Reports.jsx` | Dashboard — generate + manage reports |
 | `frontend/src/pages/About.jsx` | **Fully revamped** — new hero, mission pillars, founder section, report types with pricing |
 | `frontend/src/pages/Investors.jsx` | Investor registration + **SVG pie chart** of technology distribution by sector |
@@ -113,7 +113,7 @@ Users submit a technology idea/concept; the AI engine analyzes it across 30+ par
 | Home | WhyAssesme + WhoCanUse sections present; SampleReports section; all icon containers use solid colors (no gradients) |
 | Home | `HowItWorksSection` title renamed → **"How Investor Access & Matching Works"** (badge: "Investor Access") |
 | Home | All sections standardized to `py-24` padding — SampleReports and FinalCTA were `py-20`, now `py-24` |
-| Pricing | Complete redesign — 5-plan grid (Starter ₹290, Starter Comp ₹390, Advanced ₹799, Comprehensive ₹999, Enterprise), full non-collapsible comparison table, sample report downloads |
+| Pricing | Complete redesign — 5-plan grid: first 4 plans in `sm:grid-cols-2 lg:grid-cols-4`, Enterprise card spans full width (`lg:col-span-4`) with horizontal layout (icon/name/price/CTA left, features grid right), full non-collapsible comparison table, sample report downloads |
 | About | Fully revamped — mission pillars, improved founder section, report types with pricing and CTAs; all sections `py-24` |
 | Investors | SVG pie chart (static sector data); **5-step wizard form** with progress bar; draft saved to DB after each step; all sections `py-24` |
 | Technologies | "Who Should Apply" improved; **5-step wizard form** with progress bar; draft saved to DB after each step |

@@ -39,7 +39,7 @@ export default function ForFoundersSection() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.08, duration: 0.45 }}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-700"
+                    className="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-slate-700/40 border border-slate-100 dark:border-slate-600"
                   >
                     <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                     <span className="text-slate-700 dark:text-slate-300 text-sm font-medium">

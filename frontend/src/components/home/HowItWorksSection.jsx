@@ -113,7 +113,7 @@ export default function HowItWorksSection() {
                   duration: 0.5,
                   ease: [0.22, 1, 0.36, 1],
                 }}
-                className="flex gap-5 bg-white dark:bg-slate-800/60 rounded-2xl p-6 border border-slate-200 dark:border-slate-700"
+                className="flex gap-5 bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700"
               >
                 <div
                   className={`w-14 h-14 ${step.color} rounded-xl flex items-center justify-center flex-shrink-0 shadow-md`}

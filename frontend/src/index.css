@@ -130,7 +130,7 @@
 
 /* Gradient border card on hover */
 .card-interactive {
-  @apply bg-white rounded-xl border border-slate-200 shadow-sm
+  @apply rounded-xl shadow-sm
          transition-all duration-300;
 }
 .card-interactive:hover {

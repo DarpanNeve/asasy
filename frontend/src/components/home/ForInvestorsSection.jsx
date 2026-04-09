@@ -92,7 +92,7 @@ export default function ForInvestorsSection() {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.08, duration: 0.45 }}
-                      className="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-700"
+                      className="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-slate-700/40 border border-slate-100 dark:border-slate-600"
                     >
                       <div className="w-9 h-9 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
                         <Icon className="h-4 w-4 text-blue-600 dark:text-blue-400" />

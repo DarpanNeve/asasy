@@ -27,7 +27,11 @@ const stagger = {
 
 const fadeUp = {
   hidden: { opacity: 0, y: 22 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+  },
 };
 
 export default function PrototypingHighlightSection() {
@@ -52,7 +56,8 @@ export default function PrototypingHighlightSection() {
             </span>
           </h2>
           <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-            Have an idea but don't know how to build it? We help you convert concepts into working prototypes, MVPs, and real products.
+            Have an idea but don't know how to build it? We help you convert
+            concepts into working prototypes, MVPs, and real products.
           </p>
         </motion.div>
 
@@ -72,7 +77,9 @@ export default function PrototypingHighlightSection() {
                 whileHover={{ y: -4 }}
                 className="bg-white dark:bg-slate-900 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm card-interactive"
               >
-                <div className={`w-12 h-12 ${item.color} rounded-xl flex items-center justify-center mb-5`}>
+                <div
+                  className={`w-12 h-12 ${item.color} rounded-xl flex items-center justify-center mb-5`}
+                >
                   <Icon className="h-6 w-6 text-white" />
                 </div>
                 <p className="text-slate-700 dark:text-slate-300 font-medium leading-snug">

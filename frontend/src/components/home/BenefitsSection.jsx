@@ -83,7 +83,7 @@ export default function BenefitsSection() {
               key={index}
               variants={fadeUp}
               whileHover={{ y: -4 }}
-              className="group bg-white dark:bg-slate-800/70 rounded-2xl p-7 border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-700 transition-all duration-300"
+              className="group bg-white dark:bg-slate-800 rounded-2xl p-7 border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-700 transition-all duration-300"
             >
               <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold mb-4 ${item.audienceColor}`}>
                 {item.audience}

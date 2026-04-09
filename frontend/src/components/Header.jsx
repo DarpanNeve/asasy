@@ -54,7 +54,7 @@ export default function Header() {
 
   return (
     <nav
-      className={`bg-white/90 dark:bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 transition-all duration-300 ${
+      className={`bg-white dark:bg-slate-900 sticky top-0 z-50 transition-all duration-300 ${
         scrolled
           ? "shadow-md border-b border-neutral-200 dark:border-slate-700/60"
           : "shadow-sm border-b border-neutral-100 dark:border-slate-800/60"
@@ -221,7 +221,7 @@ export default function Header() {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-              className="lg:hidden overflow-hidden absolute top-16 left-0 w-full bg-white/97 dark:bg-slate-900/97 backdrop-blur-md shadow-lg border-t border-neutral-100 dark:border-slate-800 z-40"
+              className="lg:hidden overflow-hidden absolute top-16 left-0 w-full bg-white dark:bg-slate-900 shadow-lg border-t border-neutral-100 dark:border-slate-800 z-40"
             >
               <div className="px-4 pt-3 pb-4 space-y-1">
                 {navLinks.map(({ to, label }, i) => {

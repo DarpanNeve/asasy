@@ -8,14 +8,14 @@ export default function RTTPSection() {
       <div className="absolute inset-0 bg-dot-grid opacity-20 pointer-events-none" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
         <motion.div
-          className="max-w-3xl mx-auto bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-3xl p-8 md:p-12 shadow-2xl border border-white/20"
+          className="max-w-3xl mx-auto bg-white/10 dark:bg-white/5  rounded-3xl p-8 md:p-12 shadow-2xl border border-white/20"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
           <motion.div
-            className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm mb-6 shadow-lg"
+            className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-white/20  mb-6 shadow-lg"
             whileHover={{ scale: 1.05, rotate: 5 }}
             transition={{ duration: 0.2 }}
           >

@@ -294,7 +294,7 @@ export default function Experts() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-white/80 text-sm font-medium mb-6 backdrop-blur-sm">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-white/80 text-sm font-medium mb-6 ">
               <Sparkles className="h-3.5 w-3.5 text-blue-400" />
               Certified Professionals
             </span>
@@ -444,7 +444,7 @@ export default function Experts() {
                   key={index}
                   variants={fadeUp}
                   whileHover={{ y: -4 }}
-                  className="bg-white dark:bg-slate-800/60 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm card-interactive cursor-pointer"
+                  className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm card-interactive cursor-pointer"
                   onClick={() => setSelectedService(isOpen ? null : index)}
                 >
                   <div

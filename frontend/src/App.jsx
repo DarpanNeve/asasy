@@ -1,6 +1,7 @@
 import {
   createBrowserRouter,
   RouterProvider,
+  Outlet,
 } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Toaster } from "react-hot-toast";
@@ -34,7 +35,17 @@ import RefundPolicy from "./pages/RefundPolicy";
 import Careers from "./pages/Careers";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import QuickInquiryWidget from "./components/QuickInquiryWidget";
 import "./index.css";
+
+function RootLayout() {
+  return (
+    <>
+      <Outlet />
+      <QuickInquiryWidget />
+    </>
+  );
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -48,48 +59,53 @@ const queryClient = new QueryClient({
 
 const router = createBrowserRouter(
   [
-    { path: "/", element: <Home /> },
-    { path: "/login", element: <Login /> },
-    { path: "/signup", element: <Signup /> },
-    { path: "/forgot-password", element: <ForgotPassword /> },
-    { path: "/profile-completion", element: <ProfileCompletion /> },
-    { path: "/rttp", element: <RTTP /> },
-    { path: "/experts", element: <Experts /> },
-    { path: "/investors", element: <Investors /> },
-    { path: "/technologies", element: <Technologies /> },
-    { path: "/prototype", element: <Prototype /> },
-    { path: "/contact", element: <Contact /> },
-    { path: "/about", element: <About /> },
-    { path: "/pricing", element: <Pricing /> },
-    { path: "/admin", element: <Admin /> },
-    { path: "/careers", element: <Careers /> },
-    { path: "/blog", element: <Blog /> },
-    { path: "/blog/:slug", element: <BlogPost /> },
-    { path: "/press-releases", element: <PressReleases /> },
-    { path: "/press-releases/:slug", element: <BlogPost /> },
-    { path: "/privacy", element: <Privacy /> },
-    { path: "/terms", element: <Terms /> },
-    { path: "/pricing-policy", element: <PricingPolicy /> },
-    { path: "/refund-policy", element: <RefundPolicy /> },
     {
-      path: "/profile",
-      element: (
-        <ProtectedRoute>
-          <Layout>
-            <Profile />
-          </Layout>
-        </ProtectedRoute>
-      ),
-    },
-    {
-      path: "/reports",
-      element: (
-        <ProtectedRoute>
-          <Layout>
-            <Reports />
-          </Layout>
-        </ProtectedRoute>
-      ),
+      element: <RootLayout />,
+      children: [
+        { path: "/", element: <Home /> },
+        { path: "/login", element: <Login /> },
+        { path: "/signup", element: <Signup /> },
+        { path: "/forgot-password", element: <ForgotPassword /> },
+        { path: "/profile-completion", element: <ProfileCompletion /> },
+        { path: "/rttp", element: <RTTP /> },
+        { path: "/experts", element: <Experts /> },
+        { path: "/investors", element: <Investors /> },
+        { path: "/technologies", element: <Technologies /> },
+        { path: "/prototype", element: <Prototype /> },
+        { path: "/contact", element: <Contact /> },
+        { path: "/about", element: <About /> },
+        { path: "/pricing", element: <Pricing /> },
+        { path: "/admin", element: <Admin /> },
+        { path: "/careers", element: <Careers /> },
+        { path: "/blog", element: <Blog /> },
+        { path: "/blog/:slug", element: <BlogPost /> },
+        { path: "/press-releases", element: <PressReleases /> },
+        { path: "/press-releases/:slug", element: <BlogPost /> },
+        { path: "/privacy", element: <Privacy /> },
+        { path: "/terms", element: <Terms /> },
+        { path: "/pricing-policy", element: <PricingPolicy /> },
+        { path: "/refund-policy", element: <RefundPolicy /> },
+        {
+          path: "/profile",
+          element: (
+            <ProtectedRoute>
+              <Layout>
+                <Profile />
+              </Layout>
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/reports",
+          element: (
+            <ProtectedRoute>
+              <Layout>
+                <Reports />
+              </Layout>
+            </ProtectedRoute>
+          ),
+        },
+      ],
     },
   ],
   {

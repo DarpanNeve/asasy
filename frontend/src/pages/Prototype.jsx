@@ -287,7 +287,7 @@ export default function Prototype() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-white/80 text-sm font-medium mb-6 backdrop-blur-sm">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-white/80 text-sm font-medium mb-6 ">
               <Sparkles className="h-3.5 w-3.5 text-blue-400" />
               From Concept to Reality
             </span>
@@ -524,7 +524,7 @@ export default function Prototype() {
                 key={i}
                 variants={fadeUp}
                 whileHover={{ y: -4 }}
-                className="bg-white dark:bg-slate-900 rounded-2xl p-7 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-700 transition-all duration-300 group"
+                className="bg-white dark:bg-slate-800 rounded-2xl p-7 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-700 transition-all duration-300 group"
               >
                 <div className="flex items-start justify-between mb-4">
                   <span

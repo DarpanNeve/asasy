@@ -63,7 +63,7 @@ export default function TheProblemSection() {
                 key={index}
                 variants={fadeUp}
                 whileHover={{ y: -4 }}
-                className="bg-white dark:bg-slate-900 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm card-interactive"
+                className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm card-interactive"
               >
                 <div className="w-12 h-12 bg-slate-700 dark:bg-slate-600 rounded-xl flex items-center justify-center mb-5">
                   <Icon className="h-6 w-6 text-white" />
@@ -81,7 +81,7 @@ export default function TheProblemSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.55, delay: 0.3 }}
-          className="max-w-2xl mx-auto border-l-4 border-red-400 dark:border-red-500 bg-white dark:bg-slate-900 rounded-xl px-6 py-5 shadow-sm"
+          className="max-w-2xl mx-auto border-l-4 border-red-400 dark:border-red-500 bg-white dark:bg-slate-800 rounded-xl px-6 py-5 shadow-sm"
         >
           <p className="text-slate-700 dark:text-slate-300 font-semibold text-center text-lg">
             Result? Time lost. Capital misallocated. Innovation ignored.

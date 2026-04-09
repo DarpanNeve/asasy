@@ -8,7 +8,7 @@ export default function FinalCTASection() {
       <div className="absolute inset-0 bg-dot-grid opacity-20 pointer-events-none" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
         <motion.div
-          className="max-w-3xl mx-auto bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-3xl p-8 md:p-12 shadow-2xl border border-white/20"
+          className="max-w-3xl mx-auto bg-white/10 dark:bg-white/5  rounded-3xl p-8 md:p-12 shadow-2xl border border-white/20"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
