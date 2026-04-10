@@ -529,19 +529,19 @@ export default function Reports() {
           }`}
         >
           <div
-            className={`bg-white rounded-xl w-full h-full max-w-6xl max-h-[95vh] flex flex-col ${
+            className={`bg-white dark:bg-slate-900 rounded-xl w-full h-full max-w-6xl max-h-[95vh] flex flex-col ${
               isFullscreen ? "max-w-none max-h-none rounded-none" : ""
             }`}
           >
             {/* PDF Preview Header */}
-            <div className="flex items-center justify-between p-4 border-b border-neutral-200">
-              <h3 className="text-lg font-semibold text-neutral-900">
+            <div className="flex items-center justify-between p-4 border-b border-neutral-200 dark:border-slate-700">
+              <h3 className="text-lg font-semibold text-neutral-900 dark:text-slate-100">
                 PDF Preview
               </h3>
               <div className="flex items-center space-x-2">
                 <button
                   onClick={toggleFullscreen}
-                  className="p-2 text-neutral-600 hover:text-neutral-900 transition-colors"
+                  className="p-2 text-neutral-600 dark:text-slate-400 hover:text-neutral-900 dark:hover:text-slate-100 transition-colors"
                   title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
                 >
                   {isFullscreen ? (
@@ -552,7 +552,7 @@ export default function Reports() {
                 </button>
                 <button
                   onClick={closePdfPreview}
-                  className="p-2 text-neutral-600 hover:text-neutral-900 transition-colors"
+                  className="p-2 text-neutral-600 dark:text-slate-400 hover:text-neutral-900 dark:hover:text-slate-100 transition-colors"
                   title="Close Preview"
                 >
                   <X className="h-5 w-5" />
@@ -566,7 +566,7 @@ export default function Reports() {
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-                    <p className="text-neutral-600">Loading PDF preview...</p>
+                    <p className="text-neutral-600 dark:text-slate-400">Loading PDF preview...</p>
                   </div>
                 </div>
               ) : (

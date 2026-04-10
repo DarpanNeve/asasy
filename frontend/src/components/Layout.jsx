@@ -36,7 +36,7 @@ export default function Layout({ children }) {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-neutral-50 dark:bg-slate-950">
       {/* Mobile sidebar */}
       <div
         className={`fixed inset-0 z-50 lg:hidden ${
@@ -44,10 +44,10 @@ export default function Layout({ children }) {
         }`}
       >
         <div
-          className="fixed inset-0 bg-neutral-600 bg-opacity-75"
+          className="fixed inset-0 bg-neutral-600 bg-opacity-75 dark:bg-slate-900 dark:bg-opacity-80"
           onClick={() => setSidebarOpen(false)}
         />
-        <div className="relative flex w-full max-w-xs flex-1 flex-col bg-white">
+        <div className="relative flex w-full max-w-xs flex-1 flex-col bg-white dark:bg-slate-900">
           <div className="absolute top-0 right-0 -mr-12 pt-2">
             <button
               type="button"
@@ -69,10 +69,10 @@ export default function Layout({ children }) {
       {/* Main content */}
       <div className="lg:pl-64">
         {/* Top navigation */}
-        <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-neutral-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+        <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-neutral-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
           <button
             type="button"
-            className="-m-2.5 p-2.5 text-neutral-700 lg:hidden"
+            className="-m-2.5 p-2.5 text-neutral-700 dark:text-slate-300 lg:hidden"
             onClick={() => setSidebarOpen(true)}
           >
             <Menu className="h-6 w-6" />
@@ -83,7 +83,7 @@ export default function Layout({ children }) {
             <div className="flex items-center gap-x-4 lg:gap-x-6">
               {/* User menu */}
               <div className="relative">
-                <button className="flex items-center gap-x-2 text-sm font-medium text-neutral-700 hover:text-neutral-900">
+                <button className="flex items-center gap-x-2 text-sm font-medium text-neutral-700 dark:text-slate-300 hover:text-neutral-900 dark:hover:text-slate-100">
                   <div className="h-8 w-8 rounded-full bg-primary-600 flex items-center justify-center">
                     <span className="text-sm font-medium text-white">
                       {user?.name?.charAt(0)?.toUpperCase() || "U"}
@@ -97,7 +97,7 @@ export default function Layout({ children }) {
 
               <button
                 onClick={handleLogout}
-                className="p-2 text-neutral-600 hover:text-neutral-900 transition-colors"
+                className="p-2 text-neutral-600 dark:text-slate-400 hover:text-neutral-900 dark:hover:text-slate-100 transition-colors"
                 title="Logout"
               >
                 <LogOut className="h-5 w-5" />
@@ -118,7 +118,7 @@ export default function Layout({ children }) {
 
   function SidebarContent() {
     return (
-      <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-neutral-200 bg-white px-6 pb-4">
+      <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-neutral-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-6 pb-4">
         <div className="flex h-16 shrink-0 items-center">
           <div className="flex items-center gap-x-2">
             <Link to="/" className="flex items-center group">
@@ -147,16 +147,16 @@ export default function Layout({ children }) {
                           group flex gap-x-3 rounded-lg p-2 text-sm leading-6 font-medium transition-all duration-200
                           ${
                             isCurrent
-                              ? "bg-primary-50 text-primary-600 border-r-2 border-primary-600"
-                              : "text-neutral-700 hover:text-primary-600 hover:bg-neutral-50"
+                              ? "bg-primary-50 dark:bg-blue-900/30 text-primary-600 dark:text-blue-400 border-r-2 border-primary-600 dark:border-blue-400"
+                              : "text-neutral-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-blue-400 hover:bg-neutral-50 dark:hover:bg-slate-800"
                           }
                         `}
                       >
                         <item.icon
                           className={`h-5 w-5 shrink-0 ${
                             isCurrent
-                              ? "text-primary-600"
-                              : "text-neutral-400 group-hover:text-primary-600"
+                              ? "text-primary-600 dark:text-blue-400"
+                              : "text-neutral-400 dark:text-slate-500 group-hover:text-primary-600 dark:group-hover:text-blue-400"
                           }`}
                         />
                         {item.name}

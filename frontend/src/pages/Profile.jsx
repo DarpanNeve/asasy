@@ -94,10 +94,10 @@ export default function Profile() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-neutral-900">
+          <h1 className="text-3xl font-bold text-neutral-900 dark:text-slate-100">
             Profile Settings
           </h1>
-          <p className="mt-2 text-neutral-600">
+          <p className="mt-2 text-neutral-600 dark:text-slate-400">
             Manage your account information and preferences.
           </p>
         </div>
@@ -117,7 +117,7 @@ export default function Profile() {
         <div className="lg:col-span-2">
           <div className="card">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-neutral-900">
+              <h2 className="text-xl font-semibold text-neutral-900 dark:text-slate-100">
                 Personal Information
               </h2>
               {isEditing && (
@@ -149,7 +149,7 @@ export default function Profile() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-slate-300 mb-2">
                     Full Name
                   </label>
                   {isEditing ? (
@@ -173,20 +173,20 @@ export default function Profile() {
                       )}
                     </div>
                   ) : (
-                    <div className="flex items-center p-3 bg-neutral-50 rounded-lg">
-                      <User className="h-5 w-5 text-neutral-400 mr-3" />
-                      <span className="text-neutral-900">{user.name}</span>
+                    <div className="flex items-center p-3 bg-neutral-50 dark:bg-slate-700 rounded-lg">
+                      <User className="h-5 w-5 text-neutral-400 dark:text-slate-500 mr-3" />
+                      <span className="text-neutral-900 dark:text-slate-100">{user.name}</span>
                     </div>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-slate-300 mb-2">
                     Email Address
                   </label>
-                  <div className="flex items-center p-3 bg-neutral-50 rounded-lg">
-                    <Mail className="h-5 w-5 text-neutral-400 mr-3" />
-                    <span className="text-neutral-900">{user.email}</span>
+                  <div className="flex items-center p-3 bg-neutral-50 dark:bg-slate-700 rounded-lg">
+                    <Mail className="h-5 w-5 text-neutral-400 dark:text-slate-400 mr-3" />
+                    <span className="text-neutral-900 dark:text-slate-100">{user.email}</span>
                     {user.is_verified && (
                       <Shield
                         className="h-4 w-4 text-success-500 ml-2"
@@ -194,13 +194,13 @@ export default function Profile() {
                       />
                     )}
                   </div>
-                  <p className="mt-1 text-xs text-neutral-500">
+                  <p className="mt-1 text-xs text-neutral-500 dark:text-slate-500">
                     Email cannot be changed. Contact support if needed.
                   </p>
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-slate-300 mb-2">
                     Phone Number
                   </label>
                   {isEditing ? (
@@ -217,8 +217,8 @@ export default function Profile() {
                       placeholder="Enter your phone number"
                     />
                   ) : (
-                    <div className="flex items-center p-3 bg-neutral-50 rounded-lg">
-                      <span className="text-neutral-900">
+                    <div className="flex items-center p-3 bg-neutral-50 dark:bg-slate-700 rounded-lg">
+                      <span className="text-neutral-900 dark:text-slate-100">
                         {user.phone || "Not provided"}
                       </span>
                     </div>
@@ -236,7 +236,7 @@ export default function Profile() {
           {/* Password Change Section */}
           <div className="card mt-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-neutral-900">
+              <h2 className="text-xl font-semibold text-neutral-900 dark:text-slate-100">
                 Security
               </h2>
             </div>
@@ -244,8 +244,8 @@ export default function Profile() {
             {!showPasswordForm ? (
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium text-neutral-900">Password</p>
-                  <p className="text-sm text-neutral-600">
+                  <p className="font-medium text-neutral-900 dark:text-slate-100">Password</p>
+                  <p className="text-sm text-neutral-600 dark:text-slate-400">
                     Change your account password
                   </p>
                 </div>
@@ -263,7 +263,7 @@ export default function Profile() {
                 className="space-y-4"
               >
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-slate-300 mb-2">
                     Current Password
                   </label>
                   <input
@@ -284,7 +284,7 @@ export default function Profile() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-slate-300 mb-2">
                     New Password
                   </label>
                   <input
@@ -309,7 +309,7 @@ export default function Profile() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-slate-300 mb-2">
                     Confirm New Password
                   </label>
                   <input
@@ -366,18 +366,18 @@ export default function Profile() {
         {/* Account Stats */}
         <div className="space-y-6">
           <div className="card">
-            <h3 className="text-lg font-semibold text-neutral-900 mb-4">
+            <h3 className="text-lg font-semibold text-neutral-900 dark:text-slate-100 mb-4">
               Account Statistics
             </h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-neutral-600">Reports Generated</span>
-                <span className="font-semibold text-neutral-900">
+                <span className="text-neutral-600 dark:text-slate-400">Reports Generated</span>
+                <span className="font-semibold text-neutral-900 dark:text-slate-100">
                   {user.reports_generated}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-neutral-600">Account Status</span>
+                <span className="text-neutral-600 dark:text-slate-400">Account Status</span>
                 <span
                   className={`px-2 py-1 text-xs font-medium rounded-full ${
                     user.is_verified
@@ -389,15 +389,15 @@ export default function Profile() {
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-neutral-600">Member Since</span>
-                <span className="font-semibold text-neutral-900">
+                <span className="text-neutral-600 dark:text-slate-400">Member Since</span>
+                <span className="font-semibold text-neutral-900 dark:text-slate-100">
                   {new Date(user.created_at).toLocaleDateString()}
                 </span>
               </div>
               {user.last_login && (
                 <div className="flex items-center justify-between">
-                  <span className="text-neutral-600">Last Login</span>
-                  <span className="font-semibold text-neutral-900">
+                  <span className="text-neutral-600 dark:text-slate-400">Last Login</span>
+                  <span className="font-semibold text-neutral-900 dark:text-slate-100">
                     {new Date(user.last_login).toLocaleDateString()}
                   </span>
                 </div>
