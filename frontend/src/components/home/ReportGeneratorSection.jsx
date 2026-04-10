@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, AlertTriangle, X, Zap } from "lucide-react";
+import { ArrowRight, AlertTriangle, X, Zap, BookOpen, Download } from "lucide-react";
+import { downloadGuidelinesPDF } from "../../utils/guidelinesPdf";
 import { useAuth } from "../../contexts/AuthContext";
 import { api } from "../../services/api";
 import toast from "react-hot-toast";
@@ -22,10 +23,16 @@ export default function ReportGeneratorSection() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [pendingData, setPendingData] = useState(null);
   const [charCount, setCharCount] = useState(0);
+  const [assured, setAssured] = useState(false);
 
   const { register, handleSubmit, formState: { errors }, reset, watch } = useForm();
 
   const ideaValue = watch("idea", "");
+
+  const closeConfirm = () => {
+    setShowConfirm(false);
+    setAssured(false);
+  };
 
   const onFormSubmit = (data) => {
     if (!user) {
@@ -200,7 +207,7 @@ export default function ReportGeneratorSection() {
               transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
             >
               <button
-                onClick={() => setShowConfirm(false)}
+                onClick={closeConfirm}
                 className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
               >
                 <X className="h-5 w-5" />
@@ -231,25 +238,62 @@ export default function ReportGeneratorSection() {
                 </div>
               </div>
 
-              <div className="flex items-start gap-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/40 rounded-xl p-3 mb-6">
+              <div className="flex items-start gap-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/40 rounded-xl p-3 mb-4">
                 <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
                 <p className="text-xs text-amber-700 dark:text-amber-300 leading-relaxed">
                   Tokens will be deducted immediately. Reports cannot be cancelled once generation begins. Tokens are refunded automatically if generation fails.
                 </p>
               </div>
 
+              <div className="flex items-start gap-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/40 rounded-xl p-3 mb-4">
+                <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+                <p className="text-xs text-blue-700 dark:text-blue-300 leading-relaxed">
+                  For the best report quality, ensure your input follows our structured guidelines.{" "}
+                  <button
+                    type="button"
+                    onClick={downloadGuidelinesPDF}
+                    className="inline-flex items-center gap-1 font-semibold underline underline-offset-2 hover:text-blue-900 dark:hover:text-blue-100 transition-colors"
+                  >
+                    <Download className="h-3 w-3" />
+                    Download Guidelines
+                  </button>
+                </p>
+              </div>
+
+              <label className="flex items-start gap-3 cursor-pointer mb-6 select-none">
+                <div className="relative flex-shrink-0 mt-0.5">
+                  <input
+                    type="checkbox"
+                    checked={assured}
+                    onChange={(e) => setAssured(e.target.checked)}
+                    className="sr-only peer"
+                  />
+                  <div className="w-4 h-4 rounded border-2 border-slate-300 dark:border-slate-600 peer-checked:bg-blue-600 peer-checked:border-blue-600 transition-all duration-150 flex items-center justify-center">
+                    {assured && (
+                      <svg className="w-2.5 h-2.5 text-white" viewBox="0 0 10 8" fill="none">
+                        <path d="M1 4l3 3 5-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                  </div>
+                </div>
+                <span className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  I confirm that my input is detailed and complete. I understand that report quality depends on the information provided.
+                </span>
+              </label>
+
               <div className="flex gap-3">
                 <button
-                  onClick={() => setShowConfirm(false)}
+                  onClick={closeConfirm}
                   className="flex-1 py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                 >
                   Cancel
                 </button>
                 <motion.button
                   onClick={handleConfirmedGenerate}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white font-semibold btn-glow transition-all duration-200 shadow-md"
+                  disabled={!assured}
+                  whileHover={assured ? { scale: 1.02 } : {}}
+                  whileTap={assured ? { scale: 0.98 } : {}}
+                  className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white font-semibold btn-glow transition-all duration-200 shadow-md disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
                 >
                   Confirm & Generate
                 </motion.button>

@@ -564,6 +564,8 @@ export default function RTTP() {
                     Global Market Access
                   </option>
                   <option value="compliance_risks">Compliance and Risks</option>
+                  <option value="investor_query">Investor Query</option>
+                  <option value="investment_query">Investment Query</option>
                   <option value="other">Other</option>
                 </select>
                 {errors.reason && (

@@ -30,22 +30,20 @@ const fadeUp = {
 
 export default function SampleReportsSection() {
   return (
-    <section className="py-24 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+    <section className="pb-12 bg-slate-100 dark:bg-slate-900">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.p
+          className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4 text-center"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.55 }}
+          transition={{ duration: 0.4 }}
         >
-          <h2 className="text-3xl font-bold text-neutral-900 dark:text-slate-100 mb-3">
-            Download Sample Reports
-          </h2>
-          <p className="text-neutral-500 dark:text-slate-400 mb-10">See the quality and depth of our AI-generated reports before purchasing.</p>
-        </motion.div>
+          Not sure yet? Download a sample report
+        </motion.p>
 
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-4"
           variants={stagger}
           initial="hidden"
           whileInView="visible"
@@ -57,22 +55,22 @@ export default function SampleReportsSection() {
               href={sample.href}
               download
               variants={fadeUp}
-              whileHover={{ y: -4, scale: 1.01 }}
-              className="group bg-white dark:bg-slate-900 p-7 rounded-2xl border border-neutral-200 dark:border-slate-700 shadow-sm hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-700 transition-all duration-300 flex items-start gap-5 text-left"
+              whileHover={{ y: -2, scale: 1.01 }}
+              className="group bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-blue-200 dark:hover:border-blue-700 hover:shadow-md transition-all duration-300 flex items-center gap-4 text-left"
             >
-              <div className={`w-14 h-14 bg-gradient-to-br ${sample.color} rounded-xl flex items-center justify-center flex-shrink-0 shadow-md group-hover:scale-105 transition-transform duration-300`}>
-                <FileText className="h-7 w-7 text-white" />
+              <div className={`w-10 h-10 bg-gradient-to-br ${sample.color} rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm group-hover:scale-105 transition-transform duration-300`}>
+                <FileText className="h-5 w-5 text-white" />
               </div>
-              <div className="flex-1">
-                <div className="flex items-center justify-between mb-1">
-                  <h3 className="text-lg font-semibold text-neutral-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     {sample.title}
                   </h3>
-                  <span className="text-xs text-neutral-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">{sample.badge}</span>
+                  <span className="text-xs text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded-full flex-shrink-0">{sample.badge}</span>
                 </div>
-                <p className="text-sm text-neutral-500 dark:text-slate-400">{sample.subtitle}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{sample.subtitle}</p>
               </div>
-              <Download className="h-5 w-5 text-neutral-300 dark:text-slate-600 group-hover:text-blue-500 transition-colors flex-shrink-0 mt-1" />
+              <Download className="h-4 w-4 text-slate-300 dark:text-slate-600 group-hover:text-blue-500 transition-colors flex-shrink-0" />
             </motion.a>
           ))}
         </motion.div>

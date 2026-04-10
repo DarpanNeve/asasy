@@ -1,6 +1,44 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Star, Users } from "lucide-react";
+
+const FLIP_WORDS = ["Confidence", "Assurance"];
+
+function FlipWord() {
+  const [index, setIndex] = useState(0);
+  const [flipping, setFlipping] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFlipping(true);
+      setTimeout(() => {
+        setIndex((i) => (i + 1) % FLIP_WORDS.length);
+        setFlipping(false);
+      }, 300);
+    }, 2800);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <span
+      className="inline-block relative"
+      style={{ perspective: "600px", display: "inline-block" }}
+    >
+      <motion.span
+        key={index}
+        className="inline-block bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent"
+        initial={{ rotateX: -90, opacity: 0 }}
+        animate={{ rotateX: 0, opacity: 1 }}
+        exit={{ rotateX: 90, opacity: 0 }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        style={{ transformOrigin: "center bottom", display: "inline-block" }}
+      >
+        {FLIP_WORDS[index]}
+      </motion.span>
+    </span>
+  );
+}
 
 const STATS = [
   { value: "9,840+", label: "Innovators Trust Us" },
@@ -33,8 +71,11 @@ export default function HeroSection() {
             transition={{ delay: 0.1, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
             Validate, Protect, and Scale
-            <span className="block bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              Your Innovation with Confidence & Assurance
+            <span className="block">Your Innovation with</span>
+            <span className="block">
+              <AnimatePresence mode="wait">
+                <FlipWord />
+              </AnimatePresence>
             </span>
           </motion.h1>
 

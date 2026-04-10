@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import HowItWorksSection from "../components/home/HowItWorksSection";
+import PieChart from "../components/PieChart";
 import { motion } from "framer-motion";
 import {
   Sparkles,
@@ -30,63 +32,23 @@ const fadeUp = {
   },
 };
 
-const SECTOR_DATA = [
-  { label: "AI/ML", value: 28, color: "#3b82f6" },
-  { label: "Healthcare", value: 19, color: "#14b8a6" },
-  { label: "Deep Tech", value: 14, color: "#10b981" },
-  { label: "IoT", value: 11, color: "#f59e0b" },
-  { label: "FinTech", value: 10, color: "#8b5cf6" },
-  { label: "AgriTech", value: 8, color: "#ef4444" },
-  { label: "Others", value: 10, color: "#94a3b8" },
+
+const INVESTOR_TYPE_COLORS = {
+  "Angel Investor": "#3b82f6",
+  "Venture Capitalist": "#14b8a6",
+  "Corporate Investor": "#10b981",
+  "Family Office": "#f59e0b",
+  "HNI / Individual": "#8b5cf6",
+  "Other": "#94a3b8",
+};
+
+const INVESTOR_TYPE_DUMMY = [
+  { label: "Angel Investor", value: 34, color: "#3b82f6" },
+  { label: "Venture Capitalist", value: 27, color: "#14b8a6" },
+  { label: "Corporate Investor", value: 16, color: "#10b981" },
+  { label: "Family Office", value: 13, color: "#f59e0b" },
+  { label: "HNI / Individual", value: 10, color: "#8b5cf6" },
 ];
-
-function SectorPieChart({ data }) {
-  const total = data.reduce((sum, d) => sum + d.value, 0);
-  let cumulative = 0;
-  const r = 80;
-  const cx = 110;
-  const cy = 110;
-
-  const slices = data.map((d) => {
-    const startAngle = (cumulative / total) * 2 * Math.PI - Math.PI / 2;
-    cumulative += d.value;
-    const endAngle = (cumulative / total) * 2 * Math.PI - Math.PI / 2;
-    const x1 = cx + r * Math.cos(startAngle);
-    const y1 = cy + r * Math.sin(startAngle);
-    const x2 = cx + r * Math.cos(endAngle);
-    const y2 = cy + r * Math.sin(endAngle);
-    const largeArc = d.value / total > 0.5 ? 1 : 0;
-    const path = `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`;
-    return { ...d, path };
-  });
-
-  return (
-    <div className="flex flex-col lg:flex-row items-center gap-8">
-      <div className="flex-shrink-0">
-        <svg width="220" height="220" viewBox="0 0 220 220">
-          {slices.map((s, i) => (
-            <path key={i} d={s.path} fill={s.color} stroke="white" strokeWidth="2" className="hover:opacity-80 transition-opacity cursor-pointer">
-              <title>{s.label}: {s.value}%</title>
-            </path>
-          ))}
-          <circle cx={cx} cy={cy} r="36" fill="white" className="dark:hidden" />
-          <circle cx={cx} cy={cy} r="36" fill="#0f172a" className="hidden dark:block" />
-          <text x={cx} y={cy - 6} textAnchor="middle" className="fill-slate-700 dark:fill-slate-300" fontSize="11" fontWeight="600">Tech</text>
-          <text x={cx} y={cy + 10} textAnchor="middle" className="fill-slate-500" fontSize="10">Sectors</text>
-        </svg>
-      </div>
-      <div className="grid grid-cols-2 gap-3 flex-1">
-        {data.map((d, i) => (
-          <div key={i} className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-sm flex-shrink-0" style={{ backgroundColor: d.color }} />
-            <span className="text-sm text-slate-700 dark:text-slate-300 font-medium">{d.label}</span>
-            <span className="text-sm text-slate-500 dark:text-slate-400 ml-auto">{d.value}%</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 const WHY_CARDS = [
   {
@@ -231,6 +193,23 @@ const INVESTOR_STEP_DATA = (step, form, selectedSectors, beyondFunding) => {
 const INVESTOR_DRAFT_KEY = "assesme_investor_draft_id";
 
 export default function Investors() {
+  const [investorChartData, setInvestorChartData] = useState(INVESTOR_TYPE_DUMMY);
+
+  useEffect(() => {
+    api.get("/onboarding/investors/stats")
+      .then(({ data }) => {
+        if (data.total > 0 && data.by_type?.length) {
+          const mapped = data.by_type.map((d) => ({
+            label: d.type,
+            value: d.count,
+            color: INVESTOR_TYPE_COLORS[d.type] || "#94a3b8",
+          }));
+          setInvestorChartData(mapped);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const [step, setStep] = useState(0);
   const [draftId, setDraftId] = useState(() => localStorage.getItem(INVESTOR_DRAFT_KEY) || null);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
@@ -488,6 +467,8 @@ export default function Investors() {
         </div>
       </section>
 
+      <HowItWorksSection />
+
       <section className="py-24 bg-slate-50 dark:bg-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -564,10 +545,10 @@ export default function Investors() {
             transition={{ duration: 0.55 }}
           >
             <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-slate-100 mb-3">
-              Technology Distribution by Sector
+              Investor Type Distribution
             </h2>
             <p className="text-neutral-500 dark:text-slate-400 text-sm">
-              Based on 9,840+ registered innovations across the platform
+              Breakdown of verified investors registered on the platform
             </p>
           </motion.div>
           <motion.div
@@ -577,7 +558,7 @@ export default function Investors() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <SectorPieChart data={SECTOR_DATA} />
+            <PieChart data={investorChartData} centerLabel="Investors" centerSub="by type" />
           </motion.div>
         </div>
       </section>

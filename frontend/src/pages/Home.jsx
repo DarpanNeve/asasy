@@ -5,12 +5,12 @@ import WhyAssesmeSection from "../components/home/WhyAssesmeSection";
 import WhoCanUseSection from "../components/home/WhoCanUseSection";
 import TheProblemSection from "../components/home/TheProblemSection";
 import TheSolutionSection from "../components/home/TheSolutionSection";
-import HowItWorksSection from "../components/home/HowItWorksSection";
 import ForInvestorsSection from "../components/home/ForInvestorsSection";
 import ForFoundersSection from "../components/home/ForFoundersSection";
 import SampleReportsSection from "../components/home/SampleReportsSection";
 import PrototypingHighlightSection from "../components/home/PrototypingHighlightSection";
 import ReportGeneratorSection from "../components/home/ReportGeneratorSection";
+import GuidelinesSection from "../components/home/GuidelinesSection";
 import FinalCTASection from "../components/home/FinalCTASection";
 export default function Home() {
   return (
@@ -18,14 +18,14 @@ export default function Home() {
       <Header />
       <HeroSection />
       <ReportGeneratorSection />
+      <GuidelinesSection />
+      <SampleReportsSection />
       <WhyAssesmeSection />
       <WhoCanUseSection />
       <TheProblemSection />
       <TheSolutionSection />
-      <HowItWorksSection />
       <ForInvestorsSection />
       <ForFoundersSection />
-      <SampleReportsSection />
       <PrototypingHighlightSection />
       <FinalCTASection />
       <Footer />

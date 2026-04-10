@@ -9,6 +9,8 @@ const REASONS = [
   { value: "ip_licensing", label: "IP Licensing" },
   { value: "startup_formation", label: "Startup Formation" },
   { value: "funding_strategy", label: "Funding Strategy" },
+  { value: "investor_query", label: "Investor Query" },
+  { value: "investment_query", label: "Investment Query" },
   { value: "prototyping", label: "Prototyping" },
   { value: "other", label: "Other" },
 ];

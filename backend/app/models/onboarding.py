@@ -88,6 +88,7 @@ class InvestorRegistration(Document):
     email: EmailStr
     phone: str = Field(..., min_length=8, max_length=20)
     country: str = Field(default="India", min_length=2, max_length=100)
+    investor_type: Optional[str] = Field(None, max_length=100)
     investment_focus: TechCategory = Field(default=TechCategory.OTHER)
     investment_stage: InvestmentStage
     ticket_size: TicketSize

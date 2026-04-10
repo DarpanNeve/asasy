@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   CheckCircle,
@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import PieChart from "../components/PieChart";
 import { Field, SelectField, TextareaField } from "../components/FormFields";
 import { api } from "../services/api";
 import toast from "react-hot-toast";
@@ -114,9 +115,49 @@ const TECH_STEP_DATA = (step, form, selectedDomains) => {
   return {};
 };
 
+const TECH_CATEGORY_COLORS = {
+  "AgriTech": "#10b981",
+  "BioTech": "#14b8a6",
+  "CleanTech": "#22c55e",
+  "DeepTech": "#3b82f6",
+  "EdTech": "#f59e0b",
+  "HealthTech": "#ef4444",
+  "InfoTech": "#8b5cf6",
+  "MedTech": "#ec4899",
+  "Manufacturing": "#f97316",
+  "Other": "#94a3b8",
+};
+
+const TECH_SECTOR_DUMMY = [
+  { label: "DeepTech", value: 28, color: "#3b82f6" },
+  { label: "HealthTech", value: 19, color: "#ef4444" },
+  { label: "AgriTech", value: 14, color: "#10b981" },
+  { label: "InfoTech", value: 11, color: "#8b5cf6" },
+  { label: "CleanTech", value: 10, color: "#22c55e" },
+  { label: "EdTech", value: 8, color: "#f59e0b" },
+  { label: "Other", value: 10, color: "#94a3b8" },
+];
+
 const TECH_DRAFT_KEY = "assesme_tech_draft_id";
 
 export default function Technologies() {
+  const [techChartData, setTechChartData] = useState(TECH_SECTOR_DUMMY);
+
+  useEffect(() => {
+    api.get("/onboarding/technologies/stats")
+      .then(({ data }) => {
+        if (data.total > 0 && data.by_category?.length) {
+          const mapped = data.by_category.map((d) => ({
+            label: d.category,
+            value: d.count,
+            color: TECH_CATEGORY_COLORS[d.category] || "#94a3b8",
+          }));
+          setTechChartData(mapped);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const [step, setStep] = useState(0);
   const [draftId, setDraftId] = useState(() => localStorage.getItem(TECH_DRAFT_KEY) || null);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
@@ -600,6 +641,34 @@ export default function Technologies() {
               <span className="font-semibold text-blue-700 dark:text-blue-400">All guidelines must be confirmed</span>{" "}
               in Step 5 of the application form. Incomplete or inaccurate applications will not proceed to investor access.
             </p>
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="py-24 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+          >
+            <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-slate-100 mb-3">
+              Technology Distribution by Sector
+            </h2>
+            <p className="text-neutral-500 dark:text-slate-400 text-sm">
+              Based on registered innovations across the platform
+            </p>
+          </motion.div>
+          <motion.div
+            className="bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-200 dark:border-slate-700 shadow-sm"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <PieChart data={techChartData} centerLabel="Tech" centerSub="Sectors" />
           </motion.div>
         </div>
       </section>

@@ -31,6 +31,7 @@ class InvestorPayload(BaseModel):
     email: EmailStr
     phone: str = Field(..., min_length=8, max_length=20)
     country: str = Field(default="India", min_length=2, max_length=100)
+    investor_type: Optional[str] = Field(None, max_length=100)
     investment_focus: TechCategory = TechCategory.OTHER
     investment_stage: InvestmentStage
     ticket_size: TicketSize
@@ -261,6 +262,23 @@ async def get_technology_stats():
         }
     except Exception as e:
         logger.error(f"Error fetching technology stats: {e}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to fetch statistics.")
+
+
+@router.get("/investors/stats")
+async def get_investor_stats():
+    try:
+        records = await InvestorRegistration.find_all().to_list()
+        type_counts: dict = {}
+        for r in records:
+            key = r.investor_type if r.investor_type else "Other"
+            type_counts[key] = type_counts.get(key, 0) + 1
+        return {
+            "total": len(records),
+            "by_type": [{"type": k, "count": v} for k, v in sorted(type_counts.items(), key=lambda x: -x[1])],
+        }
+    except Exception as e:
+        logger.error(f"Error fetching investor stats: {e}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to fetch statistics.")
 
 

@@ -2,6 +2,8 @@ import {
   createBrowserRouter,
   RouterProvider,
   Outlet,
+  Navigate,
+  useRouteError,
 } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Toaster } from "react-hot-toast";
@@ -47,6 +49,24 @@ function RootLayout() {
   );
 }
 
+function RouterErrorElement() {
+  const error = useRouteError();
+  if (error?.status === 404) {
+    return <Navigate to="/" replace />;
+  }
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-neutral-50">
+      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6 text-center">
+        <h1 className="text-xl font-semibold text-neutral-900 mb-2">Something went wrong</h1>
+        <p className="text-neutral-600 mb-6">
+          We're sorry, but something unexpected happened.
+        </p>
+        <a href="/" className="btn-primary inline-block">Go Home</a>
+      </div>
+    </div>
+  );
+}
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -61,6 +81,7 @@ const router = createBrowserRouter(
   [
     {
       element: <RootLayout />,
+      errorElement: <RouterErrorElement />,
       children: [
         { path: "/", element: <Home /> },
         { path: "/login", element: <Login /> },
@@ -85,6 +106,7 @@ const router = createBrowserRouter(
         { path: "/terms", element: <Terms /> },
         { path: "/pricing-policy", element: <PricingPolicy /> },
         { path: "/refund-policy", element: <RefundPolicy /> },
+        { path: "*", element: <Navigate to="/" replace /> },
         {
           path: "/profile",
           element: (
