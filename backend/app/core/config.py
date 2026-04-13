@@ -29,11 +29,18 @@ class Settings(BaseSettings):
     # MSG91 Email Service
     MSG91_API_KEY: Optional[str] = None
     MSG91_TEMPLATE_ID: Optional[str] = None
+    MSG91_TRANSACTIONAL_TEMPLATE_ID: Optional[str] = "assesme_transactional_generic_v1"
+    MSG91_INVESTOR_TEMPLATE_ID: Optional[str] = "Assesme_Investor_Submission_Copy_v1"
+    MSG91_TECHNOLOGY_TEMPLATE_ID: Optional[str] = "assesme_technology_submission_copy_v1"
+    MSG91_PROTOTYPE_TEMPLATE_ID: Optional[str] = "assesme_prototype_inquiry_copy_v1"
+    MSG91_CONTACT_USER_TEMPLATE_ID: Optional[str] = "assesme_contact_admin_alert_v1"
+    MSG91_PASSWORD_RESET_TEMPLATE_ID: Optional[str] = "assesme_password_reset_v1"
     MSG91_FROM_EMAIL: Optional[str] = None
     MSG91_DOMAIN: Optional[str] = None
 
     MSG91_WELCOME_TEMPLATE_ID: Optional[str] = None
     MSG91_REPORT_TEMPLATE_ID: Optional[str] = None
+    SUPPORT_EMAIL: Optional[str] = "support@assesme.com"
     # Razorpay
     RAZORPAY_KEY_ID: str
     RAZORPAY_KEY_SECRET: str

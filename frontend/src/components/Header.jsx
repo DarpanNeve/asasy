@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Zap, Crown, Rocket, Diamond, Sun, Moon } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
-import { api } from "../services/api";
+import { tokenAPI } from "../services/api";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -30,7 +30,7 @@ export default function Header() {
 
   const fetchUserBalance = async () => {
     try {
-      const response = await api.get("/tokens/balance");
+      const response = await tokenAPI.getBalance();
       setUserBalance(response.data);
     } catch (error) {
       console.error("Failed to fetch user balance:", error);
@@ -43,6 +43,7 @@ export default function Header() {
   };
 
   const navLinks = [
+    { to: "/", label: "Home" },
     { to: "/about", label: "About" },
     { to: "/experts", label: "Experts" },
     { to: "/investors", label: "Investors" },

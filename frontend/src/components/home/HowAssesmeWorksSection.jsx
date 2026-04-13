@@ -28,17 +28,26 @@ const STEPS = [
 
 export default function HowAssesmeWorksSection() {
   return (
-    <section className="py-20 bg-slate-50 dark:bg-slate-900">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.h2
-          className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-slate-100 text-center mb-14"
+    <section className="py-24 bg-gradient-to-b from-slate-100 to-white dark:from-slate-950 dark:to-slate-950 border-y border-slate-200 dark:border-slate-800">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          className="text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.55 }}
         >
-          How AI Works in Assesme
-        </motion.h2>
+          <div className="inline-flex items-center justify-center px-4 py-1.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 rounded-full text-sm font-medium mb-4">
+            <span className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full mr-2" />
+            How It Works
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-950 dark:text-slate-100 leading-tight">
+            How Assessment Works in{" "}
+            <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+              Assesme
+            </span>
+          </h2>
+        </motion.div>
 
         <div className="space-y-6">
           {STEPS.map((step, i) => {
@@ -47,7 +56,7 @@ export default function HowAssesmeWorksSection() {
 
             const card = (
               <motion.div
-                className="flex-1 bg-white dark:bg-slate-800 rounded-2xl px-7 py-6 shadow-sm border border-slate-100 dark:border-slate-700"
+                className="flex-1 bg-white dark:bg-slate-900 rounded-2xl px-7 py-6 shadow-md border border-slate-300 dark:border-slate-700"
                 initial={{ opacity: 0, x: isEven ? 24 : -24 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
@@ -56,7 +65,7 @@ export default function HowAssesmeWorksSection() {
                 <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-1">
                   {step.title}
                 </h3>
-                <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
+                <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">
                   {step.description}
                 </p>
               </motion.div>
@@ -82,7 +91,7 @@ export default function HowAssesmeWorksSection() {
             return (
               <div
                 key={i}
-                className={`flex items-center gap-5 ${isEven ? "flex-row-reverse" : "flex-row"}`}
+                className={`flex items-center gap-5 ${isEven ? "md:flex-row-reverse" : "md:flex-row"} flex-row`}
               >
                 {card}
                 {icon}

@@ -1,427 +1,266 @@
 import httpx
 import logging
+from enum import Enum
 from typing import Optional
 
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
-async def send_otp_email(email: str, otp: str, name: str) -> bool:
-    """Send OTP email using MSG91"""
+# ---------------------------------------------------------------------------
+# Internal helper: single MSG91 send call (template-only, no raw body/subject)
+# ---------------------------------------------------------------------------
+
+async def _msg91_send(template_id: str, to_email: str, to_name: str, variables: dict) -> bool:
+    """
+    Send a MSG91 template email.
+    MSG91 prohibits 'body' and 'subject' when 'template_id' is provided.
+    All dynamic content must be passed as 'variables'.
+    """
     try:
-        if settings.MSG91_API_KEY and settings.MSG91_TEMPLATE_ID:
-            return await send_msg91_email(email, otp, name)
-        else:
-            logger.warning("MSG91 not configured, using fallback email")
-            return await send_fallback_email(email, otp, name)
+        payload = {
+            "to": [{"email": to_email, "name": to_name}],
+            "from": {
+                "email": settings.MSG91_FROM_EMAIL or "noreply@assesme.com",
+                "name": "Assesme",
+            },
+            "domain": settings.MSG91_DOMAIN or "assesme.com",
+            "template_id": template_id,
+            "variables": variables,
+        }
+        headers = {
+            "Content-Type": "application/json",
+            "Authkey": settings.MSG91_API_KEY,
+        }
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "https://control.msg91.com/api/v5/email/send",
+                json=payload,
+                headers=headers,
+            )
+        if response.status_code == 200:
+            logger.info(f"MSG91 email sent to {to_email} via template '{template_id}'")
+            return True
+        logger.error(f"MSG91 error {response.status_code}: {response.text}")
+        return False
+    except Exception as e:
+        logger.error(f"MSG91 send error: {e}")
+        return False
+
+
+# ---------------------------------------------------------------------------
+# OTP email
+# ---------------------------------------------------------------------------
+
+async def send_otp_email(email: str, otp: str, name: str) -> bool:
+    """Send OTP email using MSG91 template."""
+    try:
+        if settings.MSG91_API_KEY:
+            if not settings.MSG91_TEMPLATE_ID:
+                logger.error("MSG91_TEMPLATE_ID is required for OTP emails")
+                return False
+            return await _msg91_send(
+                template_id=settings.MSG91_TEMPLATE_ID,
+                to_email=email,
+                to_name=name,
+                variables={"name": name, "otp": otp, "company_name": "Assesme"},
+            )
+        logger.warning("MSG91 not configured, using fallback")
+        return await _send_fallback_email(email, otp, name)
     except Exception as e:
         logger.error(f"Failed to send OTP email: {e}")
         return False
 
-async def send_msg91_email(email: str, otp: str, name: str) -> bool:
-    """Send email using MSG91 Email service"""
-    try:
-        url = "https://control.msg91.com/api/v5/email/send"
-        
-        headers = {
-            "Content-Type": "application/json",
-            "Authkey": settings.MSG91_API_KEY
-        }
 
-        payload = {
-            "to": [{
-                "email": email,
-                "name": name
-            }],
-            "from": {
-                "email": settings.MSG91_FROM_EMAIL,
-                "name": "Assesme AI"
-            },
-            "domain": settings.MSG91_DOMAIN,
-            "template_id": settings.MSG91_TEMPLATE_ID,
-            "variables": {
-                "company_name": "Assesme",
-                "otp": otp
-            },
-            "mail_type_id": 1
-        }
-        
-        async with httpx.AsyncClient() as client:
-            response = await client.post(url, json=payload, headers=headers)
-            
-        if response.status_code == 200:
-            logger.info(f"OTP email sent successfully to {email} via MSG91")
-            return True
-        else:
-            logger.error(f"MSG91 API error: {response.status_code} - {response.text}")
-            return False
-            
-    except Exception as e:
-        logger.error(f"MSG91 email error: {e}")
-        return False
+async def _send_fallback_email(email: str, otp: str, name: str) -> bool:
+    """Log OTP when MSG91 is not configured (dev/test only)."""
+    logger.info(f"FALLBACK EMAIL — OTP for {email} ({name}): {otp}")
+    return True
 
-async def send_fallback_email(email: str, otp: str, name: str) -> bool:
-    """Fallback email method when MSG91 is not available"""
-    try:
-        # For development/testing - just log the OTP
-        logger.info(f"FALLBACK EMAIL - OTP for {email} ({name}): {otp}")
-        
-        # In production, you could integrate with another email service here
-        # For now, we'll just return True to allow the flow to continue
-        return True
-        
-    except Exception as e:
-        logger.error(f"Fallback email error: {e}")
-        return False
+
+# ---------------------------------------------------------------------------
+# Welcome email
+# ---------------------------------------------------------------------------
 
 async def send_welcome_email(email: str, name: str) -> bool:
-    """Send welcome email after successful verification"""
+    """Send welcome email after successful verification."""
     try:
-        if not settings.MSG91_API_KEY or not settings.MSG91_TEMPLATE_ID:
-            logger.info(f"Welcome email would be sent to {email} ({name})")
+        if not settings.MSG91_API_KEY:
+            logger.info(f"Welcome email (fallback) to {email}")
             return True
-            
-        url = "https://control.msg91.com/api/v5/email/send"
-        
-        headers = {
-            "Content-Type": "application/json",
-            "Authkey": settings.MSG91_API_KEY
-        }
-        
-        email_subject = "Welcome to Asasy - Start Generating Reports!"
-        email_body = f"""
-        <html>
-          <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="text-align: center; margin-bottom: 30px;">
-              <h1 style="color: #2563eb; margin-bottom: 10px;">Welcome to Asasy!</h1>
-            </div>
-            
-            <div style="background-color: #f8fafc; padding: 30px; border-radius: 10px; margin-bottom: 30px;">
-              <h2 style="color: #1e293b; margin-bottom: 20px;">Hi {name},</h2>
-              <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
-                Your email has been successfully verified! You can now start using Asasy to generate AI-powered technology assessment reports.
-              </p>
-              
-              <div style="background-color: #dbeafe; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <h3 style="color: #1e40af; margin-bottom: 15px;">🎉 What's Next?</h3>
-                <ul style="color: #475569; margin: 0; padding-left: 20px;">
-                  <li style="margin-bottom: 8px;">Generate your first free technology assessment report</li>
-                  <li style="margin-bottom: 8px;">Explore our different report formats and plans</li>
-                  <li style="margin-bottom: 8px;">Connect with RTTP experts for personalized guidance</li>
-                </ul>
-              </div>
-              
-              <div style="text-align: center; margin: 30px 0;">
-                <a href="https://asasy.com/dashboard" style="background-color: #2563eb; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
-                  Start Generating Reports
-                </a>
-              </div>
-            </div>
-            
-            <div style="text-align: center; color: #64748b; font-size: 12px;">
-              <p>Best regards,<br>The Asasy Team</p>
-            </div>
-          </body>
-        </html>
-        """
-        
-        payload = {
-            "to": [
-                {
-                    "email": email,
-                    "name": name
-                }
-            ],
-            "from": {
-                "email": settings.MSG91_FROM_EMAIL or "noreply@asasy.com",
-                "name": "Asasy"
-            },
-            "domain": settings.MSG91_DOMAIN or "asasy.com",
-            "template_id": settings.MSG91_WELCOME_TEMPLATE_ID or settings.MSG91_TEMPLATE_ID,
-            "subject": email_subject,
-            "body": email_body,
-            "variables": {
-                "name": name
-            }
-        }
-        
-        async with httpx.AsyncClient() as client:
-            response = await client.post(url, json=payload, headers=headers)
-            
-        if response.status_code == 200:
-            logger.info(f"Welcome email sent successfully to {email}")
-            return True
-        else:
-            logger.error(f"MSG91 welcome email error: {response.status_code} - {response.text}")
+        template_id = settings.MSG91_WELCOME_TEMPLATE_ID or settings.MSG91_TEMPLATE_ID
+        if not template_id:
+            logger.error("MSG91_WELCOME_TEMPLATE_ID is required for welcome emails")
             return False
-            
+        return await _msg91_send(
+            template_id=template_id,
+            to_email=email,
+            to_name=name,
+            variables={"name": name, "company_name": "Assesme"},
+        )
     except Exception as e:
         logger.error(f"Welcome email error: {e}")
         return False
 
+
+# ---------------------------------------------------------------------------
+# Password reset email
+# ---------------------------------------------------------------------------
+
 async def send_password_reset_email(email: str, name: str, reset_token: str) -> bool:
-    """Send password reset email"""
+    """Send password reset email."""
     try:
         reset_link = f"{settings.FRONTEND_URL}/reset-password?token={reset_token}"
-        
-        if not settings.MSG91_API_KEY or not settings.MSG91_TEMPLATE_ID:
-            logger.info(f"Password reset email would be sent to {email} ({name}) with link: {reset_link}")
+        if not settings.MSG91_API_KEY:
+            logger.info(f"Password reset (fallback) to {email}: {reset_link}")
             return True
-            
-        url = "https://control.msg91.com/api/v5/email/send"
-        
-        headers = {
-            "Content-Type": "application/json",
-            "Authkey": settings.MSG91_API_KEY
-        }
-        
-        email_subject = "Password Reset Request for Asasy Account"
-        email_body = f"""
-        <html>
-          <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="text-align: center; margin-bottom: 30px;">
-              <h1 style="color: #2563eb; margin-bottom: 10px;">Password Reset</h1>
-            </div>
-            
-            <div style="background-color: #f8fafc; padding: 30px; border-radius: 10px; margin-bottom: 30px;">
-              <h2 style="color: #1e293b; margin-bottom: 20px;">Hi {name},</h2>
-              <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
-                You have requested to reset your password for your Asasy account. Please click the link below to reset your password:
-              </p>
-              
-              <div style="text-align: center; margin: 30px 0;">
-                <a href="{reset_link}" style="background-color: #2563eb; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
-                  Reset Your Password
-                </a>
-              </div>
-              
-              <p style="color: #475569; font-size: 14px; line-height: 1.6; margin-top: 20px;">
-                This link is valid for 1 hour. If you did not request a password reset, please ignore this email.
-              </p>
-            </div>
-            
-            <div style="text-align: center; color: #64748b; font-size: 12px;">
-              <p>Best regards,<br>The Asasy Team</p>
-            </div>
-          </body>
-        </html>
-        """
-        
-        payload = {
-            "to": [
-                {
-                    "email": email,
-                    "name": name
-                }
-            ],
-            "from": {
-                "email": settings.MSG91_FROM_EMAIL or "noreply@asasy.com",
-                "name": "Asasy"
-            },
-            "domain": settings.MSG91_DOMAIN or "asasy.com",
-            "template_id": settings.MSG91_PASSWORD_RESET_TEMPLATE_ID or settings.MSG91_TEMPLATE_ID,
-            "subject": email_subject,
-            "body": email_body,
-            "variables": {
-                "name": name,
-                "reset_link": reset_link
-            }
-        }
-        
-        async with httpx.AsyncClient() as client:
-            response = await client.post(url, json=payload, headers=headers)
-            
-        if response.status_code == 200:
-            logger.info(f"Password reset email sent successfully to {email}")
-            return True
-        else:
-            logger.error(f"MSG91 password reset email error: {response.status_code} - {response.text}")
+        template_id = settings.MSG91_PASSWORD_RESET_TEMPLATE_ID or settings.MSG91_TEMPLATE_ID
+        if not template_id:
+            logger.error("MSG91_PASSWORD_RESET_TEMPLATE_ID is required")
             return False
-            
+        return await _msg91_send(
+            template_id=template_id,
+            to_email=email,
+            to_name=name,
+            variables={"name": name, "reset_link": reset_link, "company_name": "Assesme"},
+        )
     except Exception as e:
         logger.error(f"Password reset email error: {e}")
         return False
 
-async def _send_transactional_email(email: str, name: str, subject: str, body: str) -> bool:
-    """Generic transactional email sender"""
-    try:
-        if not settings.MSG91_API_KEY or not settings.MSG91_TEMPLATE_ID:
-            logger.info(f"Transactional email (fallback) to {email}: {subject}")
-            return True
 
-        url = "https://control.msg91.com/api/v5/email/send"
-        headers = {"Content-Type": "application/json", "Authkey": settings.MSG91_API_KEY}
-        payload = {
-            "to": [{"email": email, "name": name}],
-            "from": {"email": settings.MSG91_FROM_EMAIL or "noreply@assesme.com", "name": "Assesme"},
-            "domain": settings.MSG91_DOMAIN or "assesme.com",
-            "template_id": settings.MSG91_TEMPLATE_ID,
-            "subject": subject,
-            "body": body,
-            "variables": {"name": name},
-        }
-        async with httpx.AsyncClient() as client:
-            response = await client.post(url, json=payload, headers=headers)
-        if response.status_code == 200:
-            logger.info(f"Email sent to {email}: {subject}")
-            return True
-        logger.error(f"Email error {response.status_code}: {response.text}")
+# ---------------------------------------------------------------------------
+# Helpers for form field normalisation
+# ---------------------------------------------------------------------------
+
+def _normalize_form_value(value) -> str:
+    if value is None:
+        return "Not provided"
+    if isinstance(value, Enum):
+        return str(value.value)
+    if isinstance(value, bool):
+        return "Yes" if value else "No"
+    if isinstance(value, list):
+        return ", ".join(_normalize_form_value(i) for i in value) if value else "Not provided"
+    s = str(value).strip()
+    return s if s else "Not provided"
+
+
+def _flatten_variables(data: dict) -> dict:
+    """Return a flat dict of str→str suitable for MSG91 variables."""
+    return {k: _normalize_form_value(v) for k, v in data.items()}
+
+
+# ---------------------------------------------------------------------------
+# Investor confirmation
+# ---------------------------------------------------------------------------
+
+async def send_investor_confirmation_email(email: str, name: str, submission_data: dict) -> bool:
+    if not settings.MSG91_API_KEY:
+        logger.info(f"Investor confirmation (fallback) to {email}")
+        return True
+    template_id = settings.MSG91_INVESTOR_TEMPLATE_ID
+    if not template_id:
+        logger.error("MSG91_INVESTOR_TEMPLATE_ID is required")
         return False
-    except Exception as e:
-        logger.error(f"Email send error: {e}")
+    variables = {"name": name, "company_name": "Assesme"}
+    variables.update(_flatten_variables(submission_data))
+    return await _msg91_send(template_id=template_id, to_email=email, to_name=name, variables=variables)
+
+
+# ---------------------------------------------------------------------------
+# Technology confirmation
+# ---------------------------------------------------------------------------
+
+async def send_technology_confirmation_email(email: str, name: str, tech_title: str, submission_data: dict) -> bool:
+    if not settings.MSG91_API_KEY:
+        logger.info(f"Technology confirmation (fallback) to {email}")
+        return True
+    template_id = settings.MSG91_TECHNOLOGY_TEMPLATE_ID
+    if not template_id:
+        logger.error("MSG91_TECHNOLOGY_TEMPLATE_ID is required")
         return False
+    variables = {"name": name, "technology_title": tech_title, "company_name": "Assesme"}
+    variables.update(_flatten_variables(submission_data))
+    return await _msg91_send(template_id=template_id, to_email=email, to_name=name, variables=variables)
 
 
-async def send_investor_confirmation_email(email: str, name: str) -> bool:
-    subject = "Investor Registration Confirmed — Assesme"
-    body = f"""
-    <html><body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-      <div style="background:#f8fafc;padding:30px;border-radius:10px;">
-        <h2 style="color:#1e293b;">Hi {name},</h2>
-        <p style="color:#475569;font-size:16px;line-height:1.6;">
-          Thank you for registering as an investor on Assesme. Your profile has been received and our team will review it shortly.
-        </p>
-        <p style="color:#475569;font-size:16px;line-height:1.6;">
-          We will connect you with relevant technology opportunities that match your investment focus.
-        </p>
-        <div style="margin:24px 0;">
-          <a href="https://assesme.com" style="background:#2563eb;color:white;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;">Visit Assesme</a>
-        </div>
-        <p style="color:#64748b;font-size:13px;">Best regards,<br>The Assesme Team<br>support@assesme.com</p>
-      </div>
-    </body></html>
-    """
-    return await _send_transactional_email(email, name, subject, body)
+# ---------------------------------------------------------------------------
+# Prototype confirmation
+# ---------------------------------------------------------------------------
+
+async def send_prototype_confirmation_email(email: str, name: str, submission_data: dict) -> bool:
+    if not settings.MSG91_API_KEY:
+        logger.info(f"Prototype confirmation (fallback) to {email}")
+        return True
+    template_id = settings.MSG91_PROTOTYPE_TEMPLATE_ID
+    if not template_id:
+        logger.error("MSG91_PROTOTYPE_TEMPLATE_ID is required")
+        return False
+    variables = {"name": name, "company_name": "Assesme"}
+    variables.update(_flatten_variables(submission_data))
+    return await _msg91_send(template_id=template_id, to_email=email, to_name=name, variables=variables)
 
 
-async def send_technology_confirmation_email(email: str, name: str, tech_title: str) -> bool:
-    subject = f"Technology Submission Received — {tech_title}"
-    body = f"""
-    <html><body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-      <div style="background:#f8fafc;padding:30px;border-radius:10px;">
-        <h2 style="color:#1e293b;">Hi {name},</h2>
-        <p style="color:#475569;font-size:16px;line-height:1.6;">
-          Your technology submission <strong>"{tech_title}"</strong> has been successfully received by Assesme.
-        </p>
-        <p style="color:#475569;font-size:16px;line-height:1.6;">
-          Our team will review your submission and reach out with next steps for commercialization, licensing, or investor matching.
-        </p>
-        <div style="margin:24px 0;">
-          <a href="https://assesme.com" style="background:#2563eb;color:white;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;">Visit Assesme</a>
-        </div>
-        <p style="color:#64748b;font-size:13px;">Best regards,<br>The Assesme Team<br>support@assesme.com</p>
-      </div>
-    </body></html>
-    """
-    return await _send_transactional_email(email, name, subject, body)
+# ---------------------------------------------------------------------------
+# Contact confirmation
+# ---------------------------------------------------------------------------
+
+async def send_contact_confirmation_email(
+    email: str,
+    name: str,
+    reason: Optional[str],
+    phone: str,
+    message: str,
+) -> bool:
+    if not settings.MSG91_API_KEY:
+        logger.info(f"Contact confirmation (fallback) to {email}")
+        return True
+    template_id = settings.MSG91_CONTACT_USER_TEMPLATE_ID
+    if not template_id:
+        logger.error("MSG91_CONTACT_USER_TEMPLATE_ID is required")
+        return False
+    return await _msg91_send(
+        template_id=template_id,
+        to_email=email,
+        to_name=name,
+        variables={
+            "name": name,
+            "email": email,
+            "phone": phone or "Not provided",
+            "reason": reason or "General inquiry",
+            "message": message,
+            "support_email": settings.SUPPORT_EMAIL or "support@assesme.com",
+            "company_name": "Assesme",
+        },
+    )
 
 
-async def send_prototype_confirmation_email(email: str, name: str) -> bool:
-    subject = "Prototype Inquiry Received — Assesme"
-    body = f"""
-    <html><body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-      <div style="background:#f8fafc;padding:30px;border-radius:10px;">
-        <h2 style="color:#1e293b;">Hi {name},</h2>
-        <p style="color:#475569;font-size:16px;line-height:1.6;">
-          Thank you for submitting your prototyping inquiry to Assesme. We have received your request and our prototyping team will review the details.
-        </p>
-        <p style="color:#475569;font-size:16px;line-height:1.6;">
-          You can expect to hear from us within <strong>48 hours</strong> with a detailed response and next steps.
-        </p>
-        <div style="margin:24px 0;">
-          <a href="https://assesme.com" style="background:#2563eb;color:white;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;">Visit Assesme</a>
-        </div>
-        <p style="color:#64748b;font-size:13px;">Best regards,<br>The Assesme Team<br>support@assesme.com</p>
-      </div>
-    </body></html>
-    """
-    return await _send_transactional_email(email, name, subject, body)
-
+# ---------------------------------------------------------------------------
+# Report ready
+# ---------------------------------------------------------------------------
 
 async def send_report_ready_email(email: str, name: str, report_title: str, report_id: str) -> bool:
-    """Send notification when report is ready"""
+    """Send notification when a report is ready."""
     try:
-        if not settings.MSG91_API_KEY or not settings.MSG91_TEMPLATE_ID:
-            logger.info(f"Report ready email would be sent to {email} for report {report_id}")
+        if not settings.MSG91_API_KEY:
+            logger.info(f"Report ready (fallback) to {email} for report {report_id}")
             return True
-            
-        url = "https://control.msg91.com/api/v5/email/send"
-        
-        headers = {
-            "Content-Type": "application/json",
-            "Authkey": settings.MSG91_API_KEY
-        }
-        
-        email_subject = f"Your Report is Ready - {report_title}"
-        email_body = f"""
-        <html>
-          <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="text-align: center; margin-bottom: 30px;">
-              <h1 style="color: #2563eb; margin-bottom: 10px;">Report Ready!</h1>
-            </div>
-            
-            <div style="background-color: #f8fafc; padding: 30px; border-radius: 10px; margin-bottom: 30px;">
-              <h2 style="color: #1e293b; margin-bottom: 20px;">Hi {name},</h2>
-              <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
-                Great news! Your technology assessment report "<strong>{report_title}</strong>" has been generated and is ready for download.
-              </p>
-              
-              <div style="background-color: #dcfce7; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <h3 style="color: #166534; margin-bottom: 15px;">📊 Your Report Includes:</h3>
-                <ul style="color: #475569; margin: 0; padding-left: 20px;">
-                  <li style="margin-bottom: 8px;">Comprehensive technology analysis</li>
-                  <li style="margin-bottom: 8px;">Market opportunity assessment</li>
-                  <li style="margin-bottom: 8px;">IP landscape overview</li>
-                  <li style="margin-bottom: 8px;">Commercialization recommendations</li>
-                </ul>
-              </div>
-              
-              <div style="text-align: center; margin: 30px 0;">
-                <a href="https://asasy.com/reports" style="background-color: #2563eb; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
-                  View & Download Report
-                </a>
-              </div>
-            </div>
-            
-            <div style="text-align: center; color: #64748b; font-size: 12px;">
-              <p>Best regards,<br>The Asasy Team</p>
-            </div>
-          </body>
-        </html>
-        """
-        
-        payload = {
-            "to": [
-                {
-                    "email": email,
-                    "name": name
-                }
-            ],
-            "from": {
-                "email": settings.MSG91_FROM_EMAIL or "noreply@asasy.com",
-                "name": "Asasy"
-            },
-            "domain": settings.MSG91_DOMAIN or "asasy.com",
-            "template_id": settings.MSG91_REPORT_TEMPLATE_ID or settings.MSG91_TEMPLATE_ID,
-            "subject": email_subject,
-            "body": email_body,
-            "variables": {
+        template_id = settings.MSG91_REPORT_TEMPLATE_ID or settings.MSG91_TEMPLATE_ID
+        if not template_id:
+            logger.error("MSG91_REPORT_TEMPLATE_ID is required")
+            return False
+        return await _msg91_send(
+            template_id=template_id,
+            to_email=email,
+            to_name=name,
+            variables={
                 "name": name,
                 "report_title": report_title,
-                "report_id": report_id
-            }
-        }
-        
-        async with httpx.AsyncClient() as client:
-            response = await client.post(url, json=payload, headers=headers)
-            
-        if response.status_code == 200:
-            logger.info(f"Report ready email sent successfully to {email}")
-            return True
-        else:
-            logger.error(f"MSG91 report ready email error: {response.status_code} - {response.text}")
-            return False
-            
+                "report_id": report_id,
+                "company_name": "Assesme",
+            },
+        )
     except Exception as e:
         logger.error(f"Report ready email error: {e}")
         return False

@@ -25,6 +25,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { contactAPI } from "../services/api";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
@@ -255,15 +256,9 @@ export default function Experts() {
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     try {
-      const response = await fetch("https://backend.assesme.com/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) throw new Error("Failed to submit");
-      const result = await response.json();
+      const response = await contactAPI.submit(data);
       toast.success(
-        result.message || "Thank you! We will get back to you soon.",
+        response.data.message || "Thank you! We will get back to you soon.",
       );
       reset();
     } catch {

@@ -7,6 +7,9 @@ import logging
 from app.core.rate_limiter import limiter
 from app.models.user import User
 from app.core.security import require_admin
+from app.services.email_service import (
+    send_contact_confirmation_email,
+)
 from fastapi import Depends
 
 logger = logging.getLogger(__name__)
@@ -48,11 +51,19 @@ async def submit_contact_form(request: Request, submission: ContactSubmission):
         
         logger.info(f"Contact form submitted by {submission.email}")
         
-        # In production, you might want to:
-        # 1. Send notification email to admin
-        # 2. Send confirmation email to user
-        # 3. Create a ticket in your support system
-        
+        try:
+            user_sent = await send_contact_confirmation_email(
+                email=submission.email,
+                name=submission.name,
+                reason=submission.reason,
+                phone=submission.phone,
+                message=submission.message,
+            )
+            if not user_sent:
+                logger.warning(f"Contact user confirmation email was not sent for {submission.email}")
+        except Exception as email_error:
+            logger.error(f"Contact email dispatch error: {email_error}")
+
         return {
             "message": "Thank you for your inquiry! We will get back to you soon.",
             "submission_id": submission_data["id"]

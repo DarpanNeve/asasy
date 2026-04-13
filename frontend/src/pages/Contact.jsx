@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { contactAPI } from "../services/api";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Target,
@@ -66,24 +67,15 @@ const ContactPage = () => {
     setSubmitStatus(null);
 
     try {
-      const response = await fetch("https://backend.assesme.com/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          reason: formData.reason,
-          name: formData.name,
-          phone: formData.phone,
-          email: formData.email,
-          message: formData.message,
-        }),
+      const response = await contactAPI.submit({
+        reason: formData.reason,
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        message: formData.message,
       });
 
-      if (!response.ok) {
-        const err = await response.text();
-        throw new Error(err || "Failed to submit contact form");
-      }
-
-      const result = await response.json();
+      const result = response.data;
       setSubmitStatus("success");
       toast.success(
         result.message ||

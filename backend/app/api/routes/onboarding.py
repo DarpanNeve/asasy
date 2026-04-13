@@ -156,7 +156,11 @@ async def register_investor(request: Request, payload: InvestorPayload):
     try:
         record = InvestorRegistration(**payload.model_dump())
         await record.insert()
-        await send_investor_confirmation_email(payload.email, payload.full_name)
+        await send_investor_confirmation_email(
+            payload.email,
+            payload.full_name,
+            payload.model_dump(),
+        )
         logger.info(f"Investor registered: {payload.email}")
         return {"message": "Thank you for registering. We'll be in touch shortly."}
     except Exception as e:
@@ -170,7 +174,12 @@ async def submit_technology(request: Request, payload: TechnologyPayload):
     try:
         record = TechnologySubmission(**payload.model_dump())
         await record.insert()
-        await send_technology_confirmation_email(payload.email, payload.inventor_name, payload.technology_title)
+        await send_technology_confirmation_email(
+            payload.email,
+            payload.inventor_name,
+            payload.technology_title,
+            payload.model_dump(),
+        )
         logger.info(f"Technology submitted: {payload.technology_title} by {payload.email}")
         return {"message": "Your technology has been submitted. Our team will review and contact you soon."}
     except Exception as e:
@@ -184,7 +193,11 @@ async def submit_prototype_inquiry(request: Request, payload: PrototypePayload):
     try:
         record = PrototypeInquiry(**payload.model_dump())
         await record.insert()
-        await send_prototype_confirmation_email(payload.email, payload.full_name)
+        await send_prototype_confirmation_email(
+            payload.email,
+            payload.full_name,
+            payload.model_dump(),
+        )
         logger.info(f"Prototype inquiry submitted by {payload.email}")
         return {"message": "Your inquiry has been received. Our prototyping team will reach out within 48 hours."}
     except Exception as e:
@@ -219,6 +232,26 @@ async def get_investors(admin: User = Depends(require_admin)):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to fetch investor registrations.")
 
 
+@router.get("/investors/drafts")
+async def get_investor_drafts(admin: User = Depends(require_admin)):
+    try:
+        records = await InvestorDraft.find_all().sort(-InvestorDraft.updated_at).to_list()
+        return [
+            {
+                "id": str(r.id),
+                "email": r.email,
+                "step_reached": r.step_reached,
+                "data": r.data,
+                "created_at": r.created_at.isoformat(),
+                "updated_at": r.updated_at.isoformat(),
+            }
+            for r in records
+        ]
+    except Exception as e:
+        logger.error(f"Error fetching investor drafts: {e}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to fetch investor drafts.")
+
+
 @router.get("/technologies")
 async def get_technologies(admin: User = Depends(require_admin)):
     try:
@@ -246,6 +279,26 @@ async def get_technologies(admin: User = Depends(require_admin)):
     except Exception as e:
         logger.error(f"Error fetching technologies: {e}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to fetch technology submissions.")
+
+
+@router.get("/technologies/drafts")
+async def get_technology_drafts(admin: User = Depends(require_admin)):
+    try:
+        records = await TechnologyDraft.find_all().sort(-TechnologyDraft.updated_at).to_list()
+        return [
+            {
+                "id": str(r.id),
+                "email": r.email,
+                "step_reached": r.step_reached,
+                "data": r.data,
+                "created_at": r.created_at.isoformat(),
+                "updated_at": r.updated_at.isoformat(),
+            }
+            for r in records
+        ]
+    except Exception as e:
+        logger.error(f"Error fetching technology drafts: {e}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to fetch technology drafts.")
 
 
 @router.get("/technologies/stats")

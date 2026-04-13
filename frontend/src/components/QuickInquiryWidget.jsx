@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { contactAPI } from "../services/api";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, Phone, Mail, X, Send, CheckCircle } from "lucide-react";
 
@@ -57,18 +58,13 @@ export default function QuickInquiryWidget() {
     if (!validate()) return;
     setIsSubmitting(true);
     try {
-      const res = await fetch("https://backend.assesme.com/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          reason: form.reason || "global_market_access",
-          name: form.name,
-          phone: form.phone,
-          email: form.email,
-          message: form.message,
-        }),
+      await contactAPI.submit({
+        reason: form.reason || "global_market_access",
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        message: form.message,
       });
-      if (!res.ok) throw new Error("Failed");
       setSubmitted(true);
     } catch {
       setErrors((p) => ({

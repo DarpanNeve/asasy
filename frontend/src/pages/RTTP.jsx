@@ -30,6 +30,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { contactAPI } from "../services/api";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { useAuth } from "../contexts/AuthContext";
@@ -229,24 +230,15 @@ export default function RTTP() {
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     try {
-      const response = await fetch(`https://backend.assesme.com/contact`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: data.name,
-          phone: data.phone,
-          email: data.email,
-          message: data.message,
-        }),
+      const response = await contactAPI.submit({
+        name: data.name,
+        phone: data.phone,
+        email: data.email,
+        message: data.message,
       });
 
-      if (!response.ok) throw new Error("Failed to submit contact form");
-
-      const result = await response.json();
       toast.success(
-        result.message ||
+        response.data.message ||
           "Thank you for your inquiry! We will get back to you soon.",
       );
       reset();

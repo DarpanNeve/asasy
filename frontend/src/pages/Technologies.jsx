@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   CheckCircle,
@@ -107,12 +107,22 @@ const TECH_STEPS = [
   { label: "Eligibility", short: "5" },
 ];
 
-const TECH_STEP_DATA = (step, form, selectedDomains) => {
+const hasDraftableValues = (value) => {
+  if (value == null) return false;
+  if (typeof value === "string") return value.trim().length > 0;
+  if (typeof value === "boolean") return value;
+  if (Array.isArray(value)) return value.some(hasDraftableValues);
+  if (typeof value === "object") return Object.values(value).some(hasDraftableValues);
+  return true;
+};
+
+const TECH_STEP_DATA = (step, form, selectedDomains, eligibility, declaration) => {
   if (step === 0) return { inventor_name: form.inventor_name, co_founder: form.co_founder, email: form.email, phone: form.phone, linkedin: form.linkedin, organization: form.organization, website: form.website };
   if (step === 1) return { technology_title: form.technology_title, tech_type: form.tech_type, domains: selectedDomains, description: form.description, problem_solved: form.problem_solved, unique_value: form.unique_value };
   if (step === 2) return { current_stage: form.current_stage, trl_level: form.trl_level, working_prototype: form.working_prototype, tested_with_users: form.tested_with_users, pilot_done: form.pilot_done, pilot_details: form.pilot_details, revenue_status: form.revenue_status, business_model_defined: form.business_model_defined, target_market_size: form.target_market_size };
   if (step === 3) return { patent_filed: form.patent_filed, ip_status: form.ip_status, proprietary_tech: form.proprietary_tech, competitive_advantage: form.competitive_advantage, funding_required: form.funding_required, equity_offered: form.equity_offered, use_of_funds_desc: form.use_of_funds_desc, seeking: form.seeking, full_time_founder: form.full_time_founder, experience_level: form.experience_level };
-  return {};
+  if (step === 4) return { eligibility, declaration };
+  return { ...form, domains: selectedDomains, eligibility, declaration };
 };
 
 const TECH_CATEGORY_COLORS = {
@@ -207,6 +217,7 @@ export default function Technologies() {
   ]);
   const [declaration, setDeclaration] = useState(false);
   const [errors, setErrors] = useState({});
+  const lastDraftPayloadRef = useRef("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -276,7 +287,15 @@ export default function Technologies() {
   };
 
   const saveDraft = async (currentStep) => {
-    const stepData = TECH_STEP_DATA(currentStep, form, selectedDomains);
+    const stepData = TECH_STEP_DATA(currentStep, form, selectedDomains, eligibility, declaration);
+    if (!hasDraftableValues(stepData)) return;
+
+    const payloadSignature = JSON.stringify({
+      step_reached: currentStep + 1,
+      data: stepData,
+    });
+    if (payloadSignature === lastDraftPayloadRef.current) return;
+
     try {
       setIsSavingDraft(true);
       if (!draftId) {
@@ -287,17 +306,27 @@ export default function Technologies() {
         });
         setDraftId(res.data.draft_id);
         localStorage.setItem(TECH_DRAFT_KEY, res.data.draft_id);
+        lastDraftPayloadRef.current = payloadSignature;
       } else {
         await api.patch(`/onboarding/technologies/draft/${draftId}`, {
           step_reached: currentStep + 1,
           data: stepData,
         });
+        lastDraftPayloadRef.current = payloadSignature;
       }
     } catch {
     } finally {
       setIsSavingDraft(false);
     }
   };
+
+  useEffect(() => {
+    if (submitted) return;
+    const timer = setTimeout(() => {
+      saveDraft(step);
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, [form, selectedDomains, eligibility, declaration, step, draftId, submitted]);
 
   const handleNext = async () => {
     if (!validateStep(step)) return;

@@ -4,6 +4,7 @@ import { api } from "../../../services/api";
 
 export default function InvestorsTab() {
   const [investors, setInvestors] = useState([]);
+  const [drafts, setDrafts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -13,8 +14,12 @@ export default function InvestorsTab() {
   const fetchInvestors = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/onboarding/investors");
-      setInvestors(response.data);
+      const [investorsResponse, draftsResponse] = await Promise.all([
+        api.get("/onboarding/investors"),
+        api.get("/onboarding/investors/drafts"),
+      ]);
+      setInvestors(investorsResponse.data);
+      setDrafts(draftsResponse.data);
     } catch (error) {
       console.error("Failed to fetch investors:", error);
     } finally {
@@ -35,6 +40,25 @@ export default function InvestorsTab() {
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-neutral-900">Investor Registrations</h2>
         <p className="text-neutral-600 mt-1">{investors.length} total registrations</p>
+      </div>
+      <div className="bg-white rounded-xl shadow-sm border border-neutral-200 p-5">
+        <h3 className="text-lg font-semibold text-neutral-900 mb-1">Partial Saves (Drafts)</h3>
+        <p className="text-sm text-neutral-600 mb-4">{drafts.length} draft entries</p>
+        {drafts.length === 0 ? (
+          <p className="text-sm text-slate-600">No investor drafts yet.</p>
+        ) : (
+          <div className="space-y-3">
+            {drafts.slice(0, 20).map((draft) => (
+              <div key={draft.id} className="rounded-lg border border-slate-200 p-3">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                  <p className="text-sm font-medium text-slate-800">{draft.email || "No email yet"}</p>
+                  <p className="text-xs text-slate-500">Updated: {new Date(draft.updated_at).toLocaleString()}</p>
+                </div>
+                <p className="text-xs text-slate-600 mt-1">Step reached: {draft.step_reached} / 5</p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
       {investors.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-neutral-200">

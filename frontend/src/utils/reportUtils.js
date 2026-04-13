@@ -34,15 +34,9 @@ export const createReportPdf = (data, layoutConfig = {}) => {
 
 export const generatePdfFromReport = async (reportId) => {
   try {
-    // Fetch report data from backend
-    const response = await fetch(`/api/reports/${reportId}`);
-    if (!response.ok) throw new Error('Failed to fetch report');
-    
-    const reportData = await response.json();
-    
-    // Create PDF using the original report structure
-    const pdfData = createReportPdf(reportData);
-    
+    const { reportAPI } = await import('../services/api');
+    const response = await reportAPI.getReportById(reportId);
+    const pdfData = createReportPdf(response.data);
     return pdfData;
   } catch (error) {
     console.error('Error generating PDF:', error);

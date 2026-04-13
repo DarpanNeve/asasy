@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import HowItWorksSection from "../components/home/HowItWorksSection";
 import PieChart from "../components/PieChart";
 import { motion } from "framer-motion";
@@ -182,12 +182,22 @@ const STEPS = [
   { label: "Eligibility", short: "5" },
 ];
 
-const INVESTOR_STEP_DATA = (step, form, selectedSectors, beyondFunding) => {
+const hasDraftableValues = (value) => {
+  if (value == null) return false;
+  if (typeof value === "string") return value.trim().length > 0;
+  if (typeof value === "boolean") return value;
+  if (Array.isArray(value)) return value.some(hasDraftableValues);
+  if (typeof value === "object") return Object.values(value).some(hasDraftableValues);
+  return true;
+};
+
+const INVESTOR_STEP_DATA = (step, form, selectedSectors, beyondFunding, eligibility, declaration) => {
   if (step === 0) return { full_name: form.full_name, organization: form.organization, investor_type: form.investor_type, email: form.email, phone: form.phone, linkedin: form.linkedin };
   if (step === 1) return { investment_stage: form.investment_stage, ticket_size: form.ticket_size, sectors: selectedSectors, geography_preference: form.geography_preference };
   if (step === 2) return { num_investments: form.num_investments, years_experience: form.years_experience, past_investments_desc: form.past_investments_desc };
   if (step === 3) return { beyond_funding: beyondFunding, roi_horizon: form.roi_horizon, areas_of_interest: form.areas_of_interest };
-  return {};
+  if (step === 4) return { eligibility, declaration };
+  return { ...form, sectors: selectedSectors, beyond_funding: beyondFunding, eligibility, declaration };
 };
 
 const INVESTOR_DRAFT_KEY = "assesme_investor_draft_id";
@@ -238,6 +248,7 @@ export default function Investors() {
   const [eligibility, setEligibility] = useState([false, false, false, false, false]);
   const [declaration, setDeclaration] = useState(false);
   const [errors, setErrors] = useState({});
+  const lastDraftPayloadRef = useRef("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -290,7 +301,22 @@ export default function Investors() {
   };
 
   const saveDraft = async (currentStep) => {
-    const stepData = INVESTOR_STEP_DATA(currentStep, form, selectedSectors, beyondFunding);
+    const stepData = INVESTOR_STEP_DATA(
+      currentStep,
+      form,
+      selectedSectors,
+      beyondFunding,
+      eligibility,
+      declaration,
+    );
+    if (!hasDraftableValues(stepData)) return;
+
+    const payloadSignature = JSON.stringify({
+      step_reached: currentStep + 1,
+      data: stepData,
+    });
+    if (payloadSignature === lastDraftPayloadRef.current) return;
+
     try {
       setIsSavingDraft(true);
       if (!draftId) {
@@ -301,17 +327,27 @@ export default function Investors() {
         });
         setDraftId(res.data.draft_id);
         localStorage.setItem(INVESTOR_DRAFT_KEY, res.data.draft_id);
+        lastDraftPayloadRef.current = payloadSignature;
       } else {
         await api.patch(`/onboarding/investors/draft/${draftId}`, {
           step_reached: currentStep + 1,
           data: stepData,
         });
+        lastDraftPayloadRef.current = payloadSignature;
       }
     } catch {
     } finally {
       setIsSavingDraft(false);
     }
   };
+
+  useEffect(() => {
+    if (submitted) return;
+    const timer = setTimeout(() => {
+      saveDraft(step);
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, [form, selectedSectors, beyondFunding, eligibility, declaration, step, draftId, submitted]);
 
   const handleNext = async () => {
     if (!validateStep(step)) return;

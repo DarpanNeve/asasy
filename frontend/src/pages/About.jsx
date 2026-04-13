@@ -3,28 +3,34 @@ import { motion } from "framer-motion";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import {
-  CheckCircle,
-  Zap,
-  Shield,
-  Globe,
-  Users,
-  TrendingUp,
-  Award,
-  Clock,
-  Trophy,
-  BookOpen,
   Sparkles,
-  Target,
-  Lightbulb,
-  FileSearch,
-  Map,
+  CheckCircle,
+  Gauge,
+  Timer,
+  Users,
+  Briefcase,
+  FlaskConical,
+  Cpu,
+  ShieldCheck,
+  Network,
+  Handshake,
+  LineChart,
   ArrowRight,
-  Star,
+  Target,
+  Rocket,
+  BarChart3,
+  FileSearch,
+  Banknote,
+  UserCircle2,
+  GraduationCap,
+  Building2,
+  Microscope,
+  Landmark,
 } from "lucide-react";
 
 const stagger = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+  visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
 };
 
 const fadeUp = {
@@ -36,123 +42,139 @@ const fadeUp = {
   },
 };
 
-const MISSION_PILLARS = [
+const QUICK_STATS = [
+  { icon: Gauge, value: "92%", label: "Analysis Accuracy" },
+  { icon: Timer, value: "<60 Seconds", label: "Assessment Time" },
+  { icon: Users, value: "1000+", label: "Innovators & Technologies Evaluated" },
+  { icon: Briefcase, value: "Multi-Domain", label: "Expertise Across Industries" },
+];
+
+const PROBLEM_POINTS = [
+  "No structured validation",
+  "No clear commercialization path",
+  "No access to the right investors",
+  "No working prototype",
+];
+
+const ECOSYSTEM_STEPS = [
   {
     icon: FileSearch,
     color: "bg-blue-600",
-    title: "Evidence-Based Validation",
-    description:
-      "Every report is grounded in WIPO, EPO, NIH, and OECD standards — not guesswork.",
+    title: "Technology Assessment",
+    subtitle: "Evaluate before you invest time or money.",
+    points: [
+      "Patentability & IP potential",
+      "TRL (Technology Readiness Level)",
+      "Market viability",
+      "Commercialization pathways",
+    ],
+    outcome: "Clear feasibility + direction",
   },
   {
-    icon: Shield,
+    icon: FlaskConical,
     color: "bg-teal-600",
-    title: "IP-First Thinking",
-    description:
-      "We treat your intellectual property as the core asset and structure every assessment accordingly.",
+    title: "Prototyping & Development",
+    subtitle: "Turn concepts into working systems.",
+    points: [
+      "POC / Prototype / MVP",
+      "IoT, AI, Software, Medical solutions",
+      "Industrial-ready development",
+    ],
+    outcome: "Tangible, testable product",
   },
   {
-    icon: Globe,
+    icon: ShieldCheck,
     color: "bg-emerald-600",
-    title: "Global Commercialization",
-    description:
-      "From Indian filings to international licensing, we give you globally relevant insights.",
+    title: "Technology Onboarding",
+    subtitle: "Only qualified innovations move forward.",
+    points: [
+      "Minimum POC / MVP validation",
+      "Problem-solution clarity",
+      "Market readiness check",
+    ],
+    outcome: "High-quality innovation pipeline",
   },
   {
-    icon: Target,
-    color: "bg-orange-500",
-    title: "Investor-Ready Output",
-    description:
-      "Every report is structured to be readable by VCs, government bodies, and industry partners.",
-  },
-  {
-    icon: Users,
+    icon: Handshake,
     color: "bg-blue-700",
-    title: "Ecosystem for All",
-    description:
-      "Startups, academia, R&D labs, investors, and incubators — one platform for the whole innovation stack.",
+    title: "Investor Connect",
+    subtitle: "Access to verified, serious investors.",
+    points: [
+      "Investor profiling & filtration",
+      "Sector & stage alignment",
+      "Strategic + financial matching",
+    ],
+    outcome: "Relevant, high-quality deal flow",
   },
   {
-    icon: Lightbulb,
+    icon: Network,
     color: "bg-teal-700",
-    title: "From Idea to Impact",
-    description:
-      "We walk with you from early validation through commercialization pathways and funding readiness.",
-  },
-];
-
-const STATS = [
-  { value: "9,840+", label: "Innovators Trusted Us" },
-  { value: "92%", label: "Report Accuracy" },
-  { value: "30+", label: "Assessment Parameters" },
-  { value: "5+", label: "Countries Served" },
-];
-
-const FOUNDER_HIGHLIGHTS = [
-  {
-    icon: Award,
-    color: "bg-amber-500",
-    title: "Young & Innovative Scientist Award",
-    description:
-      "Recipient of prestigious DRDO award in 2022, conferred by Defence Minister Shri. Rajnath Singh",
-  },
-  {
-    icon: Trophy,
-    color: "bg-blue-600",
-    title: "100+ IP Rights",
-    description:
-      "Holder of over 100 intellectual property rights, including 80+ granted patents",
-  },
-  {
-    icon: BookOpen,
-    color: "bg-teal-600",
-    title: "50+ Seminars",
-    description:
-      "Delivered over 50 seminars and guest lectures at multiple universities",
-  },
-  {
-    icon: Users,
-    color: "bg-emerald-600",
-    title: "Multi-Industry Expert",
-    description:
-      "Extensive experience across Ed-tech, Information-Tech, Legal-Tech, and Food-Tech startups",
-  },
-];
-
-const REPORT_TYPES = [
-  {
-    name: "Advanced Report",
-    tokens: "7,500",
-    priceINR: "₹799",
-    priceUSD: "$9.99",
-    tokenColor: "text-teal-600 dark:text-teal-400",
-    borderColor: "border-teal-200 dark:border-teal-800/50",
-    bg: "bg-teal-50 dark:bg-teal-900/30",
-    description:
-      "VC-ready analysis with SWOT, ROI model, and commercialization paths",
-    highlights: [
-      "24+ parameters",
-      "Market & SWOT analysis",
-      "Preliminary ROI model",
-      "IP & Regulatory overview",
+    title: "Intelligent Matching",
+    subtitle: "Precision-based connection engine.",
+    points: [
+      "Stage compatibility",
+      "Ticket size alignment",
+      "Risk appetite matching",
     ],
+    outcome: "Faster decisions, better outcomes",
   },
   {
-    name: "Comprehensive Report",
-    tokens: "9,000",
-    priceINR: "₹999",
-    priceUSD: "$11.99",
-    tokenColor: "text-emerald-600 dark:text-emerald-400",
-    borderColor: "border-emerald-200 dark:border-emerald-800/50",
-    bg: "bg-emerald-50 dark:bg-emerald-900/30",
-    description:
-      "Full due-diligence — IP claims, 5-yr forecasts, global FTO, funding strategy",
-    highlights: [
-      "30+ parameters",
-      "5-Year ROI projections",
-      "Global FTO (US, EU, India, China)",
-      "Funding & Exit strategy",
+    icon: Banknote,
+    color: "bg-emerald-700",
+    title: "Funding & Commercialization",
+    subtitle: "Move from validation to growth.",
+    points: [
+      "Investor interaction",
+      "Funding discussions",
+      "Market execution",
     ],
+    outcome: "Scalable, fundable innovation",
+  },
+];
+
+const DIFFERENTIATORS = [
+  "AI + Expert Hybrid Assessment",
+  "TRL-Based Structured Evaluation",
+  "Built-in Prototyping Support",
+  "Dual Filtration (Investor + Technology)",
+  "Intelligent Matching System",
+  "End-to-End Commercialization Approach",
+];
+
+const PLATFORM_CAPABILITIES = [
+  "AI-powered assessment engine",
+  "TRL-based maturity scoring",
+  "Market & IP intelligence integration",
+  "Investor-tech matchmaking system",
+  "Structured reporting framework",
+];
+
+const REPORTING_INCLUDES = [
+  "Technical feasibility",
+  "Market analysis",
+  "IP & FTO insights",
+  "Financial projections",
+  "Go-to-market strategy",
+];
+
+const STAKEHOLDERS = [
+  { icon: Rocket, label: "Startups & Founders" },
+  { icon: Microscope, label: "Researchers & Scientists" },
+  { icon: GraduationCap, label: "Universities & Incubation Centers" },
+  { icon: Building2, label: "Corporates & R&D Teams" },
+  { icon: Landmark, label: "Investors & Venture Networks" },
+];
+
+const leadershipProfiles = [
+  {
+    name: "Mr. Venkatesh Bharti",
+    role: "Scientist & Director",
+    body: "Mr. Venkatesh Bharti is a nationally recognised innovator and IP strategist, known for bridging the gap between technology development and commercialisation. He is a recipient of the Young & Innovative Scientist Award (DRDO, 2022) and holds over 80+ granted intellectual properties across domains such as IoT, Legal-Tech, Ed-Tech, and Health-Tech. With experience collaborating with Fortune 50+ companies and delivering 50+ sessions on innovation and intellectual property, he brings deep expertise in both technical and strategic domains. He specialises in transforming early-stage ideas into structured, scalable, and investment-ready innovations.",
+  },
+  {
+    name: "Ms. Deepa Kohli",
+    role: "Academic & Innovation Ecosystem Leader",
+    body: "With over 18+ years of experience, Ms. Deepa Kohli brings strong expertise in academics, corporate training, and institutional development, with a growing focus on innovation and startup ecosystems. She has served as faculty at leading universities including DU, IGNOU, Manipal, IP University, and PTU, where she has actively mentored students in research, technology, and entrepreneurial thinking. As a trainer, she has worked with government bodies and PSUs, delivering programs across a wide range of programming and technology domains. Her experience extends into supporting startup initiatives, skill development, and innovation-driven programs, where she contributes to building structured, education-led ecosystems. She plays a key role in enabling large-scale engagement programs that connect academia, technology, and entrepreneurship.",
   },
 ];
 
@@ -172,57 +194,85 @@ export default function AboutUs() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-full text-sm font-medium mb-6">
               <Sparkles className="w-4 h-4" />
-              India's First AI-Powered Tech Assessment Platform
+              About Assessme
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
-              The Story Behind{" "}
-              <span className="bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
-                Assesme
-              </span>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+              From Idea to Investment - We Make Innovation Work
             </h1>
-            <p className="text-xl text-slate-300 mb-10 max-w-3xl mx-auto leading-relaxed">
-              We built Assesme because too many innovations die not from lack of
-              potential, but from lack of structured validation. We are changing
-              that — one report at a time.
+            <p className="text-xl text-slate-300 mb-8 max-w-4xl mx-auto leading-relaxed">
+              Assessme is an AI-powered technology assessment and commercialization platform that helps innovators evaluate, build, onboard, and connect with investors - through a structured, data-driven ecosystem.
             </p>
-            <div className="flex flex-wrap justify-center gap-3 text-sm font-medium">
-              {[
-                "AI-Powered Analysis",
-                "Experts Certified",
-                "Investor-Ready Reports",
-              ].map((pill) => (
-                <div
-                  key={pill}
-                  className="flex items-center bg-white/10  border border-white/20 px-4 py-2 rounded-full text-white"
-                >
-                  <CheckCircle className="w-4 h-4 text-teal-400 mr-2" />
-                  {pill}
-                </div>
+            <div className="inline-flex flex-wrap items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-white/5 border border-white/15 text-sm md:text-base text-slate-200 mb-10">
+              {["Assess", "Build", "Onboard", "Match", "Fund", "Scale"].map((step, idx) => (
+                <React.Fragment key={step}>
+                  <span className="font-medium">{step}</span>
+                  {idx < 5 && <ArrowRight className="w-4 h-4 text-blue-400" />}
+                </React.Fragment>
               ))}
             </div>
+
+            <motion.div
+              className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4"
+              variants={stagger}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              {QUICK_STATS.map((item, index) => {
+                const Icon = item.icon;
+                return (
+                  <motion.div
+                    key={index}
+                    variants={fadeUp}
+                    className="bg-white/5 border border-white/15 rounded-2xl p-5 text-left"
+                  >
+                    <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center mb-3">
+                      <Icon className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="text-2xl font-bold text-white">{item.value}</div>
+                    <div className="text-sm text-slate-300 mt-1">{item.label}</div>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
           </motion.div>
         </div>
       </section>
 
-      <section className="py-24 bg-white dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800">
+      <section className="py-24 bg-white dark:bg-slate-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            className="grid grid-cols-2 md:grid-cols-4 gap-8"
-            variants={stagger}
-            initial="hidden"
-            whileInView="visible"
+            className="max-w-4xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
           >
-            {STATS.map((stat, index) => (
-              <motion.div key={index} variants={fadeUp} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">
-                  {stat.value}
-                </div>
-                <div className="text-slate-600 dark:text-slate-400 text-sm">
-                  {stat.label}
-                </div>
-              </motion.div>
-            ))}
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-8 text-center">
+              The Problem We Solved
+            </h2>
+            <div className="space-y-4 text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
+              <p>Innovation is everywhere.</p>
+              <p>Successful commercialization is not.</p>
+              <p className="font-semibold text-slate-900 dark:text-slate-100">Most technologies fail because:</p>
+              <ul className="space-y-2">
+                {PROBLEM_POINTS.map((point) => (
+                  <li key={point} className="flex items-start gap-2">
+                    <CheckCircle className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+              <p>Startups build without direction.</p>
+              <p>Researchers innovate without market alignment.</p>
+              <p>Investors struggle to find validated opportunities.</p>
+              <p>Assessme was built to fix this disconnect.</p>
+            </div>
+            <div className="mt-10 rounded-2xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/40 p-6">
+              <p className="text-lg md:text-xl font-semibold text-blue-800 dark:text-blue-300 text-center">
+                We don't just assess technology - we move it toward real-world success.
+              </p>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -230,26 +280,15 @@ export default function AboutUs() {
       <section className="py-24 bg-slate-50 dark:bg-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-14"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.55 }}
           >
-            <div className="inline-flex items-center justify-center px-4 py-1.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 rounded-full text-sm font-medium mb-4">
-              <span className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full mr-2" />
-              What We Stand For
-            </div>
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-4">
-              Our Mission &{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-                Core Values
-              </span>
+              A Complete Innovation-to-Investment Pipeline
             </h2>
-            <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
-              We advance technology transfer by making professional IP
-              assessments accessible, fast, and data-driven.
-            </p>
           </motion.div>
 
           <motion.div
@@ -259,29 +298,48 @@ export default function AboutUs() {
             whileInView="visible"
             viewport={{ once: true, margin: "-80px" }}
           >
-            {MISSION_PILLARS.map((pillar, index) => {
-              const Icon = pillar.icon;
+            {ECOSYSTEM_STEPS.map((step, index) => {
+              const Icon = step.icon;
               return (
                 <motion.div
-                  key={index}
+                  key={step.title}
                   variants={fadeUp}
                   whileHover={{ y: -4 }}
-                  className="group bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-700 transition-all duration-300"
+                  className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all duration-300"
                 >
-                  <div
-                    className={`w-12 h-12 ${pillar.color} rounded-xl flex items-center justify-center mb-4 shadow-md group-hover:scale-105 transition-transform duration-300`}
-                  >
-                    <Icon className="w-6 h-6 text-white" />
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className={`w-11 h-11 ${step.color} rounded-xl flex items-center justify-center`}>
+                      <Icon className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="text-sm font-semibold text-blue-700 dark:text-blue-400">{index + 1}. {step.title}</div>
                   </div>
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-slate-200 mb-2 group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors">
-                    {pillar.title}
-                  </h3>
-                  <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                    {pillar.description}
-                  </p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">{step.subtitle}</p>
+                  <ul className="space-y-2 mb-4">
+                    {step.points.map((point) => (
+                      <li key={point} className="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
+                        <CheckCircle className="w-4 h-4 text-teal-600 dark:text-teal-400 mt-0.5 flex-shrink-0" />
+                        <span>{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="text-xs font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-400">
+                    Outcome: {step.outcome}
+                  </div>
                 </motion.div>
               );
             })}
+          </motion.div>
+
+          <motion.div
+            className="mt-12 text-center"
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <p className="text-lg md:text-xl font-semibold text-slate-800 dark:text-slate-200">
+              Assess  -  Build  -  Qualify  -  Match  -  Fund  -  Scale
+            </p>
           </motion.div>
         </div>
       </section>
@@ -289,98 +347,120 @@ export default function AboutUs() {
       <section className="py-24 bg-white dark:bg-slate-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-12"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.55 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-4">
-              Meet Our{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-                Founder
-              </span>
+              Not a Tool. Not a Marketplace. A Complete System.
             </h2>
-            <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
-              A recognized innovator with a proven track record across IP,
-              technology, and entrepreneurship
+            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
+              Most platforms offer either assessment, or investor listing, or development services. Assessme integrates everything into one structured pipeline.
             </p>
           </motion.div>
 
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              className="text-center lg:text-left"
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <div className="relative inline-block mb-6">
-                <img
-                  className="w-48 h-48 object-cover object-center rounded-full shadow-xl"
-                  src="/person.jpeg"
-                  alt="Mr. Venkatesh Bharti"
-                />
-                <div className="absolute -bottom-0 -right-0 bg-yellow-400 rounded-full p-3 shadow-lg">
-                  <Award className="w-6 h-6 text-yellow-800" />
+          <motion.div
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-4"
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            {DIFFERENTIATORS.map((item) => (
+              <motion.div
+                key={item}
+                variants={fadeUp}
+                whileHover={{ y: -3 }}
+                className="bg-slate-50 dark:bg-slate-900 rounded-xl p-5 border border-slate-100 dark:border-slate-800"
+              >
+                <div className="flex items-start gap-2 text-slate-800 dark:text-slate-200 font-medium">
+                  <Target className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                  <span>{item}</span>
                 </div>
-              </div>
-              <h3 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-                Mr. Venkatesh Bharti
-              </h3>
-              <p className="text-lg text-blue-600 dark:text-blue-400 font-semibold mb-4">
-                Founder & Chief Innovation Officer
-              </p>
-              <p className="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
-                Distinguished solution finder and versatile innovator with
-                expertise across multiple technical domains. A serial inventor,
-                speaker, and startup advisor who has translated research into
-                real-world commercial value.
-              </p>
-              <div className="flex gap-3 justify-center lg:justify-start">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs font-medium">
-                  <Star className="h-3 w-3 fill-current" /> DRDO Award 2022
-                </span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs font-medium">
-                  80+ Patents
-                </span>
-              </div>
-            </motion.div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
 
-            <motion.div
-              className="space-y-4"
-              variants={stagger}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
-              {FOUNDER_HIGHLIGHTS.map((highlight, index) => {
-                const Icon = highlight.icon;
-                return (
-                  <motion.div
-                    key={index}
-                    variants={fadeUp}
-                    whileHover={{ y: -2 }}
-                    className="flex items-start space-x-4 bg-white dark:bg-slate-800/80 rounded-xl p-6 shadow-sm hover:shadow-md border border-slate-100 dark:border-slate-700 transition-all duration-300"
-                  >
-                    <div
-                      className={`w-11 h-11 ${highlight.color} rounded-xl flex items-center justify-center flex-shrink-0 shadow-md`}
-                    >
-                      <Icon className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-slate-900 dark:text-slate-200 mb-1">
-                        {highlight.title}
-                      </h4>
-                      <p className="text-slate-600 dark:text-slate-400 text-sm">
-                        {highlight.description}
-                      </p>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </motion.div>
-          </div>
+      <section className="py-24 bg-slate-50 dark:bg-slate-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-8">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+            className="bg-white dark:bg-slate-800 rounded-2xl p-8 border border-slate-100 dark:border-slate-700"
+          >
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">Vision</h3>
+            <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
+              To become the global infrastructure for technology validation, investment, and commercialization.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+            className="bg-white dark:bg-slate-800 rounded-2xl p-8 border border-slate-100 dark:border-slate-700"
+          >
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">Mission</h3>
+            <ul className="space-y-3">
+              {[
+                "Make innovation measurable and investable",
+                "Simplify technology transfer for all stakeholders",
+                "Enable startups and researchers to scale faster",
+                "Create a trusted bridge between innovation and capital",
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-2 text-slate-700 dark:text-slate-300">
+                  <CheckCircle className="w-5 h-5 text-teal-600 dark:text-teal-400 mt-0.5 flex-shrink-0" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="py-24 bg-white dark:bg-slate-950">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+              Built for Speed. Designed for Accuracy.
+            </h2>
+            <p className="text-lg text-blue-700 dark:text-blue-400 font-semibold">Speed from AI. Confidence from expertise.</p>
+          </motion.div>
+
+          <motion.div
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-4"
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            {PLATFORM_CAPABILITIES.map((item) => (
+              <motion.div
+                key={item}
+                variants={fadeUp}
+                whileHover={{ y: -3 }}
+                className="bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 p-5"
+              >
+                <div className="flex items-start gap-2 text-slate-800 dark:text-slate-200 font-medium">
+                  <Cpu className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                  <span>{item}</span>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
@@ -394,78 +474,55 @@ export default function AboutUs() {
             transition={{ duration: 0.55 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-4">
-              Our Assessment{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-                Report Types
-              </span>
+              From Insights to Investment Decisions
             </h2>
-            <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              Two comprehensive report types designed for different stages and
-              purposes.
-            </p>
           </motion.div>
 
-          <motion.div
-            className="grid md:grid-cols-2 gap-7"
-            variants={stagger}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {REPORT_TYPES.map((report, index) => (
-              <motion.div
-                key={index}
-                variants={fadeUp}
-                whileHover={{ y: -4 }}
-                className={`${report.bg} rounded-2xl p-8 border-2 ${report.borderColor} shadow-sm hover:shadow-xl transition-all duration-300`}
-              >
-                <div className="flex items-start justify-between mb-5">
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-1">
-                      {report.name}
-                    </h3>
-                    <p className={`font-semibold text-sm ${report.tokenColor}`}>
-                      {report.tokens} tokens · {report.priceINR} /{" "}
-                      {report.priceUSD}
-                    </p>
-                  </div>
-                  <span
-                    className={`text-xs px-2.5 py-1 rounded-full ${report.tokenColor} bg-white dark:bg-slate-800 border border-current font-semibold`}
-                  >
-                    {report.tokens} tokens
-                  </span>
-                </div>
-                <p className="text-slate-600 dark:text-slate-400 text-sm mb-5">
-                  {report.description}
-                </p>
-                <ul className="space-y-2">
-                  {report.highlights.map((h, hi) => (
-                    <li
-                      key={hi}
-                      className="flex items-center gap-2 text-slate-700 dark:text-slate-300 text-sm"
-                    >
-                      <CheckCircle className="w-4 h-4 text-teal-500 flex-shrink-0" />
-                      {h}
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
-          </motion.div>
+          <div className="grid lg:grid-cols-2 gap-6 mb-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.55 }}
+              className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-100 dark:border-slate-700"
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <BarChart3 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Advanced</h3>
+              </div>
+              <p className="text-slate-700 dark:text-slate-300">Quick validation</p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.55, delay: 0.05 }}
+              className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-100 dark:border-slate-700"
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <LineChart className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Comprehensive</h3>
+              </div>
+              <p className="text-slate-700 dark:text-slate-300">Deep analysis, investor-ready intelligence</p>
+            </motion.div>
+          </div>
 
           <motion.div
-            className="text-center mt-10"
-            initial={{ opacity: 0, y: 16 }}
+            className="bg-white dark:bg-slate-800 rounded-2xl p-8 border border-slate-100 dark:border-slate-700"
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.55 }}
           >
-            <a
-              href="/pricing"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-semibold px-8 py-3.5 rounded-full btn-glow hover:shadow-xl transition-all duration-200"
-            >
-              View Pricing <ArrowRight className="h-5 w-5" />
-            </a>
+            <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-5">Includes</h3>
+            <div className="grid md:grid-cols-2 gap-3">
+              {REPORTING_INCLUDES.map((item) => (
+                <div key={item} className="flex items-start gap-2 text-slate-700 dark:text-slate-300">
+                  <CheckCircle className="w-5 h-5 text-teal-600 dark:text-teal-400 mt-0.5 flex-shrink-0" />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
           </motion.div>
         </div>
       </section>
@@ -480,33 +537,104 @@ export default function AboutUs() {
             transition={{ duration: 0.55 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-4">
-              About the Founder
+              Driven by Innovation. Backed by Experience.
             </h2>
           </motion.div>
 
           <motion.div
-            className="bg-slate-50 dark:bg-slate-900 rounded-2xl p-8 md:p-12 border border-slate-200 dark:border-slate-700"
+            className="grid lg:grid-cols-2 gap-6"
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            {leadershipProfiles.map((leader) => (
+              <motion.article
+                key={leader.name}
+                variants={fadeUp}
+                whileHover={{ y: -3 }}
+                className="bg-slate-50 dark:bg-slate-900 rounded-2xl p-8 border border-slate-100 dark:border-slate-800"
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
+                    <UserCircle2 className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">{leader.name}</h3>
+                    <p className="text-blue-700 dark:text-blue-400 font-medium">{leader.role}</p>
+                  </div>
+                </div>
+                <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{leader.body}</p>
+              </motion.article>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="py-24 bg-slate-50 dark:bg-slate-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+              Built for Every Stakeholder in Innovation
+            </h2>
+          </motion.div>
+
+          <motion.div
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-4"
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            {STAKEHOLDERS.map((item) => {
+              const Icon = item.icon;
+              return (
+                <motion.div
+                  key={item.label}
+                  variants={fadeUp}
+                  whileHover={{ y: -3 }}
+                  className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl p-5"
+                >
+                  <div className="flex items-center gap-3 text-slate-800 dark:text-slate-200 font-semibold">
+                    <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center">
+                      <Icon className="w-5 h-5 text-white" />
+                    </div>
+                    <span>{item.label}</span>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="py-24 bg-gradient-to-br from-blue-700 to-blue-900">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <div className="max-w-4xl mx-auto space-y-6">
-              {[
-                "Mr. Venkatesh Bharti is a distinguished and versatile solution finder, renowned for his remarkable contributions across various technical domains. Recipient of the prestigious Young & Innovative Scientist Award from DRDO in 2022, conferred by the Defence Minister of India, Shri. Rajnath Singh, Mr Bharti is celebrated for his groundbreaking achievements.",
-                "His accolades extend further, being honoured by IIT Directors and the Naval Chief of India, underscoring his exceptional impact on the scientific community. With over 100 intellectual property rights to his name, including 80+ Granted IP, Mr. Bharti's expertise is unparalleled.",
-                "His extensive experience spans multiple start-ups in Ed-tech, Information-Tech, Legal-Tech, and Food-Tech, showcasing his ability to navigate and innovate across diverse industries. His role as an IoT Specialist, startup consultant, and advisor highlights his capacity to provide strategic, actionable insights that drive growth and innovation.",
-                "Mr. Bharti's reputation as a speaker is well-established, having delivered over 50+ seminars, sharing his profound knowledge and innovative ideas. As a guest lecturer at multiple universities, he inspires the next generation of scientists and entrepreneurs.",
-                "Renowned for his brainstorming prowess and strategic planning, Mr. Bharti excels in developing, organizing, and delivering compelling proof-of-concept demonstrations. His ability to quickly identify issues and devise reliable solutions makes him a valuable asset, capable of transforming sectors with his innovative approaches.",
-              ].map((para, i) => (
-                <p
-                  key={i}
-                  className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed"
-                >
-                  {para}
-                </p>
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Making Innovation Investable</h2>
+            <p className="text-lg md:text-xl text-blue-100 leading-relaxed mb-8">
+              Ideas alone don't create impact. Validated, structured, and funded innovations do.
+            </p>
+            <p className="text-base md:text-lg text-blue-100 mb-4">Assessme ensures every technology moves forward with:</p>
+            <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
+              {["Clarity", "Strategy", "Execution"].map((item) => (
+                <span key={item} className="px-4 py-2 rounded-full border border-blue-200/30 text-blue-50 bg-white/10 font-medium">
+                  {item}
+                </span>
               ))}
             </div>
+            <p className="text-xl md:text-2xl font-semibold text-white">From idea to investment - we make innovation real.</p>
           </motion.div>
         </div>
       </section>

@@ -4,6 +4,7 @@ import { api } from "../../../services/api";
 
 export default function TechnologiesTab() {
   const [technologies, setTechnologies] = useState([]);
+  const [drafts, setDrafts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -13,8 +14,12 @@ export default function TechnologiesTab() {
   const fetchTechnologies = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/onboarding/technologies");
-      setTechnologies(response.data);
+      const [technologiesResponse, draftsResponse] = await Promise.all([
+        api.get("/onboarding/technologies"),
+        api.get("/onboarding/technologies/drafts"),
+      ]);
+      setTechnologies(technologiesResponse.data);
+      setDrafts(draftsResponse.data);
     } catch (error) {
       console.error("Failed to fetch technologies:", error);
     } finally {
@@ -35,6 +40,25 @@ export default function TechnologiesTab() {
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-neutral-900">Technology Submissions</h2>
         <p className="text-neutral-600 mt-1">{technologies.length} total submissions</p>
+      </div>
+      <div className="bg-white rounded-xl shadow-sm border border-neutral-200 p-5">
+        <h3 className="text-lg font-semibold text-neutral-900 mb-1">Partial Saves (Drafts)</h3>
+        <p className="text-sm text-neutral-600 mb-4">{drafts.length} draft entries</p>
+        {drafts.length === 0 ? (
+          <p className="text-sm text-slate-600">No technology drafts yet.</p>
+        ) : (
+          <div className="space-y-3">
+            {drafts.slice(0, 20).map((draft) => (
+              <div key={draft.id} className="rounded-lg border border-slate-200 p-3">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                  <p className="text-sm font-medium text-slate-800">{draft.email || "No email yet"}</p>
+                  <p className="text-xs text-slate-500">Updated: {new Date(draft.updated_at).toLocaleString()}</p>
+                </div>
+                <p className="text-xs text-slate-600 mt-1">Step reached: {draft.step_reached} / 5</p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
       {technologies.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-neutral-200">
