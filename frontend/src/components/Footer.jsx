@@ -42,9 +42,9 @@ export default function Footer() {
             <Link to="/" className="inline-flex items-center mb-6">
               <div className="relative flex items-center h-16">
                 <img
-                  src="/logoas.png"
+                  src="/logo.svg"
                   alt="Assesme Logo"
-                  className="h-18 w-auto object-contain brightness-150"
+                  className="h-10 w-auto object-contain brightness-[2]"
                 />
               </div>
             </Link>

@@ -17,6 +17,10 @@ import PieChart from "../components/PieChart";
 import { Field, SelectField, TextareaField } from "../components/FormFields";
 import { api } from "../services/api";
 import toast from "react-hot-toast";
+import {
+  TECH_CATEGORY_COLORS,
+  TECH_SECTOR_DUMMY,
+} from "../data/chartData";
 
 const stagger = {
   hidden: { opacity: 0 },
@@ -124,29 +128,6 @@ const TECH_STEP_DATA = (step, form, selectedDomains, eligibility, declaration) =
   if (step === 4) return { eligibility, declaration };
   return { ...form, domains: selectedDomains, eligibility, declaration };
 };
-
-const TECH_CATEGORY_COLORS = {
-  "AgriTech": "#10b981",
-  "BioTech": "#14b8a6",
-  "CleanTech": "#22c55e",
-  "DeepTech": "#3b82f6",
-  "EdTech": "#f59e0b",
-  "HealthTech": "#ef4444",
-  "InfoTech": "#8b5cf6",
-  "MedTech": "#ec4899",
-  "Manufacturing": "#f97316",
-  "Other": "#94a3b8",
-};
-
-const TECH_SECTOR_DUMMY = [
-  { label: "DeepTech", value: 28, color: "#3b82f6" },
-  { label: "HealthTech", value: 19, color: "#ef4444" },
-  { label: "AgriTech", value: 14, color: "#10b981" },
-  { label: "InfoTech", value: 11, color: "#8b5cf6" },
-  { label: "CleanTech", value: 10, color: "#22c55e" },
-  { label: "EdTech", value: 8, color: "#f59e0b" },
-  { label: "Other", value: 10, color: "#94a3b8" },
-];
 
 const TECH_DRAFT_KEY = "assesme_tech_draft_id";
 

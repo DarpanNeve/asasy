@@ -123,10 +123,10 @@ export default function Layout({ children }) {
           <div className="flex items-center gap-x-2">
             <Link to="/" className="flex items-center group">
   <div className="relative flex items-center h-16">
-    <img 
-      src="/logoas.png" 
-      alt="Logo" 
-      className="h-16 w-auto object-contain"
+    <img
+      src="/short-logo.svg"
+      alt="Assesme"
+      className="h-10 w-auto object-contain"
     />
   </div>
 </Link>

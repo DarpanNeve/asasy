@@ -70,9 +70,9 @@ export default function Header() {
           >
             <div className="relative flex items-center h-16">
               <img
-                src="/logoas.png"
+                src="/logo.svg"
                 alt="Assesme Logo"
-                className="h-17 w-auto object-contain dark:brightness-110"
+                className="h-10 w-auto object-contain dark:brightness-125"
               />
             </div>
           </Link>

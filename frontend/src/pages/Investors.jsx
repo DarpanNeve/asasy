@@ -17,6 +17,10 @@ import Footer from "../components/Footer";
 import { Field, SelectField, TextareaField } from "../components/FormFields";
 import { api } from "../services/api";
 import toast from "react-hot-toast";
+import {
+  INVESTOR_TYPE_COLORS,
+  INVESTOR_TYPE_DUMMY,
+} from "../data/chartData";
 
 const stagger = {
   hidden: { opacity: 0 },
@@ -31,24 +35,6 @@ const fadeUp = {
     transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
   },
 };
-
-
-const INVESTOR_TYPE_COLORS = {
-  "Angel Investor": "#3b82f6",
-  "Venture Capitalist": "#14b8a6",
-  "Corporate Investor": "#10b981",
-  "Family Office": "#f59e0b",
-  "HNI / Individual": "#8b5cf6",
-  "Other": "#94a3b8",
-};
-
-const INVESTOR_TYPE_DUMMY = [
-  { label: "Angel Investor", value: 34, color: "#3b82f6" },
-  { label: "Venture Capitalist", value: 27, color: "#14b8a6" },
-  { label: "Corporate Investor", value: 16, color: "#10b981" },
-  { label: "Family Office", value: 13, color: "#f59e0b" },
-  { label: "HNI / Individual", value: 10, color: "#8b5cf6" },
-];
 
 const WHY_CARDS = [
   {

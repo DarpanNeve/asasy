@@ -159,7 +159,7 @@ export default function Login() {
           <div className="mb-8">
             <Link to="/" className="flex items-center group">
               <div className="relative flex items-center h-16">
-                <img src="/logoas.png" alt="Logo" className="mr-7 mb-4 h-18 w-auto object-contain" />
+                <img src="/logo.svg" alt="Assesme" className="mb-4 h-10 w-auto object-contain" />
               </div>
             </Link>
             <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">

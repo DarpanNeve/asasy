@@ -7,6 +7,8 @@ import WhoCanUseSection from "../components/home/WhoCanUseSection";
 import TheProblemSection from "../components/home/TheProblemSection";
 import TheSolutionSection from "../components/home/TheSolutionSection";
 import ForInvestorsSection from "../components/home/ForInvestorsSection";
+import InvestorDistributionSection from "../components/home/InvestorDistributionSection";
+import TechSectorSection from "../components/home/TechSectorSection";
 import ForFoundersSection from "../components/home/ForFoundersSection";
 import SampleReportsSection from "../components/home/SampleReportsSection";
 import PrototypingHighlightSection from "../components/home/PrototypingHighlightSection";
@@ -29,6 +31,8 @@ export default function Home() {
       <TheSolutionSection />
       <RoadmapSection />
       <ForInvestorsSection />
+      <InvestorDistributionSection />
+      <TechSectorSection />
       <ForFoundersSection />
       <PrototypingHighlightSection />
       <FinalCTASection />
