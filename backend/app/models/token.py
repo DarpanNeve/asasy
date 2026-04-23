@@ -7,6 +7,7 @@ from enum import Enum
 
 class TokenPackageType(str, Enum):
     STARTER = "starter"
+    STARTER_COMP = "starter_comp"
     PRO = "pro"
     MAX = "max"
     ENTERPRISE = "enterprise"
@@ -23,8 +24,10 @@ class TokenPackage(Document):
     name: str = Field(..., description="Package name")
     package_type: TokenPackageType = Field(..., description="Package type")
     tokens: int = Field(..., description="Number of tokens in package")
-    price_usd: float = Field(..., description="Price in USD")
-    original_price_usd: Optional[float] = Field(None, description="Original price before discount")
+    price_inr: float = Field(..., description="Price in INR (canonical pricing currency)")
+    price_usd: float = Field(..., description="Price in USD (approx display, converted from INR)")
+    original_price_inr: Optional[float] = Field(None, description="Original price in INR before discount")
+    original_price_usd: Optional[float] = Field(None, description="Original price in USD before discount")
     discount_percentage: Optional[float] = Field(None, description="Discount percentage")
     description: str = Field(..., description="Package description")
     is_active: bool = True
@@ -43,24 +46,24 @@ class TokenPackage(Document):
         ]
 
     def get_pricing_details(self) -> dict:
-        """Get pricing details with GST calculation"""
-        base_price = self.price_usd
-        original_price = self.original_price_usd or base_price
-        gst_amount = base_price * 0.18  # 18% GST
-        total_price = base_price + gst_amount
-        original_total = original_price + (original_price * 0.18)
-
+        """Get pricing details. INR is the canonical price; USD is approximate."""
+        base_inr = self.price_inr
+        original_inr = self.original_price_inr or base_inr
+        # No GST on top — INR price is the final price shown to users
         return {
-            "currency": "USD",
-            "base_price": base_price,
-            "original_price": original_price,
+            "currency_inr": "INR",
+            "price_inr": base_inr,
+            "original_price_inr": original_inr,
+            "display_price_inr": f"₹{base_inr:.0f}",
+            "currency_usd": "USD",
+            "price_usd": self.price_usd,
+            "original_price_usd": self.original_price_usd or self.price_usd,
+            "display_price_usd": f"${self.price_usd:.2f}",
             "discount_percentage": self.discount_percentage,
-            "gst_amount": gst_amount,
-            "total_price": total_price,
-            "original_total": original_total,
-            "display_price": f"${base_price:.2f}",
-            "total_display": f"${total_price:.2f}",
-            "has_discount": self.original_price_usd is not None and self.original_price_usd > base_price
+            "has_discount": (
+                self.original_price_inr is not None
+                and self.original_price_inr > base_inr
+            ),
         }
 
 
@@ -128,33 +131,50 @@ class UserTokenBalance(Document):
         return self.available_tokens >= tokens
 
 
-# Default token packages
+# New correct pricing — INR is canonical, USD is approximate
 DEFAULT_TOKEN_PACKAGES = [
     {
-        "name": "Starter Pack",
+        "name": "Starter Report",
         "package_type": TokenPackageType.STARTER,
-        "tokens": 8000,
-        "price_usd": 30.0,  # Discounted price
-        "original_price_usd": 40.0,  # Original price
-        "description": "Perfect for getting started with AI reports",
+        "tokens": 7500,
+        "price_inr": 290.0,
+        "price_usd": 2.99,
+        "original_price_inr": None,
+        "original_price_usd": None,
+        "description": "Perfect to try your first AI assessment.",
         "sort_order": 1
     },
     {
-        "name": "Pro Pack",
-        "package_type": TokenPackageType.PRO,
-        "tokens": 24000,
-        "price_usd": 90.0,  # Discounted price
-        "original_price_usd": 120.0,  # Original price
-        "description": "Best value for regular users",
+        "name": "Starter Comprehensive",
+        "package_type": TokenPackageType.STARTER_COMP,
+        "tokens": 9000,
+        "price_inr": 390.0,
+        "price_usd": 4.50,
+        "original_price_inr": None,
+        "original_price_usd": None,
+        "description": "Full depth report for serious validation.",
         "sort_order": 2
     },
     {
-        "name": "Max Pack",
-        "package_type": TokenPackageType.MAX,
-        "tokens": 29000,
-        "price_usd": 108.0,  # Discounted price
-        "original_price_usd": 144.0,  # Original price
-        "description": "Maximum tokens for power users",
+        "name": "Advanced Pack",
+        "package_type": TokenPackageType.PRO,
+        "tokens": 7500,
+        "price_inr": 799.0,
+        "price_usd": 9.99,
+        "original_price_inr": None,
+        "original_price_usd": None,
+        "description": "Advanced Report pack — VC-ready analysis with SWOT, ROI, and commercialization paths",
         "sort_order": 3
-    }
+    },
+    {
+        "name": "Comprehensive Pack",
+        "package_type": TokenPackageType.MAX,
+        "tokens": 9000,
+        "price_inr": 999.0,
+        "price_usd": 11.99,
+        "original_price_inr": None,
+        "original_price_usd": None,
+        "description": "Comprehensive Report pack — Full due-diligence, 5-yr forecasts, global FTO, funding strategy",
+        "sort_order": 4
+    },
 ]

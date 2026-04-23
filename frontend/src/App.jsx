@@ -1,11 +1,15 @@
 import {
   createBrowserRouter,
   RouterProvider,
+  Outlet,
+  Navigate,
+  useRouteError,
 } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./contexts/AuthContext";
 import { AppProvider } from "./contexts/AppContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Layout from "./components/Layout";
@@ -18,6 +22,10 @@ import Reports from "./pages/Reports";
 import Pricing from "./pages/Pricing";
 import Home from "./pages/Home";
 import RTTP from "./pages/RTTP";
+import Experts from "./pages/Experts";
+import Investors from "./pages/Investors";
+import Technologies from "./pages/Technologies";
+import Prototype from "./pages/Prototype";
 import Admin from "./pages/Admin";
 import Contact from "./pages/Contact";
 import PressReleases from "./pages/PressReleases";
@@ -29,10 +37,35 @@ import RefundPolicy from "./pages/RefundPolicy";
 import Careers from "./pages/Careers";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import QuickInquiryWidget from "./components/QuickInquiryWidget";
 import "./index.css";
-import TokenPricingSection from "./components/TokenPricingSection";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+
+function RootLayout() {
+  return (
+    <>
+      <Outlet />
+      <QuickInquiryWidget />
+    </>
+  );
+}
+
+function RouterErrorElement() {
+  const error = useRouteError();
+  if (error?.status === 404) {
+    return <Navigate to="/" replace />;
+  }
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-neutral-50">
+      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6 text-center">
+        <h1 className="text-xl font-semibold text-neutral-900 mb-2">Something went wrong</h1>
+        <p className="text-neutral-600 mb-6">
+          We're sorry, but something unexpected happened.
+        </p>
+        <a href="/" className="btn-primary inline-block">Go Home</a>
+      </div>
+    </div>
+  );
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -46,67 +79,55 @@ const queryClient = new QueryClient({
 
 const router = createBrowserRouter(
   [
-    { path: "/", element: <Home /> },
-    { path: "/login", element: <Login /> },
-    { path: "/signup", element: <Signup /> },
-    { path: "/forgot-password", element: <ForgotPassword /> },
-    { path: "/profile-completion", element: <ProfileCompletion /> },
-    { path: "/rttp", element: <RTTP /> },
-    { path: "/contact", element: <Contact /> },
-    { path: "/about", element: <About /> },
     {
-      path: "/pricing",
-      element: (
-        <div className="min-h-screen">
-          <Header />
-          <TokenPricingSection
-            compact={false}
-            showReportTypes={true}
-            showHeader={true}
-          />
-          <Footer />
-        </div>
-      ),
-    },
-    { path: "/admin", element: <Admin /> },
-    { path: "/careers", element: <Careers /> },
-    { path: "/blog", element: <Blog /> },
-    { path: "/blog/:slug", element: <BlogPost /> },
-    { path: "/press-releases", element: <PressReleases /> },
-    { path: "/press-releases/:slug", element: <BlogPost /> },
-    { path: "/privacy", element: <Privacy /> },
-    { path: "/terms", element: <Terms /> },
-    { path: "/pricing-policy", element: <PricingPolicy /> },
-    { path: "/refund-policy", element: <RefundPolicy /> },
-    {
-      path: "/profile",
-      element: (
-        <ProtectedRoute>
-          <Layout>
-            <Profile />
-          </Layout>
-        </ProtectedRoute>
-      ),
-    },
-    {
-      path: "/login-pricing",
-      element: (
-        <ProtectedRoute>
-          <Layout>
-            <Pricing />
-          </Layout>
-        </ProtectedRoute>
-      ),
-    },
-    {
-      path: "/reports",
-      element: (
-        <ProtectedRoute>
-          <Layout>
-            <Reports />
-          </Layout>
-        </ProtectedRoute>
-      ),
+      element: <RootLayout />,
+      errorElement: <RouterErrorElement />,
+      children: [
+        { path: "/", element: <Home /> },
+        { path: "/login", element: <Login /> },
+        { path: "/signup", element: <Signup /> },
+        { path: "/forgot-password", element: <ForgotPassword /> },
+        { path: "/profile-completion", element: <ProfileCompletion /> },
+        { path: "/rttp", element: <RTTP /> },
+        { path: "/experts", element: <Experts /> },
+        { path: "/investors", element: <Investors /> },
+        { path: "/technologies", element: <Technologies /> },
+        { path: "/prototype", element: <Prototype /> },
+        { path: "/contact", element: <Contact /> },
+        { path: "/about", element: <About /> },
+        { path: "/pricing", element: <Pricing /> },
+        { path: "/admin", element: <Admin /> },
+        { path: "/careers", element: <Careers /> },
+        { path: "/blog", element: <Blog /> },
+        { path: "/blog/:slug", element: <BlogPost /> },
+        { path: "/press-releases", element: <PressReleases /> },
+        { path: "/press-releases/:slug", element: <BlogPost /> },
+        { path: "/privacy", element: <Privacy /> },
+        { path: "/terms", element: <Terms /> },
+        { path: "/pricing-policy", element: <PricingPolicy /> },
+        { path: "/refund-policy", element: <RefundPolicy /> },
+        { path: "*", element: <Navigate to="/" replace /> },
+        {
+          path: "/profile",
+          element: (
+            <ProtectedRoute>
+              <Layout>
+                <Profile />
+              </Layout>
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/reports",
+          element: (
+            <ProtectedRoute>
+              <Layout>
+                <Reports />
+              </Layout>
+            </ProtectedRoute>
+          ),
+        },
+      ],
     },
   ],
   {
@@ -122,20 +143,22 @@ function App() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <AppProvider>
-            <div className="min-h-screen bg-neutral-50">
-              <RouterProvider router={router} />
-              <Toaster
-                position="top-right"
-                toastOptions={{
-                  className: "bg-white shadow-lg border",
-                  duration: 4000,
-                }}
-              />
-            </div>
-          </AppProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <AppProvider>
+              <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300">
+                <RouterProvider router={router} />
+                <Toaster
+                  position="top-right"
+                  toastOptions={{
+                    className: "bg-white dark:bg-slate-800 dark:text-slate-100 shadow-lg border dark:border-slate-700",
+                    duration: 4000,
+                  }}
+                />
+              </div>
+            </AppProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );

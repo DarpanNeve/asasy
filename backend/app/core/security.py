@@ -13,19 +13,25 @@ from app.models.user import User
 
 logger = logging.getLogger(__name__)
 
-# Password hashing
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 # OAuth2 scheme
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
+import bcrypt
+
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a password against its hash"""
-    return pwd_context.verify(plain_password, hashed_password)
+    try:
+        safe_password = plain_password[:72]
+        return bcrypt.checkpw(safe_password.encode('utf-8'), hashed_password.encode('utf-8'))
+    except Exception as e:
+        logger.error(f"Password verification failed: {e}")
+        return False
 
 def get_password_hash(password: str) -> str:
     """Hash a password"""
-    return pwd_context.hash(password)
+    # Truncate at 72 chars to avoid bcrypt limit exceptions
+    safe_password = password[:72]
+    return bcrypt.hashpw(safe_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     """Create access token"""
@@ -107,6 +113,17 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
         logger.error(f"Error fetching user {user_id}: {e}")
         traceback.print_exc()
         raise credentials_exception
+
+
+async def require_admin(current_user: User = Depends(get_current_user)) -> User:
+    """Require the current user to have is_admin=True"""
+    if not current_user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin privileges required",
+        )
+    return current_user
+
 
 def setup_security_middleware(app):
     """Setup security middleware"""

@@ -9,7 +9,9 @@ export default function PricingPolicy() {
       {/* Page Hero */}
       <section className="bg-slate-50 border-b border-slate-200 py-28 md:py-36">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900">Pricing Policy</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
+            Pricing Policy
+          </h1>
         </div>
       </section>
 
@@ -59,8 +61,8 @@ export default function PricingPolicy() {
               produce customized outputs.
             </p>
             <p className="text-gray-700 mb-4">
-              Services are available under different tiers—Advanced and
-              Comprehensive—each offering varying depths of analysis, IP
+              Services are available under different tiers Advanced and
+              Comprehensive each offering varying depths of analysis, IP
               insights, market data, and commercialization strategies. The
               platform operates on a token-based subscription system, with token
               usage tied to the chosen report tier.
@@ -121,8 +123,8 @@ export default function PricingPolicy() {
                 INR 7500 for 24000 tokens).
               </li>
               <li>
-                Each report type consumes tokens (Advanced: 7500,
-                Comprehensive: 9000).
+                Each report type consumes tokens (Advanced: 7500, Comprehensive:
+                9000).
               </li>
               <li>
                 Tokens are non-refundable once consumed and expire 12 months

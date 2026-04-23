@@ -22,18 +22,20 @@ const CheckoutPage = ({ isOpen, packageData, onClose, onSuccess }) => {
 
   if (!isOpen || !packageData) return null;
 
-  // Get pricing breakdown with GST
-  const pricing = getPricingBreakdown(packageData.price_usd);
-  const { basePrice, gstAmount, totalPrice } = pricing;
+  // Get pricing breakdown with GST — currency auto-detected from timezone
+  const pricing = getPricingBreakdown(packageData);
+  const { basePrice, gstAmount, totalPrice, currency } = pricing;
+  const isINR = currency === 'INR';
 
   const handleConfirmPurchase = async () => {
     setLoading(true);
     setStep("processing");
 
     try {
-      // Create order
+      // Create order — send currency_hint from browser timezone (reliable for India detection)
       const orderResponse = await api.post("/tokens/purchase/create-order", {
         package_id: packageData.id,
+        currency_hint: isINR ? "INR" : "USD",
       });
 
       const { order_id, amount, currency } = orderResponse.data;
@@ -149,7 +151,7 @@ const CheckoutPage = ({ isOpen, packageData, onClose, onSuccess }) => {
                   </div>
                   <div className="text-right">
                     <div className="text-3xl font-bold text-blue-600">
-                      {formatCurrency(basePrice)}
+                      {formatCurrency(basePrice, currency)}
                     </div>
                     <div className="text-sm text-gray-600">
                       {packageData.tokens.toLocaleString()} Tokens
@@ -185,17 +187,17 @@ const CheckoutPage = ({ isOpen, packageData, onClose, onSuccess }) => {
                   <div className="flex justify-between items-center py-2">
                     <span className="text-gray-600 flex items-center">
                       <DollarSign className="w-4 h-4 mr-2" />
-                      Base Price (USD)
+                      Base Price ({currency})
                     </span>
                     <span className="font-medium text-lg">
-                      {formatCurrency(basePrice)}
+                      {formatCurrency(basePrice, currency)}
                     </span>
                   </div>
 
                   <div className="flex justify-between items-center py-2">
                     <span className="text-gray-600">GST (18%)</span>
                     <span className="font-medium">
-                      {formatCurrency(gstAmount)}
+                      {formatCurrency(gstAmount, currency)}
                     </span>
                   </div>
 
@@ -206,7 +208,7 @@ const CheckoutPage = ({ isOpen, packageData, onClose, onSuccess }) => {
                       Total Amount
                     </span>
                     <span className="text-2xl font-bold text-blue-600">
-                      {formatCurrency(totalPrice)}
+                      {formatCurrency(totalPrice, currency)}
                     </span>
                   </div>
                 </div>
@@ -239,7 +241,7 @@ const CheckoutPage = ({ isOpen, packageData, onClose, onSuccess }) => {
                   <ul className="text-xs text-blue-700 space-y-1">
                     <li>• Tokens are valid for 90 days from purchase date</li>
                     <li>• GST invoice will be provided (18% TAX included)</li>
-                    <li>• All transactions processed in USD</li>
+                    <li>• All transactions processed in {isINR ? 'INR' : 'USD'}</li>
                     <li>• Refunds are subject to our terms and conditions</li>
                     <li>• Tokens are non-transferable between accounts</li>
                   </ul>
@@ -268,7 +270,7 @@ const CheckoutPage = ({ isOpen, packageData, onClose, onSuccess }) => {
                   ) : (
                     <>
                       <CreditCard className="w-5 h-5 mr-2 inline" />
-                      Pay {formatCurrency(totalPrice)}
+                      Pay {formatCurrency(totalPrice, currency)}
                     </>
                   )}
                 </button>

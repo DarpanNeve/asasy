@@ -158,4 +158,8 @@ export const reportAPI = {
     api.get(`/reports/${reportId}/download`, { responseType: "blob" }),
 };
 
+export const contactAPI = {
+  submit: (data) => api.post("/contact", data),
+};
+
 export default api;

@@ -11,6 +11,7 @@ from app.core.security import setup_security_middleware
 from app.core.rate_limiter import setup_rate_limiting
 from app.api.routes import auth, users, tokens, reports, webhooks, admin, contact
 from app.api.routes import blog
+from app.api.routes import onboarding
 from app.core.exceptions import setup_exception_handlers
 
 # Configure logging
@@ -87,6 +88,7 @@ app.include_router(webhooks.router, prefix="/webhooks", tags=["Webhooks"])
 app.include_router(admin.router, prefix="/admin", tags=["Admin"])
 app.include_router(contact.router)
 app.include_router(blog.router, prefix="/blog", tags=["Blog"])
+app.include_router(onboarding.router)
 
 
 # Root endpoint

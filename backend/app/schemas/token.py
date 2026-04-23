@@ -8,11 +8,13 @@ class TokenPackageResponse(BaseModel):
     name: str
     package_type: TokenPackageType
     tokens: int
+    price_inr: float
     price_usd: float
     description: str
 
 class TokenPurchaseCreate(BaseModel):
     package_id: str
+    currency_hint: Optional[str] = None  # "INR" or "USD" — sent by frontend based on timezone
 
 class TokenOrderResponse(BaseModel):
     order_id: str
