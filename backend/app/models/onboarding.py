@@ -115,6 +115,7 @@ class TechnologySubmission(Document):
     problem_solved: str = Field(..., min_length=10, max_length=1000)
     unique_value: str = Field(..., min_length=10, max_length=1000)
     seeking: str = Field(..., min_length=2, max_length=200)
+    additional_info: Optional[str] = Field(None, max_length=2000)
     submitted_at: datetime = Field(default_factory=datetime.utcnow)
 
     class Settings:
