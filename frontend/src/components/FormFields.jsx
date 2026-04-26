@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 const inputBase =
   "w-full px-4 py-3 border rounded-lg text-sm transition-all duration-200 bg-white dark:bg-slate-800 text-neutral-900 dark:text-slate-100 placeholder:text-neutral-400 dark:placeholder:text-slate-500 input-glow focus:outline-none focus:ring-2 focus:border-blue-500 dark:focus:border-blue-400";
 
@@ -25,6 +23,7 @@ export function Field({
   placeholder,
   type = "text",
   optional = false,
+  ...inputProps
 }) {
   return (
     <div>
@@ -39,6 +38,7 @@ export function Field({
         onChange={onChange}
         placeholder={placeholder}
         className={`${inputBase} ${error ? inputErr : inputOk}`}
+        {...inputProps}
       />
       <ErrorMsg msg={error} />
     </div>
@@ -53,6 +53,7 @@ export function SelectField({
   error,
   options,
   placeholder,
+  ...selectProps
 }) {
   return (
     <div>
@@ -62,6 +63,7 @@ export function SelectField({
         value={value}
         onChange={onChange}
         className={`${inputBase} ${error ? inputErr : inputOk} ${!value ? "text-neutral-400 dark:text-slate-500" : "text-neutral-900 dark:text-slate-100"}`}
+        {...selectProps}
       >
         <option value="">{placeholder}</option>
         {options.map((o) => (
@@ -84,6 +86,7 @@ export function TextareaField({
   rows = 3,
   error,
   optional = false,
+  ...textareaProps
 }) {
   return (
     <div>
@@ -98,6 +101,7 @@ export function TextareaField({
         rows={rows}
         placeholder={placeholder}
         className={`${inputBase} ${error ? inputErr : inputOk} resize-none`}
+        {...textareaProps}
       />
       <ErrorMsg msg={error} />
     </div>
