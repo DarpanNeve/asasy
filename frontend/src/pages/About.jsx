@@ -1,4 +1,5 @@
 import React from "react";
+import { useSEO } from "../hooks/useSEO";
 import { motion } from "framer-motion";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -39,6 +40,11 @@ const HERO_STEPS = [
 ];
 
 export default function AboutUs() {
+  useSEO({
+    title: "About Assessme | Innovation, Prototyping & Investor Platform",
+    description: "Assessme bridges innovation and investment through AI-powered assessment, prototyping, onboarding, and investor matching—helping ideas become scalable businesses.",
+    keywords: "about assessme, innovation platform India, startup ecosystem platform, technology commercialization",
+  });
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300">
       <Header />

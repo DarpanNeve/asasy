@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useSEO } from "../hooks/useSEO";
 import HowItWorksSection from "../components/home/HowItWorksSection";
 import PieChart from "../components/PieChart";
 import { motion } from "framer-motion";
@@ -189,6 +190,11 @@ const INVESTOR_STEP_DATA = (step, form, selectedSectors, beyondFunding, eligibil
 const INVESTOR_DRAFT_KEY = "assesme_investor_draft_id";
 
 export default function Investors() {
+  useSEO({
+    title: "Investor Network for Verified Startups & Technologies | Assessme",
+    description: "Join Assessme's investor network to access AI-validated, high-potential technologies and startups. Get curated deal flow with structured insights.",
+    keywords: "startup investor platform, angel investor network India, deal flow platform, technology investment opportunities",
+  });
   const [investorChartData, setInvestorChartData] = useState(INVESTOR_TYPE_DUMMY);
 
   useEffect(() => {

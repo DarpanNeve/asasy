@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useSEO } from "../hooks/useSEO";
 import { motion } from "framer-motion";
 import {
   CheckCircle,
@@ -132,6 +133,11 @@ const TECH_STEP_DATA = (step, form, selectedDomains, eligibility, declaration) =
 const TECH_DRAFT_KEY = "assesme_tech_draft_id";
 
 export default function Technologies() {
+  useSEO({
+    title: "Submit Your Startup or Technology for Funding | Assessme",
+    description: "Onboard your innovation to get validated, filtered, and matched with investors. Only high-quality, market-ready technologies are accepted.",
+    keywords: "submit startup idea, innovation funding platform, startup onboarding, technology submission platform India",
+  });
   const [techChartData, setTechChartData] = useState(TECH_SECTOR_DUMMY);
 
   useEffect(() => {

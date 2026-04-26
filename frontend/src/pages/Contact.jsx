@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSEO } from "../hooks/useSEO";
 import { contactAPI } from "../services/api";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -22,6 +23,11 @@ const inputOk = "border-slate-300 dark:border-slate-600";
 const inputErr = "border-red-400 dark:border-red-500";
 
 const ContactPage = () => {
+  useSEO({
+    title: "Contact Assessme | Talk to Experts for Innovation & Funding",
+    description: "Connect with Assessme experts for technology assessment, prototyping, and investor support. Get guidance tailored to your innovation.",
+    keywords: "contact assessme, startup consultation India, innovation support, IP and technology consulting",
+  });
   const [formData, setFormData] = useState({
     reason: "",
     name: "",

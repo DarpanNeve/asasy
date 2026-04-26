@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useSEO } from "../hooks/useSEO";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import {
@@ -36,6 +37,11 @@ import Footer from "../components/Footer";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function RTTP() {
+  useSEO({
+    title: "AI Technology Assessment & TRL Analysis Platform | Assessme",
+    description: "Get instant AI-powered reports on patentability, TRL level, market potential, and commercialization pathways. Make smarter decisions before building or investing.",
+    keywords: "technology assessment AI, TRL analysis tool, patentability analysis, startup validation, innovation assessment platform",
+  });
   const [selectedService, setSelectedService] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [calLoaded, setCalLoaded] = useState(false);
