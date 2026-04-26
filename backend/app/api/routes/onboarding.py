@@ -53,6 +53,7 @@ class TechnologyPayload(BaseModel):
     problem_solved: str = Field(..., min_length=10, max_length=1000)
     unique_value: str = Field(..., min_length=10, max_length=1000)
     seeking: str = Field(..., min_length=2, max_length=200)
+    additional_info: Optional[str] = Field(None, max_length=2000)
 
 
 class PrototypePayload(BaseModel):
@@ -272,6 +273,7 @@ async def get_technologies(admin: User = Depends(require_admin)):
                 "problem_solved": r.problem_solved,
                 "unique_value": r.unique_value,
                 "seeking": r.seeking,
+                "additional_info": r.additional_info,
                 "submitted_at": r.submitted_at.isoformat(),
             }
             for r in records

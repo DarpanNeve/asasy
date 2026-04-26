@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
-import { Hash } from "lucide-react";
+import { Download, FileSpreadsheet, Hash } from "lucide-react";
+import * as XLSX from "xlsx";
+import toast from "react-hot-toast";
 import { api } from "../../../services/api";
 
 export default function PrototypeTab() {
@@ -17,25 +19,65 @@ export default function PrototypeTab() {
       setPrototypeInquiries(response.data);
     } catch (error) {
       console.error("Failed to fetch prototype inquiries:", error);
+      toast.error("Failed to load prototype inquiries");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const exportPrototypeToExcel = () => {
+    try {
+      const exportData = prototypeInquiries.map((inq) => ({
+        "Full Name": inq.full_name || "",
+        Organization: inq.organization || "",
+        Email: inq.email || "",
+        Phone: inq.phone || "",
+        "Technology Description": inq.tech_description || "",
+        "Prototype Type": inq.prototype_type || "",
+        "Budget Range": inq.budget_range || "",
+        Timeline: inq.timeline || "",
+        Message: inq.message || "",
+        "Submitted At": inq.submitted_at
+          ? new Date(inq.submitted_at).toLocaleString()
+          : "",
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Prototype Inquiries");
+      XLSX.writeFile(
+        workbook,
+        `assesme-prototype-inquiries-${new Date().toISOString().split("T")[0]}.xlsx`,
+      );
+      toast.success("Prototype inquiries exported");
+    } catch (error) {
+      console.error("Prototype export error:", error);
+      toast.error("Failed to export prototype inquiries");
     }
   };
 
   if (loading) {
     return (
       <div className="flex justify-center py-12">
-        <div className="w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-neutral-900">Prototype Inquiries</h2>
-        <p className="text-neutral-600 mt-1">{prototypeInquiries.length} total inquiries</p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-2">
+        <div>
+          <h2 className="text-2xl font-bold text-neutral-900">Prototype Inquiries</h2>
+          <p className="text-neutral-600 mt-1">{prototypeInquiries.length} total inquiries</p>
+        </div>
+        <button onClick={exportPrototypeToExcel} className="btn-primary flex items-center">
+          <FileSpreadsheet className="h-4 w-4 mr-2" />
+          <Download className="h-4 w-4 mr-2" />
+          Export to Excel
+        </button>
       </div>
+
       {prototypeInquiries.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-neutral-200">
           <Hash className="h-12 w-12 text-neutral-400 mx-auto mb-4" />
@@ -61,7 +103,7 @@ export default function PrototypeTab() {
                     <div className="text-xs text-neutral-400">{new Date(inq.submitted_at).toLocaleTimeString()}</div>
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6 pb-6 border-b border-neutral-100">
                   <div className="space-y-2">
                     <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Contact</p>

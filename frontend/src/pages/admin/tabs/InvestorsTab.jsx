@@ -1,6 +1,21 @@
 import { useState, useEffect } from "react";
-import { User } from "lucide-react";
+import { Download, FileSpreadsheet, User } from "lucide-react";
+import * as XLSX from "xlsx";
+import toast from "react-hot-toast";
 import { api } from "../../../services/api";
+
+const formatValue = (value) => {
+  if (value == null) return "";
+  if (Array.isArray(value)) return value.join(", ");
+  if (typeof value === "boolean") return value ? "Yes" : "No";
+  if (typeof value === "object") return JSON.stringify(value);
+  return String(value);
+};
+
+const extractDraftPreview = (data) =>
+  Object.entries(data || {})
+    .filter(([, value]) => formatValue(value).trim().length > 0)
+    .slice(0, 10);
 
 export default function InvestorsTab() {
   const [investors, setInvestors] = useState([]);
@@ -22,8 +37,61 @@ export default function InvestorsTab() {
       setDrafts(draftsResponse.data);
     } catch (error) {
       console.error("Failed to fetch investors:", error);
+      toast.error("Failed to load investor records");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const exportInvestorsToExcel = () => {
+    try {
+      const completeRows = investors.map((inv) => ({
+        Status: "Complete",
+        Name: inv.full_name || "",
+        Organization: inv.organization || "",
+        Designation: inv.designation || "",
+        Email: inv.email || "",
+        Phone: inv.phone || "",
+        Country: inv.country || "",
+        "Investment Stage": inv.investment_stage || "",
+        "Ticket Size": inv.ticket_size || "",
+        "Areas of Interest": inv.areas_of_interest || "",
+        Message: inv.message || "",
+        "Step Reached": 5,
+        "Submitted/Updated At": inv.submitted_at
+          ? new Date(inv.submitted_at).toLocaleString()
+          : "",
+      }));
+
+      const partialRows = drafts.map((draft) => ({
+        Status: "Partial",
+        Name: formatValue(draft.data?.full_name),
+        Organization: formatValue(draft.data?.organization),
+        Designation: formatValue(draft.data?.investor_type),
+        Email: draft.email || formatValue(draft.data?.email),
+        Phone: formatValue(draft.data?.phone),
+        Country: formatValue(draft.data?.country),
+        "Investment Stage": formatValue(draft.data?.investment_stage),
+        "Ticket Size": formatValue(draft.data?.ticket_size),
+        "Areas of Interest": formatValue(draft.data?.areas_of_interest),
+        Message: "",
+        "Step Reached": draft.step_reached || 0,
+        "Submitted/Updated At": draft.updated_at
+          ? new Date(draft.updated_at).toLocaleString()
+          : "",
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet([...completeRows, ...partialRows]);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Investors");
+      XLSX.writeFile(
+        workbook,
+        `assesme-investors-${new Date().toISOString().split("T")[0]}.xlsx`,
+      );
+      toast.success("Investor records exported");
+    } catch (error) {
+      console.error("Investor export error:", error);
+      toast.error("Failed to export investor records");
     }
   };
 
@@ -37,33 +105,65 @@ export default function InvestorsTab() {
 
   return (
     <div className="space-y-6">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-neutral-900">Investor Registrations</h2>
-        <p className="text-neutral-600 mt-1">{investors.length} total registrations</p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-2">
+        <div>
+          <h2 className="text-2xl font-bold text-neutral-900">Investor Registrations</h2>
+          <p className="text-neutral-600 mt-1">
+            {investors.length} complete, {drafts.length} partial
+          </p>
+        </div>
+        <button onClick={exportInvestorsToExcel} className="btn-primary flex items-center">
+          <FileSpreadsheet className="h-4 w-4 mr-2" />
+          <Download className="h-4 w-4 mr-2" />
+          Export to Excel
+        </button>
       </div>
+
       <div className="bg-white rounded-xl shadow-sm border border-neutral-200 p-5">
-        <h3 className="text-lg font-semibold text-neutral-900 mb-1">Partial Saves (Drafts)</h3>
-        <p className="text-sm text-neutral-600 mb-4">{drafts.length} draft entries</p>
+        <h3 className="text-lg font-semibold text-neutral-900 mb-1">Partial Submissions</h3>
+        <p className="text-sm text-neutral-600 mb-4">{drafts.length} draft records</p>
         {drafts.length === 0 ? (
-          <p className="text-sm text-slate-600">No investor drafts yet.</p>
+          <p className="text-sm text-slate-600">No partial investor submissions.</p>
         ) : (
           <div className="space-y-3">
-            {drafts.slice(0, 20).map((draft) => (
-              <div key={draft.id} className="rounded-lg border border-slate-200 p-3">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
-                  <p className="text-sm font-medium text-slate-800">{draft.email || "No email yet"}</p>
-                  <p className="text-xs text-slate-500">Updated: {new Date(draft.updated_at).toLocaleString()}</p>
+            {drafts.slice(0, 30).map((draft) => {
+              const previewItems = extractDraftPreview(draft.data);
+              return (
+                <div key={draft.id} className="rounded-lg border border-slate-200 p-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                    <p className="text-sm font-medium text-slate-800">
+                      {draft.email || draft.data?.email || "No email yet"}
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      Updated: {new Date(draft.updated_at).toLocaleString()}
+                    </p>
+                  </div>
+                  <p className="text-xs text-slate-600 mt-1 mb-2">
+                    Step reached: {draft.step_reached} / 5
+                  </p>
+                  {previewItems.length === 0 ? (
+                    <p className="text-xs text-slate-500">No draft fields captured yet.</p>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      {previewItems.map(([key, value]) => (
+                        <div key={key} className="text-xs text-slate-700 bg-slate-50 rounded px-2 py-1.5">
+                          <span className="font-semibold text-slate-600">{key.replaceAll("_", " ")}: </span>
+                          <span>{formatValue(value)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <p className="text-xs text-slate-600 mt-1">Step reached: {draft.step_reached} / 5</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
+
       {investors.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-neutral-200">
           <User className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-          <p className="text-slate-600">No investor registrations yet.</p>
+          <p className="text-slate-600">No complete investor registrations yet.</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -100,39 +200,27 @@ export default function InvestorsTab() {
                   <div className="space-y-2">
                     <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Investment Profile</p>
                     <div className="flex flex-wrap gap-2">
-                      {inv.designation && (
-                        <span className="bg-slate-100 text-slate-700 border border-slate-200 rounded-md text-xs font-medium px-2.5 py-1">
-                          {inv.designation}
-                        </span>
-                      )}
-                      {inv.investment_stage && (
-                        <span className="bg-slate-100 text-slate-700 border border-slate-200 rounded-md text-xs font-medium px-2.5 py-1">
-                          {inv.investment_stage}
-                        </span>
-                      )}
+                      {inv.investment_stage && <span className="bg-slate-100 text-slate-700 border border-slate-200 rounded-md text-xs font-medium px-2.5 py-1">{inv.investment_stage}</span>}
+                      {inv.ticket_size && <span className="bg-slate-100 text-slate-700 border border-slate-200 rounded-md text-xs font-medium px-2.5 py-1">{inv.ticket_size}</span>}
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Ticket Size</p>
-                    <div className="flex flex-wrap gap-2">
-                      {inv.ticket_size && (
-                        <span className="bg-slate-100 text-slate-700 border border-slate-200 rounded-md text-xs font-medium px-2.5 py-1">
-                          {inv.ticket_size}
-                        </span>
-                      )}
-                    </div>
+                    <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Status</p>
+                    <span className="bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-md text-xs font-semibold px-2.5 py-1 inline-flex">
+                      Complete Submission
+                    </span>
                   </div>
                 </div>
 
                 {inv.areas_of_interest && (
                   <div className="bg-slate-50 rounded-xl p-5 border border-slate-100 space-y-3">
-                    <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider block">Areas of Interest &amp; Details</span>
+                    <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider block">Submission Details</span>
                     {inv.areas_of_interest.split(" | ").map((part, i) => {
                       const colonIdx = part.indexOf(": ");
                       if (colonIdx > -1) {
                         return (
                           <div key={i} className="flex gap-2 text-sm">
-                            <span className="font-semibold text-neutral-600 flex-shrink-0 min-w-[100px]">{part.slice(0, colonIdx)}:</span>
+                            <span className="font-semibold text-neutral-600 flex-shrink-0 min-w-[130px]">{part.slice(0, colonIdx)}:</span>
                             <span className="text-neutral-700">{part.slice(colonIdx + 2)}</span>
                           </div>
                         );
