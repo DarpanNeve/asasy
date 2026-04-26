@@ -17,6 +17,22 @@ const extractDraftPreview = (data) =>
     .filter(([, value]) => formatValue(value).trim().length > 0)
     .slice(0, 10);
 
+const structuredInvestorRows = (inv) => [
+  ["Investor Type", inv.investor_type || inv.designation],
+  ["LinkedIn", inv.linkedin],
+  ["Sectors", formatValue(inv.sectors)],
+  ["Geography Preference", inv.geography_preference],
+  ["Number of Prior Investments", inv.num_investments],
+  ["Years of Experience", inv.years_experience],
+  ["Portfolio Description", inv.past_investments_desc],
+  ["Beyond Funding", formatValue(inv.beyond_funding)],
+  ["ROI Horizon", inv.roi_horizon],
+  ["Areas of Interest", inv.areas_of_interest],
+  ["Eligibility Confirmations", formatValue(inv.eligibility_confirmations)],
+  ["Declaration Confirmed", formatValue(inv.declaration_confirmed)],
+  ["Message", inv.message],
+].filter(([, value]) => formatValue(value).trim().length > 0);
+
 export default function InvestorsTab() {
   const [investors, setInvestors] = useState([]);
   const [drafts, setDrafts] = useState([]);
@@ -50,12 +66,23 @@ export default function InvestorsTab() {
         Name: inv.full_name || "",
         Organization: inv.organization || "",
         Designation: inv.designation || "",
+        "Investor Type": inv.investor_type || "",
         Email: inv.email || "",
         Phone: inv.phone || "",
+        LinkedIn: inv.linkedin || "",
         Country: inv.country || "",
         "Investment Stage": inv.investment_stage || "",
         "Ticket Size": inv.ticket_size || "",
+        Sectors: formatValue(inv.sectors),
+        "Geography Preference": inv.geography_preference || "",
+        "Number of Prior Investments": inv.num_investments || "",
+        "Years of Experience": inv.years_experience || "",
+        "Portfolio Description": inv.past_investments_desc || "",
+        "Beyond Funding": formatValue(inv.beyond_funding),
+        "ROI Horizon": inv.roi_horizon || "",
         "Areas of Interest": inv.areas_of_interest || "",
+        "Eligibility Confirmations": formatValue(inv.eligibility_confirmations),
+        "Declaration Confirmed": formatValue(inv.declaration_confirmed),
         Message: inv.message || "",
         "Step Reached": 5,
         "Submitted/Updated At": inv.submitted_at
@@ -70,9 +97,17 @@ export default function InvestorsTab() {
         Designation: formatValue(draft.data?.investor_type),
         Email: draft.email || formatValue(draft.data?.email),
         Phone: formatValue(draft.data?.phone),
+        LinkedIn: formatValue(draft.data?.linkedin),
         Country: formatValue(draft.data?.country),
         "Investment Stage": formatValue(draft.data?.investment_stage),
         "Ticket Size": formatValue(draft.data?.ticket_size),
+        Sectors: formatValue(draft.data?.sectors),
+        "Geography Preference": formatValue(draft.data?.geography_preference),
+        "Number of Prior Investments": formatValue(draft.data?.num_investments),
+        "Years of Experience": formatValue(draft.data?.years_experience),
+        "Portfolio Description": formatValue(draft.data?.past_investments_desc),
+        "Beyond Funding": formatValue(draft.data?.beyond_funding),
+        "ROI Horizon": formatValue(draft.data?.roi_horizon),
         "Areas of Interest": formatValue(draft.data?.areas_of_interest),
         Message: "",
         "Step Reached": draft.step_reached || 0,
@@ -227,6 +262,17 @@ export default function InvestorsTab() {
                       }
                       return <p key={i} className="text-sm text-neutral-700">{part}</p>;
                     })}
+                  </div>
+                )}
+                {structuredInvestorRows(inv).length > 0 && (
+                  <div className="bg-slate-50 rounded-xl p-5 border border-slate-100 space-y-3 mt-4">
+                    <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider block">Structured Details</span>
+                    {structuredInvestorRows(inv).map(([label, value]) => (
+                      <div key={label} className="flex gap-2 text-sm">
+                        <span className="font-semibold text-neutral-600 flex-shrink-0 min-w-[170px]">{label}:</span>
+                        <span className="text-neutral-700">{formatValue(value)}</span>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>

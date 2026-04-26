@@ -358,40 +358,29 @@ export default function Investors() {
     if (!validateStep(4)) return;
     setIsSubmitting(true);
     try {
-      const areasValue = [
-        form.areas_of_interest,
-        selectedSectors.length > 0
-          ? `Sectors: ${selectedSectors.join(", ")}`
-          : "",
-        beyondFunding.length > 0
-          ? `Beyond Funding: ${beyondFunding.join(", ")}`
-          : "",
-        form.linkedin ? `LinkedIn: ${form.linkedin}` : "",
-        form.num_investments ? `Investments made: ${form.num_investments}` : "",
-        form.years_experience ? `Experience: ${form.years_experience}` : "",
-        form.geography_preference
-          ? `Geography: ${form.geography_preference}`
-          : "",
-        form.past_investments_desc
-          ? `Portfolio: ${form.past_investments_desc}`
-          : "",
-        form.roi_horizon ? `ROI Horizon: ${form.roi_horizon}` : "",
-      ]
-        .filter(Boolean)
-        .join(" | ");
-
       await api.post("/onboarding/investors", {
-        full_name: form.full_name,
-        organization: form.organization,
+        full_name: form.full_name.trim(),
+        organization: form.organization.trim(),
         designation: form.investor_type,
-        email: form.email,
-        phone: form.phone,
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        linkedin: form.linkedin.trim() || null,
         country: "India",
+        investor_type: form.investor_type,
         investment_focus: "Other",
         investment_stage: form.investment_stage,
         ticket_size: TICKET_MAP[form.ticket_size],
-        areas_of_interest: areasValue.slice(0, 1000),
-        message: "",
+        sectors: selectedSectors,
+        geography_preference: form.geography_preference || null,
+        num_investments: form.num_investments || null,
+        years_experience: form.years_experience || null,
+        past_investments_desc: form.past_investments_desc.trim() || null,
+        beyond_funding: beyondFunding,
+        roi_horizon: form.roi_horizon || null,
+        areas_of_interest: form.areas_of_interest.trim() || null,
+        eligibility_confirmations: eligibility,
+        declaration_confirmed: declaration,
+        message: null,
       });
 
       setSubmitted(true);

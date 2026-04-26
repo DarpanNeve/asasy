@@ -34,6 +34,7 @@ export default function PrototypeTab() {
         Phone: inq.phone || "",
         "Technology Description": inq.tech_description || "",
         "Prototype Type": inq.prototype_type || "",
+        "Current Stage": inq.current_stage || "",
         "Budget Range": inq.budget_range || "",
         Timeline: inq.timeline || "",
         Message: inq.message || "",
@@ -116,6 +117,7 @@ export default function PrototypeTab() {
                     <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Requirements</p>
                     <div className="flex flex-wrap gap-2 mt-1">
                       <span className="px-2.5 py-1 bg-fuchsia-50 text-fuchsia-700 text-xs font-medium rounded-md border border-fuchsia-100">{inq.prototype_type}</span>
+                      {inq.current_stage && <span className="px-2.5 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-md border border-blue-100">{inq.current_stage}</span>}
                       <span className="px-2.5 py-1 bg-teal-50 text-teal-700 text-xs font-medium rounded-md border border-teal-100">{inq.timeline}</span>
                     </div>
                   </div>
@@ -135,7 +137,7 @@ export default function PrototypeTab() {
                   {inq.message && (
                     <div>
                       <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider block mb-1.5">Additional Notes</span>
-                      <p className="text-sm text-neutral-700 leading-relaxed italic border-l-2 border-slate-300 pl-3">"{inq.message}"</p>
+                      <p className="text-sm text-neutral-700 leading-relaxed border-l-2 border-slate-300 pl-3">{inq.message}</p>
                     </div>
                   )}
                 </div>

@@ -30,29 +30,62 @@ class InvestorPayload(BaseModel):
     designation: Optional[str] = Field(None, max_length=100)
     email: EmailStr
     phone: str = Field(..., min_length=8, max_length=20)
+    linkedin: Optional[str] = Field(None, max_length=500)
     country: str = Field(default="India", min_length=2, max_length=100)
     investor_type: Optional[str] = Field(None, max_length=100)
     investment_focus: TechCategory = TechCategory.OTHER
     investment_stage: InvestmentStage
     ticket_size: TicketSize
+    sectors: List[str] = Field(default_factory=list)
+    geography_preference: Optional[str] = Field(None, max_length=100)
+    num_investments: Optional[str] = Field(None, max_length=50)
+    years_experience: Optional[str] = Field(None, max_length=50)
+    past_investments_desc: Optional[str] = Field(None, max_length=2000)
+    beyond_funding: List[str] = Field(default_factory=list)
+    roi_horizon: Optional[str] = Field(None, max_length=50)
     areas_of_interest: Optional[str] = Field(None, max_length=1000)
+    eligibility_confirmations: Optional[List[bool]] = None
+    declaration_confirmed: Optional[bool] = None
     message: Optional[str] = Field(None, max_length=1000)
 
 
 class TechnologyPayload(BaseModel):
     technology_title: str = Field(..., min_length=3, max_length=200)
     inventor_name: str = Field(..., min_length=2, max_length=100)
+    co_founder: Optional[str] = Field(None, max_length=200)
     organization: str = Field(..., min_length=2, max_length=200)
     email: EmailStr
     phone: str = Field(..., min_length=8, max_length=20)
+    linkedin: Optional[str] = Field(None, max_length=500)
+    website: Optional[str] = Field(None, max_length=500)
     country: str = Field(..., min_length=2, max_length=100)
     category: TechCategory
+    tech_type: Optional[str] = Field(None, max_length=100)
+    domains: List[str] = Field(default_factory=list)
     ip_status: IPStatus
     trl_level: TRLLevel
     description: str = Field(..., min_length=20, max_length=2000)
     problem_solved: str = Field(..., min_length=10, max_length=1000)
     unique_value: str = Field(..., min_length=10, max_length=1000)
+    current_stage: Optional[str] = Field(None, max_length=100)
+    working_prototype: Optional[str] = Field(None, max_length=50)
+    tested_with_users: Optional[str] = Field(None, max_length=50)
+    pilot_done: Optional[str] = Field(None, max_length=50)
+    pilot_details: Optional[str] = Field(None, max_length=1000)
+    revenue_status: Optional[str] = Field(None, max_length=100)
+    business_model_defined: Optional[str] = Field(None, max_length=50)
+    target_market_size: Optional[str] = Field(None, max_length=100)
+    patent_filed: Optional[str] = Field(None, max_length=50)
+    proprietary_tech: Optional[str] = Field(None, max_length=50)
+    competitive_advantage: Optional[str] = Field(None, max_length=1000)
+    funding_required: Optional[str] = Field(None, max_length=100)
+    equity_offered: Optional[str] = Field(None, max_length=50)
+    use_of_funds_desc: Optional[str] = Field(None, max_length=1000)
     seeking: str = Field(..., min_length=2, max_length=200)
+    full_time_founder: Optional[str] = Field(None, max_length=100)
+    experience_level: Optional[str] = Field(None, max_length=100)
+    eligibility_confirmations: Optional[List[bool]] = None
+    declaration_confirmed: Optional[bool] = None
     additional_info: Optional[str] = Field(None, max_length=2000)
 
 
@@ -63,6 +96,7 @@ class PrototypePayload(BaseModel):
     phone: str = Field(..., min_length=8, max_length=20)
     tech_description: str = Field(..., min_length=20, max_length=2000)
     prototype_type: PrototypeType
+    current_stage: Optional[str] = Field(None, max_length=200)
     budget_range: PrototypeBudget
     timeline: PrototypeTimeline
     message: Optional[str] = Field(None, max_length=1000)
@@ -218,11 +252,22 @@ async def get_investors(admin: User = Depends(require_admin)):
                 "designation": r.designation,
                 "email": r.email,
                 "phone": r.phone,
+                "linkedin": r.linkedin,
                 "country": r.country,
+                "investor_type": r.investor_type,
                 "investment_focus": r.investment_focus,
                 "investment_stage": r.investment_stage,
                 "ticket_size": r.ticket_size,
+                "sectors": r.sectors,
+                "geography_preference": r.geography_preference,
+                "num_investments": r.num_investments,
+                "years_experience": r.years_experience,
+                "past_investments_desc": r.past_investments_desc,
+                "beyond_funding": r.beyond_funding,
+                "roi_horizon": r.roi_horizon,
                 "areas_of_interest": r.areas_of_interest,
+                "eligibility_confirmations": r.eligibility_confirmations,
+                "declaration_confirmed": r.declaration_confirmed,
                 "message": r.message,
                 "submitted_at": r.submitted_at.isoformat(),
             }
@@ -262,17 +307,40 @@ async def get_technologies(admin: User = Depends(require_admin)):
                 "id": str(r.id),
                 "technology_title": r.technology_title,
                 "inventor_name": r.inventor_name,
+                "co_founder": r.co_founder,
                 "organization": r.organization,
                 "email": r.email,
                 "phone": r.phone,
+                "linkedin": r.linkedin,
+                "website": r.website,
                 "country": r.country,
                 "category": r.category,
+                "tech_type": r.tech_type,
+                "domains": r.domains,
                 "ip_status": r.ip_status,
                 "trl_level": r.trl_level,
                 "description": r.description,
                 "problem_solved": r.problem_solved,
                 "unique_value": r.unique_value,
+                "current_stage": r.current_stage,
+                "working_prototype": r.working_prototype,
+                "tested_with_users": r.tested_with_users,
+                "pilot_done": r.pilot_done,
+                "pilot_details": r.pilot_details,
+                "revenue_status": r.revenue_status,
+                "business_model_defined": r.business_model_defined,
+                "target_market_size": r.target_market_size,
+                "patent_filed": r.patent_filed,
+                "proprietary_tech": r.proprietary_tech,
+                "competitive_advantage": r.competitive_advantage,
+                "funding_required": r.funding_required,
+                "equity_offered": r.equity_offered,
+                "use_of_funds_desc": r.use_of_funds_desc,
                 "seeking": r.seeking,
+                "full_time_founder": r.full_time_founder,
+                "experience_level": r.experience_level,
+                "eligibility_confirmations": r.eligibility_confirmations,
+                "declaration_confirmed": r.declaration_confirmed,
                 "additional_info": r.additional_info,
                 "submitted_at": r.submitted_at.isoformat(),
             }
@@ -350,6 +418,7 @@ async def get_prototype_inquiries(admin: User = Depends(require_admin)):
                 "phone": r.phone,
                 "tech_description": r.tech_description,
                 "prototype_type": r.prototype_type,
+                "current_stage": r.current_stage,
                 "budget_range": r.budget_range,
                 "timeline": r.timeline,
                 "message": r.message,

@@ -252,22 +252,16 @@ export default function Prototype() {
     if (!validate()) return;
     setIsSubmitting(true);
     try {
-      const messageValue = [
-        form.message,
-        form.current_stage ? `Current Stage: ${form.current_stage}` : "",
-      ]
-        .filter(Boolean)
-        .join(" | ");
-
       await api.post("/onboarding/prototype", {
-        full_name: form.full_name,
-        email: form.email,
-        phone: form.phone,
-        tech_description: form.tech_description,
+        full_name: form.full_name.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        tech_description: form.tech_description.trim(),
         prototype_type: protoTypeMap[form.prototype_type] || "Other",
+        current_stage: form.current_stage || null,
         budget_range: form.budget_range || "< ₹1L",
         timeline: form.timeline || "< 1 month",
-        message: messageValue.slice(0, 1000),
+        message: form.message.trim() || null,
       });
       setSubmitted(true);
       toast.success("Inquiry submitted successfully!");

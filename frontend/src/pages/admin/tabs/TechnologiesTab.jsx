@@ -17,6 +17,29 @@ const extractDraftPreview = (data) =>
     .filter(([, value]) => formatValue(value).trim().length > 0)
     .slice(0, 12);
 
+const structuredDetailRows = (tech) => [
+  ["Domains", formatValue(tech.domains)],
+  ["Technology Type", tech.tech_type],
+  ["Current Stage", tech.current_stage],
+  ["Working Prototype", tech.working_prototype],
+  ["Tested With Users", tech.tested_with_users],
+  ["Pilot Done", tech.pilot_done],
+  ["Pilot Details", tech.pilot_details],
+  ["Revenue Status", tech.revenue_status],
+  ["Business Model Defined", tech.business_model_defined],
+  ["Target Market Size", tech.target_market_size],
+  ["Patent Filed", tech.patent_filed],
+  ["Proprietary Tech", tech.proprietary_tech],
+  ["Competitive Advantage", tech.competitive_advantage],
+  ["Funding Required", tech.funding_required],
+  ["Equity Offered", tech.equity_offered],
+  ["Use of Funds", tech.use_of_funds_desc],
+  ["Full-Time Founder", tech.full_time_founder],
+  ["Experience Level", tech.experience_level],
+  ["Eligibility Confirmations", formatValue(tech.eligibility_confirmations)],
+  ["Declaration Confirmed", formatValue(tech.declaration_confirmed)],
+].filter(([, value]) => formatValue(value).trim().length > 0);
+
 export default function TechnologiesTab() {
   const [technologies, setTechnologies] = useState([]);
   const [drafts, setDrafts] = useState([]);
@@ -49,17 +72,40 @@ export default function TechnologiesTab() {
         Status: "Complete",
         "Technology Title": tech.technology_title || "",
         "Inventor Name": tech.inventor_name || "",
+        "Co-founder(s)": tech.co_founder || "",
         Organization: tech.organization || "",
         Email: tech.email || "",
         Phone: tech.phone || "",
+        LinkedIn: tech.linkedin || "",
+        Website: tech.website || "",
         Country: tech.country || "",
         Category: tech.category || "",
+        "Technology Type": tech.tech_type || "",
+        Domains: formatValue(tech.domains),
         "IP Status": tech.ip_status || "",
         "TRL Level": tech.trl_level || "",
         Description: tech.description || "",
         "Problem Solved": tech.problem_solved || "",
         "Unique Value": tech.unique_value || "",
+        "Current Stage": tech.current_stage || "",
+        "Working Prototype": tech.working_prototype || "",
+        "Tested With Users": tech.tested_with_users || "",
+        "Pilot Done": tech.pilot_done || "",
+        "Pilot Details": tech.pilot_details || "",
+        "Revenue Status": tech.revenue_status || "",
+        "Business Model Defined": tech.business_model_defined || "",
+        "Target Market Size": tech.target_market_size || "",
+        "Patent Filed": tech.patent_filed || "",
+        "Proprietary Tech": tech.proprietary_tech || "",
+        "Competitive Advantage": tech.competitive_advantage || "",
+        "Funding Required": tech.funding_required || "",
+        "Equity Offered": tech.equity_offered || "",
+        "Use of Funds": tech.use_of_funds_desc || "",
         Seeking: tech.seeking || "",
+        "Full-Time Founder": tech.full_time_founder || "",
+        "Experience Level": tech.experience_level || "",
+        "Eligibility Confirmations": formatValue(tech.eligibility_confirmations),
+        "Declaration Confirmed": formatValue(tech.declaration_confirmed),
         "Additional Info": tech.additional_info || "",
         "Step Reached": 5,
         "Submitted/Updated At": tech.submitted_at
@@ -255,6 +301,17 @@ export default function TechnologiesTab() {
                         }
                         return <p key={i} className="text-sm text-neutral-700">{part}</p>;
                       })}
+                    </div>
+                  )}
+                  {structuredDetailRows(tech).length > 0 && (
+                    <div className="pt-3 border-t border-slate-200 space-y-3">
+                      <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider block">Form Details (Step 3/4)</span>
+                      {structuredDetailRows(tech).map(([label, value]) => (
+                        <div key={label} className="flex gap-2 text-sm">
+                          <span className="font-semibold text-neutral-600 flex-shrink-0 min-w-[170px]">{label}:</span>
+                          <span className="text-neutral-700">{formatValue(value)}</span>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>
