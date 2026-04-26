@@ -1,3 +1,4 @@
+import { useSEO } from "../hooks/useSEO";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import HeroSection from "../components/home/HeroSection";
@@ -17,6 +18,11 @@ import GuidelinesSection from "../components/home/GuidelinesSection";
 import RoadmapSection from "../components/home/RoadmapSection";
 import FinalCTASection from "../components/home/FinalCTASection";
 export default function Home() {
+  useSEO({
+    title: "AI Technology Assessment, Prototyping & Investor Platform | Assessme",
+    description: "Assess, build, and fund your innovation with Assessme. AI-powered technology assessment, prototyping, startup onboarding, and investor matching—all in one platform.",
+    keywords: "AI technology assessment, startup validation platform, prototype development, investor matching platform, TRL analysis, innovation commercialization",
+  });
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300">
       <Header />

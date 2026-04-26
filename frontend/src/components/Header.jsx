@@ -1,7 +1,17 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Zap, Crown, Rocket, Diamond, Sun, Moon } from "lucide-react";
+import {
+  Menu,
+  X,
+  Zap,
+  Crown,
+  Rocket,
+  Diamond,
+  Sun,
+  Moon,
+  Monitor,
+} from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { tokenAPI } from "../services/api";
@@ -10,7 +20,13 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { user } = useAuth();
-  const { dark, toggle } = useTheme();
+  const { dark, mode, setMode } = useTheme();
+
+  const THEME_OPTIONS = [
+    { value: "light", icon: Sun, label: "Light" },
+    { value: "system", icon: Monitor, label: "System" },
+    { value: "dark", icon: Moon, label: "Dark" },
+  ];
   const [userBalance, setUserBalance] = useState(null);
   const location = useLocation();
 
@@ -44,13 +60,11 @@ export default function Header() {
 
   const navLinks = [
     { to: "/", label: "Home" },
-    { to: "/about", label: "About" },
     { to: "/experts", label: "Experts" },
     { to: "/investors", label: "Investors" },
     { to: "/technologies", label: "Technologies" },
     { to: "/prototype", label: "Prototype" },
     { to: "/pricing", label: "Pricing" },
-    { to: "/contact", label: "Contact" },
   ];
 
   return (
@@ -72,7 +86,7 @@ export default function Header() {
               <img
                 src="/logo.svg"
                 alt="Assesme Logo"
-                className="h-10 w-auto object-contain dark:brightness-125"
+                className="h-7 w-auto object-contain dark:brightness-125"
               />
             </div>
           </Link>
@@ -100,43 +114,35 @@ export default function Header() {
                     <motion.div
                       layoutId="nav-active"
                       className="absolute bottom-0 left-3 right-3 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-full"
-                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 380,
+                        damping: 30,
+                      }}
                     />
                   )}
                 </Link>
               );
             })}
 
-            {/* Dark mode toggle */}
-            <button
-              onClick={toggle}
-              aria-label="Toggle dark mode"
-              className="p-2 rounded-lg text-neutral-500 dark:text-slate-400 hover:text-neutral-900 dark:hover:text-slate-100 hover:bg-neutral-100 dark:hover:bg-slate-800 transition-all duration-200 ml-1"
-            >
-              <AnimatePresence mode="wait" initial={false}>
-                {dark ? (
-                  <motion.div
-                    key="sun"
-                    initial={{ rotate: -90, opacity: 0, scale: 0.8 }}
-                    animate={{ rotate: 0, opacity: 1, scale: 1 }}
-                    exit={{ rotate: 90, opacity: 0, scale: 0.8 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Sun className="h-4 w-4" />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="moon"
-                    initial={{ rotate: 90, opacity: 0, scale: 0.8 }}
-                    animate={{ rotate: 0, opacity: 1, scale: 1 }}
-                    exit={{ rotate: -90, opacity: 0, scale: 0.8 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Moon className="h-4 w-4" />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </button>
+            {/* Theme mode toggle */}
+            <div className="flex items-center bg-neutral-100 dark:bg-slate-800 rounded-full p-0.5 ml-1">
+              {THEME_OPTIONS.map(({ value, icon: Icon, label }) => (
+                <button
+                  key={value}
+                  onClick={() => setMode(value)}
+                  aria-label={label}
+                  title={label}
+                  className={`p-1.5 rounded-full transition-all duration-200 ${
+                    mode === value
+                      ? "bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm"
+                      : "text-neutral-400 dark:text-slate-500 hover:text-neutral-700 dark:hover:text-slate-300"
+                  }`}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                </button>
+              ))}
+            </div>
 
             {user ? (
               <Link
@@ -167,7 +173,9 @@ export default function Header() {
             {user && userBalance && (
               <div className="flex items-center px-3 py-1.5 bg-white dark:bg-slate-800 rounded-full shadow-sm border border-gray-200 dark:border-slate-700 ml-1">
                 <Zap className="w-4 h-4 text-blue-600 dark:text-blue-400 mr-1.5" />
-                <span className="text-gray-500 dark:text-slate-400 text-xs mr-1">Tokens</span>
+                <span className="text-gray-500 dark:text-slate-400 text-xs mr-1">
+                  Tokens
+                </span>
                 <span className="font-bold text-blue-600 dark:text-blue-400 text-sm">
                   {userBalance.available_tokens.toLocaleString()}
                 </span>
@@ -176,13 +184,23 @@ export default function Header() {
           </div>
 
           <div className="lg:hidden flex items-center gap-2">
-            <button
-              onClick={toggle}
-              aria-label="Toggle dark mode"
-              className="p-2 rounded-lg text-neutral-500 dark:text-slate-400 hover:bg-neutral-100 dark:hover:bg-slate-800 transition-colors duration-200"
-            >
-              {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </button>
+            <div className="flex items-center bg-neutral-100 dark:bg-slate-800 rounded-full p-0.5">
+              {THEME_OPTIONS.map(({ value, icon: Icon, label }) => (
+                <button
+                  key={value}
+                  onClick={() => setMode(value)}
+                  aria-label={label}
+                  className={`p-1.5 rounded-full transition-all duration-200 ${
+                    mode === value
+                      ? "bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm"
+                      : "text-neutral-400 dark:text-slate-500 hover:text-neutral-700 dark:hover:text-slate-300"
+                  }`}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                </button>
+              ))}
+            </div>
+
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="text-neutral-600 dark:text-slate-400 hover:text-neutral-900 dark:hover:text-slate-100 transition-colors p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -279,7 +297,9 @@ export default function Header() {
                 <div className="px-4 pb-4">
                   <div className="flex items-center px-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 w-fit gap-2">
                     <Zap className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                    <span className="text-gray-500 dark:text-slate-400 text-sm">Tokens</span>
+                    <span className="text-gray-500 dark:text-slate-400 text-sm">
+                      Tokens
+                    </span>
                     <span className="font-bold text-blue-600 dark:text-blue-400">
                       {userBalance.available_tokens.toLocaleString()}
                     </span>

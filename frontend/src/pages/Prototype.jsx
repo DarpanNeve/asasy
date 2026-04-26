@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSEO } from "../hooks/useSEO";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   CheckCircle,
@@ -207,6 +208,11 @@ const protoTypeMap = {
 };
 
 export default function Prototype() {
+  useSEO({
+    title: "Prototype & MVP Development Services | IoT, AI & Product Build | Assessme",
+    description: "Turn your idea into a working prototype or MVP. We build IoT, AI, and software solutions ready for testing, validation, and investor pitching.",
+    keywords: "prototype development India, MVP development services, IoT prototype, hardware startup development, product prototyping",
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({

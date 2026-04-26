@@ -3,24 +3,39 @@ import { createContext, useContext, useState, useEffect } from "react";
 const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
-  const [dark, setDark] = useState(() => {
-    const saved = localStorage.getItem("theme");
-    if (saved) return saved === "dark";
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const [mode, setMode] = useState(() => {
+    return localStorage.getItem("theme") || "system";
   });
 
   useEffect(() => {
     const root = document.documentElement;
-    if (dark) {
-      root.classList.add("dark");
+
+    const applyDark = (isDark) => {
+      root.classList.toggle("dark", isDark);
+    };
+
+    if (mode === "dark") {
+      applyDark(true);
+    } else if (mode === "light") {
+      applyDark(false);
     } else {
-      root.classList.remove("dark");
+      // system
+      const mq = window.matchMedia("(prefers-color-scheme: dark)");
+      applyDark(mq.matches);
+      const handler = (e) => applyDark(e.matches);
+      mq.addEventListener("change", handler);
+      return () => mq.removeEventListener("change", handler);
     }
-    localStorage.setItem("theme", dark ? "dark" : "light");
-  }, [dark]);
+
+    localStorage.setItem("theme", mode);
+  }, [mode]);
+
+  const dark =
+    mode === "dark" ||
+    (mode === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   return (
-    <ThemeContext.Provider value={{ dark, toggle: () => setDark((d) => !d) }}>
+    <ThemeContext.Provider value={{ dark, mode, setMode }}>
       {children}
     </ThemeContext.Provider>
   );
