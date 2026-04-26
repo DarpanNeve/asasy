@@ -188,6 +188,7 @@ const INVESTOR_STEP_DATA = (step, form, selectedSectors, beyondFunding, eligibil
 };
 
 const INVESTOR_DRAFT_KEY = "assesme_investor_draft_id";
+const CHART_REAL_DATA_MIN = 100;
 
 export default function Investors() {
   useSEO({
@@ -200,7 +201,7 @@ export default function Investors() {
   useEffect(() => {
     api.get("/onboarding/investors/stats")
       .then(({ data }) => {
-        if (data.total > 0 && data.by_type?.length) {
+        if (data.total >= CHART_REAL_DATA_MIN && data.by_type?.length) {
           const mapped = data.by_type.map((d) => ({
             label: d.type,
             value: d.count,

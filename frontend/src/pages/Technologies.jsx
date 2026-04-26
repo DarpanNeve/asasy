@@ -131,6 +131,7 @@ const TECH_STEP_DATA = (step, form, selectedDomains, eligibility, declaration) =
 };
 
 const TECH_DRAFT_KEY = "assesme_tech_draft_id";
+const CHART_REAL_DATA_MIN = 100;
 
 export default function Technologies() {
   useSEO({
@@ -143,7 +144,7 @@ export default function Technologies() {
   useEffect(() => {
     api.get("/onboarding/technologies/stats")
       .then(({ data }) => {
-        if (data.total > 0 && data.by_category?.length) {
+        if (data.total >= CHART_REAL_DATA_MIN && data.by_category?.length) {
           const mapped = data.by_category.map((d) => ({
             label: d.category,
             value: d.count,
