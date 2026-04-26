@@ -132,6 +132,49 @@ const TECH_STEP_DATA = (step, form, selectedDomains, eligibility, declaration) =
 
 const TECH_DRAFT_KEY = "assesme_tech_draft_id";
 const CHART_REAL_DATA_MIN = 100;
+const TECHNOLOGY_DESCRIPTION_MIN_LENGTH = 20;
+const PROBLEM_MIN_LENGTH = 10;
+const UNIQUE_VALUE_MIN_LENGTH = 10;
+const SEEKING_MIN_LENGTH = 2;
+const TECH_FIELD_TO_STEP = {
+  inventor_name: 0,
+  organization: 0,
+  email: 0,
+  phone: 0,
+  technology_title: 1,
+  tech_type: 1,
+  description: 1,
+  problem_solved: 1,
+  unique_value: 1,
+  current_stage: 2,
+  trl_level: 2,
+  working_prototype: 2,
+  tested_with_users: 2,
+  pilot_done: 2,
+  revenue_status: 2,
+  business_model_defined: 2,
+  ip_status: 3,
+  competitive_advantage: 3,
+  funding_required: 3,
+  seeking: 3,
+  full_time_founder: 3,
+  experience_level: 3,
+};
+
+const parseBackendFieldErrors = (errorList) => {
+  if (!Array.isArray(errorList)) return {};
+  const parsed = {};
+  errorList.forEach((entry) => {
+    if (typeof entry !== "string") return;
+    const [location, ...messageParts] = entry.split(":");
+    const message = messageParts.join(":").trim();
+    const fieldPath = location?.trim();
+    const field = fieldPath?.split("->")?.pop()?.trim();
+    if (!field || !message) return;
+    parsed[field] = message;
+  });
+  return parsed;
+};
 
 export default function Technologies() {
   useSEO({
@@ -240,12 +283,15 @@ export default function Technologies() {
       if (!form.linkedin.trim()) e.linkedin = "Required";
     }
     if (s === 1) {
+      const descriptionLength = form.description.trim().length;
+      const problemLength = form.problem_solved.trim().length;
+      const uniqueValueLength = form.unique_value.trim().length;
       if (!form.technology_title.trim()) e.technology_title = "Required";
       if (!form.tech_type) e.tech_type = "Required";
       if (selectedDomains.length === 0) e.domains = "Select at least one domain";
-      if (!form.description.trim()) e.description = "Required";
-      if (!form.problem_solved.trim()) e.problem_solved = "Required";
-      if (!form.unique_value.trim()) e.unique_value = "Required";
+      if (descriptionLength < TECHNOLOGY_DESCRIPTION_MIN_LENGTH) e.description = `Must be at least ${TECHNOLOGY_DESCRIPTION_MIN_LENGTH} characters`;
+      if (problemLength < PROBLEM_MIN_LENGTH) e.problem_solved = `Must be at least ${PROBLEM_MIN_LENGTH} characters`;
+      if (uniqueValueLength < UNIQUE_VALUE_MIN_LENGTH) e.unique_value = `Must be at least ${UNIQUE_VALUE_MIN_LENGTH} characters`;
     }
     if (s === 2) {
       if (!form.current_stage) e.current_stage = "Required";
@@ -262,7 +308,7 @@ export default function Technologies() {
       if (!form.proprietary_tech) e.proprietary_tech = "Required";
       if (!form.competitive_advantage.trim()) e.competitive_advantage = "Required";
       if (!form.funding_required) e.funding_required = "Required";
-      if (!form.seeking.trim()) e.seeking = "Required";
+      if (form.seeking.trim().length < SEEKING_MIN_LENGTH) e.seeking = `Must be at least ${SEEKING_MIN_LENGTH} characters`;
       if (!form.full_time_founder) e.full_time_founder = "Required";
       if (!form.experience_level) e.experience_level = "Required";
     }
@@ -375,28 +421,40 @@ export default function Technologies() {
         .join(" | ");
 
       await api.post("/onboarding/technologies", {
-        technology_title: form.technology_title,
-        inventor_name: form.inventor_name,
-        organization: form.organization,
-        email: form.email,
-        phone: form.phone,
+        technology_title: form.technology_title.trim(),
+        inventor_name: form.inventor_name.trim(),
+        organization: form.organization.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
         country: "India",
         category: "Other",
         ip_status: form.ip_status || "No IP Protection",
         trl_level: trlMap[form.trl_level] || form.trl_level,
-        description: form.description,
-        problem_solved: form.problem_solved,
-        unique_value: form.unique_value,
-        seeking: form.seeking || "Investment",
+        description: form.description.trim(),
+        problem_solved: form.problem_solved.trim(),
+        unique_value: form.unique_value.trim(),
+        seeking: form.seeking.trim() || "Investment",
         additional_info: additionalInfo.slice(0, 2000),
       });
       setSubmitted(true);
       localStorage.removeItem(TECH_DRAFT_KEY);
       toast.success("Technology submitted successfully!");
     } catch (err) {
-      toast.error(
-        err?.response?.data?.detail || "Submission failed. Please try again.",
-      );
+      const backendErrors = parseBackendFieldErrors(err?.response?.data?.errors);
+      const backendErrorFields = Object.keys(backendErrors);
+
+      if (backendErrorFields.length > 0) {
+        const firstField = backendErrorFields[0];
+        const mappedStep = TECH_FIELD_TO_STEP[firstField];
+        if (Number.isInteger(mappedStep)) {
+          setStep(mappedStep);
+        }
+        setErrors(backendErrors);
+      } else {
+        toast.error(
+          err?.response?.data?.detail || "Submission failed. Please try again.",
+        );
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -795,7 +853,7 @@ export default function Technologies() {
                         </div>
                         {errors.domains && <p className="mt-1.5 text-xs text-red-500">{errors.domains}</p>}
                       </div>
-                      <TextareaField label="One-line Description (max 150 chars)" name="description" value={form.description} onChange={handleChange} error={errors.description} placeholder="Briefly describe your technology in one line" rows={2} maxLength={150} />
+                      <TextareaField label="One-line Description (20-150 chars)" name="description" value={form.description} onChange={handleChange} error={errors.description} placeholder="Briefly describe your technology in one line" rows={2} maxLength={150} minLength={TECHNOLOGY_DESCRIPTION_MIN_LENGTH} />
                       <TextareaField label="Problem Statement" name="problem_solved" value={form.problem_solved} onChange={handleChange} error={errors.problem_solved} placeholder="What problem are you solving?" rows={3} />
                       <TextareaField label="Your Solution" name="unique_value" value={form.unique_value} onChange={handleChange} error={errors.unique_value} placeholder="How does your solution address the problem?" rows={3} />
                     </>
