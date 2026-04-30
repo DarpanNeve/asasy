@@ -291,7 +291,7 @@ export default function RTTP() {
                 className="border border-blue-600 text-blue-600 hover:bg-blue-50 text-base font-medium px-8 py-3 rounded-lg transition-colors duration-200 flex items-center justify-center"
               >
                 <User className="mr-2 h-5 w-5" />
-                Join as Expert
+                Share your Query
                 <ExternalLink className="ml-2 h-4 w-4" />
               </button>
             </div>

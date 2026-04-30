@@ -321,7 +321,7 @@ export default function Experts() {
                 className="inline-flex items-center justify-center gap-2 border border-white/30 text-white hover:bg-white/10 font-medium px-8 py-3.5 rounded-lg transition-colors duration-200"
               >
                 <User className="h-4 w-4" />
-                Join as Expert
+                Share your Query
                 <ArrowRight className="h-4 w-4" />
               </motion.a>
             </div>
@@ -494,7 +494,10 @@ export default function Experts() {
       </section>
 
       {/* Contact Form */}
-      <section id="join-form" className="py-24 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800">
+      <section
+        id="join-form"
+        className="py-24 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800"
+      >
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-12"
@@ -510,7 +513,8 @@ export default function Experts() {
               </span>
             </h2>
             <p className="text-neutral-500 dark:text-slate-400">
-              Are you an RTTP professional, IP specialist, or industry expert? Reach out to join our growing network.
+              Are you an RTTP professional, IP specialist, or industry expert?
+              Reach out to join our growing network.
             </p>
           </motion.div>
 

@@ -15,7 +15,7 @@ export default function TechSectorSection() {
     api
       .get("/onboarding/technologies/stats")
       .then(({ data: res }) => {
-        if (res.total > 0 && res.by_category?.length) {
+        if (res.total > 100 && res.by_category?.length) {
           const mapped = res.by_category.map((d) => ({
             label: d.category,
             value: d.count,

@@ -42,7 +42,7 @@ export default function InvestorDistributionSection() {
     api
       .get("/onboarding/investors/stats")
       .then(({ data: res }) => {
-        if (res.total > 0 && res.by_type?.length) {
+        if (res.total > 100 && res.by_type?.length) {
           const mapped = res.by_type.map((d) => ({
             label: d.type,
             value: d.count,
@@ -92,7 +92,10 @@ export default function InvestorDistributionSection() {
             transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="relative w-64 h-64 md:w-80 md:h-80">
-              <svg viewBox="0 0 180 180" className="w-full h-full drop-shadow-xl">
+              <svg
+                viewBox="0 0 180 180"
+                className="w-full h-full drop-shadow-xl"
+              >
                 <circle
                   cx={CX}
                   cy={CY}
