@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Download, FileSpreadsheet, FileText } from "lucide-react";
 import * as XLSX from "xlsx";
 import toast from "react-hot-toast";
@@ -17,33 +17,35 @@ const extractDraftPreview = (data) =>
     .filter(([, value]) => formatValue(value).trim().length > 0)
     .slice(0, 12);
 
-const structuredDetailRows = (tech) => [
-  ["Domains", formatValue(tech.domains)],
-  ["Technology Type", tech.tech_type],
-  ["Current Stage", tech.current_stage],
-  ["Working Prototype", tech.working_prototype],
-  ["Tested With Users", tech.tested_with_users],
-  ["Pilot Done", tech.pilot_done],
-  ["Pilot Details", tech.pilot_details],
-  ["Revenue Status", tech.revenue_status],
-  ["Business Model Defined", tech.business_model_defined],
-  ["Target Market Size", tech.target_market_size],
-  ["Patent Filed", tech.patent_filed],
-  ["Proprietary Tech", tech.proprietary_tech],
-  ["Competitive Advantage", tech.competitive_advantage],
-  ["Funding Required", tech.funding_required],
-  ["Equity Offered", tech.equity_offered],
-  ["Use of Funds", tech.use_of_funds_desc],
-  ["Full-Time Founder", tech.full_time_founder],
-  ["Experience Level", tech.experience_level],
-  ["Eligibility Confirmations", formatValue(tech.eligibility_confirmations)],
-  ["Declaration Confirmed", formatValue(tech.declaration_confirmed)],
-].filter(([, value]) => formatValue(value).trim().length > 0);
+const structuredDetailRows = (tech) =>
+  [
+    ["Domains", formatValue(tech.domains)],
+    ["Technology Type", tech.tech_type],
+    ["Current Stage", tech.current_stage],
+    ["Working Prototype", tech.working_prototype],
+    ["Tested With Users", tech.tested_with_users],
+    ["Pilot Done", tech.pilot_done],
+    ["Pilot Details", tech.pilot_details],
+    ["Revenue Status", tech.revenue_status],
+    ["Business Model Defined", tech.business_model_defined],
+    ["Target Market Size", tech.target_market_size],
+    ["Patent Filed", tech.patent_filed],
+    ["Proprietary Tech", tech.proprietary_tech],
+    ["Competitive Advantage", tech.competitive_advantage],
+    ["Funding Required", tech.funding_required],
+    ["Equity Offered", tech.equity_offered],
+    ["Use of Funds", tech.use_of_funds_desc],
+    ["Full-Time Founder", tech.full_time_founder],
+    ["Experience Level", tech.experience_level],
+    ["Eligibility Confirmations", formatValue(tech.eligibility_confirmations)],
+    ["Declaration Confirmed", formatValue(tech.declaration_confirmed)],
+  ].filter(([, value]) => formatValue(value).trim().length > 0);
 
 export default function TechnologiesTab() {
   const [technologies, setTechnologies] = useState([]);
   const [drafts, setDrafts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("complete");
 
   useEffect(() => {
     fetchTechnologies();
@@ -149,6 +151,162 @@ export default function TechnologiesTab() {
     }
   };
 
+  const renderPartial = () => (
+    <div className="bg-white rounded-xl shadow-sm border border-neutral-200 p-5">
+      <h3 className="text-lg font-semibold text-neutral-900 mb-1">Partial Submissions</h3>
+      <p className="text-sm text-neutral-600 mb-4">{drafts.length} draft records</p>
+      {drafts.length === 0 ? (
+        <p className="text-sm text-slate-600">No partial technology submissions.</p>
+      ) : (
+        <div className="space-y-3">
+          {drafts.slice(0, 30).map((draft) => {
+            const previewItems = extractDraftPreview(draft.data);
+            return (
+              <div key={draft.id} className="rounded-lg border border-slate-200 p-3">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                  <p className="text-sm font-medium text-slate-800">
+                    {draft.data?.technology_title || draft.email || "Untitled draft"}
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    Updated: {new Date(draft.updated_at).toLocaleString()}
+                  </p>
+                </div>
+                <p className="text-xs text-slate-600 mt-1 mb-2">
+                  Step reached: {draft.step_reached} / 5
+                </p>
+                {previewItems.length === 0 ? (
+                  <p className="text-xs text-slate-500">No draft fields captured yet.</p>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {previewItems.map(([key, value]) => (
+                      <div key={key} className="text-xs text-slate-700 bg-slate-50 rounded px-2 py-1.5">
+                        <span className="font-semibold text-slate-600">{key.replaceAll("_", " ")}: </span>
+                        <span>{formatValue(value)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+
+  const renderComplete = () => {
+    if (technologies.length === 0) {
+      return (
+        <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-neutral-200">
+          <FileText className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+          <p className="text-slate-600">No complete technology submissions yet.</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-4">
+        {technologies.map((tech) => (
+          <div key={tech.id} className="bg-white rounded-xl shadow-sm border border-neutral-200 overflow-hidden hover:shadow-md transition-shadow">
+            <div className="p-6">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6">
+                <div className="flex items-center gap-4">
+                  <div className="bg-blue-600 text-white w-12 h-12 rounded-xl flex items-center justify-center shrink-0">
+                    <FileText className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-neutral-900">{tech.technology_title}</h3>
+                    <p className="text-sm font-medium text-neutral-500">
+                      {tech.inventor_name} at <span className="text-neutral-700">{tech.organization}</span>
+                    </p>
+                  </div>
+                </div>
+                <div className="sm:text-right shrink-0">
+                  <div className="text-sm font-semibold text-slate-700">{new Date(tech.submitted_at).toLocaleDateString()}</div>
+                  <div className="text-xs text-neutral-400">{new Date(tech.submitted_at).toLocaleTimeString()}</div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6 pb-6 border-b border-neutral-100">
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Contact</p>
+                  <div className="text-sm space-y-1">
+                    <a href={`mailto:${tech.email}`} className="text-slate-800 hover:text-blue-600 transition-colors">{tech.email}</a>
+                    <p className="text-slate-600">{tech.phone}</p>
+                    <p className="text-slate-600">{tech.country}</p>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Classification</p>
+                  <div className="flex flex-wrap gap-2">
+                    {tech.category && <span className="bg-slate-100 text-slate-700 border border-slate-200 rounded-md text-xs font-medium px-2.5 py-1">{tech.category}</span>}
+                    {tech.trl_level && <span className="bg-slate-100 text-slate-700 border border-slate-200 rounded-md text-xs font-medium px-2.5 py-1">{tech.trl_level}</span>}
+                    {tech.ip_status && <span className="bg-slate-100 text-slate-700 border border-slate-200 rounded-md text-xs font-medium px-2.5 py-1">{tech.ip_status}</span>}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Status</p>
+                  <span className="bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-md text-xs font-semibold px-2.5 py-1 inline-flex">
+                    Complete Submission
+                  </span>
+                </div>
+              </div>
+
+              <div className="bg-slate-50 rounded-xl p-5 space-y-4 border border-slate-100">
+                {tech.description && (
+                  <div>
+                    <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider block mb-1.5">Description</span>
+                    <p className="text-sm text-neutral-700 leading-relaxed">{tech.description}</p>
+                  </div>
+                )}
+                {tech.problem_solved && (
+                  <div>
+                    <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider block mb-1.5">Problem Solved</span>
+                    <p className="text-sm text-neutral-700 leading-relaxed">{tech.problem_solved}</p>
+                  </div>
+                )}
+                {tech.unique_value && (
+                  <div>
+                    <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider block mb-1.5">Unique Value</span>
+                    <p className="text-sm text-neutral-700 leading-relaxed">{tech.unique_value}</p>
+                  </div>
+                )}
+                {tech.additional_info && (
+                  <div className="pt-3 border-t border-slate-200 space-y-3">
+                    <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider block">Additional Details</span>
+                    {tech.additional_info.split(" | ").map((part, i) => {
+                      const colonIdx = part.indexOf(": ");
+                      if (colonIdx > -1) {
+                        return (
+                          <div key={i} className="flex gap-2 text-sm">
+                            <span className="font-semibold text-neutral-600 flex-shrink-0 min-w-[130px]">{part.slice(0, colonIdx)}:</span>
+                            <span className="text-neutral-700">{part.slice(colonIdx + 2)}</span>
+                          </div>
+                        );
+                      }
+                      return <p key={i} className="text-sm text-neutral-700">{part}</p>;
+                    })}
+                  </div>
+                )}
+                {structuredDetailRows(tech).length > 0 && (
+                  <div className="pt-3 border-t border-slate-200 space-y-3">
+                    <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider block">Form Details (Step 3/4)</span>
+                    {structuredDetailRows(tech).map(([label, value]) => (
+                      <div key={label} className="flex gap-2 text-sm">
+                        <span className="font-semibold text-neutral-600 flex-shrink-0 min-w-[170px]">{label}:</span>
+                        <span className="text-neutral-700">{formatValue(value)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center py-12">
@@ -173,153 +331,32 @@ export default function TechnologiesTab() {
         </button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-neutral-200 p-5">
-        <h3 className="text-lg font-semibold text-neutral-900 mb-1">Partial Submissions</h3>
-        <p className="text-sm text-neutral-600 mb-4">{drafts.length} draft records</p>
-        {drafts.length === 0 ? (
-          <p className="text-sm text-slate-600">No partial technology submissions.</p>
-        ) : (
-          <div className="space-y-3">
-            {drafts.slice(0, 30).map((draft) => {
-              const previewItems = extractDraftPreview(draft.data);
-              return (
-                <div key={draft.id} className="rounded-lg border border-slate-200 p-3">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
-                    <p className="text-sm font-medium text-slate-800">
-                      {draft.data?.technology_title || draft.email || "Untitled draft"}
-                    </p>
-                    <p className="text-xs text-slate-500">
-                      Updated: {new Date(draft.updated_at).toLocaleString()}
-                    </p>
-                  </div>
-                  <p className="text-xs text-slate-600 mt-1 mb-2">
-                    Step reached: {draft.step_reached} / 5
-                  </p>
-                  {previewItems.length === 0 ? (
-                    <p className="text-xs text-slate-500">No draft fields captured yet.</p>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {previewItems.map(([key, value]) => (
-                        <div key={key} className="text-xs text-slate-700 bg-slate-50 rounded px-2 py-1.5">
-                          <span className="font-semibold text-slate-600">{key.replaceAll("_", " ")}: </span>
-                          <span>{formatValue(value)}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
+      <div className="bg-white rounded-xl shadow-sm border border-neutral-200 p-2 inline-flex gap-2">
+        <button
+          type="button"
+          onClick={() => setActiveTab("complete")}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            activeTab === "complete"
+              ? "bg-primary-50 text-primary-700"
+              : "text-neutral-600 hover:bg-neutral-50"
+          }`}
+        >
+          Complete ({technologies.length})
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("partial")}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            activeTab === "partial"
+              ? "bg-primary-50 text-primary-700"
+              : "text-neutral-600 hover:bg-neutral-50"
+          }`}
+        >
+          Partial ({drafts.length})
+        </button>
       </div>
 
-      {technologies.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-neutral-200">
-          <FileText className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-          <p className="text-slate-600">No complete technology submissions yet.</p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {technologies.map((tech) => (
-            <div key={tech.id} className="bg-white rounded-xl shadow-sm border border-neutral-200 overflow-hidden hover:shadow-md transition-shadow">
-              <div className="p-6">
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6">
-                  <div className="flex items-center gap-4">
-                    <div className="bg-blue-600 text-white w-12 h-12 rounded-xl flex items-center justify-center shrink-0">
-                      <FileText className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-neutral-900">{tech.technology_title}</h3>
-                      <p className="text-sm font-medium text-neutral-500">
-                        {tech.inventor_name} at <span className="text-neutral-700">{tech.organization}</span>
-                      </p>
-                    </div>
-                  </div>
-                  <div className="sm:text-right shrink-0">
-                    <div className="text-sm font-semibold text-slate-700">{new Date(tech.submitted_at).toLocaleDateString()}</div>
-                    <div className="text-xs text-neutral-400">{new Date(tech.submitted_at).toLocaleTimeString()}</div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6 pb-6 border-b border-neutral-100">
-                  <div className="space-y-2">
-                    <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Contact</p>
-                    <div className="text-sm space-y-1">
-                      <a href={`mailto:${tech.email}`} className="text-slate-800 hover:text-blue-600 transition-colors">{tech.email}</a>
-                      <p className="text-slate-600">{tech.phone}</p>
-                      <p className="text-slate-600">{tech.country}</p>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Classification</p>
-                    <div className="flex flex-wrap gap-2">
-                      {tech.category && <span className="bg-slate-100 text-slate-700 border border-slate-200 rounded-md text-xs font-medium px-2.5 py-1">{tech.category}</span>}
-                      {tech.trl_level && <span className="bg-slate-100 text-slate-700 border border-slate-200 rounded-md text-xs font-medium px-2.5 py-1">{tech.trl_level}</span>}
-                      {tech.ip_status && <span className="bg-slate-100 text-slate-700 border border-slate-200 rounded-md text-xs font-medium px-2.5 py-1">{tech.ip_status}</span>}
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Status</p>
-                    <span className="bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-md text-xs font-semibold px-2.5 py-1 inline-flex">
-                      Complete Submission
-                    </span>
-                  </div>
-                </div>
-
-                <div className="bg-slate-50 rounded-xl p-5 space-y-4 border border-slate-100">
-                  {tech.description && (
-                    <div>
-                      <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider block mb-1.5">Description</span>
-                      <p className="text-sm text-neutral-700 leading-relaxed">{tech.description}</p>
-                    </div>
-                  )}
-                  {tech.problem_solved && (
-                    <div>
-                      <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider block mb-1.5">Problem Solved</span>
-                      <p className="text-sm text-neutral-700 leading-relaxed">{tech.problem_solved}</p>
-                    </div>
-                  )}
-                  {tech.unique_value && (
-                    <div>
-                      <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider block mb-1.5">Unique Value</span>
-                      <p className="text-sm text-neutral-700 leading-relaxed">{tech.unique_value}</p>
-                    </div>
-                  )}
-                  {tech.additional_info && (
-                    <div className="pt-3 border-t border-slate-200 space-y-3">
-                      <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider block">Additional Details</span>
-                      {tech.additional_info.split(" | ").map((part, i) => {
-                        const colonIdx = part.indexOf(": ");
-                        if (colonIdx > -1) {
-                          return (
-                            <div key={i} className="flex gap-2 text-sm">
-                              <span className="font-semibold text-neutral-600 flex-shrink-0 min-w-[130px]">{part.slice(0, colonIdx)}:</span>
-                              <span className="text-neutral-700">{part.slice(colonIdx + 2)}</span>
-                            </div>
-                          );
-                        }
-                        return <p key={i} className="text-sm text-neutral-700">{part}</p>;
-                      })}
-                    </div>
-                  )}
-                  {structuredDetailRows(tech).length > 0 && (
-                    <div className="pt-3 border-t border-slate-200 space-y-3">
-                      <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider block">Form Details (Step 3/4)</span>
-                      {structuredDetailRows(tech).map(([label, value]) => (
-                        <div key={label} className="flex gap-2 text-sm">
-                          <span className="font-semibold text-neutral-600 flex-shrink-0 min-w-[170px]">{label}:</span>
-                          <span className="text-neutral-700">{formatValue(value)}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      {activeTab === "partial" ? renderPartial() : renderComplete()}
     </div>
   );
 }

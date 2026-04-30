@@ -1,15 +1,19 @@
 from fastapi import APIRouter, HTTPException, status, Request, Depends
-from pydantic import BaseModel, EmailStr, Field
-from typing import Optional, List, Any, Dict
-from bson import ObjectId
+from typing import Optional
+from datetime import datetime
 import logging
 
 from app.core.rate_limiter import limiter
 from app.models.onboarding import (
     InvestorRegistration, TechnologySubmission, PrototypeInquiry,
     InvestorDraft, TechnologyDraft,
-    TechCategory, IPStatus, TRLLevel, InvestmentStage, TicketSize,
-    PrototypeType, PrototypeBudget, PrototypeTimeline,
+)
+from app.schemas.onboarding import (
+    InvestorPayload,
+    TechnologyPayload,
+    PrototypePayload,
+    DraftPayload,
+    DraftUpdatePayload,
 )
 from app.services.email_service import (
     send_investor_confirmation_email,
@@ -24,93 +28,34 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/onboarding", tags=["Onboarding"])
 
 
-class InvestorPayload(BaseModel):
-    full_name: str = Field(..., min_length=2, max_length=100)
-    organization: str = Field(..., min_length=2, max_length=200)
-    designation: Optional[str] = Field(None, max_length=100)
-    email: EmailStr
-    phone: str = Field(..., min_length=8, max_length=20)
-    linkedin: Optional[str] = Field(None, max_length=500)
-    country: str = Field(default="India", min_length=2, max_length=100)
-    investor_type: Optional[str] = Field(None, max_length=100)
-    investment_focus: TechCategory = TechCategory.OTHER
-    investment_stage: InvestmentStage
-    ticket_size: TicketSize
-    sectors: List[str] = Field(default_factory=list)
-    geography_preference: Optional[str] = Field(None, max_length=100)
-    num_investments: Optional[str] = Field(None, max_length=50)
-    years_experience: Optional[str] = Field(None, max_length=50)
-    past_investments_desc: Optional[str] = Field(None, max_length=2000)
-    beyond_funding: List[str] = Field(default_factory=list)
-    roi_horizon: Optional[str] = Field(None, max_length=50)
-    areas_of_interest: Optional[str] = Field(None, max_length=1000)
-    eligibility_confirmations: Optional[List[bool]] = None
-    declaration_confirmed: Optional[bool] = None
-    message: Optional[str] = Field(None, max_length=1000)
+async def delete_investor_drafts(draft_id: Optional[str], email: Optional[str]):
+    if draft_id:
+        try:
+            draft = await InvestorDraft.get(draft_id)
+            if draft:
+                await draft.delete()
+        except Exception as err:
+            logger.warning(f"Investor draft cleanup by id failed ({draft_id}): {err}")
+    if email:
+        try:
+            await InvestorDraft.find({"email": email}).delete()
+        except Exception as err:
+            logger.warning(f"Investor draft cleanup by email failed ({email}): {err}")
 
 
-class TechnologyPayload(BaseModel):
-    technology_title: str = Field(..., min_length=3, max_length=200)
-    inventor_name: str = Field(..., min_length=2, max_length=100)
-    co_founder: Optional[str] = Field(None, max_length=200)
-    organization: str = Field(..., min_length=2, max_length=200)
-    email: EmailStr
-    phone: str = Field(..., min_length=8, max_length=20)
-    linkedin: Optional[str] = Field(None, max_length=500)
-    website: Optional[str] = Field(None, max_length=500)
-    country: str = Field(..., min_length=2, max_length=100)
-    category: TechCategory
-    tech_type: Optional[str] = Field(None, max_length=100)
-    domains: List[str] = Field(default_factory=list)
-    ip_status: IPStatus
-    trl_level: TRLLevel
-    description: str = Field(..., min_length=20, max_length=2000)
-    problem_solved: str = Field(..., min_length=10, max_length=1000)
-    unique_value: str = Field(..., min_length=10, max_length=1000)
-    current_stage: Optional[str] = Field(None, max_length=100)
-    working_prototype: Optional[str] = Field(None, max_length=50)
-    tested_with_users: Optional[str] = Field(None, max_length=50)
-    pilot_done: Optional[str] = Field(None, max_length=50)
-    pilot_details: Optional[str] = Field(None, max_length=1000)
-    revenue_status: Optional[str] = Field(None, max_length=100)
-    business_model_defined: Optional[str] = Field(None, max_length=50)
-    target_market_size: Optional[str] = Field(None, max_length=100)
-    patent_filed: Optional[str] = Field(None, max_length=50)
-    proprietary_tech: Optional[str] = Field(None, max_length=50)
-    competitive_advantage: Optional[str] = Field(None, max_length=1000)
-    funding_required: Optional[str] = Field(None, max_length=100)
-    equity_offered: Optional[str] = Field(None, max_length=50)
-    use_of_funds_desc: Optional[str] = Field(None, max_length=1000)
-    seeking: str = Field(..., min_length=2, max_length=200)
-    full_time_founder: Optional[str] = Field(None, max_length=100)
-    experience_level: Optional[str] = Field(None, max_length=100)
-    eligibility_confirmations: Optional[List[bool]] = None
-    declaration_confirmed: Optional[bool] = None
-    additional_info: Optional[str] = Field(None, max_length=2000)
-
-
-class PrototypePayload(BaseModel):
-    full_name: str = Field(..., min_length=2, max_length=100)
-    organization: Optional[str] = Field(None, max_length=200)
-    email: EmailStr
-    phone: str = Field(..., min_length=8, max_length=20)
-    tech_description: str = Field(..., min_length=20, max_length=2000)
-    prototype_type: PrototypeType
-    current_stage: Optional[str] = Field(None, max_length=200)
-    budget_range: PrototypeBudget
-    timeline: PrototypeTimeline
-    message: Optional[str] = Field(None, max_length=1000)
-
-
-class DraftPayload(BaseModel):
-    email: Optional[str] = None
-    step_reached: int = 1
-    data: Dict[str, Any] = Field(default_factory=dict)
-
-
-class DraftUpdatePayload(BaseModel):
-    step_reached: int
-    data: Dict[str, Any]
+async def delete_technology_drafts(draft_id: Optional[str], email: Optional[str]):
+    if draft_id:
+        try:
+            draft = await TechnologyDraft.get(draft_id)
+            if draft:
+                await draft.delete()
+        except Exception as err:
+            logger.warning(f"Technology draft cleanup by id failed ({draft_id}): {err}")
+    if email:
+        try:
+            await TechnologyDraft.find({"email": email}).delete()
+        except Exception as err:
+            logger.warning(f"Technology draft cleanup by email failed ({email}): {err}")
 
 
 @router.post("/investors/draft")
@@ -138,7 +83,6 @@ async def update_investor_draft(request: Request, draft_id: str, payload: DraftU
             raise HTTPException(status_code=404, detail="Draft not found.")
         draft.step_reached = payload.step_reached
         draft.data.update(payload.data)
-        from datetime import datetime
         draft.updated_at = datetime.utcnow()
         await draft.save()
         return {"draft_id": draft_id, "step_reached": draft.step_reached}
@@ -174,7 +118,6 @@ async def update_technology_draft(request: Request, draft_id: str, payload: Draf
             raise HTTPException(status_code=404, detail="Draft not found.")
         draft.step_reached = payload.step_reached
         draft.data.update(payload.data)
-        from datetime import datetime
         draft.updated_at = datetime.utcnow()
         await draft.save()
         return {"draft_id": draft_id, "step_reached": draft.step_reached}
@@ -185,16 +128,38 @@ async def update_technology_draft(request: Request, draft_id: str, payload: Draf
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update draft.")
 
 
+@router.delete("/investors/draft/{draft_id}")
+@limiter.limit("30/minute")
+async def remove_investor_draft(request: Request, draft_id: str):
+    draft = await InvestorDraft.get(draft_id)
+    if not draft:
+        raise HTTPException(status_code=404, detail="Draft not found.")
+    await draft.delete()
+    return {"message": "Draft removed."}
+
+
+@router.delete("/technologies/draft/{draft_id}")
+@limiter.limit("30/minute")
+async def remove_technology_draft(request: Request, draft_id: str):
+    draft = await TechnologyDraft.get(draft_id)
+    if not draft:
+        raise HTTPException(status_code=404, detail="Draft not found.")
+    await draft.delete()
+    return {"message": "Draft removed."}
+
+
 @router.post("/investors")
 @limiter.limit("5/minute")
 async def register_investor(request: Request, payload: InvestorPayload):
     try:
-        record = InvestorRegistration(**payload.model_dump())
+        payload_dict = payload.model_dump(exclude={"draft_id"})
+        record = InvestorRegistration(**payload_dict)
         await record.insert()
+        await delete_investor_drafts(payload.draft_id, payload.email)
         await send_investor_confirmation_email(
             payload.email,
             payload.full_name,
-            payload.model_dump(),
+            payload_dict,
         )
         logger.info(f"Investor registered: {payload.email}")
         return {"message": "Thank you for registering. We'll be in touch shortly."}
@@ -207,13 +172,15 @@ async def register_investor(request: Request, payload: InvestorPayload):
 @limiter.limit("5/minute")
 async def submit_technology(request: Request, payload: TechnologyPayload):
     try:
-        record = TechnologySubmission(**payload.model_dump())
+        payload_dict = payload.model_dump(exclude={"draft_id"})
+        record = TechnologySubmission(**payload_dict)
         await record.insert()
+        await delete_technology_drafts(payload.draft_id, payload.email)
         await send_technology_confirmation_email(
             payload.email,
             payload.inventor_name,
             payload.technology_title,
-            payload.model_dump(),
+            payload_dict,
         )
         logger.info(f"Technology submitted: {payload.technology_title} by {payload.email}")
         return {"message": "Your technology has been submitted. Our team will review and contact you soon."}

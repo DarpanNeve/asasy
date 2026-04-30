@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Users, FileText, Activity, DollarSign, CreditCard } from "lucide-react";
 import { api } from "../../../services/api";
 
-export default function DashboardTab({ setActiveTab }) {
+export default function DashboardTab({ onNavigateTab }) {
   const [stats, setStats] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -86,7 +86,7 @@ export default function DashboardTab({ setActiveTab }) {
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <button
-          onClick={() => setActiveTab("users")}
+          onClick={() => onNavigateTab?.("users")}
           className="card hover:shadow-lg transition-shadow p-6 text-left"
         >
           <Users className="h-8 w-8 text-primary-600 mb-2" />
@@ -95,7 +95,7 @@ export default function DashboardTab({ setActiveTab }) {
         </button>
 
         <button
-          onClick={() => setActiveTab("blog")}
+          onClick={() => onNavigateTab?.("blog")}
           className="card hover:shadow-lg transition-shadow p-6 text-left"
         >
           <FileText className="h-8 w-8 text-success-600 mb-2" />
@@ -104,7 +104,7 @@ export default function DashboardTab({ setActiveTab }) {
         </button>
 
         <button
-          onClick={() => setActiveTab("press")}
+          onClick={() => onNavigateTab?.("press")}
           className="card hover:shadow-lg transition-shadow p-6 text-left"
         >
           <FileText className="h-8 w-8 text-warning-600 mb-2" />
@@ -113,7 +113,7 @@ export default function DashboardTab({ setActiveTab }) {
         </button>
 
         <button
-          onClick={() => setActiveTab("transactions")}
+          onClick={() => onNavigateTab?.("transactions")}
           className="card hover:shadow-lg transition-shadow p-6 text-left"
         >
           <CreditCard className="h-8 w-8 text-secondary-600 mb-2" />

@@ -1,14 +1,67 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.responses import JSONResponse
+from datetime import datetime, timedelta
+import re
+from fastapi import APIRouter, Depends, Query
 import traceback
 
 from app.core.security import require_admin
 from app.models.user import User
 from app.models.report import ReportLog
-from app.models.token import TokenTransaction, UserTokenBalance
-from app.models.contact import ContactSubmission
+from app.models.token import TokenTransaction
 
 router = APIRouter()
+
+VALID_TIME_FILTERS = {"today", "week", "month", "year", "all"}
+VALID_SORT_OPTIONS = {"latest", "oldest"}
+VALID_STATUS_FILTERS = {"all", "completed", "incomplete"}
+
+
+def get_time_filter_start(time_filter: str):
+    now = datetime.utcnow()
+    if time_filter == "today":
+        return datetime(now.year, now.month, now.day)
+    if time_filter == "week":
+        start_of_today = datetime(now.year, now.month, now.day)
+        return start_of_today - timedelta(days=start_of_today.weekday())
+    if time_filter == "month":
+        return datetime(now.year, now.month, 1)
+    if time_filter == "year":
+        return datetime(now.year, 1, 1)
+    return None
+
+
+def build_user_query(search: str, time_filter: str, status_filter: str):
+    conditions = []
+    search_value = (search or "").strip()
+    if search_value:
+        safe_pattern = re.escape(search_value[:80])
+        conditions.append({
+            "$or": [
+                {"name": {"$regex": safe_pattern, "$options": "i"}},
+                {"email": {"$regex": safe_pattern, "$options": "i"}},
+            ]
+        })
+
+    start_date = get_time_filter_start(time_filter)
+    if start_date:
+        conditions.append({"created_at": {"$gte": start_date}})
+
+    if status_filter == "completed":
+        conditions.append({"phone": {"$nin": [None, "", "Not provided"]}})
+    elif status_filter == "incomplete":
+        conditions.append({
+            "$or": [
+                {"phone": {"$exists": False}},
+                {"phone": None},
+                {"phone": ""},
+                {"phone": "Not provided"},
+            ]
+        })
+
+    if not conditions:
+        return {}
+    if len(conditions) == 1:
+        return conditions[0]
+    return {"$and": conditions}
 
 
 @router.get("/me")
@@ -18,12 +71,30 @@ async def admin_check(admin: User = Depends(require_admin)):
 
 
 @router.get("/users")
-async def get_all_users(admin: User = Depends(require_admin)):
+async def get_all_users(
+    search: str = Query(default=""),
+    time_filter: str = Query(default="all"),
+    sort: str = Query(default="latest"),
+    status_filter: str = Query(default="all"),
+    admin: User = Depends(require_admin),
+):
     try:
-        users = await User.find_all().to_list()
+        selected_time_filter = time_filter if time_filter in VALID_TIME_FILTERS else "all"
+        selected_sort = sort if sort in VALID_SORT_OPTIONS else "latest"
+        selected_status_filter = (
+            status_filter if status_filter in VALID_STATUS_FILTERS else "all"
+        )
+        query = build_user_query(search, selected_time_filter, selected_status_filter)
+        sort_direction = -1 if selected_sort == "latest" else 1
+        users = await User.find(query).sort([("created_at", sort_direction)]).to_list()
         result = []
         for user in users:
             token_balance = await user.get_token_balance()
+            profile_status = (
+                "completed"
+                if user.phone and user.phone.strip() and user.phone != "Not provided"
+                else "incomplete"
+            )
             result.append({
                 "id": str(user.id),
                 "name": user.name,
@@ -34,6 +105,7 @@ async def get_all_users(admin: User = Depends(require_admin)):
                 "used_tokens": token_balance.used_tokens,
                 "reports_generated": user.reports_generated,
                 "is_admin": user.is_admin,
+                "profile_status": profile_status,
                 "created_at": user.created_at.isoformat(),
                 "last_login": user.last_login.isoformat() if user.last_login else None,
             })
