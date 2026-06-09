@@ -132,7 +132,7 @@ const USERS = [
 ];
 
 const CTA_ACTIONS = [
-  { label: "Let's Generate Report", icon: FileText, route: "/rttp", color: "bg-gradient-to-r from-blue-600 to-blue-800 hover:to-blue-900 text-white" },
+  { label: "Let's Generate Report", icon: FileText, route: "/reports", color: "bg-gradient-to-r from-blue-600 to-blue-800 hover:to-blue-900 text-white" },
   { label: "Make Prototype", icon: Cpu, route: "/prototype", color: "bg-gradient-to-r from-emerald-600 to-emerald-700 hover:to-emerald-800 text-white" },
   { label: "Register Investor", icon: Users, route: "/investors", color: "bg-gradient-to-r from-orange-500 to-orange-600 hover:to-orange-700 text-white" },
   { label: "Submit Technology", icon: Rocket, route: "/technologies", color: "bg-gradient-to-r from-teal-600 to-teal-700 hover:to-teal-800 text-white" },
