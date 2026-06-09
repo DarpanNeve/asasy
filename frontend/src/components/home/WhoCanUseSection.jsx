@@ -250,7 +250,7 @@ export default function WhoCanUseSection() {
   const [selected, setSelected] = useState(null);
 
   return (
-    <section className="py-24 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
+    <section id="who-can-use" className="scroll-mt-20 py-24 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           className="text-center mb-16"

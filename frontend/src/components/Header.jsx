@@ -31,6 +31,13 @@ export default function Header() {
   const location = useLocation();
 
   useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.slice(1);
+      const t = setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+      }, 120);
+      return () => clearTimeout(t);
+    }
     window.scrollTo(0, 0);
   }, [location]);
 
@@ -60,6 +67,7 @@ export default function Header() {
 
   const navLinks = [
     { to: "/", label: "Home" },
+    { to: "/#who-can-use", label: "Use Case" },
     { to: "/experts", label: "Experts" },
     { to: "/investors", label: "Investors" },
     { to: "/technologies", label: "Technologies" },
