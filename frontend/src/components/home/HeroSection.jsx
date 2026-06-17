@@ -125,7 +125,7 @@ export default function HeroSection() {
           >
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Link
-                to="/rttp"
+                to="#generate-report"
                 className="inline-flex items-center justify-center px-8 py-3.5 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white font-semibold rounded-full btn-glow transition-all duration-300"
               >
                 Generate Your Report
