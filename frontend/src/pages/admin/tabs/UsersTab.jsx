@@ -1,20 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  Calendar,
-  ChevronDown,
-  ChevronRight,
-  CreditCard,
-  FileSpreadsheet,
-  FileText,
-  Hash,
-  Mail,
-  Phone,
-  Search,
-  User,
-} from "lucide-react";
+import { FileSpreadsheet, Search } from "lucide-react";
 import * as XLSX from "xlsx";
 import toast from "react-hot-toast";
 import { api } from "../../../services/api";
+import UserCard from "./UserCard";
 
 const TIME_FILTERS = [
   { id: "all", label: "All Time" },
@@ -155,224 +144,112 @@ export default function UsersTab() {
   if (loading) {
     return (
       <div className="flex justify-center py-12">
-        <div className="w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-primary-500 dark:border-primary-400 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-xl border border-neutral-200 shadow-sm p-5 space-y-4">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+      <div className="card space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h2 className="text-xl font-semibold text-neutral-900">Users</h2>
-            <p className="text-sm text-neutral-600">
+            <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">
+              Users
+            </h2>
+            <p className="text-sm text-neutral-600 dark:text-slate-400">
               {users.length} users, {completedCount} completed profiles
             </p>
           </div>
           <button
             onClick={exportUsersToExcel}
-            className="btn-primary flex items-center"
+            className="btn-primary flex items-center shrink-0"
           >
             <FileSpreadsheet className="h-4 w-4 mr-2" />
             Export to Excel
           </button>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-[1fr_auto_auto] gap-3">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" />
+        <div className="flex flex-col lg:flex-row lg:items-center gap-3">
+          <div className="relative flex-1 min-w-0">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400 dark:text-slate-500" />
             <input
               type="text"
               value={searchInput}
               onChange={(event) => setSearchInput(event.target.value)}
-              placeholder="Search by Name or Email"
+              placeholder="Search by name or email"
               className="input pl-10"
             />
           </div>
 
           <select
-            className="input min-w-[140px]"
+            className="input lg:w-40 shrink-0"
             value={sortOrder}
             onChange={(event) => setSortOrder(event.target.value)}
           >
-            <option value="latest">Latest</option>
-            <option value="oldest">Oldest</option>
+            <option value="latest">Latest first</option>
+            <option value="oldest">Oldest first</option>
           </select>
-
-          <div className="flex items-center gap-2">
-            {STATUS_FILTERS.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => setStatusFilter(item.id)}
-                className={`px-3 py-2 rounded-lg text-xs font-medium border transition-colors ${
-                  statusFilter === item.id
-                    ? "bg-primary-50 text-primary-700 border-primary-200"
-                    : "bg-white text-neutral-600 border-neutral-200 hover:border-neutral-300"
-                }`}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          {TIME_FILTERS.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => setTimeFilter(item.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
-                timeFilter === item.id
-                  ? "bg-primary-50 text-primary-700 border-primary-200"
-                  : "bg-white text-neutral-600 border-neutral-200 hover:border-neutral-300"
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
+        <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6 pt-1">
+          <div className="space-y-1.5">
+            <span className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-slate-500">
+              Status
+            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              {STATUS_FILTERS.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setStatusFilter(item.id)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+                    statusFilter === item.id
+                      ? "bg-primary-50 text-primary-700 border-primary-200 dark:bg-primary-500/10 dark:text-primary-400 dark:border-primary-500/30"
+                      : "bg-white text-neutral-600 border-neutral-200 hover:border-neutral-300 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-600 dark:hover:border-slate-500"
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <span className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-slate-500">
+              Time range
+            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              {TIME_FILTERS.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setTimeFilter(item.id)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+                    timeFilter === item.id
+                      ? "bg-primary-50 text-primary-700 border-primary-200 dark:bg-primary-500/10 dark:text-primary-400 dark:border-primary-500/30"
+                      : "bg-white text-neutral-600 border-neutral-200 hover:border-neutral-300 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-600 dark:hover:border-slate-500"
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {users.map((user) => (
-          <div key={user.id} className="card">
-            <div
-              className="flex items-center justify-between cursor-pointer"
-              onClick={() => toggleUserExpansion(user.id)}
-            >
-              <div className="flex items-center space-x-4">
-                <div className="p-3 bg-primary-50 rounded-lg">
-                  <User className="h-6 w-6 text-primary-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-neutral-900">{user.name}</h3>
-                  <div className="flex flex-wrap items-center gap-3 text-sm text-neutral-600">
-                    <span className="flex items-center">
-                      <Mail className="h-4 w-4 mr-1" />
-                      {user.email}
-                    </span>
-                    <span className="flex items-center">
-                      <Phone className="h-4 w-4 mr-1" />
-                      {user.phone}
-                    </span>
-                    <span className="flex items-center">
-                      <FileText className="h-4 w-4 mr-1" />
-                      {user.reports_generated} reports
-                    </span>
-                    <span
-                      className={`text-xs px-2 py-1 rounded border ${
-                        user.profile_status === "completed"
-                          ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                          : "bg-amber-50 text-amber-700 border-amber-200"
-                      }`}
-                    >
-                      {user.profile_status === "completed"
-                        ? "Completed"
-                        : "Incomplete"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              {expandedUserId === user.id ? (
-                <ChevronDown className="h-5 w-5 text-neutral-400" />
-              ) : (
-                <ChevronRight className="h-5 w-5 text-neutral-400" />
-              )}
-            </div>
-
-            {expandedUserId === user.id && (
-              <div className="mt-6 pt-6 border-t border-neutral-200 space-y-6">
-                <div>
-                  <h4 className="text-lg font-semibold text-neutral-900 mb-4 flex items-center">
-                    <CreditCard className="h-5 w-5 mr-2" />
-                    Transactions ({userTransactions.length})
-                  </h4>
-                  {userTransactions.length === 0 ? (
-                    <p className="text-neutral-600">No transactions found</p>
-                  ) : (
-                    <div className="space-y-3">
-                      {userTransactions.map((transaction) => (
-                        <div
-                          key={transaction.id}
-                          className="bg-neutral-50 rounded-lg p-4 text-sm"
-                        >
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            <div>
-                              <p className="font-medium text-neutral-900">Package</p>
-                              <p className="text-neutral-600">{transaction.package_name}</p>
-                            </div>
-                            <div>
-                              <p className="font-medium text-neutral-900">Status</p>
-                              <p className="text-neutral-600">{transaction.status}</p>
-                            </div>
-                            <div>
-                              <p className="font-medium text-neutral-900">Amount</p>
-                              <p className="text-neutral-600">
-                                ₹{((transaction.amount_paid || 0) / 100).toFixed(2)}
-                              </p>
-                            </div>
-                            <div>
-                              <p className="font-medium text-neutral-900">Payment Id</p>
-                              <p className="text-neutral-600 break-all">
-                                {transaction.razorpay_payment_id || "N/A"}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div>
-                  <h4 className="text-lg font-semibold text-neutral-900 mb-4 flex items-center">
-                    <FileText className="h-5 w-5 mr-2" />
-                    Reports ({userReports.length})
-                  </h4>
-                  {userReports.length === 0 ? (
-                    <p className="text-neutral-600">No reports generated yet</p>
-                  ) : (
-                    <div className="space-y-4">
-                      {userReports.map((report) => (
-                        <div key={report.id} className="bg-neutral-50 rounded-lg p-4">
-                          <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
-                            <div className="flex flex-wrap items-center gap-3">
-                              <span className="flex items-center text-neutral-600">
-                                <Hash className="h-4 w-4 mr-1" />
-                                {report.id.slice(-8)}
-                              </span>
-                              <span className="flex items-center text-neutral-600">
-                                <Calendar className="h-4 w-4 mr-1" />
-                                {new Date(report.created_at).toLocaleDateString()}
-                              </span>
-                              <span className="text-xs bg-primary-100 text-primary-800 px-2 py-1 rounded">
-                                {report.plan_name || "Report"}
-                              </span>
-                            </div>
-                            {report.file_url ? (
-                              <button
-                                onClick={() => handleDownloadReport(report.id)}
-                                className="btn-outline btn-sm"
-                              >
-                                Download
-                              </button>
-                            ) : (
-                              <span className="text-xs text-neutral-500">
-                                Not completed
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
+          <UserCard
+            key={user.id}
+            user={user}
+            isExpanded={expandedUserId === user.id}
+            onToggle={toggleUserExpansion}
+            userReports={expandedUserId === user.id ? userReports : []}
+            userTransactions={expandedUserId === user.id ? userTransactions : []}
+            onDownloadReport={handleDownloadReport}
+          />
         ))}
       </div>
     </div>
