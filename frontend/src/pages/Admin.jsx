@@ -190,7 +190,7 @@ export default function Admin() {
         </aside>
 
         <main className="flex-1 min-w-0">
-          <div className="p-4 sm:p-6 lg:p-8 space-y-4">
+          <div className="p-3 sm:p-4 space-y-4">
             <div className="lg:hidden bg-white rounded-xl border border-neutral-200 shadow-sm p-3">
               <nav className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {ADMIN_TABS.map((tab) => {
