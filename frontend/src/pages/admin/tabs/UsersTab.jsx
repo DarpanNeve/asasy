@@ -17,6 +17,7 @@ import toast from "react-hot-toast";
 import { api } from "../../../services/api";
 
 const TIME_FILTERS = [
+  { id: "all", label: "All Time" },
   { id: "today", label: "Today" },
   { id: "week", label: "This Week" },
   { id: "month", label: "This Month" },
