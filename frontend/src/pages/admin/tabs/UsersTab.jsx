@@ -3,7 +3,7 @@ import { FileSpreadsheet, Search } from "lucide-react";
 import * as XLSX from "xlsx";
 import toast from "react-hot-toast";
 import { api } from "../../../services/api";
-import UserCard from "./UserCard";
+import UserRow from "./UserRow";
 
 const TIME_FILTERS = [
   { id: "all", label: "All Time" },
@@ -150,8 +150,8 @@ export default function UsersTab() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="card space-y-5">
+    <div className="space-y-4">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-neutral-200 dark:border-slate-700 p-4 space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">
@@ -182,14 +182,16 @@ export default function UsersTab() {
             />
           </div>
 
-          <select
-            className="input lg:w-40 shrink-0"
-            value={sortOrder}
-            onChange={(event) => setSortOrder(event.target.value)}
-          >
-            <option value="latest">Latest first</option>
-            <option value="oldest">Oldest first</option>
-          </select>
+          <div className="lg:w-40 shrink-0">
+            <select
+              className="input w-full"
+              value={sortOrder}
+              onChange={(event) => setSortOrder(event.target.value)}
+            >
+              <option value="latest">Latest first</option>
+              <option value="oldest">Oldest first</option>
+            </select>
+          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6 pt-1">
@@ -239,18 +241,43 @@ export default function UsersTab() {
         </div>
       </div>
 
-      <div className="space-y-3">
-        {users.map((user) => (
-          <UserCard
-            key={user.id}
-            user={user}
-            isExpanded={expandedUserId === user.id}
-            onToggle={toggleUserExpansion}
-            userReports={expandedUserId === user.id ? userReports : []}
-            userTransactions={expandedUserId === user.id ? userTransactions : []}
-            onDownloadReport={handleDownloadReport}
-          />
-        ))}
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-neutral-200 dark:border-slate-700 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-neutral-200 dark:divide-slate-700">
+            <thead className="bg-neutral-50 dark:bg-slate-900/60">
+              <tr>
+                <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-slate-500">
+                  User
+                </th>
+                <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-slate-500">
+                  Phone
+                </th>
+                <th className="px-4 py-2.5 text-center text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-slate-500">
+                  Reports
+                </th>
+                <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-slate-500">
+                  Status
+                </th>
+                <th className="px-4 py-2.5 w-10" />
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-neutral-200 dark:divide-slate-700">
+              {users.map((user) => (
+                <UserRow
+                  key={user.id}
+                  user={user}
+                  isExpanded={expandedUserId === user.id}
+                  onToggle={toggleUserExpansion}
+                  userReports={expandedUserId === user.id ? userReports : []}
+                  userTransactions={
+                    expandedUserId === user.id ? userTransactions : []
+                  }
+                  onDownloadReport={handleDownloadReport}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

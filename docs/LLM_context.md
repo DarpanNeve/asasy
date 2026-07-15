@@ -96,7 +96,7 @@ Users submit a technology idea/concept; the AI engine analyzes it across 30+ par
 | `backend/app/api/routes/onboarding.py` | Investor, Technology, Prototype form submission endpoints + stats |
 | `backend/app/models/onboarding.py` | Beanie ODM models for all 3 onboarding types |
 | `backend/app/services/email_service.py` | Confirmation emails for all 3 onboarding forms |
-| `frontend/src/pages/admin/tabs/UserCard.jsx` | Admin Users tab row — expandable card (transactions + reports detail), full dark mode support. Extracted from `UsersTab.jsx` to stay under 400-line cap. |
+| `frontend/src/pages/admin/tabs/UserRow.jsx` | Admin Users tab table row (`<tr>`) — expandable to a detail row (transactions + reports), full dark mode support. Extracted from `UsersTab.jsx` to stay under 400-line cap. Users tab renders as a dense `<table>`, not cards. |
 
 ## Business Rules
 - **No free tokens** — free token concept completely removed from UI
