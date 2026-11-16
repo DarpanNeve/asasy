@@ -1,9 +1,8 @@
-from fastapi import APIRouter, HTTPException, status, Request, Depends
+from fastapi import APIRouter, HTTPException, status, Depends
 from typing import Optional
 from datetime import datetime
 import logging
 
-from app.core.rate_limiter import limiter
 from app.models.onboarding import (
     InvestorRegistration, TechnologySubmission, PrototypeInquiry,
     InvestorDraft, TechnologyDraft,
@@ -59,8 +58,7 @@ async def delete_technology_drafts(draft_id: Optional[str], email: Optional[str]
 
 
 @router.post("/investors/draft")
-@limiter.limit("20/minute")
-async def create_investor_draft(request: Request, payload: DraftPayload):
+async def create_investor_draft(payload: DraftPayload):
     try:
         draft = InvestorDraft(
             email=payload.email,
@@ -75,8 +73,7 @@ async def create_investor_draft(request: Request, payload: DraftPayload):
 
 
 @router.patch("/investors/draft/{draft_id}")
-@limiter.limit("30/minute")
-async def update_investor_draft(request: Request, draft_id: str, payload: DraftUpdatePayload):
+async def update_investor_draft(draft_id: str, payload: DraftUpdatePayload):
     try:
         draft = await InvestorDraft.get(draft_id)
         if not draft:
@@ -94,8 +91,7 @@ async def update_investor_draft(request: Request, draft_id: str, payload: DraftU
 
 
 @router.post("/technologies/draft")
-@limiter.limit("20/minute")
-async def create_technology_draft(request: Request, payload: DraftPayload):
+async def create_technology_draft(payload: DraftPayload):
     try:
         draft = TechnologyDraft(
             email=payload.email,
@@ -110,8 +106,7 @@ async def create_technology_draft(request: Request, payload: DraftPayload):
 
 
 @router.patch("/technologies/draft/{draft_id}")
-@limiter.limit("30/minute")
-async def update_technology_draft(request: Request, draft_id: str, payload: DraftUpdatePayload):
+async def update_technology_draft(draft_id: str, payload: DraftUpdatePayload):
     try:
         draft = await TechnologyDraft.get(draft_id)
         if not draft:
@@ -129,8 +124,7 @@ async def update_technology_draft(request: Request, draft_id: str, payload: Draf
 
 
 @router.delete("/investors/draft/{draft_id}")
-@limiter.limit("30/minute")
-async def remove_investor_draft(request: Request, draft_id: str):
+async def remove_investor_draft(draft_id: str):
     draft = await InvestorDraft.get(draft_id)
     if not draft:
         raise HTTPException(status_code=404, detail="Draft not found.")
@@ -139,8 +133,7 @@ async def remove_investor_draft(request: Request, draft_id: str):
 
 
 @router.delete("/technologies/draft/{draft_id}")
-@limiter.limit("30/minute")
-async def remove_technology_draft(request: Request, draft_id: str):
+async def remove_technology_draft(draft_id: str):
     draft = await TechnologyDraft.get(draft_id)
     if not draft:
         raise HTTPException(status_code=404, detail="Draft not found.")
@@ -149,8 +142,7 @@ async def remove_technology_draft(request: Request, draft_id: str):
 
 
 @router.post("/investors")
-@limiter.limit("5/minute")
-async def register_investor(request: Request, payload: InvestorPayload):
+async def register_investor(payload: InvestorPayload):
     try:
         payload_dict = payload.model_dump(exclude={"draft_id"})
         record = InvestorRegistration(**payload_dict)
@@ -169,8 +161,7 @@ async def register_investor(request: Request, payload: InvestorPayload):
 
 
 @router.post("/technologies")
-@limiter.limit("5/minute")
-async def submit_technology(request: Request, payload: TechnologyPayload):
+async def submit_technology(payload: TechnologyPayload):
     try:
         payload_dict = payload.model_dump(exclude={"draft_id"})
         record = TechnologySubmission(**payload_dict)
@@ -190,8 +181,7 @@ async def submit_technology(request: Request, payload: TechnologyPayload):
 
 
 @router.post("/prototype")
-@limiter.limit("5/minute")
-async def submit_prototype_inquiry(request: Request, payload: PrototypePayload):
+async def submit_prototype_inquiry(payload: PrototypePayload):
     try:
         record = PrototypeInquiry(**payload.model_dump())
         await record.insert()

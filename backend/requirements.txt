@@ -8,8 +8,6 @@ python-multipart
 python-jose[cryptography]
 passlib[bcrypt]
 python-decouple
-redis
-aioredis
 httpx
 jinja2
 emails
@@ -20,7 +18,6 @@ PyPDF2
 reportlab
 weasyprint
 Pillow
-slowapi
 python-json-logger
 pytest
 pytest-asyncio

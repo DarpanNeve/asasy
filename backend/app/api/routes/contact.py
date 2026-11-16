@@ -1,10 +1,9 @@
-from fastapi import APIRouter, HTTPException, status, Request
+from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
 from datetime import datetime
 import logging
 
-from app.core.rate_limiter import limiter
 from app.models.user import User
 from app.core.security import require_admin
 from app.services.email_service import (
@@ -30,8 +29,7 @@ class ContactSubmission(BaseModel):
 contact_submissions = []
 
 @router.post("/")
-@limiter.limit("5/minute")
-async def submit_contact_form(request: Request, submission: ContactSubmission):
+async def submit_contact_form(submission: ContactSubmission):
     """Submit contact form for RTTP consultation"""
     try:
         # Create submission record

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import JSONResponse
 from datetime import datetime, timedelta
@@ -12,7 +12,6 @@ from app.core.security import (
     get_current_user,
     verify_token,
 )
-from app.core.rate_limiter import limiter
 from app.services.email_service import send_otp_email, send_welcome_email, send_password_reset_email
 from app.services.oauth_service import verify_google_token
 from app.models.user import User, OAuthProvider
@@ -37,8 +36,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 @router.post("/signup", response_model=dict)
-@limiter.limit("5/minute")
-async def signup(request: Request, user_data: UserSignup):
+async def signup(user_data: UserSignup):
     """User registration"""
     try:
         # Validate required fields
@@ -94,8 +92,7 @@ async def signup(request: Request, user_data: UserSignup):
         raise
 
 @router.post("/login", response_model=TokenResponse)
-@limiter.limit("10/minute")
-async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends()):
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     """User login"""
     try:
         # Find user
@@ -140,8 +137,7 @@ async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends
         raise
 
 @router.post("/verify-email-otp", response_model=dict)
-@limiter.limit("10/minute")
-async def verify_email_otp(request: Request, verification: EmailVerification):
+async def verify_email_otp(verification: EmailVerification):
     """Verify email with OTP"""
     try:
         user = await User.find_one({"email": verification.email})
@@ -191,8 +187,7 @@ async def verify_email_otp(request: Request, verification: EmailVerification):
         raise
 
 @router.post("/google")
-@limiter.limit("10/minute")
-async def google_auth(request: Request, google_data: GoogleAuth):
+async def google_auth(google_data: GoogleAuth):
     """Google OAuth authentication"""
     try:
         # Verify Google token and get user info
@@ -276,8 +271,7 @@ async def google_auth(request: Request, google_data: GoogleAuth):
         )
 
 @router.post("/complete-profile", response_model=TokenResponse)
-@limiter.limit("10/minute")
-async def complete_profile(request: Request, profile_data: CompleteProfile):
+async def complete_profile(profile_data: CompleteProfile):
     """Complete user profile after Google OAuth"""
     try:
         user_id = profile_data.user_id
@@ -408,8 +402,7 @@ async def logout(current_user: User = Depends(get_current_user)):
     return {"message": "Logged out successfully"}
 
 @router.post("/resend-verification")
-@limiter.limit("3/minute")
-async def resend_verification(request: Request, email: str):
+async def resend_verification(email: str):
     """Resend email verification code"""
     try:
         user = await User.find_one({"email": email})
@@ -441,8 +434,7 @@ async def resend_verification(request: Request, email: str):
         raise
 
 @router.post("/forgot-password")
-@limiter.limit("5/minute")
-async def forgot_password(request: Request, password_reset: PasswordReset):
+async def forgot_password(password_reset: PasswordReset):
     """Request password reset OTP"""
     try:
         user = await User.find_one({"email": password_reset.email})
@@ -474,8 +466,7 @@ async def forgot_password(request: Request, password_reset: PasswordReset):
         raise
 
 @router.post("/verify-password-reset-otp")
-@limiter.limit("5/minute")
-async def verify_password_reset_otp(request: Request, verification: PasswordResetOTPVerify):
+async def verify_password_reset_otp(verification: PasswordResetOTPVerify):
     """Verify password reset OTP"""
     try:
         user = await User.find_one({"email": verification.email})
@@ -501,8 +492,7 @@ async def verify_password_reset_otp(request: Request, verification: PasswordRese
         raise
 
 @router.post("/reset-password")
-@limiter.limit("5/minute")
-async def reset_password(request: Request, password_reset_confirm: PasswordResetConfirm):
+async def reset_password(password_reset_confirm: PasswordResetConfirm):
     """Reset password with OTP"""
     try:
         user = await User.find_one({"email": password_reset_confirm.email})

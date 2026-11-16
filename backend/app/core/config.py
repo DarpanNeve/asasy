@@ -19,9 +19,6 @@ class Settings(BaseSettings):
     MONGODB_URL: str
     DATABASE_NAME: str = "asasy"
 
-    # Redis
-    REDIS_URL: str = "redis://localhost:6379"
-
     # OAuth
     GOOGLE_CLIENT_ID: str
     GOOGLE_CLIENT_SECRET: str
@@ -66,10 +63,6 @@ class Settings(BaseSettings):
         "*"
     ]
     ALLOWED_HOSTS: List[str] = ["localhost", "127.0.0.1"]
-
-    # Rate limiting
-    RATE_LIMIT_REQUESTS: int = 100
-    RATE_LIMIT_PERIOD: int = 60  # seconds
 
     # Admin credentials
     ADMIN_USERNAME: str = "admin"
